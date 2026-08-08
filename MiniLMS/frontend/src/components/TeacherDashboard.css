@@ -1,0 +1,561 @@
+/* Container & Layout */
+.teacher-dashboard {
+  padding: 1rem 0 3rem 0;
+}
+
+.teacher-header-section {
+  margin-bottom: 2.5rem;
+  text-align: left;
+}
+
+.teacher-title {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.teacher-subtitle {
+  font-size: 1.15rem;
+  margin: 0;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* Animations */
+@keyframes slideUpFade {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.slide-up {
+  animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease-in forwards;
+}
+
+/* Global Segmented Control is now used */
+
+/* Teacher Panels */
+.teacher-panel h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.panel-header h3 {
+  margin: 0;
+}
+
+.glass-panel-teacher {
+  background: var(--glass-bg);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: 2rem;
+  box-shadow: var(--glass-shadow);
+}
+
+/* Global Empty State is now used */
+
+/* Buttons */
+.btn-icon {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-lg {
+  padding: 1rem;
+  font-size: 1.05rem;
+}
+
+.btn-action {
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-action:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+}
+
+.text-amber { color: #fbbf24; }
+.text-red { color: #f87171; }
+
+/* Inputs & Forms */
+.glass-input-teacher {
+  background: rgba(15, 10, 5, 0.65);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: white;
+  padding: 0.85rem 1.25rem;
+  border-radius: 50px;
+  font-size: 0.95rem;
+  width: 100%;
+  outline: none;
+  transition: all 0.2s;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.glass-input-teacher:focus {
+  border-color: rgba(245, 158, 11, 0.85);
+  background: rgba(15, 10, 5, 0.85);
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.25);
+}
+
+.glass-input-teacher::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.input-with-icon {
+  position: relative;
+  flex: 1;
+}
+
+.input-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.glass-input-teacher.with-icon {
+  padding-left: 3rem;
+}
+
+select.glass-input-teacher {
+  appearance: none;
+  cursor: pointer;
+}
+
+.select-wrapper {
+  position: relative;
+}
+
+.select-wrapper::after {
+  content: '▼';
+  font-size: 0.8rem;
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255, 255, 255, 0.5);
+  pointer-events: none;
+}
+
+select option {
+  background: #1f2937;
+  color: #fff;
+  padding: 10px;
+}
+
+.select-placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Students Grid */
+.add-student-card {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+}
+
+.add-student-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.students-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.student-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border-radius: 24px;
+  padding: 1rem;
+  transition: all 0.2s;
+}
+
+.student-card:hover {
+  background: rgba(245, 158, 11, 0.2);
+  border-color: rgba(245, 158, 11, 0.55);
+  transform: translateY(-2px);
+  box-shadow: var(--glass-shadow);
+}
+
+.student-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.student-avatar {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.student-avatar-sm {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.student-email {
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.student-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Assign Form */
+.assign-form {
+  max-width: 600px;
+}
+
+.assign-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.assign-field label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.deadlines-section {
+  background: rgba(15, 10, 5, 0.45);
+  border-radius: 24px;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  backdrop-filter: blur(10px);
+}
+
+.deadlines-section h4 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.deadlines-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.deadline-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 0.75rem 1.25rem;
+  border-radius: 50px;
+}
+
+.lesson-name {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.lesson-index {
+  background: rgba(255, 255, 255, 0.1);
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.deadline-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.deadline-icon {
+  position: absolute;
+  left: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+}
+
+.datetime-input {
+  padding-left: 2.5rem;
+  padding-right: 0.5rem;
+  width: 220px;
+}
+
+/* Data Grid (Overview) */
+.data-grid {
+  overflow: hidden;
+  padding: 0;
+}
+
+.grid-header {
+  display: grid;
+  grid-template-columns: 1.5fr 1.5fr 2fr;
+  padding: 1.25rem 1.5rem;
+  background: rgba(255, 255, 255, 0.15);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+}
+
+.grid-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.grid-row {
+  display: grid;
+  grid-template-columns: 1.5fr 1.5fr 2fr;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  align-items: center;
+  transition: background 0.2s;
+}
+
+.grid-row:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.grid-row:last-child {
+  border-bottom: none;
+}
+
+.grid-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.course-cell {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.progress-cell {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.progress-bar-container-teacher {
+  height: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  flex: 1;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+}
+
+.progress-bar-teacher {
+  height: 100%;
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+  border-radius: 4px;
+  transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.progress-text {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  min-width: 60px;
+}
+
+/* Submissions */
+.submissions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.submission-card {
+  padding: 1.5rem;
+}
+
+.submission-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
+}
+
+.submission-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.submission-student {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.1rem;
+}
+
+.submission-course {
+  margin: 0;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.separator {
+  margin: 0 0.5rem;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.submission-date {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.4);
+  background: rgba(0, 0, 0, 0.2);
+  padding: 4px 10px;
+  border-radius: 100px;
+}
+
+.submission-content {
+  background: rgba(15, 10, 5, 0.55);
+  padding: 1.25rem;
+  border-radius: 24px;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  color: var(--text-primary);
+  margin-bottom: 1.25rem;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.submission-attachments h5 {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 0.75rem;
+  font-weight: 500;
+}
+
+.attachments-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.attachment-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 6px 12px;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.85rem;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.attachment-chip:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .segmented-control-global {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    border-radius: 12px;
+    padding: 0.5rem;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .segmented-btn-global {
+    border-radius: 8px;
+    white-space: nowrap;
+  }
+
+  .add-student-row {
+    flex-direction: column;
+  }
+  
+  .assign-row {
+    grid-template-columns: 1fr;
+  }
+
+  .grid-header {
+    display: none;
+  }
+  
+  .grid-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 1.25rem;
+  }
+  
+  .submission-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}

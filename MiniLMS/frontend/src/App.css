@@ -1,0 +1,66 @@
+.courses-section {
+  padding: 4rem 0;
+}
+
+/* Teacher mode background override and dark gold glass theme */
+.teacher-mode {
+  background-image: url('/bg-teacher.jpg') !important;
+  --glass-bg: rgba(20, 10, 5, 0.7);
+  --glass-border: rgba(245, 158, 11, 0.4);
+  --text-primary: #fbbf24;
+  --text-secondary: rgba(251, 191, 36, 0.8);
+  --glass-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.8);
+  color: var(--text-primary);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+
+  /* Card Banner Theme (Teacher: dark amber/gold) */
+  --banner-bg: linear-gradient(135deg, rgba(120, 60, 10, 0.7) 0%, rgba(160, 80, 20, 0.55) 50%, rgba(20, 10, 5, 0.9) 100%);
+  --banner-wrapper-bg: rgba(20, 10, 5, 0.6);
+  --banner-glow: radial-gradient(circle, rgba(245, 158, 11, 0.3) 0%, rgba(0, 0, 0, 0) 70%);
+  --banner-icon-bg: rgba(245, 158, 11, 0.15);
+  --banner-icon-border: rgba(245, 158, 11, 0.4);
+  --banner-icon-color: #fbbf24;
+  --banner-icon-hover-color: #f59e0b;
+
+  /* Calendar Popover Theme (Teacher: dark amber) */
+  --cal-bg: #19120a;
+  --cal-border: rgba(245, 158, 11, 0.45);
+  --cal-shadow: 0 25px 60px rgba(0, 0, 0, 0.95), 0 0 30px rgba(245, 158, 11, 0.25);
+  --cal-text: #fef3c7;
+  --cal-text-muted: rgba(251, 191, 36, 0.6);
+  --cal-today-border: rgba(245, 158, 11, 0.7);
+  --cal-today-color: #fbbf24;
+  --cal-selected-bg: linear-gradient(135deg, #f59e0b, #d97706);
+  --cal-selected-shadow: 0 4px 12px rgba(217, 119, 6, 0.5);
+  --cal-input-bg: rgba(0, 0, 0, 0.5);
+  --cal-input-border: rgba(245, 158, 11, 0.3);
+  --cal-input-color: #fbbf24;
+  --cal-divider: rgba(255, 255, 255, 0.1);
+  --cal-nav-bg: rgba(255, 255, 255, 0.08);
+  --cal-nav-border: rgba(255, 255, 255, 0.15);
+  --cal-nav-hover-bg: rgba(255, 255, 255, 0.2);
+  --cal-nav-hover-color: #fbbf24;
+  --cal-day-color: rgba(255, 255, 255, 0.85);
+  --cal-day-hover-bg: rgba(255, 255, 255, 0.12);
+}
+
+.teacher-mode h1 { text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7); }
+.teacher-mode h2, .teacher-mode h3, .teacher-mode h4, .teacher-mode h5, .teacher-mode h6 { text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6); }
+.teacher-mode p { text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6); }
+
+.courses-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.courses-header h2 {
+  margin-bottom: 0;
+}
+
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}

@@ -1,0 +1,216 @@
+/* Glassmorphism Date & Time Picker Styles */
+.glass-datetime-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.glass-datetime-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.9rem;
+  background: var(--glass-bg, rgba(255, 255, 255, 0.25));
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.35));
+  border-radius: 12px;
+  color: var(--text-primary, #ffffff);
+  font-size: 0.88rem;
+  cursor: pointer;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: all 0.25s ease;
+}
+
+.glass-datetime-trigger:hover {
+  border-color: var(--cal-border, rgba(45, 160, 155, 0.5));
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.glass-datetime-trigger-info {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.glass-datetime-trigger-icon {
+  color: var(--cal-today-color, #0d9488);
+  flex-shrink: 0;
+}
+
+/* Popover - uses CSS variables for full theme adaptation */
+.glass-datetime-popover {
+  width: 300px;
+  background: var(--cal-bg) !important;
+  border: 1px solid var(--cal-border) !important;
+  border-radius: 20px;
+  padding: 1.1rem;
+  box-shadow: var(--cal-shadow);
+  color: var(--cal-text);
+  animation: popoverFadeIn 0.2s ease-out;
+  font-family: var(--font-family, sans-serif);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+}
+
+@keyframes popoverFadeIn {
+  from { opacity: 0; transform: translateY(4px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Calendar Header */
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.85rem;
+}
+
+.calendar-month-year {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--cal-text);
+}
+
+.calendar-nav-btn {
+  background: var(--cal-nav-bg);
+  border: 1px solid var(--cal-nav-border);
+  color: var(--cal-text);
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.calendar-nav-btn:hover {
+  background: var(--cal-nav-hover-bg);
+  border-color: var(--cal-nav-border);
+  color: var(--cal-nav-hover-color);
+}
+
+/* Calendar Grid */
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--cal-text-muted);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+.calendar-days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 0.85rem;
+}
+
+.calendar-day-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.82rem;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--cal-day-color);
+  background: transparent;
+  border: none;
+  transition: all 0.15s ease;
+}
+
+.calendar-day-cell:hover:not(.empty-day) {
+  background: var(--cal-day-hover-bg);
+  color: var(--cal-text);
+}
+
+.calendar-day-cell.empty-day {
+  cursor: default;
+  opacity: 0.2;
+}
+
+.calendar-day-cell.is-today {
+  border: 1px solid var(--cal-today-border);
+  color: var(--cal-today-color);
+  font-weight: 700;
+}
+
+.calendar-day-cell.is-selected {
+  background: var(--cal-selected-bg) !important;
+  color: #ffffff !important;
+  font-weight: 700;
+  box-shadow: var(--cal-selected-shadow);
+}
+
+/* Time Picker Section */
+.time-picker-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--cal-divider);
+  margin-bottom: 0.85rem;
+}
+
+.time-picker-label {
+  font-size: 0.82rem;
+  color: var(--cal-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.time-inputs-group {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.time-input-field {
+  width: 48px;
+  background: var(--cal-input-bg);
+  border: 1px solid var(--cal-input-border);
+  border-radius: 8px;
+  color: var(--cal-input-color);
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 4px;
+  outline: none;
+}
+
+.time-input-field:focus {
+  border-color: var(--cal-today-color);
+}
+
+.time-separator {
+  color: var(--cal-text-muted);
+  font-weight: 700;
+}
+
+/* Popover Footer Actions */
+.popover-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.btn-popover-action {
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  border-radius: 8px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}

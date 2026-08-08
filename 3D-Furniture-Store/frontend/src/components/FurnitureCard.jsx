@@ -1,0 +1,105 @@
+'use client';
+
+/**
+ * @file FurnitureCard.jsx
+ * @module components/FurnitureCard
+ * @description Catalog item card component. Displays custom Lucide React vector icons based on model names,
+ * handles hover triggers for the 3D Inspector Box, and provides a "+ Add to Scene" button.
+ * 
+ * @author 3D Furniture Configurator Team
+ */
+
+import React from 'react';
+import { 
+  Sofa, 
+  Armchair, 
+  Table, 
+  BookOpen, 
+  Tv, 
+  Lamp, 
+  LampDesk, 
+  LampCeiling, 
+  Flower2, 
+  Image as ImageIcon, 
+  Monitor, 
+  Plus, 
+  Box,
+  Layers,
+  Grid,
+  DoorClosed,
+  Maximize2
+} from 'lucide-react';
+
+/**
+ * Derives a clean Lucide icon component and vibrant accent color string from a 3D model name.
+ * 
+ * @param {string} [name=''] - Name of the furniture or architectural item.
+ * @returns {{ icon: React.ComponentType, color: string }} Icon component and color hex string.
+ */
+export function getFurnitureIcon(name = '') {
+  const n = name.toLowerCase();
+  
+  if (n.includes('стіна') || n.includes('wall')) return { icon: Layers, color: '#38bdf8' };
+  if (n.includes('підлога') || n.includes('floor')) return { icon: Grid, color: '#fb923c' };
+  if (n.includes('двері') || n.includes('door')) return { icon: DoorClosed, color: '#a3e635' };
+  if (n.includes('вікно') || n.includes('window')) return { icon: Maximize2, color: '#38bdf8' };
+  if (n.includes('дах') || n.includes('roof')) return { icon: Box, color: '#94a3b8' };
+  if (n.includes('арка') || n.includes('arch')) return { icon: Layers, color: '#c084fc' };
+  
+  if (n.includes('sofa')) return { icon: Sofa, color: '#1ed760' };
+  if (n.includes('chair') || n.includes('pouf') || n.includes('stool')) return { icon: Armchair, color: '#34d399' };
+  if (n.includes('table')) return { icon: Table, color: '#60a5fa' };
+  if (n.includes('bookshelf') || n.includes('sideboard')) return { icon: BookOpen, color: '#f59e0b' };
+  if (n.includes('tv stand') || n.includes('tv')) return { icon: Tv, color: '#a78bfa' };
+  if (n.includes('floor lamp')) return { icon: Lamp, color: '#fbbf24' };
+  if (n.includes('table lamp')) return { icon: LampDesk, color: '#f59e0b' };
+  if (n.includes('chandelier')) return { icon: LampCeiling, color: '#f43f5e' };
+  if (n.includes('plant') || n.includes('живопліт')) return { icon: Flower2, color: '#10b981' };
+  if (n.includes('painting')) return { icon: ImageIcon, color: '#ec4899' };
+  if (n.includes('monitor')) return { icon: Monitor, color: '#3b82f6' };
+  
+  return { icon: Box, color: '#9ca3af' };
+}
+
+/**
+ * FurnitureCard Component.
+ * 
+ * @param {Object} props - Props.
+ * @param {{ name: string, file: string }} props.item - Catalog item descriptor.
+ * @param {(item: { name: string, file: string }) => void} props.onAdd - Callback triggered when add button clicked.
+ * @param {(item: { name: string, file: string }) => void} [props.onHover] - Callback triggered when mouse hovers card.
+ * @returns {JSX.Element} Card UI component.
+ */
+export default function FurnitureCard({ item, onAdd, onHover }) {
+  const { icon: ItemIcon, color } = getFurnitureIcon(item.name);
+
+  return (
+    <div 
+      className="furniture-card" 
+      onMouseEnter={() => onHover && onHover(item)}
+    >
+      <div className="furniture-card-icon-wrapper" style={{ '--accent-color': color }}>
+        <div className="furniture-card-glow" />
+        <ItemIcon size={32} className="furniture-card-icon" />
+        <span className="furniture-card-badge">3D</span>
+      </div>
+      
+      <div className="furniture-card-footer">
+        <div className="furniture-card-info">
+          <span className="furniture-card-name" title={item.name}>{item.name}</span>
+          <span className="furniture-card-tag">GLB Model</span>
+        </div>
+        <button 
+          className="furniture-card-add-btn" 
+          onClick={(e) => {
+            e.stopPropagation();
+            onAdd(item);
+          }} 
+          title="Розмістити у 3D просторі"
+        >
+          <Plus size={16} />
+        </button>
+      </div>
+    </div>
+  );
+}

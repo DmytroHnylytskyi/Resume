@@ -1,0 +1,10 @@
+node_modules/
+.env
+__pycache__/
+*.pyc
+venv/
+env/
+backend/uploads/
+sql_app.db
+dist/
+.DS_Store

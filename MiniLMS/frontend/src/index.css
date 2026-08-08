@@ -1,0 +1,410 @@
+:root {
+  --font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --glass-bg: rgba(255, 255, 255, 0.25);
+  --glass-border: rgba(255, 255, 255, 0.35);
+  --glass-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+  
+  --text-primary: #1e293b;
+  --text-secondary: rgba(30, 41, 59, 0.75);
+
+  /* Card Banner Theme (Student: warm teal/peach) */
+  --banner-bg: linear-gradient(135deg, rgba(45, 160, 155, 0.55) 0%, rgba(220, 155, 100, 0.45) 50%, rgba(255, 255, 255, 0.35) 100%);
+  --banner-wrapper-bg: rgba(255, 255, 255, 0.12);
+  --banner-glow: radial-gradient(circle, rgba(45, 160, 155, 0.35) 0%, rgba(0, 0, 0, 0) 70%);
+  --banner-icon-bg: rgba(255, 255, 255, 0.25);
+  --banner-icon-border: rgba(255, 255, 255, 0.4);
+  --banner-icon-color: #1a8a85;
+  --banner-icon-hover-color: #0d6e6a;
+
+  /* Calendar Popover Theme (Student: frosted white) */
+  --cal-bg: rgba(255, 255, 255, 0.92);
+  --cal-border: rgba(45, 160, 155, 0.35);
+  --cal-shadow: 0 25px 60px rgba(0, 0, 0, 0.3), 0 0 30px rgba(45, 160, 155, 0.15);
+  --cal-text: #1e293b;
+  --cal-text-muted: rgba(30, 40, 60, 0.55);
+  --cal-today-border: rgba(45, 160, 155, 0.7);
+  --cal-today-color: #0d9488;
+  --cal-selected-bg: linear-gradient(135deg, #0d9488, #0f766e);
+  --cal-selected-shadow: 0 4px 12px rgba(13, 148, 136, 0.4);
+  --cal-input-bg: rgba(0, 0, 0, 0.06);
+  --cal-input-border: rgba(0, 0, 0, 0.15);
+  --cal-input-color: #1e293b;
+  --cal-divider: rgba(0, 0, 0, 0.08);
+  --cal-nav-bg: rgba(0, 0, 0, 0.05);
+  --cal-nav-border: rgba(0, 0, 0, 0.1);
+  --cal-nav-hover-bg: rgba(0, 0, 0, 0.1);
+  --cal-nav-hover-color: #0d9488;
+  --cal-day-color: #334155;
+  --cal-day-hover-bg: rgba(0, 0, 0, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  color: var(--text-primary);
+  min-height: 100dvh;
+  font-weight: 600;
+  text-shadow: none;
+}
+
+/* Glassmorphism utility classes */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(80px) saturate(1.2);
+  -webkit-backdrop-filter: blur(80px) saturate(1.2);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: 24px;
+}
+
+.glass-nav {
+  background: rgba(20, 20, 20, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--glass-border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* App Layout */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background-image: url('/bg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  transition: background-image 0.3s ease;
+}
+
+.main-content {
+  flex: 1;
+  padding: 3rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Typography */
+h1 {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  text-shadow: none;
+  line-height: 1.2;
+}
+
+h2, h3, h4, h5, h6 {
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  text-shadow: none;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+p {
+  font-size: 1.15rem;
+  line-height: 1.6;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-shadow: none;
+}
+
+/* Buttons */
+.btn-oil {
+  background: rgba(249, 115, 22, 0.4);
+  color: var(--text-primary);
+  border: 1px solid rgba(249, 115, 22, 0.7);
+  padding: 12px 28px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(249, 115, 22, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.btn-oil:hover {
+  transform: scale(1.05) translateY(-2px);
+  background: rgba(249, 115, 22, 0.6);
+  border-color: rgba(249, 115, 22, 0.9);
+  box-shadow: 0 8px 25px rgba(249, 115, 22, 0.25);
+}
+
+.btn-oil:active {
+  transform: scale(0.95);
+}
+
+.btn-gold {
+  background: rgba(20, 10, 5, 0.75);
+  border: 1px solid rgba(245, 158, 11, 0.55);
+  color: #fbbf24;
+  padding: 0.8rem 1.5rem;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.btn-gold:hover {
+  background: rgba(245, 158, 11, 0.3);
+  border-color: rgba(245, 158, 11, 0.85);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(245, 158, 11, 0.35);
+}
+
+/* Global Segmented Control */
+.segmented-control-global {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  background: var(--glass-bg);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  padding: 0.5rem;
+  border-radius: 100px;
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.segmented-btn-global {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 100px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.segmented-btn-global:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.segmented-btn-global.active {
+  background: rgba(255, 255, 255, 0.25);
+  color: var(--text-primary);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+}
+
+/* Global Empty State */
+.empty-state-global {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  background: var(--glass-bg);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  box-shadow: var(--glass-shadow);
+}
+
+.empty-icon-global {
+  background: rgba(255, 255, 255, 0.15);
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  color: var(--text-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.empty-msg-global {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin: 0;
+  text-shadow: none;
+}
+
+.btn-glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+  padding: 10px 24px;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 50px;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: all 0.2s ease;
+}
+
+.btn-glass:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+/* ─── Shared Modal Base ─── */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100dvh;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: modalBackdropFadeIn 0.25s ease-out;
+}
+
+@keyframes modalBackdropFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  position: relative;
+  padding: 2.5rem;
+  width: 420px;
+  max-width: 92vw;
+  animation: modalContentIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalContentIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.7);
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  background: rgba(239, 68, 68, 0.3);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #fca5a5;
+  transform: rotate(90deg);
+}
+
+/* ─── Shared Glass Input ─── */
+.glass-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  color: #f8fafc;
+  font-size: 0.95rem;
+  font-weight: 500;
+  outline: none;
+  transition: all 0.25s ease;
+  box-sizing: border-box;
+  font-family: var(--font-family);
+}
+
+.glass-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 400;
+}
+
+.glass-input:focus {
+  border-color: rgba(249, 115, 22, 0.6);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.12);
+}
+
+select.glass-input {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.8rem center;
+  padding-right: 2.2rem;
+}
+
+select.glass-input option {
+  background: #1e293b;
+  color: #f1f5f9;
+}
+
+.glass-textarea {
+  resize: vertical;
+  min-height: 60px;
+  font-family: inherit;
+}
+
+/* ─── Utility Classes ─── */
+.w-full { width: 100%; }
+.mt-4 { margin-top: 1rem; }
+
+/* ─── Mobile Responsiveness ─── */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 1.5rem 1rem;
+  }
+  
+  h1 {
+    font-size: 2.2rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  .glass-panel {
+    border-radius: 16px;
+  }
+  
+  .modal-content {
+    padding: 1.5rem;
+    width: 95vw;
+  }
+
+  .btn-oil {
+    padding: 10px 20px;
+    font-size: 1rem;
+  }
+  
+  .app-container {
+    background-attachment: scroll;
+  }
+}
