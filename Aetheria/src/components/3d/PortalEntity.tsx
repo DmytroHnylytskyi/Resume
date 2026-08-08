@@ -28,7 +28,7 @@ export default function PortalEntity({
   position,
   rotation,
   scale,
-  portalKey = 'globescope',
+  portalKey = 'terrascope',
   colors = {},
   playerPosRef
 }: PortalEntityProps): React.ReactElement {

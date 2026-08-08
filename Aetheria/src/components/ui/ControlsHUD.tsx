@@ -40,7 +40,7 @@ export default function ControlsHUD(): React.ReactElement {
         <div className="brand-badge">
           <div className="brand-dot" />
           <span className="brand-name">Гнилицький Дмитро</span>
-          <span className="brand-tag">3D Hub</span>
+          <span className="brand-tag">Aetheria 3D</span>
         </div>
 
         {/* Quick Nav Shortcut Buttons */}

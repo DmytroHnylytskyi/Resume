@@ -1,3 +1,7 @@
+/**
+ * Comprehensive Developer Profile, Skills Matrix, and Project Types.
+ */
+
 export interface UniversityInfo {
   fullName: string;
   institute: string;
@@ -22,8 +26,8 @@ export interface ContactLinks {
 export interface SkillItem {
   name: string;
   level: number;
-  icon: string;
-  desc: string;
+  icon?: string;
+  desc?: string;
 }
 
 export type SkillMatrix = Record<string, SkillItem[]>;
@@ -32,13 +36,16 @@ export interface ProjectItem {
   id: string;
   title: string;
   subtitle: string;
-  portalKey: string;
+  portalKey: 'forma' | 'terrascope' | 'lumina';
   themeColor: string;
   accentGlow: string;
   badge: string;
   url: string;
   description: string;
   tags: string[];
+  metrics?: string[];
+  technologies?: string[];
+  githubUrl?: string;
 }
 
 export interface DeveloperProfile {

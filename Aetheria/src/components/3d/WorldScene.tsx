@@ -257,10 +257,10 @@ export default function WorldScene({ playerPosRef }: WorldSceneProps): React.Rea
           const resolvedPortalKey =
             portalKey ||
             (modelPath.includes('GlobeScope')
-              ? 'globescope'
+              ? 'terrascope'
               : modelPath.includes('3D_Furniture')
-              ? 'furniture'
-              : 'minilms');
+              ? 'forma'
+              : 'lumina');
 
           return (
             <Suspense key={id} fallback={null}>

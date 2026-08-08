@@ -147,7 +147,7 @@
       "rotation": [0, 1.2792225060745082, 0],
       "scale": 2,
       "type": "portal",
-      "portalKey": "furniture",
+      "portalKey": "forma",
       "colors": { "Object": "#686175" }
     },
     {
@@ -157,7 +157,7 @@
       "rotation": [0.008618281380007411, -0.2552878029451335, 0.03411618052333506],
       "scale": 2,
       "type": "portal",
-      "portalKey": "minilms",
+      "portalKey": "lumina",
       "colors": { "Object": "#969476" }
     },
     {
@@ -167,7 +167,7 @@
       "rotation": [0, 3.141592653589793, 0],
       "scale": 2,
       "type": "portal",
-      "portalKey": "globescope",
+      "portalKey": "terrascope",
       "colors": { "Object": "#262323" }
     },
     {
