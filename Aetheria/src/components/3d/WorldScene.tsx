@@ -90,7 +90,7 @@ interface StaticPropProps {
  * Exact PlaceableObject rendering pipeline from 3D Furniture Configurator:
  * - Clones base GLTF scene.
  * - Applies getCategoryHeightScale.
- * - Snaps bottom bounding box to Y=0 (clone.position.y -= box.min.y).
+ * - Snaps bottom bounding box to Y=0 (clone.position.y -= box.min.y) unconditionally.
  * - Maps custom sub-part colors.
  * - Applies exact finalScale = scale * unitScale.
  */
@@ -108,20 +108,13 @@ function StaticProp({
     const clone = scene.clone(true);
     const uScale = getCategoryHeightScale(modelPath, clone);
 
-    const isTerrainOrStructure =
-      modelPath.includes('island_') ||
-      modelPath.includes('steps') ||
-      modelPath.includes('bridge');
-
     const wrapper = new THREE.Group();
     wrapper.add(clone);
 
-    // Snap bottom of 3D bounding box to Y=0 for props
-    if (!isTerrainOrStructure) {
-      const box = new THREE.Box3().setFromObject(wrapper);
-      if (!box.isEmpty()) {
-        clone.position.y -= box.min.y;
-      }
+    // Snap bottom of 3D bounding box to Y=0 so no object sinks under floor
+    const box = new THREE.Box3().setFromObject(wrapper);
+    if (!box.isEmpty()) {
+      clone.position.y -= box.min.y;
     }
 
     clone.traverse((child) => {
@@ -146,7 +139,7 @@ function StaticProp({
       }
     });
 
-    return { clonedScene: clone, unitScale: uScale };
+    return { clonedScene: wrapper, unitScale: uScale };
   }, [scene, modelPath]);
 
   const rawScale = Array.isArray(scale) ? scale[0] : (scale || 1);
@@ -209,39 +202,39 @@ interface WorldSceneProps {
 }
 
 /**
- * Complete 3D Floating Archipelago World Scene with bedrock safety colliders
- * and invisible smooth incline stair ramps for effortless walking.
+ * Complete 3D Floating Archipelago World Scene with millimeter-accurate geometry
+ * and bedrock safety platforms for all 5 floating islands.
  */
 export default function WorldScene({ playerPosRef }: WorldSceneProps): React.ReactElement {
   return (
     <group>
       {/* ── Solid Invisible Bedrock Safety Platforms for the 5 Main Islands ── */}
-      {/* 1. Central Altar Island */}
+      {/* 1. Central Altar Island (Top Surface Y ~ 9.8) */}
       <RigidBody type="fixed" colliders={false} position={[0.5, 9.2, -0.5]} friction={0.05}>
         <CylinderCollider args={[0.8, 12.5]} />
       </RigidBody>
 
-      {/* 2. Hero Statue Island */}
-      <RigidBody type="fixed" colliders={false} position={[7.03, 9.0, 17.71]} friction={0.05}>
+      {/* 2. Hero Statue Island (Top Surface Y ~ 9.0) */}
+      <RigidBody type="fixed" colliders={false} position={[7.03, 8.6, 17.71]} friction={0.05}>
         <CylinderCollider args={[0.8, 7.5]} />
       </RigidBody>
 
-      {/* 3. Lumina Island */}
-      <RigidBody type="fixed" colliders={false} position={[-17.32, 4.0, -19.02]} friction={0.05}>
+      {/* 3. Lumina Island (Top Surface Y ~ 4.0) */}
+      <RigidBody type="fixed" colliders={false} position={[-17.32, 3.6, -19.02]} friction={0.05}>
         <CylinderCollider args={[0.8, 7.5]} />
       </RigidBody>
 
-      {/* 4. Forma 3D Cliff Island */}
-      <RigidBody type="fixed" colliders={false} position={[-27.65, 5.8, -8.92]} friction={0.05}>
+      {/* 4. Forma 3D Cliff Island (Top Surface Y ~ 5.8) */}
+      <RigidBody type="fixed" colliders={false} position={[-27.65, 5.4, -8.92]} friction={0.05}>
         <CylinderCollider args={[0.8, 9.5]} />
       </RigidBody>
 
-      {/* 5. Oracle Island */}
-      <RigidBody type="fixed" colliders={false} position={[-15.75, 9.0, 25.43]} friction={0.05}>
+      {/* 5. Oracle Island (Top Surface Y ~ 8.8) */}
+      <RigidBody type="fixed" colliders={false} position={[-15.75, 8.4, 25.43]} friction={0.05}>
         <CylinderCollider args={[0.8, 9.0]} />
       </RigidBody>
 
-      {/* ── Invisible Smooth Incline Stair Ramps (Butter-smooth climbing) ── */}
+      {/* ── Invisible Smooth Incline Stair Ramps ── */}
       {/* Long Staircase: Central Altar down to Lumina Island */}
       <RigidBody
         type="fixed"
