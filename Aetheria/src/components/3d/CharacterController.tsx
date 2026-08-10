@@ -9,8 +9,8 @@ import { sound } from '../../utils/audio';
 import AnimatedCharacter from './AnimatedCharacter';
 
 const MOVE_SPEED = 6.8;
-const SPRINT_SPEED = 11.0;
-const JUMP_FORCE = 6.5;
+const SPRINT_SPEED = 11.2;
+const JUMP_FORCE = 7.2;
 
 interface CharacterControllerProps {
   playerPosRef: React.MutableRefObject<THREE.Vector3 | null>;
@@ -18,11 +18,11 @@ interface CharacterControllerProps {
 }
 
 /**
- * Enhanced 3rd-Person Character Controller with Pointer Lock:
- * - Native Mouse Pointer Lock (cursor disappears and directly rotates camera).
- * - Correct facing direction (walking forward shows her back, not her face).
- * - Silky smooth acceleration/deceleration lerp (zero abrupt snaps).
- * - Shortest-path rotational slerp for natural avatar turning.
+ * Enhanced 3rd-Person Character Controller:
+ * - Native Mouse Pointer Lock (free 360° mouse-look).
+ * - Exact canonical camera-relative movement (W: into screen away from camera, S: towards camera, A: left, D: right).
+ * - Player shows her back when walking forward into the screen.
+ * - Smooth velocity lerp and safe grounded detection for stairs and bridges.
  * - Auto-recovery on void falls.
  */
 export default function CharacterController({
@@ -37,7 +37,6 @@ export default function CharacterController({
   const [isMoving, setIsMoving] = useState(false);
   const [isSprinting, setIsSprinting] = useState(false);
   const [isJumpingState, setIsJumpingState] = useState(false);
-  const [isLocked, setIsLocked] = useState(false);
 
   // Keyboard state
   const keys = useRef({
@@ -50,8 +49,8 @@ export default function CharacterController({
   });
 
   // Camera angles & distances
-  const cameraYaw = useRef(0.35); // Initial view over the island
-  const cameraPitch = useRef(0.26); // Pleasant over-the-shoulder angle
+  const cameraYaw = useRef(0.35); // Initial pleasant angle overlooking island
+  const cameraPitch = useRef(0.24); // Pleasant over-the-shoulder pitch
   const cameraDistance = useRef(4.8);
 
   // Smooth velocity lerp buffers
@@ -68,20 +67,13 @@ export default function CharacterController({
     const dom = gl.domElement;
 
     const handleCanvasClick = () => {
-      // Only request pointer lock if no modal is active
       if (!activeModal && document.pointerLockElement !== dom) {
         dom.requestPointerLock();
       }
     };
 
-    const handlePointerLockChange = () => {
-      const locked = document.pointerLockElement === dom;
-      setIsLocked(locked);
-    };
-
     const handleMouseMove = (e: MouseEvent) => {
       if (document.pointerLockElement === dom) {
-        // Direct responsive mouse-look sensitivity
         const sensitivity = 0.0024;
         cameraYaw.current -= e.movementX * sensitivity;
         cameraPitch.current = Math.max(0.04, Math.min(1.15, cameraPitch.current + e.movementY * sensitivity));
@@ -93,13 +85,11 @@ export default function CharacterController({
     };
 
     dom.addEventListener('click', handleCanvasClick);
-    document.addEventListener('pointerlockchange', handlePointerLockChange);
     document.addEventListener('mousemove', handleMouseMove);
     dom.addEventListener('wheel', handleWheel, { passive: true });
 
     return () => {
       dom.removeEventListener('click', handleCanvasClick);
-      document.removeEventListener('pointerlockchange', handlePointerLockChange);
       document.removeEventListener('mousemove', handleMouseMove);
       dom.removeEventListener('wheel', handleWheel);
     };
@@ -158,6 +148,12 @@ export default function CharacterController({
     const translation = rigidBodyRef.current.translation();
     const linvel = rigidBodyRef.current.linvel();
 
+    if (!Number.isFinite(translation.x) || !Number.isFinite(translation.y) || !Number.isFinite(translation.z)) {
+      rigidBodyRef.current.setTranslation({ x: spawnPoint[0], y: spawnPoint[1], z: spawnPoint[2] }, true);
+      rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
+      return;
+    }
+
     // Broadcast player coordinates
     if (playerPosRef) {
       playerPosRef.current = new THREE.Vector3(translation.x, translation.y, translation.z);
@@ -169,7 +165,7 @@ export default function CharacterController({
       sound.playVoidWind();
 
       rigidBodyRef.current.setTranslation(
-        { x: spawnPoint[0], y: spawnPoint[1] + 1.5, z: spawnPoint[2] },
+        { x: spawnPoint[0], y: spawnPoint[1] + 1.2, z: spawnPoint[2] },
         true
       );
       rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
@@ -182,43 +178,46 @@ export default function CharacterController({
       return;
     }
 
-    isGrounded.current = Math.abs(linvel.y) < 0.45;
-    setIsJumpingState(!isGrounded.current);
+    // Grounded detection (stairs friendly)
+    isGrounded.current = Math.abs(linvel.y) < 1.5;
+    setIsJumpingState(!isGrounded.current && Math.abs(linvel.y) > 2.0);
 
-    // Movement calculation relative to camera yaw
-    // W = forward (into screen), S = backward, A = left, D = right
-    const moveZ = (keys.current.forward ? -1 : 0) + (keys.current.backward ? 1 : 0);
-    const moveX = (keys.current.left ? -1 : 0) + (keys.current.right ? 1 : 0);
-    const inputVector = new THREE.Vector3(moveX, 0, moveZ);
-    const moving = inputVector.lengthSq() > 0.01;
+    // ── Direction Calculation Relative to Camera Yaw ──
+    const fwdInput = (keys.current.forward ? 1 : 0) - (keys.current.backward ? 1 : 0);
+    const sideInput = (keys.current.right ? 1 : 0) - (keys.current.left ? 1 : 0);
 
+    // Forward direction in XZ plane (away from camera, into screen)
+    const forwardX = -Math.sin(cameraYaw.current);
+    const forwardZ = -Math.cos(cameraYaw.current);
+
+    // Right direction in XZ plane
+    const rightX = Math.cos(cameraYaw.current);
+    const rightZ = -Math.sin(cameraYaw.current);
+
+    const moveDirection = new THREE.Vector3(
+      forwardX * fwdInput + rightX * sideInput,
+      0,
+      forwardZ * fwdInput + rightZ * sideInput
+    );
+
+    const moving = moveDirection.lengthSq() > 0.01;
     setIsMoving(moving);
     setIsSprinting(keys.current.shift && moving);
 
     if (moving) {
-      inputVector.normalize();
-
-      // In three.js with camera behind player:
-      // pressing W (moveZ = -1, moveX = 0) -> moveAngle = 0
-      // targetDirection = cameraYaw + moveAngle
-      const moveAngle = Math.atan2(inputVector.x, -inputVector.z);
-      const targetFacingAngle = cameraYaw.current + moveAngle;
+      moveDirection.normalize();
 
       const speed = keys.current.shift ? SPRINT_SPEED : MOVE_SPEED;
-      const moveDirection = new THREE.Vector3(
-        -Math.sin(targetFacingAngle),
-        0,
-        -Math.cos(targetFacingAngle)
-      ).multiplyScalar(speed);
+      targetVelocity.current.copy(moveDirection).multiplyScalar(speed);
 
-      targetVelocity.current.copy(moveDirection);
+      // Natural avatar rotation facing the movement direction (showing back when moving forward)
+      const targetFacingAngle = Math.atan2(moveDirection.x, moveDirection.z);
 
-      // ── Natural Shortest-Angle Avatar Rotation ──
       if (avatarGroupRef.current) {
         let diff = (targetFacingAngle - avatarGroupRef.current.rotation.y) % (Math.PI * 2);
         if (diff < -Math.PI) diff += Math.PI * 2;
         if (diff > Math.PI) diff -= Math.PI * 2;
-        avatarGroupRef.current.rotation.y += diff * 0.16;
+        avatarGroupRef.current.rotation.y += diff * 0.18;
       }
 
       // Footstep sound timing
@@ -233,7 +232,7 @@ export default function CharacterController({
     }
 
     // ── Silky Smooth Velocity Lerp (Zero Jerkiness) ──
-    currentVelocity.current.lerp(targetVelocity.current, moving ? 0.18 : 0.25);
+    currentVelocity.current.lerp(targetVelocity.current, moving ? 0.20 : 0.28);
 
     rigidBodyRef.current.setLinvel(
       {
@@ -276,7 +275,7 @@ export default function CharacterController({
         colliders={false}
         position={spawnPoint}
         enabledRotations={[false, false, false]}
-        friction={0.2}
+        friction={0.05}
         restitution={0.0}
         linearDamping={0.4}
         angularDamping={1.0}

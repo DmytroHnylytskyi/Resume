@@ -108,34 +108,45 @@ function StaticProp({
     const clone = scene.clone(true);
     const uScale = getCategoryHeightScale(modelPath, clone);
 
+    const isTerrainOrStructure =
+      modelPath.includes('island_') ||
+      modelPath.includes('steps') ||
+      modelPath.includes('bridge');
+
     const wrapper = new THREE.Group();
     wrapper.add(clone);
 
-    // Snap bottom of 3D bounding box to Y=0 so no object sinks under floor
-    const box = new THREE.Box3().setFromObject(wrapper);
-    if (!box.isEmpty()) {
-      clone.position.y -= box.min.y;
+    // Snap bottom of 3D bounding box to Y=0 for props
+    if (!isTerrainOrStructure) {
+      const box = new THREE.Box3().setFromObject(wrapper);
+      if (!box.isEmpty()) {
+        clone.position.y -= box.min.y;
+      }
     }
 
     clone.traverse((child) => {
-      if ((child as THREE.Mesh).isMesh && (child as THREE.Mesh).material) {
+      if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh;
-        if (Array.isArray(mesh.material)) {
-          mesh.material = mesh.material.map((m) => m.clone());
-        } else {
-          mesh.material = mesh.material.clone();
-        }
-
-        const mat = (Array.isArray(mesh.material) ? mesh.material[0] : mesh.material) as THREE.MeshStandardMaterial;
         mesh.castShadow = true;
         mesh.receiveShadow = true;
 
-        mesh.userData.originalColor = mat.color ? mat.color.clone() : new THREE.Color(0xffffff);
-        mesh.userData.partName = getCleanPartName(mesh);
+        if (mesh.material) {
+          const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+          mats.forEach((mat) => {
+            if (mat instanceof THREE.MeshStandardMaterial || mat instanceof THREE.MeshPhongMaterial) {
+              mat.side = THREE.DoubleSide;
+              if ('roughness' in mat) mat.roughness = 0.65;
+              if ('metalness' in mat) mat.metalness = 0.12;
+            }
+          });
+        }
+
+        const partKey = getCleanPartName(mesh);
+        mesh.userData.partName = partKey;
       }
     });
 
-    return { clonedScene: wrapper, unitScale: uScale };
+    return { clonedScene: clone, unitScale: uScale };
   }, [scene, modelPath]);
 
   const rawScale = Array.isArray(scale) ? scale[0] : (scale || 1);
@@ -145,40 +156,51 @@ function StaticProp({
   useEffect(() => {
     clonedScene.traverse((child) => {
       if ((child as THREE.Mesh).isMesh && child.userData.partName) {
-        const mesh = child as THREE.Mesh;
-        const mat = (Array.isArray(mesh.material) ? mesh.material[0] : mesh.material) as THREE.MeshStandardMaterial;
-        if (mat && mat.color) {
-          const customColor = colors[child.userData.partName];
-          if (customColor) {
-            mat.color.set(customColor);
-          } else if (mesh.userData.originalColor) {
-            mat.color.copy(mesh.userData.originalColor);
+        const part = child.userData.partName;
+        if (colors[part]) {
+          const mesh = child as THREE.Mesh;
+          if (mesh.material) {
+            const mat = (mesh.material as THREE.Material).clone();
+            if ('color' in mat) {
+              (mat as THREE.MeshStandardMaterial).color.set(colors[part]);
+            }
+            mesh.material = mat;
           }
         }
       }
     });
-  }, [colors, clonedScene]);
+  }, [clonedScene, colors]);
 
-  if (colliderType === 'none') {
+  const isWalkable =
+    modelPath.includes('island_') ||
+    modelPath.includes('steps') ||
+    modelPath.includes('bridge') ||
+    modelPath.includes('floor') ||
+    modelPath.includes('stone_path');
+
+  if (isWalkable && colliderType !== 'none') {
     return (
-      <group position={position} rotation={rotation} scale={finalScale}>
-        <primitive object={clonedScene} />
-      </group>
+      <RigidBody
+        type="fixed"
+        colliders={false}
+        position={position}
+        rotation={rotation}
+        friction={0.05}
+        restitution={0.0}
+      >
+        <MeshCollider type={colliderType}>
+          <group scale={finalScale}>
+            <primitive object={clonedScene} />
+          </group>
+        </MeshCollider>
+      </RigidBody>
     );
   }
 
   return (
-    <RigidBody
-      type="fixed"
-      colliders={false}
-      position={position}
-      rotation={rotation}
-      scale={finalScale}
-    >
-      <MeshCollider type={colliderType}>
-        <primitive object={clonedScene} />
-      </MeshCollider>
-    </RigidBody>
+    <group position={position} rotation={rotation} scale={finalScale}>
+      <primitive object={clonedScene} />
+    </group>
   );
 }
 
@@ -187,35 +209,101 @@ interface WorldSceneProps {
 }
 
 /**
- * Complete 3D Floating Archipelago World Scene with bedrock safety colliders.
+ * Complete 3D Floating Archipelago World Scene with bedrock safety colliders
+ * and invisible smooth incline stair ramps for effortless walking.
  */
 export default function WorldScene({ playerPosRef }: WorldSceneProps): React.ReactElement {
   return (
     <group>
       {/* ── Solid Invisible Bedrock Safety Platforms for the 5 Main Islands ── */}
       {/* 1. Central Altar Island */}
-      <RigidBody type="fixed" colliders={false} position={[0.5, 9.2, -0.5]}>
+      <RigidBody type="fixed" colliders={false} position={[0.5, 9.2, -0.5]} friction={0.05}>
         <CylinderCollider args={[0.8, 12.5]} />
       </RigidBody>
 
       {/* 2. Hero Statue Island */}
-      <RigidBody type="fixed" colliders={false} position={[7.03, 9.0, 17.71]}>
+      <RigidBody type="fixed" colliders={false} position={[7.03, 9.0, 17.71]} friction={0.05}>
         <CylinderCollider args={[0.8, 7.5]} />
       </RigidBody>
 
-      {/* 3. MiniLMS Island */}
-      <RigidBody type="fixed" colliders={false} position={[-17.32, 4.0, -19.02]}>
+      {/* 3. Lumina Island */}
+      <RigidBody type="fixed" colliders={false} position={[-17.32, 4.0, -19.02]} friction={0.05}>
         <CylinderCollider args={[0.8, 7.5]} />
       </RigidBody>
 
-      {/* 4. 3D Furniture Store Cliff Island */}
-      <RigidBody type="fixed" colliders={false} position={[-27.65, 5.8, -8.92]}>
+      {/* 4. Forma 3D Cliff Island */}
+      <RigidBody type="fixed" colliders={false} position={[-27.65, 5.8, -8.92]} friction={0.05}>
         <CylinderCollider args={[0.8, 9.5]} />
       </RigidBody>
 
       {/* 5. Oracle Island */}
-      <RigidBody type="fixed" colliders={false} position={[-15.75, 9.0, 25.43]}>
+      <RigidBody type="fixed" colliders={false} position={[-15.75, 9.0, 25.43]} friction={0.05}>
         <CylinderCollider args={[0.8, 9.0]} />
+      </RigidBody>
+
+      {/* ── Invisible Smooth Incline Stair Ramps (Butter-smooth climbing) ── */}
+      {/* Long Staircase: Central Altar down to Lumina Island */}
+      <RigidBody
+        type="fixed"
+        colliders={false}
+        position={[-7.0, 6.5, -8.3]}
+        rotation={[-0.46, 0.81, 0]}
+        friction={0.05}
+      >
+        <CuboidCollider args={[1.3, 0.15, 6.0]} />
+      </RigidBody>
+
+      {/* Short Staircase: Forma 3D Island Connection */}
+      <RigidBody
+        type="fixed"
+        colliders={false}
+        position={[-22.86, 4.6, -12.21]}
+        rotation={[0.42, 1.21, 0]}
+        friction={0.05}
+      >
+        <CuboidCollider args={[1.2, 0.15, 1.8]} />
+      </RigidBody>
+
+      {/* Staircase: Lumina Island entrance */}
+      <RigidBody
+        type="fixed"
+        colliders={false}
+        position={[-20.50, 3.50, -24.18]}
+        rotation={[0.26, 1.09, 0]}
+        friction={0.05}
+      >
+        <CuboidCollider args={[1.2, 0.15, 1.5]} />
+      </RigidBody>
+
+      {/* Smooth Incline Colliders for Rope Bridges */}
+      <RigidBody
+        type="fixed"
+        colliders={false}
+        position={[3.73, 9.08, 9.90]}
+        rotation={[0, 0.26, 0]}
+        friction={0.05}
+      >
+        <CuboidCollider args={[1.3, 0.12, 5.8]} />
+      </RigidBody>
+
+      <RigidBody
+        type="fixed"
+        colliders={false}
+        position={[-6.45, 8.89, 19.61]}
+        rotation={[0, -1.15, 0]}
+        friction={0.05}
+      >
+        <CuboidCollider args={[1.3, 0.12, 5.8]} />
+      </RigidBody>
+
+      <RigidBody
+        type="fixed"
+        colliders={false}
+        position={[-15.34, 4.11, -24.10]}
+        rotation={[0.13, -0.81, 0.09]}
+        friction={0.05}
+      >
+        <CuboidCollider args={[1.3, 0.12, 5.8]} />
       </RigidBody>
 
       {/* Deep Safety Nether Floor (so character never falls into infinity) */}
@@ -277,21 +365,7 @@ export default function WorldScene({ playerPosRef }: WorldSceneProps): React.Rea
           );
         }
 
-        // ── 3. Walkable Archipelago Terrain & Props ──
-        const isWalkableTerrain =
-          modelPath.includes('island_base') ||
-          modelPath.includes('stone_steps') ||
-          modelPath.includes('rope_bridge') ||
-          modelPath.includes('house_stone_path') ||
-          modelPath.includes('floorpattern') ||
-          modelPath.includes('house_balconny');
-
-        const colliderType: 'trimesh' | 'hull' | 'none' = isWalkableTerrain
-          ? 'trimesh'
-          : modelPath.includes('magic_tree')
-          ? 'hull'
-          : 'none';
-
+        // ── 3. Islands, Bridges, Stairs, Trees, Architecture & Furniture Props ──
         return (
           <Suspense key={id} fallback={null}>
             <StaticProp
@@ -300,7 +374,7 @@ export default function WorldScene({ playerPosRef }: WorldSceneProps): React.Rea
               rotation={rotation}
               scale={scale}
               colors={colors}
-              colliderType={colliderType}
+              colliderType="trimesh"
             />
           </Suspense>
         );
