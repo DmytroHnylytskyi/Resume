@@ -1,6 +1,9 @@
+'use client';
+
 import React, { useRef, useState, useMemo, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF, Html } from '@react-three/drei';
+import { RigidBody, MeshCollider } from '@react-three/rapier';
 import * as THREE from 'three';
 import { useGameStore } from '../../store/useGameStore';
 import { developerProfile } from '../../data/resumeData';
@@ -20,8 +23,10 @@ interface PortalEntityProps {
 }
 
 /**
- * Interactive Dimensional Portal Gate with exact 3D Furniture Store rendering pipeline,
- * proximity detection, and modal transition.
+ * Interactive Dimensional Portal Gate:
+ * - Solid physical hull collider (prevents passing through frame).
+ * - Interactive proximity detection (6.5m) and smooth teleport transition.
+ * - Dynamic PBR material colors.
  */
 export default function PortalEntity({
   modelPath,
@@ -89,32 +94,30 @@ export default function PortalEntity({
     });
   }, [colors, clonedScene]);
 
-  const groupRef = useRef<THREE.Group>(null);
   const [isNear, setIsNear] = useState(false);
+  const { setInteractionPrompt, clearInteractionPrompt, triggerPortalWarp } = useGameStore();
 
-  const { triggerPortalWarp, setInteractionPrompt, clearInteractionPrompt } = useGameStore();
+  const project = developerProfile.projects.find((p) => p.portalKey === portalKey) || developerProfile.projects[0];
 
-  const project =
-    developerProfile.projects.find((p) => p.portalKey === portalKey) || developerProfile.projects[0];
-
-  const handleEnterPortal = () => {
+  const handleEnter = () => {
     sound.playWarp();
     triggerPortalWarp(project);
   };
 
   useFrame(() => {
-    if (playerPosRef && playerPosRef.current && groupRef.current) {
+    if (playerPosRef && playerPosRef.current) {
       const portalPos = new THREE.Vector3(...position);
       const dist = playerPosRef.current.distanceTo(portalPos);
 
-      if (dist < 4.5) {
+      // Generous 6.5m proximity radius
+      if (dist < 6.5) {
         if (!isNear) {
           setIsNear(true);
           setInteractionPrompt({
             type: 'portal',
             title: `Портал: ${project.title}`,
             key: portalKey,
-            action: handleEnterPortal
+            action: handleEnter
           });
         }
       } else {
@@ -127,42 +130,42 @@ export default function PortalEntity({
   });
 
   return (
-    <group ref={groupRef} position={position} rotation={rotation} scale={finalScale}>
-      {/* 3D Portal Arch / Frame */}
-      <primitive
-        object={clonedScene}
-        onClick={handleEnterPortal}
-        onPointerOver={() => (document.body.style.cursor = 'pointer')}
-        onPointerOut={() => (document.body.style.cursor = 'auto')}
-      />
+    <group position={position} rotation={rotation}>
+      {/* ── Solid Physics Hull Collider (Prevents character walking through frame) ── */}
+      <RigidBody type="fixed" colliders={false}>
+        <MeshCollider type="hull">
+          <group scale={finalScale}>
+            <primitive object={clonedScene} />
+          </group>
+        </MeshCollider>
+      </RigidBody>
 
-      {/* Interactive 3D Floating Portal Badge */}
+      {/* Floating 3D Proximity Badge with [E] prompt */}
       {isNear && (
         <Html
-          position={[0, 2.2, 0]}
+          position={[0, 2.6, 0]}
           center
-          distanceFactor={16}
+          distanceFactor={14}
           style={{ pointerEvents: 'auto' }}
         >
           <div
             className="portal-prompt-badge glass-card"
-            onClick={handleEnterPortal}
+            onClick={handleEnter}
             style={{
               borderColor: project.themeColor,
-              boxShadow: `0 0 30px ${project.themeColor}66`
+              boxShadow: `0 0 30px ${project.themeColor}66`,
+              cursor: 'pointer'
             }}
           >
-            <div className="portal-badge-header">
-              <span className="badge-key" style={{ background: project.themeColor }}>
-                E
-              </span>
+            <div className="portal-badge-key" style={{ background: project.themeColor }}>
+              E
+            </div>
+            <div className="portal-badge-content">
               <span className="portal-badge-tag">{project.badge}</span>
-            </div>
-            <div className="portal-badge-body">
               <span className="portal-badge-title">{project.title}</span>
-              <span className="portal-badge-sub">Натисніть або підійдіть, щоб увійти</span>
+              <span className="portal-badge-hint">Натисніть або підійдіть, щоб увійти</span>
             </div>
-            <ExternalLink size={16} className="portal-badge-icon" />
+            <ExternalLink size={16} color={project.themeColor} />
           </div>
         </Html>
       )}

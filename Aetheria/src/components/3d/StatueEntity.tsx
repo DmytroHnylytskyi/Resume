@@ -1,6 +1,9 @@
+'use client';
+
 import React, { useRef, useState, useMemo, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF, Html } from '@react-three/drei';
+import { RigidBody, MeshCollider, CylinderCollider } from '@react-three/rapier';
 import * as THREE from 'three';
 import { useGameStore } from '../../store/useGameStore';
 import { sound } from '../../utils/audio';
@@ -17,22 +20,22 @@ interface StatueMeta {
 
 const STATUE_INFO: Record<StatueKey, StatueMeta> = {
   bio: {
-    title: "Статуя Біографії (Про мене)",
+    title: 'Статуя Біографії (Про мене)',
     icon: User,
-    badge: "Bio & Experience",
-    color: "#38bdf8"
+    badge: 'Bio & Experience',
+    color: '#38bdf8'
   },
   contacts: {
     title: "Статуя Зв'язку & Соцмереж",
     icon: Share2,
-    badge: "Contacts & Links",
-    color: "#34d399"
+    badge: 'Contacts & Links',
+    color: '#34d399'
   },
   skills: {
-    title: "Вівтар Навичок & Технологій",
+    title: 'Вівтар Навичок & Технологій',
     icon: Award,
-    badge: "Skills Matrix",
-    color: "#a855f7"
+    badge: 'Skills Matrix',
+    color: '#a855f7'
   }
 };
 
@@ -47,8 +50,11 @@ interface StatueEntityProps {
 }
 
 /**
- * Interactive Statue Entity with exact 3D Furniture Store scaling,
- * bottom ground alignment, custom color mapping, and proximity prompt.
+ * Interactive Statue Entity:
+ * - Solid physical hull collider (character cannot walk through statues).
+ * - Generous proximity detection (6.8m) supporting all 3 statues (bio, contacts, skills).
+ * - Click and [E] keypress modal openers.
+ * - Glowing aura and 3D floating badge.
  */
 export default function StatueEntity({
   modelPath,
@@ -98,27 +104,26 @@ export default function StatueEntity({
   const rawScale = Array.isArray(scale) ? scale[0] : (scale || 1);
   const finalScale = rawScale * unitScale;
 
-  // Apply colors from islandScene.json
+  // Apply custom colors from islandScene.json
   useEffect(() => {
     clonedScene.traverse((child) => {
       if ((child as THREE.Mesh).isMesh && child.userData.partName) {
-        const mesh = child as THREE.Mesh;
-        const mat = (Array.isArray(mesh.material) ? mesh.material[0] : mesh.material) as THREE.MeshStandardMaterial;
-        if (mat && mat.color) {
-          const customColor = colors[child.userData.partName];
-          if (customColor) {
-            mat.color.set(customColor);
-          } else if (mesh.userData.originalColor) {
-            mat.color.copy(mesh.userData.originalColor);
+        const part = child.userData.partName;
+        if (colors[part]) {
+          const mesh = child as THREE.Mesh;
+          if (mesh.material) {
+            const mat = (mesh.material as THREE.Material).clone();
+            if ('color' in mat) {
+              (mat as THREE.MeshStandardMaterial).color.set(colors[part]);
+            }
+            mesh.material = mat;
           }
         }
       }
     });
   }, [colors, clonedScene]);
 
-  const groupRef = useRef<THREE.Group>(null);
   const auraRef = useRef<THREE.Mesh>(null);
-
   const [isNear, setIsNear] = useState(false);
   const { setActiveModal, setInteractionPrompt, clearInteractionPrompt } = useGameStore();
 
@@ -136,11 +141,12 @@ export default function StatueEntity({
       auraRef.current.scale.setScalar(1 + Math.sin(t * 2.5) * 0.08);
     }
 
-    if (playerPosRef && playerPosRef.current && groupRef.current) {
+    if (playerPosRef && playerPosRef.current) {
       const statuePos = new THREE.Vector3(...position);
       const dist = playerPosRef.current.distanceTo(statuePos);
 
-      if (dist < 4.8) {
+      // Generous 6.8m proximity radius
+      if (dist < 6.8) {
         if (!isNear) {
           setIsNear(true);
           setInteractionPrompt({
@@ -160,22 +166,23 @@ export default function StatueEntity({
   });
 
   return (
-    <group ref={groupRef} position={position} rotation={rotation} scale={finalScale}>
-      {/* 3D GLB Statue Mesh */}
-      <primitive
-        object={clonedScene}
-        onClick={handleOpen}
-        onPointerOver={() => (document.body.style.cursor = 'pointer')}
-        onPointerOut={() => (document.body.style.cursor = 'auto')}
-      />
+    <group position={position} rotation={rotation}>
+      {/* ── Solid Physics Hull Collider (Character cannot walk through statue) ── */}
+      <RigidBody type="fixed" colliders={false}>
+        <MeshCollider type="hull">
+          <group scale={finalScale}>
+            <primitive object={clonedScene} />
+          </group>
+        </MeshCollider>
+      </RigidBody>
 
-      {/* Ground Glowing Halo Ring at bottom ground level */}
+      {/* Ground Glowing Halo Ring */}
       <mesh
         ref={auraRef}
         rotation={[-Math.PI / 2, 0, 0]}
-        position={[0, 0.05, 0]}
+        position={[0, 0.08, 0]}
       >
-        <ringGeometry args={[0.8, 1.2, 32]} />
+        <ringGeometry args={[1.0, 1.6, 32]} />
         <meshBasicMaterial
           color={info.color}
           transparent
@@ -187,9 +194,9 @@ export default function StatueEntity({
       {/* Floating 3D Proximity Badge with [E] prompt */}
       {isNear && (
         <Html
-          position={[0, 2.2, 0]}
+          position={[0, 2.6, 0]}
           center
-          distanceFactor={15}
+          distanceFactor={14}
           style={{ pointerEvents: 'auto' }}
         >
           <div
@@ -197,7 +204,8 @@ export default function StatueEntity({
             onClick={handleOpen}
             style={{
               borderColor: info.color,
-              boxShadow: `0 0 25px ${info.color}55`
+              boxShadow: `0 0 25px ${info.color}55`,
+              cursor: 'pointer'
             }}
           >
             <div className="badge-key" style={{ background: info.color }}>

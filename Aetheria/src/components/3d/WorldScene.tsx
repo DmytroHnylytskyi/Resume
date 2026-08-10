@@ -171,7 +171,13 @@ function StaticProp({
     modelPath.includes('floor') ||
     modelPath.includes('stone_path');
 
-  if (isWalkable && colliderType !== 'none') {
+  const isSolidProp =
+    modelPath.includes('tree') ||
+    modelPath.includes('column') ||
+    modelPath.includes('wall') ||
+    modelPath.includes('house_');
+
+  if ((isWalkable || isSolidProp) && colliderType !== 'none') {
     return (
       <RigidBody
         type="fixed"
@@ -181,7 +187,7 @@ function StaticProp({
         friction={0.05}
         restitution={0.0}
       >
-        <MeshCollider type={colliderType}>
+        <MeshCollider type={isWalkable ? colliderType : 'hull'}>
           <group scale={finalScale}>
             <primitive object={clonedScene} />
           </group>

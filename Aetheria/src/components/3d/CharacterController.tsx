@@ -8,9 +8,10 @@ import { useGameStore } from '../../store/useGameStore';
 import { sound } from '../../utils/audio';
 import AnimatedCharacter from './AnimatedCharacter';
 
-const MOVE_SPEED = 6.8;
-const SPRINT_SPEED = 11.2;
-const JUMP_FORCE = 7.2;
+// Calibrated speeds matching natural footstep cadence (zero ice-skating)
+const MOVE_SPEED = 4.2;
+const SPRINT_SPEED = 8.2;
+const JUMP_FORCE = 6.8;
 
 interface CharacterControllerProps {
   playerPosRef: React.MutableRefObject<THREE.Vector3 | null>;
@@ -19,10 +20,9 @@ interface CharacterControllerProps {
 
 /**
  * Enhanced 3rd-Person Character Controller:
- * - Native Mouse Pointer Lock (free 360° mouse-look).
- * - Exact canonical camera-relative movement (W: into screen away from camera, S: towards camera, A: left, D: right).
- * - Player shows her back when walking forward into the screen.
- * - Smooth velocity lerp and safe grounded detection for stairs and bridges.
+ * - Proportional capsule collider matching 1.38m avatar.
+ * - Calibrated movement speeds synchronized to footstep animation rate.
+ * - Smooth camera follow with pleasant 3.8m distance.
  * - Auto-recovery on void falls.
  */
 export default function CharacterController({
@@ -49,9 +49,9 @@ export default function CharacterController({
   });
 
   // Camera angles & distances
-  const cameraYaw = useRef(0.35); // Initial pleasant angle overlooking island
-  const cameraPitch = useRef(0.24); // Pleasant over-the-shoulder pitch
-  const cameraDistance = useRef(4.8);
+  const cameraYaw = useRef(0.35);
+  const cameraPitch = useRef(0.24);
+  const cameraDistance = useRef(3.8); // Perfectly proportioned over-the-shoulder distance
 
   // Smooth velocity lerp buffers
   const currentVelocity = useRef(new THREE.Vector3());
@@ -81,7 +81,7 @@ export default function CharacterController({
     };
 
     const handleWheel = (e: WheelEvent) => {
-      cameraDistance.current = Math.max(2.5, Math.min(12.0, cameraDistance.current + e.deltaY * 0.004));
+      cameraDistance.current = Math.max(2.2, Math.min(9.0, cameraDistance.current + e.deltaY * 0.0035));
     };
 
     dom.addEventListener('click', handleCanvasClick);
@@ -178,19 +178,17 @@ export default function CharacterController({
       return;
     }
 
-    // Grounded detection (stairs friendly)
+    // Grounded detection (stairs & bridges friendly)
     isGrounded.current = Math.abs(linvel.y) < 1.5;
     setIsJumpingState(!isGrounded.current && Math.abs(linvel.y) > 2.0);
 
-    // ── Direction Calculation Relative to Camera Yaw ──
+    // Direction calculation relative to camera yaw
     const fwdInput = (keys.current.forward ? 1 : 0) - (keys.current.backward ? 1 : 0);
     const sideInput = (keys.current.right ? 1 : 0) - (keys.current.left ? 1 : 0);
 
-    // Forward direction in XZ plane (away from camera, into screen)
     const forwardX = -Math.sin(cameraYaw.current);
     const forwardZ = -Math.cos(cameraYaw.current);
 
-    // Right direction in XZ plane
     const rightX = Math.cos(cameraYaw.current);
     const rightZ = -Math.sin(cameraYaw.current);
 
@@ -210,7 +208,7 @@ export default function CharacterController({
       const speed = keys.current.shift ? SPRINT_SPEED : MOVE_SPEED;
       targetVelocity.current.copy(moveDirection).multiplyScalar(speed);
 
-      // Natural avatar rotation facing the movement direction (showing back when moving forward)
+      // Natural avatar rotation facing the movement direction
       const targetFacingAngle = Math.atan2(moveDirection.x, moveDirection.z);
 
       if (avatarGroupRef.current) {
@@ -220,9 +218,9 @@ export default function CharacterController({
         avatarGroupRef.current.rotation.y += diff * 0.18;
       }
 
-      // Footstep sound timing
+      // Footstep sound timing matching 1.35x animation rate
       const now = performance.now();
-      const stepInterval = keys.current.shift ? 240 : 360;
+      const stepInterval = keys.current.shift ? 260 : 380;
       if (isGrounded.current && now - lastStepTime.current > stepInterval) {
         sound.playFootstep();
         lastStepTime.current = now;
@@ -231,8 +229,8 @@ export default function CharacterController({
       targetVelocity.current.set(0, 0, 0);
     }
 
-    // ── Silky Smooth Velocity Lerp (Zero Jerkiness) ──
-    currentVelocity.current.lerp(targetVelocity.current, moving ? 0.20 : 0.28);
+    // ── Silky Smooth Velocity Lerp ──
+    currentVelocity.current.lerp(targetVelocity.current, moving ? 0.22 : 0.30);
 
     rigidBodyRef.current.setLinvel(
       {
@@ -252,13 +250,13 @@ export default function CharacterController({
 
     // ── 3rd Person Smooth Camera Following ──
     if (cameraMode === 'third_person') {
-      const lookTarget = new THREE.Vector3(translation.x, translation.y + 0.95, translation.z);
+      const lookTarget = new THREE.Vector3(translation.x, translation.y + 0.78, translation.z);
 
       const cx =
         translation.x +
         cameraDistance.current * Math.sin(cameraYaw.current) * Math.cos(cameraPitch.current);
       const cy =
-        translation.y + 0.95 + cameraDistance.current * Math.sin(cameraPitch.current);
+        translation.y + 0.78 + cameraDistance.current * Math.sin(cameraPitch.current);
       const cz =
         translation.z +
         cameraDistance.current * Math.cos(cameraYaw.current) * Math.cos(cameraPitch.current);
@@ -281,8 +279,8 @@ export default function CharacterController({
         angularDamping={1.0}
         ccd={true}
       >
-        {/* Human-scale capsule collider (Height: ~1.75m, Radius: 0.28m) */}
-        <CapsuleCollider args={[0.55, 0.28]} position={[0, 0.85, 0]} />
+        {/* Proportional capsule collider for 1.38m avatar (HalfHeight: 0.44m, Radius: 0.24m) */}
+        <CapsuleCollider args={[0.44, 0.24]} position={[0, 0.68, 0]} />
 
         {/* 3D Animated Skinned Character Mesh */}
         <group ref={avatarGroupRef} position={[0, 0, 0]}>

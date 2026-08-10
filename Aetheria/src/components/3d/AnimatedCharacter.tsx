@@ -11,12 +11,15 @@ interface AnimatedCharacterProps {
   isJumping: boolean;
 }
 
+/** Proportional avatar height calibrated to match island environment */
+const TARGET_AVATAR_HEIGHT = 1.38;
+
 /**
  * Skeletal Animated Character Component (Mixamo Arissa):
- * - Dynamically measures bounding box and auto-normalizes height to exact 1.72 meters.
- * - Snaps feet to Y=0 floor so character walks directly on the ground.
- * - Extracts and blends clips from Idle.fbx, Walking (1).fbx, Running.fbx, and Jumping.fbx.
- * - Double-sided PBR materials with preserved textures.
+ * - Scaled to ideal proportional RPG height (1.38m).
+ * - Synchronized animation stride speed (zero ice-skating / foot sliding).
+ * - Snaps feet to ground floor.
+ * - Blends clips: Idle, Walk, Run, Jump with smooth cross-fades.
  */
 export default function AnimatedCharacter({
   isMoving,
@@ -31,9 +34,8 @@ export default function AnimatedCharacter({
 
   const groupRef = useRef<THREE.Group>(null);
 
-  // ── 2. Proper SkinnedMesh Cloning & Dynamic Height Normalization ──
+  // ── 2. SkinnedMesh Cloning & Height Calibration ──
   const { characterModel, animations, autoScale } = useMemo(() => {
-    // Clone with full armature skeleton preservation
     const clone = cloneSkeleton(idleFbx) as THREE.Group;
 
     // Measure raw bounding box height
@@ -41,8 +43,8 @@ export default function AnimatedCharacter({
     const size = box.getSize(new THREE.Vector3());
     const rawHeight = size.y;
 
-    // Desired real human height = 1.72 meters
-    const normalizedScale = rawHeight > 0 ? 1.72 / rawHeight : 0.01;
+    // Normalized scale to target height (1.38m)
+    const normalizedScale = rawHeight > 0 ? TARGET_AVATAR_HEIGHT / rawHeight : 0.008;
 
     // Snap feet of character directly to Y=0
     if (!box.isEmpty()) {
@@ -54,7 +56,7 @@ export default function AnimatedCharacter({
         const mesh = child as THREE.SkinnedMesh;
         mesh.castShadow = true;
         mesh.receiveShadow = true;
-        mesh.frustumCulled = false; // Prevent mesh popping out during camera orbit
+        mesh.frustumCulled = false;
 
         if (mesh.material) {
           const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
@@ -108,7 +110,20 @@ export default function AnimatedCharacter({
 
   const { actions } = useAnimations(animations, groupRef);
 
-  // ── 3. Animation State Machine & Cross-Fade ──
+  // ── 3. Animation Cadence & Stride Speed Synchronization ──
+  useEffect(() => {
+    if (actions['Walk']) {
+      actions['Walk'].timeScale = 1.35; // Perfect stride-to-displacement synchronization
+    }
+    if (actions['Run']) {
+      actions['Run'].timeScale = 1.18;
+    }
+    if (actions['Idle']) {
+      actions['Idle'].timeScale = 1.0;
+    }
+  }, [actions]);
+
+  // ── 4. Animation State Machine & Cross-Fade ──
   const currentActionRef = useRef<string>('Idle');
 
   useEffect(() => {
@@ -124,11 +139,11 @@ export default function AnimatedCharacter({
       const nextAction = actions[target];
 
       if (prevAction) {
-        prevAction.fadeOut(0.2);
+        prevAction.fadeOut(0.18);
       }
 
       if (nextAction) {
-        nextAction.reset().fadeIn(0.2).play();
+        nextAction.reset().fadeIn(0.18).play();
         if (target === 'Jump') {
           nextAction.setLoop(THREE.LoopOnce, 1);
           nextAction.clampWhenFinished = true;
@@ -141,7 +156,7 @@ export default function AnimatedCharacter({
     }
   }, [isMoving, isSprinting, isJumping, actions]);
 
-  // Start with Idle
+  // Initial Idle playback
   useEffect(() => {
     if (actions['Idle']) {
       actions['Idle'].reset().fadeIn(0.2).play();
@@ -149,7 +164,6 @@ export default function AnimatedCharacter({
   }, [actions]);
 
   return (
-    // Automatically normalized human height = 1.72m
     <group
       ref={groupRef}
       dispose={null}
