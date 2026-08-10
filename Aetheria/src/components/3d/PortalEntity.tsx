@@ -3,7 +3,7 @@
 import React, { useRef, useState, useMemo, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF, Html } from '@react-three/drei';
-import { RigidBody, MeshCollider } from '@react-three/rapier';
+import { RigidBody, CylinderCollider } from '@react-three/rapier';
 import * as THREE from 'three';
 import { useGameStore } from '../../store/useGameStore';
 import { developerProfile } from '../../data/resumeData';
@@ -24,9 +24,8 @@ interface PortalEntityProps {
 
 /**
  * Interactive Dimensional Portal Gate:
- * - Solid physical hull collider (prevents passing through frame).
+ * - High-speed O(1) physics cylinder pedestal.
  * - Interactive proximity detection (6.5m) and smooth teleport transition.
- * - Dynamic PBR material colors.
  */
 export default function PortalEntity({
   modelPath,
@@ -131,14 +130,15 @@ export default function PortalEntity({
 
   return (
     <group position={position} rotation={rotation}>
-      {/* ── Solid Physics Hull Collider (Prevents character walking through frame) ── */}
-      <RigidBody type="fixed" colliders={false}>
-        <MeshCollider type="hull">
-          <group scale={finalScale}>
-            <primitive object={clonedScene} />
-          </group>
-        </MeshCollider>
+      {/* ── Lightweight O(1) Physics Cylinder Pedestal ── */}
+      <RigidBody type="fixed" colliders={false} position={[0, 0.8, 0]}>
+        <CylinderCollider args={[0.8, 1.2]} />
       </RigidBody>
+
+      {/* 3D Visual Mesh */}
+      <group scale={finalScale}>
+        <primitive object={clonedScene} />
+      </group>
 
       {/* Floating 3D Proximity Badge with [E] prompt */}
       {isNear && (

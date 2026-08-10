@@ -3,7 +3,7 @@
 import React, { useRef, useState, useMemo, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF, Html } from '@react-three/drei';
-import { RigidBody, MeshCollider, CylinderCollider } from '@react-three/rapier';
+import { RigidBody, CylinderCollider } from '@react-three/rapier';
 import * as THREE from 'three';
 import { useGameStore } from '../../store/useGameStore';
 import { sound } from '../../utils/audio';
@@ -51,10 +51,9 @@ interface StatueEntityProps {
 
 /**
  * Interactive Statue Entity:
- * - Solid physical hull collider (character cannot walk through statues).
- * - Generous proximity detection (6.8m) supporting all 3 statues (bio, contacts, skills).
- * - Click and [E] keypress modal openers.
- * - Glowing aura and 3D floating badge.
+ * - High-speed O(1) physics cylinder pedestal collider.
+ * - Proximity detection (6.8m) supporting all 3 statues.
+ * - Direct click and [E] keypress modal openers.
  */
 export default function StatueEntity({
   modelPath,
@@ -104,7 +103,7 @@ export default function StatueEntity({
   const rawScale = Array.isArray(scale) ? scale[0] : (scale || 1);
   const finalScale = rawScale * unitScale;
 
-  // Apply custom colors from islandScene.json
+  // Apply colors from islandScene.json
   useEffect(() => {
     clonedScene.traverse((child) => {
       if ((child as THREE.Mesh).isMesh && child.userData.partName) {
@@ -167,14 +166,20 @@ export default function StatueEntity({
 
   return (
     <group position={position} rotation={rotation}>
-      {/* ── Solid Physics Hull Collider (Character cannot walk through statue) ── */}
-      <RigidBody type="fixed" colliders={false}>
-        <MeshCollider type="hull">
-          <group scale={finalScale}>
-            <primitive object={clonedScene} />
-          </group>
-        </MeshCollider>
+      {/* ── Lightweight O(1) Cylinder Pedestal Physics Collider ── */}
+      <RigidBody type="fixed" colliders={false} position={[0, 0.7, 0]}>
+        <CylinderCollider args={[0.7, 0.9]} />
       </RigidBody>
+
+      {/* 3D Visual Mesh */}
+      <group scale={finalScale}>
+        <primitive
+          object={clonedScene}
+          onClick={handleOpen}
+          onPointerOver={() => (document.body.style.cursor = 'pointer')}
+          onPointerOut={() => (document.body.style.cursor = 'auto')}
+        />
+      </group>
 
       {/* Ground Glowing Halo Ring */}
       <mesh
@@ -191,7 +196,7 @@ export default function StatueEntity({
         />
       </mesh>
 
-      {/* Floating 3D Proximity Badge with [E] prompt */}
+      {/* Floating 3D Proximity Badge */}
       {isNear && (
         <Html
           position={[0, 2.6, 0]}

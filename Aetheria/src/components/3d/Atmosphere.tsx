@@ -4,102 +4,88 @@ import { Cloud, Stars, Environment } from '@react-three/drei';
 import * as THREE from 'three';
 
 /**
- * Atmospheric celestial cosmos lighting:
- * - Rich deep cosmic background '#070d18' (preventing bright white HDRI background overrides).
- * - Environment preset "apartment" for realistic PBR metalness & gloss reflections (with background={false}).
- * - 3-point daylight balance (key sun, cool sky fill, top ambient bounce).
- * - Drifting celestial ether clouds beneath the islands and gentle floating firefly pollen.
+ * Optimized Atmospheric celestial cosmos lighting:
+ * - High-performance 1024x1024 shadow map with tight frustum and minimal GPU draw passes.
+ * - Environment preset "apartment" with background={false} for crisp PBR reflections.
+ * - Drifting celestial clouds and lightweight particle motes.
  */
 export default function Atmosphere(): React.ReactElement {
   const particlesRef = useRef<THREE.Points>(null);
 
-  // Generate hovering dust & pollen motes around the archipelago
-  const particleCount = 160;
+  // Lightweight particle motes (90 particles for minimal CPU update cost)
+  const particleCount = 90;
   const particlePositions = useMemo(() => {
     const pos = new Float32Array(particleCount * 3);
     for (let i = 0; i < particleCount; i++) {
-      pos[i * 3 + 0] = (Math.random() - 0.5) * 110;
-      pos[i * 3 + 1] = Math.random() * 24 + 2;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 110;
+      pos[i * 3 + 0] = (Math.random() - 0.5) * 90;
+      pos[i * 3 + 1] = Math.random() * 20 + 2;
+      pos[i * 3 + 2] = (Math.random() - 0.5) * 90;
     }
     return pos;
   }, []);
 
   useFrame((state) => {
     if (particlesRef.current) {
-      const time = state.clock.getElapsedTime() * 0.15;
-      particlesRef.current.rotation.y = time * 0.04;
-      const positions = particlesRef.current.geometry.attributes.position.array as Float32Array;
-      for (let i = 0; i < particleCount; i++) {
-        positions[i * 3 + 1] += Math.sin(time + i) * 0.005;
-      }
-      particlesRef.current.geometry.attributes.position.needsUpdate = true;
+      const time = state.clock.getElapsedTime() * 0.12;
+      particlesRef.current.rotation.y = time * 0.03;
     }
   });
 
   return (
     <>
-      {/* 3D Cosmic Space Background & Distant Atmospheric Fog */}
+      {/* 3D Cosmic Space Background & Atmospheric Fog */}
       <color attach="background" args={['#070d18']} />
-      <fog attach="fog" args={['#070d18', 80, 350]} />
+      <fog attach="fog" args={['#070d18', 90, 320]} />
 
-      {/* ── Environment Reflections (background=false to prevent white apartment photo override) ── */}
+      {/* ── Environment Reflections (background=false) ── */}
       <Environment preset="apartment" background={false} />
 
-      {/* Natural Ambient Illumination */}
-      <ambientLight intensity={1.3} color="#ffffff" />
+      {/* High-efficiency Ambient Illumination */}
+      <ambientLight intensity={1.4} color="#ffffff" />
 
-      {/* Primary Key Sun Light with Crisp Shadows */}
+      {/* Primary Key Sun Light with Optimized 1024 Shadow Map */}
       <directionalLight
-        position={[25, 45, 20]}
-        intensity={2.6}
+        position={[25, 42, 20]}
+        intensity={2.4}
         castShadow
         color="#fff8eb"
-        shadow-mapSize={[2048, 2048]}
-        shadow-camera-far={120}
-        shadow-camera-left={-45}
-        shadow-camera-right={45}
-        shadow-camera-top={45}
-        shadow-camera-bottom={-45}
-        shadow-bias={-0.0001}
+        shadow-mapSize={[1024, 1024]}
+        shadow-camera-far={100}
+        shadow-camera-left={-35}
+        shadow-camera-right={35}
+        shadow-camera-top={35}
+        shadow-camera-bottom={-35}
+        shadow-bias={-0.0004}
       />
 
-      {/* Cool Sky Fill Light */}
+      {/* Cool Sky Fill Light (No Shadows = 60 FPS) */}
       <directionalLight
         position={[-20, 25, -20]}
-        intensity={1.1}
+        intensity={1.0}
         color="#38bdf8"
       />
 
       {/* Top Ambient Bounce */}
       <directionalLight
         position={[0, 30, 0]}
-        intensity={0.7}
+        intensity={0.6}
         color="#f1f5f9"
       />
 
       {/* Starfield in high celestial dome */}
-      <Stars radius={95} depth={45} count={2800} factor={4} saturation={1} fade speed={1.2} />
+      <Stars radius={95} depth={40} count={2000} factor={3} saturation={1} fade speed={0.8} />
 
-      {/* Drifting Clouds beneath the islands at Y = -14 */}
+      {/* Drifting Clouds beneath the islands */}
       <group position={[0, -14, 0]}>
         <Cloud
-          opacity={0.35}
-          speed={0.15}
-          segments={15}
+          opacity={0.3}
+          speed={0.12}
+          segments={10}
           color="#0f172a"
         />
       </group>
-      <group position={[-22, -18, 12]}>
-        <Cloud
-          opacity={0.25}
-          speed={0.2}
-          segments={12}
-          color="#1e293b"
-        />
-      </group>
 
-      {/* Magical Floating Pollen & Fireflies */}
+      {/* Floating Dust / Pollen Motes */}
       <points ref={particlesRef}>
         <bufferGeometry>
           <bufferAttribute
@@ -110,12 +96,12 @@ export default function Atmosphere(): React.ReactElement {
           />
         </bufferGeometry>
         <pointsMaterial
-          size={0.35}
+          size={0.12}
           color="#38bdf8"
           transparent
-          opacity={0.85}
+          opacity={0.6}
           blending={THREE.AdditiveBlending}
-          sizeAttenuation
+          depthWrite={false}
         />
       </points>
     </>
