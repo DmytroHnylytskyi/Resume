@@ -8,8 +8,8 @@ import { useGameStore } from '../../store/useGameStore';
 /**
  * Enhanced High-Fidelity Retro 3D Pixel-Art Screen Pass:
  * - Fine-grain pixel density (pixelSize: 2.0) for crisp, readable, stylish pixel art.
- * - Luminous gamma & shadow lift (pow curve) ensuring islands and character are bright and vibrant.
- * - Rich color vibrancy & saturation boost.
+ * - Extra-luminous shadow lift (pow 0.80) ensuring complete clarity in all areas.
+ * - Vibrant color saturation and golden exposure boost.
  */
 export default function PixelArtPass(): React.ReactElement | null {
   const { gl, scene, camera, size } = useThree();
@@ -38,9 +38,9 @@ export default function PixelArtPass(): React.ReactElement | null {
       uniforms: {
         tDiffuse: { value: null },
         resolution: { value: new THREE.Vector2(size.width, size.height) },
-        pixelSize: { value: 2.0 }, // Fine, crisp, high-definition pixel size (not overly chunky)
+        pixelSize: { value: 2.0 }, // Fine, crisp pixel density
         colorLevels: { value: 64.0 },
-        exposure: { value: 1.25 } // Bright, luminous celestial lighting boost
+        exposure: { value: 1.45 } // Extra luminous brightness boost
       },
       vertexShader: `
         varying vec2 vUv;
@@ -87,17 +87,17 @@ export default function PixelArtPass(): React.ReactElement | null {
 
           vec4 texel = texture2D(tDiffuse, coord);
 
-          // 2. Lift Shadows & Brighten (Gamma correction curve)
+          // 2. Extra Shadow Lift & Luminous Exposure (Gamma 0.80)
           vec3 col = texel.rgb * exposure;
-          col = pow(col, vec3(0.86)); // Lifts dark shadows significantly
+          col = pow(col, vec3(0.80)); // Significantly lifts and illuminates dark shadows
 
           // 3. Fine Dither & Color Quantization (64 color levels)
-          float dither = bayer4(gl_FragCoord.xy / pixelSize) * 0.03;
+          float dither = bayer4(gl_FragCoord.xy / pixelSize) * 0.025;
           col = col + dither;
           col = floor(col * colorLevels + 0.5) / colorLevels;
 
-          // 4. Vibrant Color Saturation (+18%)
-          col = adjustSaturation(col, 1.18);
+          // 4. Vibrant Color Saturation (+20%)
+          col = adjustSaturation(col, 1.20);
 
           gl_FragColor = vec4(clamp(col, 0.0, 1.0), texel.a);
         }

@@ -33,22 +33,22 @@ export default function Atmosphere(): React.ReactElement {
 
   return (
     <>
-      {/* Rich Celestial Cosmic Sky & Subtle Distance Fog */}
-      <color attach="background" args={['#0e1930']} />
-      <fog attach="fog" args={['#0e1930', 120, 380]} />
+      {/* Rich Celestial Cosmic Sky & Open Fog */}
+      <color attach="background" args={['#101e38']} />
+      <fog attach="fog" args={['#101e38', 140, 450]} />
 
       {/* ── Environment Reflections ── */}
       <Environment preset="apartment" background={false} />
 
       {/* Bright Primary Ambient Illumination */}
-      <ambientLight intensity={2.2} color="#ffffff" />
+      <ambientLight intensity={2.6} color="#ffffff" />
 
       {/* Primary Key Sun Light with Warm Luminous Gold */}
       <directionalLight
         position={[25, 42, 20]}
-        intensity={3.4}
+        intensity={3.8}
         castShadow
-        color="#fffbeb"
+        color="#fffbf0"
         shadow-mapSize={[1024, 1024]}
         shadow-camera-far={100}
         shadow-camera-left={-35}
@@ -61,14 +61,14 @@ export default function Atmosphere(): React.ReactElement {
       {/* Vibrant Cyan Sky Fill Light (Brightens all shadows) */}
       <directionalLight
         position={[-20, 25, -20]}
-        intensity={1.8}
+        intensity={2.2}
         color="#38bdf8"
       />
 
       {/* Soft Top Sky Bounce */}
       <directionalLight
         position={[0, 30, 0]}
-        intensity={1.2}
+        intensity={1.4}
         color="#f8fafc"
       />
 
