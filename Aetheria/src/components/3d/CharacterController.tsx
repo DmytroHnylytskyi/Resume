@@ -19,9 +19,10 @@ interface CharacterControllerProps {
 }
 
 /**
- * Enhanced 3rd-Person Character Controller:
- * - Frictionless rounded capsule (0.82m height) allowing effortless gliding over stone steps.
- * - Exact ground alignment with animated boots firmly planted on the surface.
+ * High-Performance 3rd-Person Character Controller:
+ * - Instant stop upon key release (zero drifting / ice sliding).
+ * - Exact ground height calibration (no sinking into textures).
+ * - Calibrated capsule collider (Height: 0.82m, Radius: 0.17m).
  * - Smooth camera follow with pleasant 2.6m distance.
  * - Auto-recovery on void falls.
  */
@@ -53,9 +54,8 @@ export default function CharacterController({
   const cameraPitch = useRef(0.22);
   const cameraDistance = useRef(2.6);
 
-  // Smooth velocity lerp buffers
+  // Smooth velocity buffer
   const currentVelocity = useRef(new THREE.Vector3());
-  const targetVelocity = useRef(new THREE.Vector3());
 
   const lastStepTime = useRef(0);
   const isGrounded = useRef(true);
@@ -179,7 +179,7 @@ export default function CharacterController({
     }
 
     // Grounded detection
-    isGrounded.current = Math.abs(linvel.y) < 1.2;
+    isGrounded.current = Math.abs(linvel.y) < 1.0;
     setIsJumpingState(!isGrounded.current && Math.abs(linvel.y) > 1.8);
 
     // Direction calculation relative to camera yaw
@@ -206,16 +206,19 @@ export default function CharacterController({
       moveDirection.normalize();
 
       const speed = keys.current.shift ? SPRINT_SPEED : MOVE_SPEED;
-      targetVelocity.current.copy(moveDirection).multiplyScalar(speed);
+      const targetVel = moveDirection.multiplyScalar(speed);
 
-      // Natural avatar rotation facing the movement direction
+      // Fast responsive acceleration
+      currentVelocity.current.lerp(targetVel, 0.45);
+
+      // Natural avatar rotation facing movement direction
       const targetFacingAngle = Math.atan2(moveDirection.x, moveDirection.z);
 
       if (avatarGroupRef.current) {
         let diff = (targetFacingAngle - avatarGroupRef.current.rotation.y) % (Math.PI * 2);
         if (diff < -Math.PI) diff += Math.PI * 2;
         if (diff > Math.PI) diff -= Math.PI * 2;
-        avatarGroupRef.current.rotation.y += diff * 0.18;
+        avatarGroupRef.current.rotation.y += diff * 0.22;
       }
 
       // Footstep sound timing
@@ -225,21 +228,27 @@ export default function CharacterController({
         sound.playFootstep();
         lastStepTime.current = now;
       }
+
+      rigidBodyRef.current.setLinvel(
+        {
+          x: currentVelocity.current.x,
+          y: linvel.y,
+          z: currentVelocity.current.z
+        },
+        true
+      );
     } else {
-      targetVelocity.current.set(0, 0, 0);
+      // ── Instant Crisp Stop: Zero sliding / drifting across slopes ──
+      currentVelocity.current.set(0, 0, 0);
+      rigidBodyRef.current.setLinvel(
+        {
+          x: 0,
+          y: linvel.y > 0 ? linvel.y : Math.max(linvel.y, -2.0),
+          z: 0
+        },
+        true
+      );
     }
-
-    // ── Silky Smooth Velocity Lerp ──
-    currentVelocity.current.lerp(targetVelocity.current, moving ? 0.24 : 0.32);
-
-    rigidBodyRef.current.setLinvel(
-      {
-        x: currentVelocity.current.x,
-        y: linvel.y,
-        z: currentVelocity.current.z
-      },
-      true
-    );
 
     // Jump trigger
     if (keys.current.jump && isGrounded.current) {
@@ -261,7 +270,7 @@ export default function CharacterController({
         translation.z +
         cameraDistance.current * Math.cos(cameraYaw.current) * Math.cos(cameraPitch.current);
 
-      camera.position.lerp(new THREE.Vector3(cx, cy, cz), 0.16);
+      camera.position.lerp(new THREE.Vector3(cx, cy, cz), 0.18);
       camera.lookAt(lookTarget);
     }
   });
@@ -273,14 +282,14 @@ export default function CharacterController({
         colliders={false}
         position={spawnPoint}
         enabledRotations={[false, false, false]}
-        friction={0.0}
+        friction={0.8}
         restitution={0.0}
-        linearDamping={0.2}
-        angularDamping={1.0}
+        linearDamping={1.5}
+        angularDamping={2.0}
         ccd={true}
       >
-        {/* Rounded friction-less capsule collider touching ground at Y=0 */}
-        <CapsuleCollider args={[0.22, 0.16]} position={[0, 0.38, 0]} friction={0.0} />
+        {/* Calibrated capsule collider (Base touches floor exactly at Y=0.0) */}
+        <CapsuleCollider args={[0.24, 0.17]} position={[0, 0.41, 0]} friction={0.8} />
 
         {/* 3D Animated Skinned Character Mesh */}
         <group ref={avatarGroupRef} position={[0, 0, 0]}>

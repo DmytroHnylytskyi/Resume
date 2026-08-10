@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect, Suspense } from 'react';
 import { useGLTF } from '@react-three/drei';
-import { RigidBody, MeshCollider } from '@react-three/rapier';
+import { RigidBody, MeshCollider, CylinderCollider } from '@react-three/rapier';
 import * as THREE from 'three';
 import rawIslandSceneData from '../../data/islandScene.json';
 import { IslandSceneData, PlacedObject } from '../../types/scene';
@@ -31,7 +31,7 @@ export function getCategoryHeightScale(modelPath: string, scene: THREE.Object3D)
   const unitScale = getUnitScale(scene);
   const file = (modelPath || '').toLowerCase();
 
-  // Architectural structural items (walls, doors, windows, tiles, house components) -> keep 1:1 in meters!
+  // Architectural structural items -> keep 1:1 in meters
   if (
     file.includes('wall') ||
     file.includes('door') ||
@@ -86,9 +86,10 @@ interface StaticPropProps {
 
 /**
  * High-Performance StaticProp:
- * - Only walkable terrain, steps, and bridges get real-time trimesh colliders.
- * - Foliage (trees, bushes) is rendered without physics overhead (60+ FPS).
- * - Matrix updates frozen on static meshes for zero per-frame matrix recalculations.
+ * - Walkable surfaces (islands, steps, bridges) use exact trimesh colliders.
+ * - Trees use lightweight O(1) solid trunk cylinder colliders (player cannot pass through trees!).
+ * - Bushes are soft non-collidable foliage.
+ * - GPU Frustum culling enabled on all meshes for optimal 60+ FPS.
  */
 function StaticProp({
   modelPath,
@@ -106,7 +107,8 @@ function StaticProp({
     modelPath.includes('floor') ||
     modelPath.includes('stone_path');
 
-  const isFoliage = modelPath.includes('bush') || modelPath.includes('tree');
+  const isTree = modelPath.includes('tree');
+  const isBush = modelPath.includes('bush');
 
   const { clonedScene, unitScale } = useMemo(() => {
     const clone = scene.clone(true);
@@ -124,9 +126,9 @@ function StaticProp({
     clone.traverse((child) => {
       if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh;
-        // Only primary terrain surfaces cast/receive heavy shadows; foliage receives light without multi-pass casting
-        mesh.castShadow = !isFoliage;
+        mesh.castShadow = !isBush && !isTree;
         mesh.receiveShadow = true;
+        mesh.frustumCulled = true;
 
         if (mesh.material) {
           const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
@@ -145,7 +147,7 @@ function StaticProp({
     });
 
     return { clonedScene: wrapper, unitScale: uScale };
-  }, [scene, modelPath, isFoliage]);
+  }, [scene, modelPath, isBush, isTree]);
 
   const rawScale = Array.isArray(scale) ? scale[0] : (scale || 1);
   const finalScale = rawScale * unitScale;
@@ -169,6 +171,7 @@ function StaticProp({
     });
   }, [clonedScene, colors]);
 
+  // 1. Walkable terrain, stairs, and bridges
   if (isWalkable) {
     return (
       <RigidBody
@@ -176,7 +179,7 @@ function StaticProp({
         colliders={false}
         position={position}
         rotation={rotation}
-        friction={0.0}
+        friction={0.8}
         restitution={0.0}
       >
         <MeshCollider type="trimesh">
@@ -188,6 +191,21 @@ function StaticProp({
     );
   }
 
+  // 2. Solid Tree Trunks (Lightweight O(1) Cylinder Collider - player cannot walk through trees!)
+  if (isTree) {
+    return (
+      <group position={position} rotation={rotation}>
+        <RigidBody type="fixed" colliders={false} position={[0, 1.2, 0]}>
+          <CylinderCollider args={[1.2, 0.45]} />
+        </RigidBody>
+        <group scale={finalScale}>
+          <primitive object={clonedScene} />
+        </group>
+      </group>
+    );
+  }
+
+  // 3. Decorative Soft Props & Bushes
   return (
     <group position={position} rotation={rotation} scale={finalScale}>
       <primitive object={clonedScene} />
@@ -201,8 +219,8 @@ interface WorldSceneProps {
 
 /**
  * Complete 3D Floating Archipelago World Scene:
- * - High-speed physics optimization: only 15 active physics bodies instead of 500+.
- * - Smooth 60+ FPS WebGL rendering pipeline.
+ * - Solid physical tree trunks and terrain.
+ * - 60+ FPS high-performance WebGL pipeline.
  */
 export default function WorldScene({ playerPosRef }: WorldSceneProps): React.ReactElement {
   return (

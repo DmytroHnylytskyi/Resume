@@ -20,7 +20,7 @@ const TARGET_AVATAR_HEIGHT = 0.82;
 /**
  * Skeletal Animated Character Component (Mixamo Arissa):
  * - Calibrated 0.82m height to pass under bridge arches and match world proportions.
- * - Exact ground snapping: boots firmly planted on the ground with zero hover/gap.
+ * - Exact ground level alignment: boots rest right ON TOP of the floor without sinking.
  * - Synchronized stride speeds for realistic locomotion.
  */
 export default function AnimatedCharacter({
@@ -166,12 +166,12 @@ export default function AnimatedCharacter({
   }, [actions]);
 
   return (
-    // position.y = -0.09 offsets skeletal knee-bend so animated boots touch ground at Y=0
+    // Clean position [0, 0, 0] ensures boots rest right on the top plane of the floor
     <group
       ref={groupRef}
       dispose={null}
       scale={[autoScale, autoScale, autoScale]}
-      position={[0, -0.09, 0]}
+      position={[0, 0, 0]}
     >
       <primitive object={characterModel} />
     </group>
