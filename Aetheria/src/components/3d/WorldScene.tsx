@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect, Suspense } from 'react';
 import { useGLTF } from '@react-three/drei';
-import { RigidBody, MeshCollider, CylinderCollider, CuboidCollider } from '@react-three/rapier';
+import { RigidBody, MeshCollider } from '@react-three/rapier';
 import * as THREE from 'three';
 import rawIslandSceneData from '../../data/islandScene.json';
 import { IslandSceneData, PlacedObject } from '../../types/scene';
@@ -171,23 +171,23 @@ function StaticProp({
     modelPath.includes('floor') ||
     modelPath.includes('stone_path');
 
-  const isSolidProp =
+  const isSolidObstacle =
     modelPath.includes('tree') ||
     modelPath.includes('column') ||
     modelPath.includes('wall') ||
     modelPath.includes('house_');
 
-  if ((isWalkable || isSolidProp) && colliderType !== 'none') {
+  if ((isWalkable || isSolidObstacle) && colliderType !== 'none') {
     return (
       <RigidBody
         type="fixed"
         colliders={false}
         position={position}
         rotation={rotation}
-        friction={0.05}
+        friction={0.0}
         restitution={0.0}
       >
-        <MeshCollider type={isWalkable ? colliderType : 'hull'}>
+        <MeshCollider type={isWalkable ? 'trimesh' : 'hull'}>
           <group scale={finalScale}>
             <primitive object={clonedScene} />
           </group>
@@ -208,108 +208,13 @@ interface WorldSceneProps {
 }
 
 /**
- * Complete 3D Floating Archipelago World Scene with millimeter-accurate geometry
- * and bedrock safety platforms for all 5 floating islands.
+ * Complete 3D Floating Archipelago World Scene:
+ * - Exact real-time trimesh physics on all islands, stairs, and bridges (zero invisible walls / floating steps).
+ * - Exact PlaceableObject millimeter geometry.
  */
 export default function WorldScene({ playerPosRef }: WorldSceneProps): React.ReactElement {
   return (
     <group>
-      {/* ── Solid Invisible Bedrock Safety Platforms for the 5 Main Islands ── */}
-      {/* 1. Central Altar Island (Top Surface Y ~ 9.8) */}
-      <RigidBody type="fixed" colliders={false} position={[0.5, 9.2, -0.5]} friction={0.05}>
-        <CylinderCollider args={[0.8, 12.5]} />
-      </RigidBody>
-
-      {/* 2. Hero Statue Island (Top Surface Y ~ 9.0) */}
-      <RigidBody type="fixed" colliders={false} position={[7.03, 8.6, 17.71]} friction={0.05}>
-        <CylinderCollider args={[0.8, 7.5]} />
-      </RigidBody>
-
-      {/* 3. Lumina Island (Top Surface Y ~ 4.0) */}
-      <RigidBody type="fixed" colliders={false} position={[-17.32, 3.6, -19.02]} friction={0.05}>
-        <CylinderCollider args={[0.8, 7.5]} />
-      </RigidBody>
-
-      {/* 4. Forma 3D Cliff Island (Top Surface Y ~ 5.8) */}
-      <RigidBody type="fixed" colliders={false} position={[-27.65, 5.4, -8.92]} friction={0.05}>
-        <CylinderCollider args={[0.8, 9.5]} />
-      </RigidBody>
-
-      {/* 5. Oracle Island (Top Surface Y ~ 8.8) */}
-      <RigidBody type="fixed" colliders={false} position={[-15.75, 8.4, 25.43]} friction={0.05}>
-        <CylinderCollider args={[0.8, 9.0]} />
-      </RigidBody>
-
-      {/* ── Invisible Smooth Incline Stair Ramps ── */}
-      {/* Long Staircase: Central Altar down to Lumina Island */}
-      <RigidBody
-        type="fixed"
-        colliders={false}
-        position={[-7.0, 6.5, -8.3]}
-        rotation={[-0.46, 0.81, 0]}
-        friction={0.05}
-      >
-        <CuboidCollider args={[1.3, 0.15, 6.0]} />
-      </RigidBody>
-
-      {/* Short Staircase: Forma 3D Island Connection */}
-      <RigidBody
-        type="fixed"
-        colliders={false}
-        position={[-22.86, 4.6, -12.21]}
-        rotation={[0.42, 1.21, 0]}
-        friction={0.05}
-      >
-        <CuboidCollider args={[1.2, 0.15, 1.8]} />
-      </RigidBody>
-
-      {/* Staircase: Lumina Island entrance */}
-      <RigidBody
-        type="fixed"
-        colliders={false}
-        position={[-20.50, 3.50, -24.18]}
-        rotation={[0.26, 1.09, 0]}
-        friction={0.05}
-      >
-        <CuboidCollider args={[1.2, 0.15, 1.5]} />
-      </RigidBody>
-
-      {/* Smooth Incline Colliders for Rope Bridges */}
-      <RigidBody
-        type="fixed"
-        colliders={false}
-        position={[3.73, 9.08, 9.90]}
-        rotation={[0, 0.26, 0]}
-        friction={0.05}
-      >
-        <CuboidCollider args={[1.3, 0.12, 5.8]} />
-      </RigidBody>
-
-      <RigidBody
-        type="fixed"
-        colliders={false}
-        position={[-6.45, 8.89, 19.61]}
-        rotation={[0, -1.15, 0]}
-        friction={0.05}
-      >
-        <CuboidCollider args={[1.3, 0.12, 5.8]} />
-      </RigidBody>
-
-      <RigidBody
-        type="fixed"
-        colliders={false}
-        position={[-15.34, 4.11, -24.10]}
-        rotation={[0.13, -0.81, 0.09]}
-        friction={0.05}
-      >
-        <CuboidCollider args={[1.3, 0.12, 5.8]} />
-      </RigidBody>
-
-      {/* Deep Safety Nether Floor (so character never falls into infinity) */}
-      <RigidBody type="fixed" colliders={false} position={[0, -10, 0]}>
-        <CuboidCollider args={[150, 0.5, 150]} />
-      </RigidBody>
-
       {/* ── Placed Scene Objects from islandScene.json ── */}
       {islandSceneData.placedObjects.map((obj: PlacedObject) => {
         const { id, modelPath, position, rotation, scale, type, statueKey, portalKey, colors } = obj;

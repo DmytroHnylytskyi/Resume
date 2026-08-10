@@ -12,7 +12,7 @@ interface AnimatedCharacterProps {
 }
 
 /**
- * Scaled avatar height (0.82m) so Arissa passes cleanly under bridge arches,
+ * Scaled avatar height (0.82m) to pass freely under bridge arches,
  * tree branches, and through stone door portals.
  */
 const TARGET_AVATAR_HEIGHT = 0.82;
@@ -20,7 +20,7 @@ const TARGET_AVATAR_HEIGHT = 0.82;
 /**
  * Skeletal Animated Character Component (Mixamo Arissa):
  * - Calibrated 0.82m height to pass under bridge arches and match world proportions.
- * - Exact ground snapping (feet touch ground with zero air gap).
+ * - Exact ground snapping: boots firmly planted on the ground with zero hover/gap.
  * - Synchronized stride speeds for realistic locomotion.
  */
 export default function AnimatedCharacter({
@@ -166,11 +166,12 @@ export default function AnimatedCharacter({
   }, [actions]);
 
   return (
+    // position.y = -0.09 offsets skeletal knee-bend so animated boots touch ground at Y=0
     <group
       ref={groupRef}
       dispose={null}
       scale={[autoScale, autoScale, autoScale]}
-      position={[0, 0, 0]}
+      position={[0, -0.09, 0]}
     >
       <primitive object={characterModel} />
     </group>

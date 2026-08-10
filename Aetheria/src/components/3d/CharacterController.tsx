@@ -20,8 +20,8 @@ interface CharacterControllerProps {
 
 /**
  * Enhanced 3rd-Person Character Controller:
- * - Perfectly scaled capsule collider (Height: 0.82m, Radius: 0.16m) touching ground at Y=0.
- * - Fits naturally under bridge arches, doorways, and tree branches.
+ * - Frictionless rounded capsule (0.82m height) allowing effortless gliding over stone steps.
+ * - Exact ground alignment with animated boots firmly planted on the surface.
  * - Smooth camera follow with pleasant 2.6m distance.
  * - Auto-recovery on void falls.
  */
@@ -51,7 +51,7 @@ export default function CharacterController({
   // Camera angles & distances
   const cameraYaw = useRef(0.35);
   const cameraPitch = useRef(0.22);
-  const cameraDistance = useRef(2.6); // Clean over-the-shoulder RPG distance for 0.82m avatar
+  const cameraDistance = useRef(2.6);
 
   // Smooth velocity lerp buffers
   const currentVelocity = useRef(new THREE.Vector3());
@@ -160,7 +160,7 @@ export default function CharacterController({
     }
 
     // ── Void Fall Detection & Auto-Recovery ──
-    if (translation.y < 1.0 && !isRespawning) {
+    if (translation.y < -4.0 && !isRespawning) {
       setIsRespawning(true);
       sound.playVoidWind();
 
@@ -230,7 +230,7 @@ export default function CharacterController({
     }
 
     // ── Silky Smooth Velocity Lerp ──
-    currentVelocity.current.lerp(targetVelocity.current, moving ? 0.22 : 0.30);
+    currentVelocity.current.lerp(targetVelocity.current, moving ? 0.24 : 0.32);
 
     rigidBodyRef.current.setLinvel(
       {
@@ -273,14 +273,14 @@ export default function CharacterController({
         colliders={false}
         position={spawnPoint}
         enabledRotations={[false, false, false]}
-        friction={0.05}
+        friction={0.0}
         restitution={0.0}
-        linearDamping={0.4}
+        linearDamping={0.2}
         angularDamping={1.0}
         ccd={true}
       >
-        {/* Proportional capsule collider for 0.82m avatar (HalfHeight: 0.25m, Radius: 0.16m, Base touches Y=0) */}
-        <CapsuleCollider args={[0.25, 0.16]} position={[0, 0.41, 0]} />
+        {/* Rounded friction-less capsule collider touching ground at Y=0 */}
+        <CapsuleCollider args={[0.22, 0.16]} position={[0, 0.38, 0]} friction={0.0} />
 
         {/* 3D Animated Skinned Character Mesh */}
         <group ref={avatarGroupRef} position={[0, 0, 0]}>
