@@ -25,7 +25,7 @@ export default function AnimatedCharacter({
 }: AnimatedCharacterProps): React.ReactElement {
   // ── 1. Load FBX Assets ──
   const idleFbx = useFBX('/model/Idle.fbx');
-  const walkFbx = useFBX('/model/Walking (1).fbx');
+  const walkFbx = useFBX('/model/Walking.fbx');
   const runFbx = useFBX('/model/Running.fbx');
   const jumpFbx = useFBX('/model/Jumping.fbx');
 

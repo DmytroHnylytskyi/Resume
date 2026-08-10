@@ -17,8 +17,8 @@ const islandSceneData = rawIslandSceneData as unknown as IslandSceneData;
 
 /**
  * Full-screen WebGL Canvas Container:
- * - High-performance WebGL options ported from 3D Furniture Configurator.
- * - Dynamic Day/Night atmosphere with Environment preset "apartment".
+ * - Resilient independent Suspense boundaries for Atmosphere, World, and Avatar.
+ * - Dynamic Day/Night atmosphere with high-performance 3-point lighting.
  * - Seamless switching between 3rd-Person Cyber Avatar and Cinematic Flight Camera.
  */
 export default function IslandCanvas(): React.ReactElement {
@@ -46,23 +46,27 @@ export default function IslandCanvas(): React.ReactElement {
       <AdaptiveDpr pixelated />
 
       {/* Atmosphere & Celestial Lighting */}
-      <Atmosphere />
+      <Suspense fallback={null}>
+        <Atmosphere />
+      </Suspense>
 
       {/* ── Rapier 3D Physics Simulation ── */}
-      <Suspense fallback={null}>
-        <Physics gravity={[0, -19.6, 0]}>
-          {/* Walkable Archipelago Terrain, Bridges, Stairs, and Props */}
+      <Physics gravity={[0, -19.6, 0]}>
+        {/* Walkable Archipelago Terrain, Bridges, Stairs, and Props */}
+        <Suspense fallback={null}>
           <WorldScene playerPosRef={playerPosRef} />
+        </Suspense>
 
-          {/* 3rd Person Character Controller */}
-          {cameraMode === 'third_person' && (
+        {/* 3rd Person Character Controller */}
+        {cameraMode === 'third_person' && (
+          <Suspense fallback={null}>
             <CharacterController
               playerPosRef={playerPosRef}
               spawnPoint={spawnPoint}
             />
-          )}
-        </Physics>
-      </Suspense>
+          </Suspense>
+        )}
+      </Physics>
 
       {/* Cinematic Drone / Flight Navigation Mode (from 3D Furniture Store) */}
       {cameraMode === 'bird_eye' && (
