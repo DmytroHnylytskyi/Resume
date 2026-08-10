@@ -11,15 +11,17 @@ interface AnimatedCharacterProps {
   isJumping: boolean;
 }
 
-/** Proportional avatar height calibrated to match island environment */
-const TARGET_AVATAR_HEIGHT = 1.38;
+/**
+ * Scaled avatar height (0.82m) so Arissa passes cleanly under bridge arches,
+ * tree branches, and through stone door portals.
+ */
+const TARGET_AVATAR_HEIGHT = 0.82;
 
 /**
  * Skeletal Animated Character Component (Mixamo Arissa):
- * - Scaled to ideal proportional RPG height (1.38m).
- * - Synchronized animation stride speed (zero ice-skating / foot sliding).
- * - Snaps feet to ground floor.
- * - Blends clips: Idle, Walk, Run, Jump with smooth cross-fades.
+ * - Calibrated 0.82m height to pass under bridge arches and match world proportions.
+ * - Exact ground snapping (feet touch ground with zero air gap).
+ * - Synchronized stride speeds for realistic locomotion.
  */
 export default function AnimatedCharacter({
   isMoving,
@@ -34,7 +36,7 @@ export default function AnimatedCharacter({
 
   const groupRef = useRef<THREE.Group>(null);
 
-  // ── 2. SkinnedMesh Cloning & Height Calibration ──
+  // ── 2. SkinnedMesh Cloning & Ground Height Snapping ──
   const { characterModel, animations, autoScale } = useMemo(() => {
     const clone = cloneSkeleton(idleFbx) as THREE.Group;
 
@@ -43,16 +45,16 @@ export default function AnimatedCharacter({
     const size = box.getSize(new THREE.Vector3());
     const rawHeight = size.y;
 
-    // Normalized scale to target height (1.38m)
-    const normalizedScale = rawHeight > 0 ? TARGET_AVATAR_HEIGHT / rawHeight : 0.008;
+    // Normalized scale to target height (0.82m)
+    const normalizedScale = rawHeight > 0 ? TARGET_AVATAR_HEIGHT / rawHeight : 0.005;
 
-    // Snap feet of character directly to Y=0
+    // Snap feet of character directly to ground level Y=0
     if (!box.isEmpty()) {
       clone.position.y -= box.min.y;
     }
 
     clone.traverse((child) => {
-      if ((child as THREE.SkinnedMesh).isSkinnedMesh || (child as THREE.Mesh).isMesh) {
+      if ((child as THREE.SkinnedMesh).isMesh || (child as THREE.SkinnedMesh).isSkinnedMesh) {
         const mesh = child as THREE.SkinnedMesh;
         mesh.castShadow = true;
         mesh.receiveShadow = true;
@@ -110,13 +112,13 @@ export default function AnimatedCharacter({
 
   const { actions } = useAnimations(animations, groupRef);
 
-  // ── 3. Animation Cadence & Stride Speed Synchronization ──
+  // ── 3. Animation Cadence & Stride Speed ──
   useEffect(() => {
     if (actions['Walk']) {
-      actions['Walk'].timeScale = 1.35; // Perfect stride-to-displacement synchronization
+      actions['Walk'].timeScale = 1.30;
     }
     if (actions['Run']) {
-      actions['Run'].timeScale = 1.18;
+      actions['Run'].timeScale = 1.15;
     }
     if (actions['Idle']) {
       actions['Idle'].timeScale = 1.0;
