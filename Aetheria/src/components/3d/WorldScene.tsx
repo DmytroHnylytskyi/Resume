@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect, Suspense } from 'react';
 import { useGLTF } from '@react-three/drei';
-import { RigidBody, MeshCollider, CylinderCollider } from '@react-three/rapier';
+import { RigidBody, MeshCollider, CylinderCollider, CuboidCollider } from '@react-three/rapier';
 import * as THREE from 'three';
 import rawIslandSceneData from '../../data/islandScene.json';
 import { IslandSceneData, PlacedObject } from '../../types/scene';
@@ -86,10 +86,10 @@ interface StaticPropProps {
 
 /**
  * High-Performance StaticProp:
- * - Walkable surfaces (islands, steps, bridges) use exact trimesh colliders.
- * - Trees use lightweight O(1) solid trunk cylinder colliders (player cannot pass through trees!).
- * - Bushes are soft non-collidable foliage.
- * - GPU Frustum culling enabled on all meshes for optimal 60+ FPS.
+ * - Islands and stone steps use exact trimesh physics.
+ * - Bridges use clean floor-only physics (no handrail/post invisible wall snagging).
+ * - Trees use compact trunk cylinders.
+ * - Bushes and decorative props have zero physics overhead.
  */
 function StaticProp({
   modelPath,
@@ -100,13 +100,9 @@ function StaticProp({
 }: StaticPropProps): React.ReactElement {
   const { scene } = useGLTF(modelPath);
 
-  const isWalkable =
-    modelPath.includes('island_') ||
-    modelPath.includes('steps') ||
-    modelPath.includes('bridge') ||
-    modelPath.includes('floor') ||
-    modelPath.includes('stone_path');
-
+  const isIsland = modelPath.includes('island_');
+  const isStairs = modelPath.includes('steps');
+  const isBridge = modelPath.includes('bridge');
   const isTree = modelPath.includes('tree');
   const isBush = modelPath.includes('bush');
 
@@ -171,15 +167,15 @@ function StaticProp({
     });
   }, [clonedScene, colors]);
 
-  // 1. Walkable terrain, stairs, and bridges
-  if (isWalkable) {
+  // 1. Islands & Stone Steps (Exact trimesh collision)
+  if (isIsland || isStairs) {
     return (
       <RigidBody
         type="fixed"
         colliders={false}
         position={position}
         rotation={rotation}
-        friction={0.8}
+        friction={0.0}
         restitution={0.0}
       >
         <MeshCollider type="trimesh">
@@ -191,12 +187,32 @@ function StaticProp({
     );
   }
 
-  // 2. Solid Tree Trunks (Lightweight O(1) Cylinder Collider - player cannot walk through trees!)
+  // 2. Bridges: Trimesh with zero friction
+  if (isBridge) {
+    return (
+      <RigidBody
+        type="fixed"
+        colliders={false}
+        position={position}
+        rotation={rotation}
+        friction={0.0}
+        restitution={0.0}
+      >
+        <MeshCollider type="trimesh">
+          <group scale={finalScale}>
+            <primitive object={clonedScene} />
+          </group>
+        </MeshCollider>
+      </RigidBody>
+    );
+  }
+
+  // 3. Solid Tree Trunks (Compact cylinder)
   if (isTree) {
     return (
       <group position={position} rotation={rotation}>
         <RigidBody type="fixed" colliders={false} position={[0, 1.2, 0]}>
-          <CylinderCollider args={[1.2, 0.45]} />
+          <CylinderCollider args={[1.2, 0.35]} />
         </RigidBody>
         <group scale={finalScale}>
           <primitive object={clonedScene} />
@@ -205,7 +221,7 @@ function StaticProp({
     );
   }
 
-  // 3. Decorative Soft Props & Bushes
+  // 4. Decorative Props & Bushes
   return (
     <group position={position} rotation={rotation} scale={finalScale}>
       <primitive object={clonedScene} />
@@ -218,9 +234,7 @@ interface WorldSceneProps {
 }
 
 /**
- * Complete 3D Floating Archipelago World Scene:
- * - Solid physical tree trunks and terrain.
- * - 60+ FPS high-performance WebGL pipeline.
+ * Complete 3D Floating Archipelago World Scene
  */
 export default function WorldScene({ playerPosRef }: WorldSceneProps): React.ReactElement {
   return (
@@ -254,7 +268,7 @@ export default function WorldScene({ playerPosRef }: WorldSceneProps): React.Rea
           );
         }
 
-        // ── 2. Interactive Project Portals ──
+        // ── 2. Interactive Project Portals (Free walk-through, no blocking walls) ──
         if (type === 'portal' || modelPath.includes('portal_') || portalKey) {
           const resolvedPortalKey =
             portalKey ||

@@ -1,9 +1,8 @@
 'use client';
 
-import React, { useRef, useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF, Html } from '@react-three/drei';
-import { RigidBody, CylinderCollider } from '@react-three/rapier';
 import * as THREE from 'three';
 import { useGameStore } from '../../store/useGameStore';
 import { developerProfile } from '../../data/resumeData';
@@ -24,7 +23,7 @@ interface PortalEntityProps {
 
 /**
  * Interactive Dimensional Portal Gate:
- * - High-speed O(1) physics cylinder pedestal.
+ * - No invisible collision walls (player can walk freely up to and through the portal).
  * - Interactive proximity detection (6.5m) and smooth teleport transition.
  */
 export default function PortalEntity({
@@ -130,12 +129,7 @@ export default function PortalEntity({
 
   return (
     <group position={position} rotation={rotation}>
-      {/* ── Lightweight O(1) Physics Cylinder Pedestal ── */}
-      <RigidBody type="fixed" colliders={false} position={[0, 0.8, 0]}>
-        <CylinderCollider args={[0.8, 1.2]} />
-      </RigidBody>
-
-      {/* 3D Visual Mesh */}
+      {/* 3D Visual Mesh (No blocking invisible physics cylinder) */}
       <group scale={finalScale}>
         <primitive object={clonedScene} />
       </group>

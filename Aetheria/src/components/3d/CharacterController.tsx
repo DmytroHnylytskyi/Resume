@@ -19,9 +19,10 @@ interface CharacterControllerProps {
 }
 
 /**
- * Enhanced 3rd-Person Character Controller with Smooth Step-Climbing:
- * - Rounded bottom capsule dome (Radius: 0.21m) that effortlessly rides over steps and ledges.
- * - Automatic step-climbing assist: smoothly ascends stone staircases and bridge thresholds without getting stuck.
+ * Enhanced 3rd-Person Character Controller:
+ * - Steadicam Gimbal camera smoothing (ZERO shaking/vibration on stairs or rough terrain).
+ * - Downward stair-snapping (hugs steps smoothly without launching or hovering in the air).
+ * - Slim compact capsule (Radius: 0.16m) passing easily between bridge posts and arches.
  * - Instant crisp stop on key release.
  * - Auto-recovery on void falls.
  */
@@ -52,6 +53,10 @@ export default function CharacterController({
   const cameraYaw = useRef(0.35);
   const cameraPitch = useRef(0.22);
   const cameraDistance = useRef(2.6);
+
+  // Steadicam Smooth Gimbal Buffers
+  const smoothLookTarget = useRef(new THREE.Vector3(spawnPoint[0], spawnPoint[1] + 0.5, spawnPoint[2]));
+  const smoothCamPos = useRef(new THREE.Vector3());
 
   // Velocity buffers
   const currentVelocity = useRef(new THREE.Vector3());
@@ -178,7 +183,7 @@ export default function CharacterController({
     }
 
     // Grounded detection
-    isGrounded.current = Math.abs(linvel.y) < 1.2;
+    isGrounded.current = Math.abs(linvel.y) < 1.4;
     setIsJumpingState(!isGrounded.current && Math.abs(linvel.y) > 2.0);
 
     // Direction calculation relative to camera yaw
@@ -228,12 +233,11 @@ export default function CharacterController({
         lastStepTime.current = now;
       }
 
-      // ── Step-Climbing & Stair Ascension Assist ──
-      // When moving against low steps or climbing stairs, smoothly lift vertical velocity
+      // ── Ground-Snapping for Descending Stairs ──
+      // Prevents launching or floating into the air when walking down stair slopes
       let targetYVel = linvel.y;
-      if (isGrounded.current && linvel.y < 0.8 && linvel.y > -1.2) {
-        // Automatic step-up assistance over stone stairs and bridge thresholds
-        targetYVel = Math.max(linvel.y, 0.35);
+      if (isGrounded.current && linvel.y < 0.1 && linvel.y > -2.5) {
+        targetYVel = -1.8; // Snaps firmly to descending steps
       }
 
       rigidBodyRef.current.setLinvel(
@@ -245,7 +249,7 @@ export default function CharacterController({
         true
       );
     } else {
-      // Instant Crisp Stop: Zero sliding on flat surfaces or stairs
+      // Instant Crisp Stop
       currentVelocity.current.set(0, 0, 0);
       rigidBodyRef.current.setLinvel(
         {
@@ -264,21 +268,28 @@ export default function CharacterController({
       keys.current.jump = false;
     }
 
-    // ── 3rd Person Smooth Camera Following ──
+    // ── Steadicam Gimbal 3rd Person Camera (ZERO SHAKING) ──
     if (cameraMode === 'third_person') {
-      const lookTarget = new THREE.Vector3(translation.x, translation.y + 0.50, translation.z);
+      // Smoothly dampen the look target (horizontal lerp 0.14, vertical lerp 0.06 to filter all step bumps!)
+      smoothLookTarget.current.x = THREE.MathUtils.lerp(smoothLookTarget.current.x, translation.x, 0.14);
+      smoothLookTarget.current.y = THREE.MathUtils.lerp(smoothLookTarget.current.y, translation.y + 0.50, 0.06);
+      smoothLookTarget.current.z = THREE.MathUtils.lerp(smoothLookTarget.current.z, translation.z, 0.14);
 
-      const cx =
-        translation.x +
+      const targetCamX =
+        smoothLookTarget.current.x +
         cameraDistance.current * Math.sin(cameraYaw.current) * Math.cos(cameraPitch.current);
-      const cy =
-        translation.y + 0.50 + cameraDistance.current * Math.sin(cameraPitch.current);
-      const cz =
-        translation.z +
+      const targetCamY =
+        smoothLookTarget.current.y + cameraDistance.current * Math.sin(cameraPitch.current);
+      const targetCamZ =
+        smoothLookTarget.current.z +
         cameraDistance.current * Math.cos(cameraYaw.current) * Math.cos(cameraPitch.current);
 
-      camera.position.lerp(new THREE.Vector3(cx, cy, cz), 0.18);
-      camera.lookAt(lookTarget);
+      smoothCamPos.current.x = THREE.MathUtils.lerp(smoothCamPos.current.x || targetCamX, targetCamX, 0.14);
+      smoothCamPos.current.y = THREE.MathUtils.lerp(smoothCamPos.current.y || targetCamY, targetCamY, 0.06);
+      smoothCamPos.current.z = THREE.MathUtils.lerp(smoothCamPos.current.z || targetCamZ, targetCamZ, 0.14);
+
+      camera.position.copy(smoothCamPos.current);
+      camera.lookAt(smoothLookTarget.current);
     }
   });
 
@@ -289,14 +300,14 @@ export default function CharacterController({
         colliders={false}
         position={spawnPoint}
         enabledRotations={[false, false, false]}
-        friction={0.05}
+        friction={0.0}
         restitution={0.0}
         linearDamping={1.2}
         angularDamping={2.0}
         ccd={true}
       >
-        {/* Rounded bottom dome capsule (Radius: 0.20m, Height: 0.82m) to effortlessly step over obstacles */}
-        <CapsuleCollider args={[0.21, 0.20]} position={[0, 0.41, 0]} friction={0.05} />
+        {/* Slim compact capsule (Radius: 0.16m, Height: 0.82m) to effortlessly pass between narrow bridge posts and portals */}
+        <CapsuleCollider args={[0.25, 0.16]} position={[0, 0.41, 0]} friction={0.0} />
 
         {/* 3D Animated Skinned Character Mesh */}
         <group ref={avatarGroupRef} position={[0, 0, 0]}>
