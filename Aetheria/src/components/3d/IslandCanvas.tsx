@@ -27,7 +27,7 @@ export default function IslandCanvas(): React.ReactElement {
   const { cameraMode } = useGameStore();
 
   // Safe spawn position on the central island lawn
-  const spawnPoint: [number, number, number] = islandSceneData.spawnPoint || [0.5, 9.8, -0.5];
+  const spawnPoint: [number, number, number] = islandSceneData.spawnPoint || [-0.5, 11.2, 2.5];
 
   return (
     <Canvas

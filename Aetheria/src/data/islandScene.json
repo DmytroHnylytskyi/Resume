@@ -2,7 +2,7 @@
   "version": "1.0",
   "timestamp": "2026-08-08T15:21:31.981Z",
   "projectName": "Floating Archipelago",
-  "spawnPoint": [0.5, 9.8, -0.5],
+  "spawnPoint": [-0.5, 11.2, 2.5],
   "placedObjects": [
     {
       "id": "e80c0d81-b130-40ea-ba9e-37749a6f57b6",
