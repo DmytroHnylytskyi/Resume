@@ -6,10 +6,10 @@ import * as THREE from 'three';
 import { useGameStore } from '../../store/useGameStore';
 
 /**
- * High-Performance Retro 3D Pixel-Art Screen Pass:
- * - Quantizes the 3D viewport into authentic low-res pixel blocks (3.5px grid).
- * - Applies 4x4 Bayer Dithering matrix for nostalgic PS1/GBA color blending.
- * - Dynamic ON/OFF toggle in HUD without performance penalty.
+ * Enhanced High-Fidelity Retro 3D Pixel-Art Screen Pass:
+ * - Fine-grain pixel density (pixelSize: 2.0) for crisp, readable, stylish pixel art.
+ * - Luminous gamma & shadow lift (pow curve) ensuring islands and character are bright and vibrant.
+ * - Rich color vibrancy & saturation boost.
  */
 export default function PixelArtPass(): React.ReactElement | null {
   const { gl, scene, camera, size } = useThree();
@@ -38,9 +38,9 @@ export default function PixelArtPass(): React.ReactElement | null {
       uniforms: {
         tDiffuse: { value: null },
         resolution: { value: new THREE.Vector2(size.width, size.height) },
-        pixelSize: { value: 3.5 }, // Authentic Retro Pixel density
-        ditherStrength: { value: 0.08 },
-        colorLevels: { value: 48.0 }
+        pixelSize: { value: 2.0 }, // Fine, crisp, high-definition pixel size (not overly chunky)
+        colorLevels: { value: 64.0 },
+        exposure: { value: 1.25 } // Bright, luminous celestial lighting boost
       },
       vertexShader: `
         varying vec2 vUv;
@@ -53,11 +53,11 @@ export default function PixelArtPass(): React.ReactElement | null {
         uniform sampler2D tDiffuse;
         uniform vec2 resolution;
         uniform float pixelSize;
-        uniform float ditherStrength;
         uniform float colorLevels;
+        uniform float exposure;
         varying vec2 vUv;
 
-        // 4x4 Bayer Matrix for authentic retro dithering
+        // Subtle 4x4 Bayer Matrix for authentic retro gradient smoothing
         float bayer4(vec2 uv) {
           int x = int(mod(uv.x, 4.0));
           int y = int(mod(uv.y, 4.0));
@@ -74,17 +74,30 @@ export default function PixelArtPass(): React.ReactElement | null {
           return 0.0;
         }
 
+        // Saturation helper
+        vec3 adjustSaturation(vec3 color, float saturation) {
+          float grey = dot(color, vec3(0.299, 0.587, 0.114));
+          return mix(vec3(grey), color, saturation);
+        }
+
         void main() {
-          // 1. Pixel coordinate grid snapping
+          // 1. Fine Pixel Grid Snapping
           vec2 dxy = pixelSize / resolution;
           vec2 coord = dxy * floor(vUv / dxy) + dxy * 0.5;
 
           vec4 texel = texture2D(tDiffuse, coord);
 
-          // 2. Subtle Dithering & Color Banding for authentic Retro Pixel-Art
-          float dither = bayer4(gl_FragCoord.xy / pixelSize) * ditherStrength;
-          vec3 col = texel.rgb + dither;
+          // 2. Lift Shadows & Brighten (Gamma correction curve)
+          vec3 col = texel.rgb * exposure;
+          col = pow(col, vec3(0.86)); // Lifts dark shadows significantly
+
+          // 3. Fine Dither & Color Quantization (64 color levels)
+          float dither = bayer4(gl_FragCoord.xy / pixelSize) * 0.03;
+          col = col + dither;
           col = floor(col * colorLevels + 0.5) / colorLevels;
+
+          // 4. Vibrant Color Saturation (+18%)
+          col = adjustSaturation(col, 1.18);
 
           gl_FragColor = vec4(clamp(col, 0.0, 1.0), texel.a);
         }
@@ -115,7 +128,7 @@ export default function PixelArtPass(): React.ReactElement | null {
     gl.setRenderTarget(renderTarget);
     gl.render(scene, camera);
 
-    // 2. Apply Retro Pixel-Art Screen Shader directly to Canvas
+    // 2. Apply Bright & Fine Retro Pixel-Art Screen Shader directly to Canvas
     material.uniforms.tDiffuse.value = renderTarget.texture;
     gl.setRenderTarget(null);
     gl.render(postScene, postCamera);

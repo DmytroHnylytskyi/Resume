@@ -4,15 +4,15 @@ import { Cloud, Stars, Environment } from '@react-three/drei';
 import * as THREE from 'three';
 
 /**
- * Optimized Atmospheric celestial cosmos lighting:
- * - High-performance 1024x1024 shadow map with tight frustum and minimal GPU draw passes.
- * - Environment preset "apartment" with background={false} for crisp PBR reflections.
- * - Drifting celestial clouds and lightweight particle motes.
+ * Luminous Atmospheric celestial cosmos lighting:
+ * - Bright ambient and directional lighting ensuring clear visibility.
+ * - Soft sky bounce and warm celestial sun.
+ * - Drifting clouds and particles.
  */
 export default function Atmosphere(): React.ReactElement {
   const particlesRef = useRef<THREE.Points>(null);
 
-  // Lightweight particle motes (90 particles for minimal CPU update cost)
+  // Lightweight particle motes
   const particleCount = 90;
   const particlePositions = useMemo(() => {
     const pos = new Float32Array(particleCount * 3);
@@ -33,22 +33,22 @@ export default function Atmosphere(): React.ReactElement {
 
   return (
     <>
-      {/* 3D Cosmic Space Background & Atmospheric Fog */}
-      <color attach="background" args={['#070d18']} />
-      <fog attach="fog" args={['#070d18', 90, 320]} />
+      {/* Rich Celestial Cosmic Sky & Subtle Distance Fog */}
+      <color attach="background" args={['#0e1930']} />
+      <fog attach="fog" args={['#0e1930', 120, 380]} />
 
-      {/* ── Environment Reflections (background=false) ── */}
+      {/* ── Environment Reflections ── */}
       <Environment preset="apartment" background={false} />
 
-      {/* High-efficiency Ambient Illumination */}
-      <ambientLight intensity={1.4} color="#ffffff" />
+      {/* Bright Primary Ambient Illumination */}
+      <ambientLight intensity={2.2} color="#ffffff" />
 
-      {/* Primary Key Sun Light with Optimized 1024 Shadow Map */}
+      {/* Primary Key Sun Light with Warm Luminous Gold */}
       <directionalLight
         position={[25, 42, 20]}
-        intensity={2.4}
+        intensity={3.4}
         castShadow
-        color="#fff8eb"
+        color="#fffbeb"
         shadow-mapSize={[1024, 1024]}
         shadow-camera-far={100}
         shadow-camera-left={-35}
@@ -58,30 +58,30 @@ export default function Atmosphere(): React.ReactElement {
         shadow-bias={-0.0004}
       />
 
-      {/* Cool Sky Fill Light (No Shadows = 60 FPS) */}
+      {/* Vibrant Cyan Sky Fill Light (Brightens all shadows) */}
       <directionalLight
         position={[-20, 25, -20]}
-        intensity={1.0}
+        intensity={1.8}
         color="#38bdf8"
       />
 
-      {/* Top Ambient Bounce */}
+      {/* Soft Top Sky Bounce */}
       <directionalLight
         position={[0, 30, 0]}
-        intensity={0.6}
-        color="#f1f5f9"
+        intensity={1.2}
+        color="#f8fafc"
       />
 
-      {/* Starfield in high celestial dome */}
-      <Stars radius={95} depth={40} count={2000} factor={3} saturation={1} fade speed={0.8} />
+      {/* High Celestial Dome Starfield */}
+      <Stars radius={95} depth={40} count={2200} factor={3.5} saturation={1} fade speed={0.8} />
 
-      {/* Drifting Clouds beneath the islands */}
+      {/* Drifting Clouds beneath the archipelago */}
       <group position={[0, -14, 0]}>
         <Cloud
-          opacity={0.3}
+          opacity={0.35}
           speed={0.12}
           segments={10}
-          color="#0f172a"
+          color="#1e293b"
         />
       </group>
 
@@ -96,10 +96,10 @@ export default function Atmosphere(): React.ReactElement {
           />
         </bufferGeometry>
         <pointsMaterial
-          size={0.12}
+          size={0.14}
           color="#38bdf8"
           transparent
-          opacity={0.6}
+          opacity={0.7}
           blending={THREE.AdditiveBlending}
           depthWrite={false}
         />
