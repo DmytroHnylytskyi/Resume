@@ -25,7 +25,9 @@ export default function ControlsHUD(): React.ReactElement {
     toastMessage,
     interactionPrompt,
     cameraMode,
-    toggleCameraMode
+    toggleCameraMode,
+    isPixelArt,
+    togglePixelArt
   } = useGameStore();
 
   const handleAudioToggle = () => {
@@ -82,8 +84,20 @@ export default function ControlsHUD(): React.ReactElement {
           </button>
         </div>
 
-        {/* Top Right Controls: Audio Toggle */}
+        {/* Top Right Controls: Pixel Art & Audio Toggle */}
         <div className="top-bar-right">
+          <button
+            className={`nav-shortcut-btn ${isPixelArt ? 'active' : ''}`}
+            onClick={togglePixelArt}
+            title={isPixelArt ? 'Вимкнути Pixel Art режим' : 'Увімкнути Retro 3D Pixel Art'}
+            style={{
+              borderColor: isPixelArt ? '#38bdf8' : 'rgba(255,255,255,0.15)',
+              background: isPixelArt ? 'rgba(56, 189, 248, 0.2)' : 'rgba(15, 23, 42, 0.6)'
+            }}
+          >
+            <span>{isPixelArt ? '👾 Pixel: ON' : '✨ 3D Crisp'}</span>
+          </button>
+
           <button
             className={`audio-toggle-btn ${isAudioMuted ? 'muted' : ''}`}
             onClick={handleAudioToggle}

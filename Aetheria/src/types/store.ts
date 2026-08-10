@@ -19,6 +19,7 @@ export interface GameStoreState {
   cameraMode: CameraMode;
   isRespawning: boolean;
   isAudioMuted: boolean;
+  isPixelArt: boolean;
   toastMessage: string | null;
 }
 
@@ -32,6 +33,7 @@ export interface GameStoreActions {
   toggleCameraMode: () => void;
   setIsRespawning: (respawning: boolean) => void;
   toggleAudio: () => void;
+  togglePixelArt: () => void;
   showToast: (msg: string) => void;
 }
 

@@ -9,6 +9,7 @@ import Atmosphere from './Atmosphere';
 import WorldScene from './WorldScene';
 import CharacterController from './CharacterController';
 import CameraNavigationController from './CameraNavigationController';
+import PixelArtPass from './PixelArtPass';
 import rawIslandSceneData from '../../data/islandScene.json';
 import { IslandSceneData } from '../../types/scene';
 import { useGameStore } from '../../store/useGameStore';
@@ -17,9 +18,9 @@ const islandSceneData = rawIslandSceneData as unknown as IslandSceneData;
 
 /**
  * Ultra-Optimized Full-Screen WebGL Canvas Container:
+ * - Retro 3D Pixel-Art shader pass (Option 1).
  * - DPR calibrated to [1, 1.25] for rock-solid 60-120 FPS on all GPUs.
  * - Interpolated physics loop (timeStep="vary") for zero micro-stutters.
- * - Hardware accelerated high-performance WebGL context.
  */
 export default function IslandCanvas(): React.ReactElement {
   const playerPosRef = useRef<THREE.Vector3 | null>(null);
@@ -50,7 +51,7 @@ export default function IslandCanvas(): React.ReactElement {
         <Atmosphere />
       </Suspense>
 
-      {/* ── High-Speed Rapier 3D Physics Simulation (60+ FPS) ── */}
+      {/* ── High-Speed Rapier 3D Physics Simulation ── */}
       <Physics gravity={[0, -19.6, 0]} timeStep="vary" interpolate={true}>
         {/* Walkable Archipelago Terrain, Bridges, Stairs, and Props */}
         <Suspense fallback={null}>
@@ -75,6 +76,9 @@ export default function IslandCanvas(): React.ReactElement {
           targetPosition={[0, 6, 0]}
         />
       )}
+
+      {/* 👾 3D Retro Pixel-Art Post-Processing Pass */}
+      <PixelArtPass />
     </Canvas>
   );
 }

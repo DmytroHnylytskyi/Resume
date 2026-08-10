@@ -1,11 +1,10 @@
 import { create } from 'zustand';
-import { GameStore } from '../types/store';
+import { GameStore, ModalType, InteractionPrompt, CameraMode } from '../types/store';
 import { ProjectItem } from '../types/portfolio';
-import { ModalType, InteractionPrompt } from '../types/store';
 
 /**
  * Global typed game state for UI modals, player respawn lifecycle,
- * portal teleportation warp VFX, overview camera, and spatial audio settings.
+ * portal teleportation warp VFX, overview camera, audio, and Retro Pixel-Art mode.
  */
 export const useGameStore = create<GameStore>((set, get) => ({
   // Modal & Overlay State
@@ -27,7 +26,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   cancelPortalWarp: () => set({ isWarping: false, activePortal: null }),
 
   // Camera Overview Mode ('third_person' | 'bird_eye')
-  cameraMode: 'third_person',
+  cameraMode: 'third_person' as CameraMode,
   toggleCameraMode: () =>
     set((state) => ({
       cameraMode: state.cameraMode === 'third_person' ? 'bird_eye' : 'third_person'
@@ -40,6 +39,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
   // Audio Configuration
   isAudioMuted: false,
   toggleAudio: () => set((state) => ({ isAudioMuted: !state.isAudioMuted })),
+
+  // 👾 Retro Pixel-Art Mode (Default: true)
+  isPixelArt: true,
+  togglePixelArt: () => set((state) => ({ isPixelArt: !state.isPixelArt })),
 
   // Toast & Notifications
   toastMessage: null as string | null,
