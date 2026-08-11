@@ -79,7 +79,8 @@ export default function CharacterController({
       if (document.pointerLockElement === dom) {
         const sensitivity = 0.0024;
         cameraYaw.current -= e.movementX * sensitivity;
-        cameraPitch.current = Math.max(0.04, Math.min(1.15, cameraPitch.current + e.movementY * sensitivity));
+        // Expanded pitch range (-0.65 to 1.40 rad) allowing player to tilt camera fully UPWARDS at statues and sky
+        cameraPitch.current = Math.max(-0.65, Math.min(1.40, cameraPitch.current + e.movementY * sensitivity));
       }
     };
 

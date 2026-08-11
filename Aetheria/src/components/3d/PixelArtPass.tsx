@@ -6,10 +6,11 @@ import * as THREE from 'three';
 import { useGameStore } from '../../store/useGameStore';
 
 /**
- * Universal High-Performance 3D Retro Pixel-Art Screen Pass:
- * - 100% WebGL universal format (UnsignedByteType) - zero black screen risks.
- * - Safe Orthographic viewing volume (-1 to 1 near/far).
- * - Fine 2.0 pixel grid with rich shadow illumination and vibrant saturation.
+ * Ultra-Crisp High-Density 3D Retro Pixel-Art Screen Pass:
+ * - Fine-grain pixel density (pixelSize: 1.25) for ultra-sharp readability of models, text, and details.
+ * - 96 color quantization levels with 4x4 Bayer dithering for smooth color transitions.
+ * - Luminous shadow illumination (gamma 0.85, exposure 1.35).
+ * - Universal 100% WebGL compatibility.
  */
 export default function PixelArtPass(): React.ReactElement | null {
   const { gl, scene, camera, size } = useThree();
@@ -44,9 +45,9 @@ export default function PixelArtPass(): React.ReactElement | null {
       uniforms: {
         tDiffuse: { value: null },
         resolution: { value: new THREE.Vector2(Math.max(1, size.width), Math.max(1, size.height)) },
-        pixelSize: { value: 2.0 },
-        colorLevels: { value: 64.0 },
-        exposure: { value: 1.45 }
+        pixelSize: { value: 1.25 }, // Ultra-crisp high-density pixel grid
+        colorLevels: { value: 96.0 }, // Rich 96-step quantization
+        exposure: { value: 1.35 }
       },
       vertexShader: `
         varying vec2 vUv;
@@ -63,6 +64,7 @@ export default function PixelArtPass(): React.ReactElement | null {
         uniform float exposure;
         varying vec2 vUv;
 
+        // Subtle 4x4 Bayer Matrix for authentic retro gradient smoothing
         float bayer4(vec2 uv) {
           int x = int(mod(uv.x, 4.0));
           int y = int(mod(uv.y, 4.0));
@@ -85,19 +87,23 @@ export default function PixelArtPass(): React.ReactElement | null {
         }
 
         void main() {
+          // 1. Ultra-fine Pixel Grid Snapping (pixelSize 1.25)
           vec2 dxy = pixelSize / resolution;
           vec2 coord = dxy * floor(vUv / dxy) + dxy * 0.5;
 
           vec4 texel = texture2D(tDiffuse, coord);
 
+          // 2. Luminous Exposure & Shadow Lift (Gamma 0.85)
           vec3 col = texel.rgb * exposure;
-          col = pow(col, vec3(0.80));
+          col = pow(col, vec3(0.85));
 
-          float dither = bayer4(gl_FragCoord.xy / pixelSize) * 0.025;
+          // 3. Subtle Bayer Dither & High-Fidelity 96-Level Quantization
+          float dither = bayer4(gl_FragCoord.xy / pixelSize) * 0.015;
           col = col + dither;
           col = floor(col * colorLevels + 0.5) / colorLevels;
 
-          col = adjustSaturation(col, 1.20);
+          // 4. Enhanced Saturation (+15%)
+          col = adjustSaturation(col, 1.15);
 
           gl_FragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
         }
