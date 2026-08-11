@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF, Html } from '@react-three/drei';
 import { RigidBody, CylinderCollider } from '@react-three/rapier';
@@ -50,11 +50,11 @@ interface StatueEntityProps {
 }
 
 /**
- * Pure & Clean Interactive Statue Entity:
- * - 100% authentic 3D sculpt without any artificial crystals or light pillars.
- * - Solid physics pedestal collider.
- * - Clean close-proximity interaction trigger (2.5m).
- * - Direct mouse click and keyboard [E] modal openers.
+ * Organic Interactive Statue Entity (Option A - Zelda/Elden Ring Style):
+ * - Zero floating shapes or artificial geometric clutter.
+ * - Dynamic surface emissive glow when near (<2.5m) or hovering with mouse.
+ * - Solid physical pedestal collider.
+ * - Clean frosted-glass [E] badge appearing only within close proximity.
  */
 export default function StatueEntity({
   modelPath,
@@ -67,9 +67,10 @@ export default function StatueEntity({
 }: StatueEntityProps): React.ReactElement {
   const { scene } = useGLTF(modelPath);
 
-  const { clonedScene, unitScale } = useMemo(() => {
+  const { clonedScene, unitScale, materialsList } = useMemo(() => {
     const clone = scene.clone(true);
     const uScale = getCategoryHeightScale(modelPath, clone);
+    const mats: THREE.MeshStandardMaterial[] = [];
 
     const wrapper = new THREE.Group();
     wrapper.add(clone);
@@ -95,10 +96,11 @@ export default function StatueEntity({
 
         mesh.userData.originalColor = mat.color ? mat.color.clone() : new THREE.Color(0xffffff);
         mesh.userData.partName = getCleanPartName(mesh);
+        mats.push(mat);
       }
     });
 
-    return { clonedScene: wrapper, unitScale: uScale };
+    return { clonedScene: wrapper, unitScale: uScale, materialsList: mats };
   }, [scene, modelPath]);
 
   const rawScale = Array.isArray(scale) ? scale[0] : (scale || 1);
@@ -124,16 +126,33 @@ export default function StatueEntity({
   }, [colors, clonedScene]);
 
   const [isNear, setIsNear] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const currentGlow = useRef(0);
   const { setActiveModal, setInteractionPrompt, clearInteractionPrompt } = useGameStore();
 
   const info = STATUE_INFO[statueKey] || STATUE_INFO.bio;
+  const themeColor = useMemo(() => new THREE.Color(info.color), [info.color]);
 
   const handleOpen = () => {
     sound.playStatueChime();
     setActiveModal(statueKey);
   };
 
-  useFrame(() => {
+  useFrame((state, delta) => {
+    // ── Smooth Organic Emissive Rim Glow ──
+    const targetGlow = isNear || isHovered ? 0.48 : 0.0;
+    currentGlow.current = THREE.MathUtils.lerp(currentGlow.current, targetGlow, 0.12);
+
+    if (materialsList.length > 0) {
+      for (let i = 0; i < materialsList.length; i++) {
+        const mat = materialsList[i];
+        if (mat && 'emissive' in mat) {
+          mat.emissive.copy(themeColor);
+          mat.emissiveIntensity = currentGlow.current;
+        }
+      }
+    }
+
     if (playerPosRef && playerPosRef.current) {
       const statuePos = new THREE.Vector3(...position);
       const dist = playerPosRef.current.distanceTo(statuePos);
@@ -165,17 +184,23 @@ export default function StatueEntity({
         <CylinderCollider args={[0.7, 0.9]} />
       </RigidBody>
 
-      {/* ── Pure 3D Sculpt Mesh (Zero visual clutter / zero artificial shapes) ── */}
+      {/* ── Authentic 3D Sculpt with Organic Hover/Proximity Emissive Glow ── */}
       <group scale={finalScale}>
         <primitive
           object={clonedScene}
           onClick={handleOpen}
-          onPointerOver={() => (document.body.style.cursor = 'pointer')}
-          onPointerOut={() => (document.body.style.cursor = 'auto')}
+          onPointerOver={() => {
+            setIsHovered(true);
+            document.body.style.cursor = 'pointer';
+          }}
+          onPointerOut={() => {
+            setIsHovered(false);
+            document.body.style.cursor = 'auto';
+          }}
         />
       </group>
 
-      {/* ── Sleek Proximity Badge (Appears ONLY within 2.5m) ── */}
+      {/* ── Minimalist Frosted-Glass [E] Prompt (Only in close 2.5m range) ── */}
       {isNear && (
         <Html
           position={[0, 2.4, 0]}

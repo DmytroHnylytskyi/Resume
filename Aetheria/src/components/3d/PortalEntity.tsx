@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF, Html } from '@react-three/drei';
 import * as THREE from 'three';
@@ -22,10 +22,11 @@ interface PortalEntityProps {
 }
 
 /**
- * Natural & Clean Dimensional Portal Gate:
- * - Pure 3D stone gateway model with authentic geometry (zero artificial flat cyan discs or light pillars).
- * - Close proximity trigger (2.8m).
- * - Smooth teleport on interaction.
+ * Organic Interactive Portal Gate (Option A - Zelda/Elden Ring Style):
+ * - Zero artificial flat shapes or light pillars.
+ * - Dynamic surface emissive glow when approaching (<2.8m) or hovering with mouse.
+ * - Clean close-proximity interaction trigger.
+ * - Direct click, keyboard [E], and walk-in teleport support.
  */
 export default function PortalEntity({
   modelPath,
@@ -38,9 +39,10 @@ export default function PortalEntity({
 }: PortalEntityProps): React.ReactElement {
   const { scene } = useGLTF(modelPath);
 
-  const { clonedScene, unitScale } = useMemo(() => {
+  const { clonedScene, unitScale, materialsList } = useMemo(() => {
     const clone = scene.clone(true);
     const uScale = getCategoryHeightScale(modelPath, clone);
+    const mats: THREE.MeshStandardMaterial[] = [];
 
     const wrapper = new THREE.Group();
     wrapper.add(clone);
@@ -66,10 +68,11 @@ export default function PortalEntity({
 
         mesh.userData.originalColor = mat.color ? mat.color.clone() : new THREE.Color(0xffffff);
         mesh.userData.partName = getCleanPartName(mesh);
+        mats.push(mat);
       }
     });
 
-    return { clonedScene: wrapper, unitScale: uScale };
+    return { clonedScene: wrapper, unitScale: uScale, materialsList: mats };
   }, [scene, modelPath]);
 
   const rawScale = Array.isArray(scale) ? scale[0] : (scale || 1);
@@ -94,9 +97,12 @@ export default function PortalEntity({
   }, [colors, clonedScene]);
 
   const [isNear, setIsNear] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const currentGlow = useRef(0);
   const { setInteractionPrompt, clearInteractionPrompt, triggerPortalWarp } = useGameStore();
 
   const project = developerProfile.projects.find((p) => p.portalKey === portalKey) || developerProfile.projects[0];
+  const themeColor = useMemo(() => new THREE.Color(project.themeColor), [project.themeColor]);
 
   const handleEnter = () => {
     sound.playWarp();
@@ -104,6 +110,20 @@ export default function PortalEntity({
   };
 
   useFrame(() => {
+    // ── Smooth Organic Emissive Rim Glow ──
+    const targetGlow = isNear || isHovered ? 0.52 : 0.0;
+    currentGlow.current = THREE.MathUtils.lerp(currentGlow.current, targetGlow, 0.12);
+
+    if (materialsList.length > 0) {
+      for (let i = 0; i < materialsList.length; i++) {
+        const mat = materialsList[i];
+        if (mat && 'emissive' in mat) {
+          mat.emissive.copy(themeColor);
+          mat.emissiveIntensity = currentGlow.current;
+        }
+      }
+    }
+
     if (playerPosRef && playerPosRef.current) {
       const portalPos = new THREE.Vector3(...position);
       const dist = playerPosRef.current.distanceTo(portalPos);
@@ -130,12 +150,23 @@ export default function PortalEntity({
 
   return (
     <group position={position} rotation={rotation}>
-      {/* ── Authentic 3D Architectural Gateway (Clean & Natural) ── */}
+      {/* ── Authentic 3D Architectural Gateway with Organic Hover/Proximity Emissive Glow ── */}
       <group scale={finalScale}>
-        <primitive object={clonedScene} />
+        <primitive
+          object={clonedScene}
+          onClick={handleEnter}
+          onPointerOver={() => {
+            setIsHovered(true);
+            document.body.style.cursor = 'pointer';
+          }}
+          onPointerOut={() => {
+            setIsHovered(false);
+            document.body.style.cursor = 'auto';
+          }}
+        />
       </group>
 
-      {/* ── Floating Proximity Badge (Only in 2.8m range) ── */}
+      {/* ── Minimalist Frosted-Glass [E] Prompt (Only in close 2.8m range) ── */}
       {isNear && (
         <Html
           position={[0, 2.8, 0]}
