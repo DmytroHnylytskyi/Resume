@@ -19,10 +19,9 @@ interface CharacterControllerProps {
 }
 
 /**
- * Enhanced 3rd-Person Character Controller with Effortless Stair Climbing:
- * - Spherical dome capsule base (Radius: 0.23m) that glides over stone step edges.
- * - Dynamic slope climbing lift (2.0 m/s) when ascending stairs.
- * - Firm ground-snapping (-2.2 m/s) when descending stairs (no floating).
+ * Enhanced 3rd-Person Character Controller:
+ * - Natural grounded physics: zero artificial upward flight/takeoff.
+ * - Smooth spherical dome capsule base (Radius: 0.23m) that glides over stone step ramp hulls.
  * - Steadicam Gimbal camera smoothing (ZERO vibration).
  * - Instant crisp stop on key release.
  */
@@ -183,8 +182,8 @@ export default function CharacterController({
     }
 
     // Grounded detection
-    isGrounded.current = Math.abs(linvel.y) < 1.6;
-    setIsJumpingState(!isGrounded.current && Math.abs(linvel.y) > 2.2);
+    isGrounded.current = Math.abs(linvel.y) < 0.45;
+    setIsJumpingState(!isGrounded.current && Math.abs(linvel.y) > 1.8);
 
     // Direction calculation relative to camera yaw
     const fwdInput = (keys.current.forward ? 1 : 0) - (keys.current.backward ? 1 : 0);
@@ -233,22 +232,13 @@ export default function CharacterController({
         lastStepTime.current = now;
       }
 
-      // ── Dynamic Stair Climbing & Ground-Snapping ──
-      let targetYVel = linvel.y;
-      if (isGrounded.current) {
-        // When ascending stairs/slopes, apply fluid vertical climbing velocity
-        if (linvel.y >= -0.2 && linvel.y < 1.2) {
-          targetYVel = 1.8; // Ascends stone steps effortlessly
-        } else if (linvel.y < -0.2 && linvel.y > -3.5) {
-          // Snaps firmly to descending steps (no air launch)
-          targetYVel = -2.4;
-        }
-      }
-
+      // Pure Natural Physics Movement:
+      // - Horizontal velocity is driven by player input
+      // - Vertical velocity (gravity / sliding along ramps) is naturally handled by physics engine
       rigidBodyRef.current.setLinvel(
         {
           x: currentVelocity.current.x,
-          y: targetYVel,
+          y: linvel.y,
           z: currentVelocity.current.z
         },
         true
