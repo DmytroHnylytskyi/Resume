@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF, Html } from '@react-three/drei';
 import { RigidBody, CylinderCollider } from '@react-three/rapier';
@@ -50,10 +50,11 @@ interface StatueEntityProps {
 }
 
 /**
- * Clean & Elegant Interactive Statue Entity:
- * - Pure 3D sculpture without visual clutter (no giant light cylinders or heavy ground rings).
- * - Subtle floating rotating crystal marker above the head.
- * - Strict close-proximity interaction trigger (2.5m).
+ * Pure & Clean Interactive Statue Entity:
+ * - 100% authentic 3D sculpt without any artificial crystals or light pillars.
+ * - Solid physics pedestal collider.
+ * - Clean close-proximity interaction trigger (2.5m).
+ * - Direct mouse click and keyboard [E] modal openers.
  */
 export default function StatueEntity({
   modelPath,
@@ -122,7 +123,6 @@ export default function StatueEntity({
     });
   }, [colors, clonedScene]);
 
-  const diamondRef = useRef<THREE.Group>(null);
   const [isNear, setIsNear] = useState(false);
   const { setActiveModal, setInteractionPrompt, clearInteractionPrompt } = useGameStore();
 
@@ -133,15 +133,7 @@ export default function StatueEntity({
     setActiveModal(statueKey);
   };
 
-  useFrame((state) => {
-    const t = state.clock.getElapsedTime();
-
-    // Gentle floating & rotating crystal marker
-    if (diamondRef.current) {
-      diamondRef.current.position.y = 3.6 + Math.sin(t * 2.0) * 0.12;
-      diamondRef.current.rotation.y = t * 1.0;
-    }
-
+  useFrame(() => {
     if (playerPosRef && playerPosRef.current) {
       const statuePos = new THREE.Vector3(...position);
       const dist = playerPosRef.current.distanceTo(statuePos);
@@ -173,7 +165,7 @@ export default function StatueEntity({
         <CylinderCollider args={[0.7, 0.9]} />
       </RigidBody>
 
-      {/* ── Pure 3D Sculpt Mesh (No visual clutter / no giant cylinders) ── */}
+      {/* ── Pure 3D Sculpt Mesh (Zero visual clutter / zero artificial shapes) ── */}
       <group scale={finalScale}>
         <primitive
           object={clonedScene}
@@ -183,24 +175,10 @@ export default function StatueEntity({
         />
       </group>
 
-      {/* ── Subtle Floating Crystal Marker ── */}
-      <group ref={diamondRef} position={[0, 3.6, 0]}>
-        <mesh>
-          <octahedronGeometry args={[0.22, 0]} />
-          <meshStandardMaterial
-            color={info.color}
-            emissive={info.color}
-            emissiveIntensity={isNear ? 2.2 : 1.2}
-            roughness={0.15}
-            metalness={0.85}
-          />
-        </mesh>
-      </group>
-
-      {/* ── Floating Proximity Badge (Only in 2.5m range) ── */}
+      {/* ── Sleek Proximity Badge (Appears ONLY within 2.5m) ── */}
       {isNear && (
         <Html
-          position={[0, 2.5, 0]}
+          position={[0, 2.4, 0]}
           center
           distanceFactor={11}
           style={{ pointerEvents: 'auto' }}

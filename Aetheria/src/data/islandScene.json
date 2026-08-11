@@ -183,8 +183,8 @@
     {
       "id": "fcff7691-5d96-445e-959e-2b2206bd4998",
       "modelPath": "/model/statue_social_oracle.glb",
-      "position": [-14.80, 3.70, -18.20],
-      "rotation": [0, 0.45, 0],
+      "position": [-34.20, 9.26, -8.70],
+      "rotation": [0, 1.25, 0],
       "scale": 3.0285478753589383,
       "type": "statue",
       "statueKey": "contacts",
