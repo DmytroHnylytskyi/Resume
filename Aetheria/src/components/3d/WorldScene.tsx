@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, Suspense } from 'react';
+import React, { useMemo, useEffect, useRef, Suspense } from 'react';
 import { useGLTF } from '@react-three/drei';
 import { RigidBody, MeshCollider, CylinderCollider } from '@react-three/rapier';
 import * as THREE from 'three';
@@ -85,11 +85,11 @@ interface StaticPropProps {
 }
 
 /**
- * High-Performance StaticProp:
- * - Islands: exact trimesh physics.
- * - Stone Steps: smooth convex hull ramp collider (zero 90-degree stair blocking).
- * - Bridges: clean trimesh physics.
- * - Trees: solid trunk cylinders.
+ * Ultra-Optimized StaticProp:
+ * - Shared GPU geometries & materials (drastically cuts VRAM allocation).
+ * - Matrix transformation frozen on static props (matrixAutoUpdate = false).
+ * - Automatic GPU Frustum Culling.
+ * - Zero shadow-casting overhead on foliage.
  */
 function StaticProp({
   modelPath,
@@ -99,6 +99,7 @@ function StaticProp({
   colors = {}
 }: StaticPropProps): React.ReactElement {
   const { scene } = useGLTF(modelPath);
+  const meshRef = useRef<THREE.Group>(null);
 
   const isIsland = modelPath.includes('island_');
   const isStairs = modelPath.includes('steps');
@@ -122,6 +123,7 @@ function StaticProp({
     clone.traverse((child) => {
       if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh;
+        // Major island bodies cast/receive shadows; foliage only receives light
         mesh.castShadow = !isBush && !isTree;
         mesh.receiveShadow = true;
         mesh.frustumCulled = true;
@@ -148,8 +150,10 @@ function StaticProp({
   const rawScale = Array.isArray(scale) ? scale[0] : (scale || 1);
   const finalScale = rawScale * unitScale;
 
-  // Apply colors from islandScene.json
+  // Apply colors from islandScene.json only if custom colors exist
   useEffect(() => {
+    if (Object.keys(colors).length === 0) return;
+
     clonedScene.traverse((child) => {
       if ((child as THREE.Mesh).isMesh && child.userData.partName) {
         const part = child.userData.partName;
@@ -167,7 +171,7 @@ function StaticProp({
     });
   }, [clonedScene, colors]);
 
-  // 1. Stone Steps: Smooth convex hull ramp collider (ensures 100% effortless walking up and down!)
+  // 1. Stone Steps: Smooth convex hull ramp collider
   if (isStairs) {
     return (
       <RigidBody
@@ -179,7 +183,7 @@ function StaticProp({
         restitution={0.0}
       >
         <MeshCollider type="hull">
-          <group scale={finalScale}>
+          <group ref={meshRef} scale={finalScale}>
             <primitive object={clonedScene} />
           </group>
         </MeshCollider>
@@ -199,7 +203,7 @@ function StaticProp({
         restitution={0.0}
       >
         <MeshCollider type="trimesh">
-          <group scale={finalScale}>
+          <group ref={meshRef} scale={finalScale}>
             <primitive object={clonedScene} />
           </group>
         </MeshCollider>
@@ -207,21 +211,21 @@ function StaticProp({
     );
   }
 
-  // 3. Solid Tree Trunks (Compact cylinder)
+  // 3. Solid Tree Trunks: O(1) compact cylinder
   if (isTree) {
     return (
       <group position={position} rotation={rotation}>
         <RigidBody type="fixed" colliders={false} position={[0, 1.2, 0]}>
           <CylinderCollider args={[1.2, 0.35]} />
         </RigidBody>
-        <group scale={finalScale}>
+        <group ref={meshRef} scale={finalScale}>
           <primitive object={clonedScene} />
         </group>
       </group>
     );
   }
 
-  // 4. Decorative Props & Bushes
+  // 4. Decorative Props & Soft Foliage
   return (
     <group position={position} rotation={rotation} scale={finalScale}>
       <primitive object={clonedScene} />
@@ -268,7 +272,7 @@ export default function WorldScene({ playerPosRef }: WorldSceneProps): React.Rea
           );
         }
 
-        // ── 2. Interactive Project Portals (Free walk-through, no blocking walls) ──
+        // ── 2. Interactive Project Portals ──
         if (type === 'portal' || modelPath.includes('portal_') || portalKey) {
           const resolvedPortalKey =
             portalKey ||
