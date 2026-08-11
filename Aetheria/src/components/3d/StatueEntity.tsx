@@ -51,6 +51,7 @@ interface StatueEntityProps {
 
 /**
  * Organic Interactive Statue Entity (Option A - Zelda/Elden Ring Style):
+ * - Normal, calibrated proportional sizing (matching the islands and avatar).
  * - Accurate local coordinate centering: sits precisely on its placed location.
  * - Standardized 2.5m interaction trigger distance.
  * - Dynamic surface emissive glow (0.80) when near or hovering with mouse.
@@ -69,11 +70,11 @@ export default function StatueEntity({
 
   const { clonedScene, unitScale, materialsList } = useMemo(() => {
     const clone = scene.clone(true);
+    const uScale = getCategoryHeightScale(modelPath, clone);
     const mats: THREE.MeshStandardMaterial[] = [];
 
     // Calculate natural raw bounding box and center
     const rawBox = new THREE.Box3().setFromObject(clone);
-    const rawSize = rawBox.getSize(new THREE.Vector3());
     const rawCenter = rawBox.getCenter(new THREE.Vector3());
 
     // Center in local space and align bottom to Y=0
@@ -83,10 +84,6 @@ export default function StatueEntity({
 
     const wrapper = new THREE.Group();
     wrapper.add(clone);
-
-    // Target monumental height: 3.2m
-    const targetHeight = 3.2;
-    const uScale = rawSize.y > 0 ? targetHeight / rawSize.y : 1.0;
 
     clone.traverse((child) => {
       if ((child as THREE.Mesh).isMesh) {
