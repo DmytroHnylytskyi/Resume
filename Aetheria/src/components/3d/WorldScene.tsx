@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect, Suspense } from 'react';
 import { useGLTF } from '@react-three/drei';
-import { RigidBody, MeshCollider, CylinderCollider, CuboidCollider } from '@react-three/rapier';
+import { RigidBody, MeshCollider, CylinderCollider } from '@react-three/rapier';
 import * as THREE from 'three';
 import rawIslandSceneData from '../../data/islandScene.json';
 import { IslandSceneData, PlacedObject } from '../../types/scene';
@@ -86,10 +86,10 @@ interface StaticPropProps {
 
 /**
  * High-Performance StaticProp:
- * - Islands and stone steps use exact trimesh physics.
- * - Bridges use clean floor-only physics (no handrail/post invisible wall snagging).
- * - Trees use compact trunk cylinders.
- * - Bushes and decorative props have zero physics overhead.
+ * - Islands: exact trimesh physics.
+ * - Stone Steps: smooth convex hull ramp collider (zero 90-degree stair blocking).
+ * - Bridges: clean trimesh physics.
+ * - Trees: solid trunk cylinders.
  */
 function StaticProp({
   modelPath,
@@ -167,8 +167,8 @@ function StaticProp({
     });
   }, [clonedScene, colors]);
 
-  // 1. Islands & Stone Steps (Exact trimesh collision)
-  if (isIsland || isStairs) {
+  // 1. Stone Steps: Smooth convex hull ramp collider (ensures 100% effortless walking up and down!)
+  if (isStairs) {
     return (
       <RigidBody
         type="fixed"
@@ -178,7 +178,7 @@ function StaticProp({
         friction={0.0}
         restitution={0.0}
       >
-        <MeshCollider type="trimesh">
+        <MeshCollider type="hull">
           <group scale={finalScale}>
             <primitive object={clonedScene} />
           </group>
@@ -187,8 +187,8 @@ function StaticProp({
     );
   }
 
-  // 2. Bridges: Trimesh with zero friction
-  if (isBridge) {
+  // 2. Islands & Bridges: Trimesh collision
+  if (isIsland || isBridge) {
     return (
       <RigidBody
         type="fixed"

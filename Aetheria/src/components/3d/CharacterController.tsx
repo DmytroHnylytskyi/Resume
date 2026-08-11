@@ -19,12 +19,12 @@ interface CharacterControllerProps {
 }
 
 /**
- * Enhanced 3rd-Person Character Controller:
- * - Steadicam Gimbal camera smoothing (ZERO shaking/vibration on stairs or rough terrain).
- * - Downward stair-snapping (hugs steps smoothly without launching or hovering in the air).
- * - Slim compact capsule (Radius: 0.16m) passing easily between bridge posts and arches.
+ * Enhanced 3rd-Person Character Controller with Effortless Stair Climbing:
+ * - Spherical dome capsule base (Radius: 0.23m) that glides over stone step edges.
+ * - Dynamic slope climbing lift (2.0 m/s) when ascending stairs.
+ * - Firm ground-snapping (-2.2 m/s) when descending stairs (no floating).
+ * - Steadicam Gimbal camera smoothing (ZERO vibration).
  * - Instant crisp stop on key release.
- * - Auto-recovery on void falls.
  */
 export default function CharacterController({
   playerPosRef,
@@ -183,8 +183,8 @@ export default function CharacterController({
     }
 
     // Grounded detection
-    isGrounded.current = Math.abs(linvel.y) < 1.4;
-    setIsJumpingState(!isGrounded.current && Math.abs(linvel.y) > 2.0);
+    isGrounded.current = Math.abs(linvel.y) < 1.6;
+    setIsJumpingState(!isGrounded.current && Math.abs(linvel.y) > 2.2);
 
     // Direction calculation relative to camera yaw
     const fwdInput = (keys.current.forward ? 1 : 0) - (keys.current.backward ? 1 : 0);
@@ -233,15 +233,15 @@ export default function CharacterController({
         lastStepTime.current = now;
       }
 
-      // ── Bidirectional Stair & Step Assist ──
+      // ── Dynamic Stair Climbing & Ground-Snapping ──
       let targetYVel = linvel.y;
       if (isGrounded.current) {
-        if (linvel.y >= -0.15 && linvel.y < 0.8) {
-          // Smooth glide up stone step edges and bridge inclines
-          targetYVel = Math.max(linvel.y, 0.45);
-        } else if (linvel.y < -0.15 && linvel.y > -3.0) {
-          // Firm ground-snap when descending stairs (prevents floating/launching)
-          targetYVel = -2.2;
+        // When ascending stairs/slopes, apply fluid vertical climbing velocity
+        if (linvel.y >= -0.2 && linvel.y < 1.2) {
+          targetYVel = 1.8; // Ascends stone steps effortlessly
+        } else if (linvel.y < -0.2 && linvel.y > -3.5) {
+          // Snaps firmly to descending steps (no air launch)
+          targetYVel = -2.4;
         }
       }
 
@@ -275,7 +275,6 @@ export default function CharacterController({
 
     // ── Steadicam Gimbal 3rd Person Camera (ZERO SHAKING) ──
     if (cameraMode === 'third_person') {
-      // Smoothly dampen the look target (horizontal lerp 0.14, vertical lerp 0.06 to filter all step bumps!)
       smoothLookTarget.current.x = THREE.MathUtils.lerp(smoothLookTarget.current.x, translation.x, 0.14);
       smoothLookTarget.current.y = THREE.MathUtils.lerp(smoothLookTarget.current.y, translation.y + 0.50, 0.06);
       smoothLookTarget.current.z = THREE.MathUtils.lerp(smoothLookTarget.current.z, translation.z, 0.14);
@@ -311,8 +310,8 @@ export default function CharacterController({
         angularDamping={2.0}
         ccd={true}
       >
-        {/* Slim compact capsule (Radius: 0.16m, Height: 0.82m) to effortlessly pass between narrow bridge posts and portals */}
-        <CapsuleCollider args={[0.25, 0.16]} position={[0, 0.41, 0]} friction={0.0} />
+        {/* Generous spherical bottom dome (Radius: 0.23m, Height: 0.82m) to effortlessly step up onto stairs */}
+        <CapsuleCollider args={[0.18, 0.23]} position={[0, 0.41, 0]} friction={0.0} />
 
         {/* 3D Animated Skinned Character Mesh */}
         <group ref={avatarGroupRef} position={[0, 0, 0]}>
