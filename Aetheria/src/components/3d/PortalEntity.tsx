@@ -22,11 +22,11 @@ interface PortalEntityProps {
 }
 
 /**
- * Organic Interactive Portal Gate (Option A - Zelda/Elden Ring Style):
- * - Zero artificial flat shapes or light pillars.
- * - Dynamic surface emissive glow when approaching (<2.8m) or hovering with mouse.
- * - Clean close-proximity interaction trigger.
- * - Direct click, keyboard [E], and walk-in teleport support.
+ * Organic Interactive Portal Gate (Zelda/Elden Ring Style):
+ * - Geometric local centering for precise world placement.
+ * - Standardized MeshStandardMaterial: guarantees vibrant emissive glow on all portals (including MiniLMS).
+ * - Smooth emissive highlight on proximity (<2.8m) and hover.
+ * - Close proximity [E] prompt and direct teleport.
  */
 export default function PortalEntity({
   modelPath,
@@ -47,28 +47,40 @@ export default function PortalEntity({
     const wrapper = new THREE.Group();
     wrapper.add(clone);
 
-    // Snap bottom of bounding box to Y=0
-    const box = new THREE.Box3().setFromObject(wrapper);
+    // Center X & Z and snap bottom Y directly to 0
+    const box = new THREE.Box3().setFromObject(clone);
     if (!box.isEmpty()) {
+      const center = box.getCenter(new THREE.Vector3());
+      clone.position.x -= center.x;
+      clone.position.z -= center.z;
       clone.position.y -= box.min.y;
     }
 
     clone.traverse((child) => {
-      if ((child as THREE.Mesh).isMesh && (child as THREE.Mesh).material) {
+      if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh;
-        if (Array.isArray(mesh.material)) {
-          mesh.material = mesh.material.map((m) => m.clone());
-        } else {
-          mesh.material = mesh.material.clone();
-        }
-
-        const mat = (Array.isArray(mesh.material) ? mesh.material[0] : mesh.material) as THREE.MeshStandardMaterial;
         mesh.castShadow = true;
         mesh.receiveShadow = true;
 
-        mesh.userData.originalColor = mat.color ? mat.color.clone() : new THREE.Color(0xffffff);
+        // Upgrade any material to MeshStandardMaterial to guarantee emissive lighting
+        const origMat = (Array.isArray(mesh.material) ? mesh.material[0] : mesh.material) as THREE.Material;
+        let stdMat: THREE.MeshStandardMaterial;
+
+        if (origMat instanceof THREE.MeshStandardMaterial) {
+          stdMat = origMat.clone();
+        } else {
+          stdMat = new THREE.MeshStandardMaterial({
+            color: (origMat as THREE.MeshBasicMaterial).color ? (origMat as THREE.MeshBasicMaterial).color.clone() : new THREE.Color(0xffffff),
+            map: (origMat as THREE.MeshBasicMaterial).map || null,
+            roughness: 0.5,
+            metalness: 0.2
+          });
+        }
+
+        mesh.material = stdMat;
+        mesh.userData.originalColor = stdMat.color.clone();
         mesh.userData.partName = getCleanPartName(mesh);
-        mats.push(mat);
+        mats.push(stdMat);
       }
     });
 
@@ -82,14 +94,11 @@ export default function PortalEntity({
   useEffect(() => {
     clonedScene.traverse((child) => {
       if ((child as THREE.Mesh).isMesh && child.userData.partName) {
-        const mesh = child as THREE.Mesh;
-        const mat = (Array.isArray(mesh.material) ? mesh.material[0] : mesh.material) as THREE.MeshStandardMaterial;
-        if (mat && mat.color) {
-          const customColor = colors[child.userData.partName];
-          if (customColor) {
-            mat.color.set(customColor);
-          } else if (mesh.userData.originalColor) {
-            mat.color.copy(mesh.userData.originalColor);
+        const part = child.userData.partName;
+        if (colors[part]) {
+          const mesh = child as THREE.Mesh;
+          if (mesh.material && (mesh.material as THREE.MeshStandardMaterial).color) {
+            (mesh.material as THREE.MeshStandardMaterial).color.set(colors[part]);
           }
         }
       }
@@ -111,13 +120,13 @@ export default function PortalEntity({
 
   useFrame(() => {
     // ── Smooth Organic Emissive Rim Glow ──
-    const targetGlow = isNear || isHovered ? 0.52 : 0.0;
-    currentGlow.current = THREE.MathUtils.lerp(currentGlow.current, targetGlow, 0.12);
+    const targetGlow = isNear || isHovered ? 0.80 : 0.0;
+    currentGlow.current = THREE.MathUtils.lerp(currentGlow.current, targetGlow, 0.14);
 
     if (materialsList.length > 0) {
       for (let i = 0; i < materialsList.length; i++) {
         const mat = materialsList[i];
-        if (mat && 'emissive' in mat) {
+        if (mat) {
           mat.emissive.copy(themeColor);
           mat.emissiveIntensity = currentGlow.current;
         }
