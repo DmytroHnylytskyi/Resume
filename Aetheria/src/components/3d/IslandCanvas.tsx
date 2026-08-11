@@ -3,7 +3,6 @@
 import React, { useRef, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Physics } from '@react-three/rapier';
-import { AdaptiveDpr } from '@react-three/drei';
 import * as THREE from 'three';
 import Atmosphere from './Atmosphere';
 import WorldScene from './WorldScene';
@@ -18,8 +17,8 @@ const islandSceneData = rawIslandSceneData as unknown as IslandSceneData;
 
 /**
  * Ultra-Optimized Full-Screen WebGL Canvas Container:
- * - Retro 3D Pixel-Art shader pass (Option 1).
- * - DPR calibrated to [1, 1.25] for rock-solid 60-120 FPS on all GPUs.
+ * - Retro 3D Pixel-Art shader pass.
+ * - Hardware accelerated high-performance WebGL context.
  * - Interpolated physics loop (timeStep="vary") for zero micro-stutters.
  */
 export default function IslandCanvas(): React.ReactElement {
@@ -44,8 +43,6 @@ export default function IslandCanvas(): React.ReactElement {
         toneMappingExposure: 1.15
       }}
     >
-      <AdaptiveDpr pixelated />
-
       {/* Atmosphere & Celestial Lighting */}
       <Suspense fallback={null}>
         <Atmosphere />

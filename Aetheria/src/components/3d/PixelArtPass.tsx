@@ -6,47 +6,53 @@ import * as THREE from 'three';
 import { useGameStore } from '../../store/useGameStore';
 
 /**
- * Enhanced High-Fidelity Retro 3D Pixel-Art Screen Pass:
- * - Fine-grain pixel density (pixelSize: 2.0) for crisp, readable, stylish pixel art.
- * - Extra-luminous shadow lift (pow 0.80) ensuring complete clarity in all areas.
- * - Vibrant color saturation and golden exposure boost.
+ * Universal High-Performance 3D Retro Pixel-Art Screen Pass:
+ * - 100% WebGL universal format (UnsignedByteType) - zero black screen risks.
+ * - Safe Orthographic viewing volume (-1 to 1 near/far).
+ * - Fine 2.0 pixel grid with rich shadow illumination and vibrant saturation.
  */
 export default function PixelArtPass(): React.ReactElement | null {
   const { gl, scene, camera, size } = useThree();
   const { isPixelArt } = useGameStore();
 
   const renderTarget = useMemo(() => {
-    const target = new THREE.WebGLRenderTarget(size.width, size.height, {
+    const width = Math.max(1, size.width);
+    const height = Math.max(1, size.height);
+    const target = new THREE.WebGLRenderTarget(width, height, {
       minFilter: THREE.NearestFilter,
       magFilter: THREE.NearestFilter,
       format: THREE.RGBAFormat,
-      type: THREE.HalfFloatType
+      type: THREE.UnsignedByteType,
+      depthBuffer: true,
+      stencilBuffer: false
     });
     return target;
-  }, []);
+  }, [size.width, size.height]);
 
   useEffect(() => {
-    renderTarget.setSize(size.width, size.height);
+    if (size.width > 0 && size.height > 0) {
+      renderTarget.setSize(size.width, size.height);
+    }
   }, [size, renderTarget]);
 
   // Fullscreen Quad Scene & Shader Material
   const { postScene, postCamera, material } = useMemo(() => {
     const pScene = new THREE.Scene();
-    const pCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    const pCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1);
 
     const mat = new THREE.ShaderMaterial({
       uniforms: {
         tDiffuse: { value: null },
-        resolution: { value: new THREE.Vector2(size.width, size.height) },
-        pixelSize: { value: 2.0 }, // Fine, crisp pixel density
+        resolution: { value: new THREE.Vector2(Math.max(1, size.width), Math.max(1, size.height)) },
+        pixelSize: { value: 2.0 },
         colorLevels: { value: 64.0 },
-        exposure: { value: 1.45 } // Extra luminous brightness boost
+        exposure: { value: 1.45 }
       },
       vertexShader: `
         varying vec2 vUv;
         void main() {
           vUv = uv;
-          gl_Position = vec4(position, 1.0);
+          gl_Position = vec4(position.xy, 0.0, 1.0);
         }
       `,
       fragmentShader: `
@@ -57,7 +63,6 @@ export default function PixelArtPass(): React.ReactElement | null {
         uniform float exposure;
         varying vec2 vUv;
 
-        // Subtle 4x4 Bayer Matrix for authentic retro gradient smoothing
         float bayer4(vec2 uv) {
           int x = int(mod(uv.x, 4.0));
           int y = int(mod(uv.y, 4.0));
@@ -74,32 +79,27 @@ export default function PixelArtPass(): React.ReactElement | null {
           return 0.0;
         }
 
-        // Saturation helper
         vec3 adjustSaturation(vec3 color, float saturation) {
           float grey = dot(color, vec3(0.299, 0.587, 0.114));
           return mix(vec3(grey), color, saturation);
         }
 
         void main() {
-          // 1. Fine Pixel Grid Snapping
           vec2 dxy = pixelSize / resolution;
           vec2 coord = dxy * floor(vUv / dxy) + dxy * 0.5;
 
           vec4 texel = texture2D(tDiffuse, coord);
 
-          // 2. Extra Shadow Lift & Luminous Exposure (Gamma 0.80)
           vec3 col = texel.rgb * exposure;
-          col = pow(col, vec3(0.80)); // Significantly lifts and illuminates dark shadows
+          col = pow(col, vec3(0.80));
 
-          // 3. Fine Dither & Color Quantization (64 color levels)
           float dither = bayer4(gl_FragCoord.xy / pixelSize) * 0.025;
           col = col + dither;
           col = floor(col * colorLevels + 0.5) / colorLevels;
 
-          // 4. Vibrant Color Saturation (+20%)
           col = adjustSaturation(col, 1.20);
 
-          gl_FragColor = vec4(clamp(col, 0.0, 1.0), texel.a);
+          gl_FragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
         }
       `,
       depthWrite: false,
@@ -113,12 +113,13 @@ export default function PixelArtPass(): React.ReactElement | null {
   }, []);
 
   useEffect(() => {
-    material.uniforms.resolution.value.set(size.width, size.height);
+    if (material && size.width > 0 && size.height > 0) {
+      material.uniforms.resolution.value.set(size.width, size.height);
+    }
   }, [size, material]);
 
   useFrame(() => {
     if (!isPixelArt) {
-      // Standard Crisp 3D Render
       gl.setRenderTarget(null);
       gl.render(scene, camera);
       return;
@@ -128,7 +129,7 @@ export default function PixelArtPass(): React.ReactElement | null {
     gl.setRenderTarget(renderTarget);
     gl.render(scene, camera);
 
-    // 2. Apply Bright & Fine Retro Pixel-Art Screen Shader directly to Canvas
+    // 2. Render Pixel Art Pass directly to Canvas
     material.uniforms.tDiffuse.value = renderTarget.texture;
     gl.setRenderTarget(null);
     gl.render(postScene, postCamera);
