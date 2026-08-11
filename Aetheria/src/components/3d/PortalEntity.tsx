@@ -22,11 +22,11 @@ interface PortalEntityProps {
 }
 
 /**
- * Organic Interactive Portal Gate (Zelda/Elden Ring Style):
- * - Geometric local centering for precise world placement.
+ * Organic Interactive Portal Gate (Option A - Zelda/Elden Ring Style):
+ * - Standardized 2.5m interaction trigger distance.
  * - Standardized MeshStandardMaterial: guarantees vibrant emissive glow on all portals (including MiniLMS).
- * - Smooth emissive highlight on proximity (<2.8m) and hover.
- * - Close proximity [E] prompt and direct teleport.
+ * - Smooth emissive highlight on proximity and hover.
+ * - Direct click, keyboard [E], and walk-in teleport support.
  */
 export default function PortalEntity({
   modelPath,
@@ -62,7 +62,6 @@ export default function PortalEntity({
         mesh.castShadow = true;
         mesh.receiveShadow = true;
 
-        // Upgrade any material to MeshStandardMaterial to guarantee emissive lighting
         const origMat = (Array.isArray(mesh.material) ? mesh.material[0] : mesh.material) as THREE.Material;
         let stdMat: THREE.MeshStandardMaterial;
 
@@ -137,8 +136,8 @@ export default function PortalEntity({
       const portalPos = new THREE.Vector3(...position);
       const dist = playerPosRef.current.distanceTo(portalPos);
 
-      // Strict close proximity: 2.8m
-      if (dist < 2.8) {
+      // Standardized close proximity: 2.5m EXACTLY
+      if (dist < 2.5) {
         if (!isNear) {
           setIsNear(true);
           setInteractionPrompt({
@@ -175,7 +174,7 @@ export default function PortalEntity({
         />
       </group>
 
-      {/* ── Minimalist Frosted-Glass [E] Prompt (Only in close 2.8m range) ── */}
+      {/* ── Minimalist Frosted-Glass [E] Prompt (Only in close 2.5m range) ── */}
       {isNear && (
         <Html
           position={[0, 2.8, 0]}

@@ -50,11 +50,11 @@ interface StatueEntityProps {
 }
 
 /**
- * Organic Interactive Statue Entity (Zelda/Elden Ring Style):
- * - Geometric local centering: guarantees model sits precisely on placed coordinates.
- * - Vibrant surface emissive glow (0.80) when near (<2.5m) or hovering with mouse.
+ * Organic Interactive Statue Entity (Option A - Zelda/Elden Ring Style):
+ * - Accurate local coordinate centering: sits precisely on its placed location.
+ * - Standardized 2.5m interaction trigger distance.
+ * - Dynamic surface emissive glow (0.80) when near or hovering with mouse.
  * - Solid physical pedestal collider.
- * - Clean close-proximity [E] prompt.
  */
 export default function StatueEntity({
   modelPath,
@@ -69,20 +69,24 @@ export default function StatueEntity({
 
   const { clonedScene, unitScale, materialsList } = useMemo(() => {
     const clone = scene.clone(true);
-    const uScale = getCategoryHeightScale(modelPath, clone);
     const mats: THREE.MeshStandardMaterial[] = [];
+
+    // Calculate natural raw bounding box and center
+    const rawBox = new THREE.Box3().setFromObject(clone);
+    const rawSize = rawBox.getSize(new THREE.Vector3());
+    const rawCenter = rawBox.getCenter(new THREE.Vector3());
+
+    // Center in local space and align bottom to Y=0
+    clone.position.x = -rawCenter.x;
+    clone.position.z = -rawCenter.z;
+    clone.position.y = -rawBox.min.y;
 
     const wrapper = new THREE.Group();
     wrapper.add(clone);
 
-    // Center X & Z and snap bottom Y directly to 0
-    const box = new THREE.Box3().setFromObject(clone);
-    if (!box.isEmpty()) {
-      const center = box.getCenter(new THREE.Vector3());
-      clone.position.x -= center.x;
-      clone.position.z -= center.z;
-      clone.position.y -= box.min.y;
-    }
+    // Target monumental height: 3.2m
+    const targetHeight = 3.2;
+    const uScale = rawSize.y > 0 ? targetHeight / rawSize.y : 1.0;
 
     clone.traverse((child) => {
       if ((child as THREE.Mesh).isMesh) {
@@ -90,7 +94,6 @@ export default function StatueEntity({
         mesh.castShadow = true;
         mesh.receiveShadow = true;
 
-        // Upgrade any material to MeshStandardMaterial to guarantee emissive lighting
         const origMat = (Array.isArray(mesh.material) ? mesh.material[0] : mesh.material) as THREE.Material;
         let stdMat: THREE.MeshStandardMaterial;
 
@@ -165,7 +168,7 @@ export default function StatueEntity({
       const statuePos = new THREE.Vector3(...position);
       const dist = playerPosRef.current.distanceTo(statuePos);
 
-      // Strict close proximity: 2.5m
+      // Standardized close proximity: 2.5m EXACTLY
       if (dist < 2.5) {
         if (!isNear) {
           setIsNear(true);

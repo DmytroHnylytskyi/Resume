@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect, useRef, Suspense } from 'react';
 import { useGLTF } from '@react-three/drei';
-import { RigidBody, MeshCollider, CylinderCollider } from '@react-three/rapier';
+import { RigidBody, MeshCollider, CylinderCollider, CuboidCollider } from '@react-three/rapier';
 import * as THREE from 'three';
 import rawIslandSceneData from '../../data/islandScene.json';
 import { IslandSceneData, PlacedObject } from '../../types/scene';
@@ -31,7 +31,7 @@ export function getCategoryHeightScale(modelPath: string, scene: THREE.Object3D)
   const unitScale = getUnitScale(scene);
   const file = (modelPath || '').toLowerCase();
 
-  // Architectural structural items -> keep 1:1 in meters
+  // Architectural structural items & statues -> keep 1:1 in meters
   if (
     file.includes('wall') ||
     file.includes('door') ||
@@ -39,7 +39,8 @@ export function getCategoryHeightScale(modelPath: string, scene: THREE.Object3D)
     file.includes('floor') ||
     file.includes('roof') ||
     file.includes('gothic') ||
-    file.includes('house_')
+    file.includes('house_') ||
+    file.includes('statue_')
   ) {
     return unitScale;
   }
@@ -86,10 +87,10 @@ interface StaticPropProps {
 
 /**
  * Ultra-Optimized StaticProp:
- * - Shared GPU geometries & materials (drastically cuts VRAM allocation).
- * - Matrix transformation frozen on static props (matrixAutoUpdate = false).
- * - Automatic GPU Frustum Culling.
- * - Zero shadow-casting overhead on foliage.
+ * - Islands: exact trimesh physics.
+ * - Stone Steps: smooth convex hull ramp collider.
+ * - Bridges: trimesh with invisible side safety guide rails (prevents falling off narrow edges).
+ * - Trees: solid trunk cylinders.
  */
 function StaticProp({
   modelPath,
@@ -123,7 +124,6 @@ function StaticProp({
     clone.traverse((child) => {
       if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh;
-        // Major island bodies cast/receive shadows; foliage only receives light
         mesh.castShadow = !isBush && !isTree;
         mesh.receiveShadow = true;
         mesh.frustumCulled = true;
@@ -150,7 +150,7 @@ function StaticProp({
   const rawScale = Array.isArray(scale) ? scale[0] : (scale || 1);
   const finalScale = rawScale * unitScale;
 
-  // Apply colors from islandScene.json only if custom colors exist
+  // Apply colors from islandScene.json
   useEffect(() => {
     if (Object.keys(colors).length === 0) return;
 
@@ -191,8 +191,31 @@ function StaticProp({
     );
   }
 
-  // 2. Islands & Bridges: Trimesh collision
-  if (isIsland || isBridge) {
+  // 2. Bridges: Trimesh with side safety guide rails (prevents falling off narrow edges)
+  if (isBridge) {
+    return (
+      <group position={position} rotation={rotation}>
+        <RigidBody
+          type="fixed"
+          colliders={false}
+          friction={0.0}
+          restitution={0.0}
+        >
+          <MeshCollider type="trimesh">
+            <group ref={meshRef} scale={finalScale}>
+              <primitive object={clonedScene} />
+            </group>
+          </MeshCollider>
+          {/* Invisible Side Safety Guide Rails (Left & Right) */}
+          <CuboidCollider args={[0.08, 0.6, 2.2]} position={[-0.75, 0.6, 0]} />
+          <CuboidCollider args={[0.08, 0.6, 2.2]} position={[0.75, 0.6, 0]} />
+        </RigidBody>
+      </group>
+    );
+  }
+
+  // 3. Islands: Exact trimesh collision
+  if (isIsland) {
     return (
       <RigidBody
         type="fixed"
@@ -211,7 +234,7 @@ function StaticProp({
     );
   }
 
-  // 3. Solid Tree Trunks: O(1) compact cylinder
+  // 4. Solid Tree Trunks
   if (isTree) {
     return (
       <group position={position} rotation={rotation}>
@@ -225,7 +248,7 @@ function StaticProp({
     );
   }
 
-  // 4. Decorative Props & Soft Foliage
+  // 5. Decorative Props & Soft Foliage
   return (
     <group position={position} rotation={rotation} scale={finalScale}>
       <primitive object={clonedScene} />

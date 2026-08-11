@@ -11,7 +11,7 @@ import AnimatedCharacter from './AnimatedCharacter';
 // Calibrated, smooth, natural locomotion speeds
 const MOVE_SPEED = 2.2;
 const SPRINT_SPEED = 3.8;
-const JUMP_FORCE = 5.0;
+const JUMP_FORCE = 5.2;
 
 interface CharacterControllerProps {
   playerPosRef: React.MutableRefObject<THREE.Vector3 | null>;
@@ -19,10 +19,10 @@ interface CharacterControllerProps {
 }
 
 /**
- * Premium Butter-Smooth 3rd-Person Character Controller:
- * - Weighted, silky-smooth mouse look (zero camera twitching or snapping).
- * - Anti-slip slope lock: character firmly stays in place on slopes and edges without sliding.
- * - Gentle, controlled walking speed.
+ * Premium 3rd-Person Character Controller:
+ * - Anti-Air-Jump Lock: 450ms cooldown strictly preventing jump spam flight / double jumping.
+ * - Solid ground detection & natural jump arc.
+ * - Anti-slip slope lock: character firmly stays in place on slopes and edges.
  * - Steadicam Gimbal camera smoothing with full vertical pitch range.
  * - Instant crisp stop on key release.
  */
@@ -64,6 +64,7 @@ export default function CharacterController({
   const currentVelocity = useRef(new THREE.Vector3());
 
   const lastStepTime = useRef(0);
+  const lastJumpTime = useRef(0);
   const isGrounded = useRef(true);
 
   const { isRespawning, setIsRespawning, interactionPrompt, isWarping, cameraMode, activeModal } = useGameStore();
@@ -80,7 +81,7 @@ export default function CharacterController({
 
     const handleMouseMove = (e: MouseEvent) => {
       if (document.pointerLockElement === dom) {
-        const sensitivity = 0.0014; // Soft, non-twitchy sensitivity
+        const sensitivity = 0.0014;
         targetYaw.current -= e.movementX * sensitivity;
         targetPitch.current = Math.max(-0.65, Math.min(1.35, targetPitch.current + e.movementY * sensitivity));
       }
@@ -153,6 +154,7 @@ export default function CharacterController({
 
     const translation = rigidBodyRef.current.translation();
     const linvel = rigidBodyRef.current.linvel();
+    const now = performance.now();
 
     if (!Number.isFinite(translation.x) || !Number.isFinite(translation.y) || !Number.isFinite(translation.z)) {
       rigidBodyRef.current.setTranslation({ x: spawnPoint[0], y: spawnPoint[1], z: spawnPoint[2] }, true);
@@ -165,7 +167,7 @@ export default function CharacterController({
       playerPosRef.current = new THREE.Vector3(translation.x, translation.y, translation.z);
     }
 
-    // Smooth weighted camera rotation interpolation (no sudden snapping)
+    // Smooth weighted camera rotation interpolation
     cameraYaw.current = THREE.MathUtils.lerp(cameraYaw.current, targetYaw.current, 0.22);
     cameraPitch.current = THREE.MathUtils.lerp(cameraPitch.current, targetPitch.current, 0.22);
 
@@ -188,9 +190,10 @@ export default function CharacterController({
       return;
     }
 
-    // Grounded detection
-    isGrounded.current = Math.abs(linvel.y) < 0.35;
-    setIsJumpingState(!isGrounded.current && Math.abs(linvel.y) > 1.4);
+    // Strict Grounded Detection (Cooldown prevents apex air jumps)
+    const timeSinceLastJump = now - lastJumpTime.current;
+    isGrounded.current = Math.abs(linvel.y) < 0.25 && timeSinceLastJump > 450;
+    setIsJumpingState(!isGrounded.current && timeSinceLastJump < 650);
 
     // Direction calculation relative to camera yaw
     const fwdInput = (keys.current.forward ? 1 : 0) - (keys.current.backward ? 1 : 0);
@@ -218,7 +221,7 @@ export default function CharacterController({
       const speed = keys.current.shift ? SPRINT_SPEED : MOVE_SPEED;
       const targetVel = moveDirection.multiplyScalar(speed);
 
-      // Frame-rate independent smooth acceleration (no snapping)
+      // Frame-rate independent smooth acceleration
       const smoothFactor = 1.0 - Math.exp(-10.0 * Math.min(delta, 0.1));
       currentVelocity.current.lerp(targetVel, smoothFactor);
 
@@ -233,7 +236,6 @@ export default function CharacterController({
       }
 
       // Footstep sound timing
-      const now = performance.now();
       const stepInterval = keys.current.shift ? 320 : 450;
       if (isGrounded.current && now - lastStepTime.current > stepInterval) {
         sound.playFootstep();
@@ -251,7 +253,6 @@ export default function CharacterController({
       );
     } else {
       // ── Anti-Slip Slope Lock ──
-      // Firmly zeroes horizontal velocity so player NEVER slips down hills/edges while standing still
       currentVelocity.current.set(0, 0, 0);
       rigidBodyRef.current.setLinvel(
         {
@@ -263,10 +264,13 @@ export default function CharacterController({
       );
     }
 
-    // Jump trigger
-    if (keys.current.jump && isGrounded.current) {
+    // ── Safe Jump Trigger with 450ms Cooldown (NO AIR FLYING) ──
+    if (keys.current.jump && isGrounded.current && timeSinceLastJump > 450) {
       rigidBodyRef.current.setLinvel({ x: linvel.x, y: JUMP_FORCE, z: linvel.z }, true);
       sound.playJump();
+      lastJumpTime.current = now;
+      isGrounded.current = false;
+      setIsJumpingState(true);
       keys.current.jump = false;
     }
 
@@ -303,7 +307,7 @@ export default function CharacterController({
         enabledRotations={[false, false, false]}
         friction={0.8}
         restitution={0.0}
-        linearDamping={6.0}
+        linearDamping={4.0}
         angularDamping={2.0}
         ccd={true}
       >

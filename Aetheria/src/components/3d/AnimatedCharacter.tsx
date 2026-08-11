@@ -11,17 +11,13 @@ interface AnimatedCharacterProps {
   isJumping: boolean;
 }
 
-/**
- * Scaled avatar height (0.82m) to pass freely under bridge arches,
- * tree branches, and through stone door portals.
- */
 const TARGET_AVATAR_HEIGHT = 0.82;
 
 /**
- * Skeletal Animated Character Component (Mixamo Arissa):
- * - Calibrated 0.82m height to pass under bridge arches and match world proportions.
- * - Exact ground level alignment: boots rest right ON TOP of the floor without sinking.
- * - Synchronized stride speeds for realistic locomotion.
+ * Enhanced Skeletal Animated Character Component (Mixamo Arissa):
+ * - Smooth animation blending between Idle, Walk, Run, and Jump.
+ * - Clean non-stuttering jump animation playback with instant landing recovery.
+ * - Ground-level boot alignment.
  */
 export default function AnimatedCharacter({
   isMoving,
@@ -45,7 +41,6 @@ export default function AnimatedCharacter({
     const size = box.getSize(new THREE.Vector3());
     const rawHeight = size.y;
 
-    // Normalized scale to target height (0.82m)
     const normalizedScale = rawHeight > 0 ? TARGET_AVATAR_HEIGHT / rawHeight : 0.005;
 
     // Snap feet of character directly to ground level Y=0
@@ -112,20 +107,23 @@ export default function AnimatedCharacter({
 
   const { actions } = useAnimations(animations, groupRef);
 
-  // ── 3. Animation Cadence & Stride Speed ──
+  // ── 3. Animation Cadence & Speeds ──
   useEffect(() => {
     if (actions['Walk']) {
-      actions['Walk'].timeScale = 1.30;
+      actions['Walk'].timeScale = 1.15;
     }
     if (actions['Run']) {
-      actions['Run'].timeScale = 1.15;
+      actions['Run'].timeScale = 1.10;
     }
     if (actions['Idle']) {
       actions['Idle'].timeScale = 1.0;
     }
+    if (actions['Jump']) {
+      actions['Jump'].timeScale = 1.25;
+    }
   }, [actions]);
 
-  // ── 4. Animation State Machine & Cross-Fade ──
+  // ── 4. Robust Animation State Machine ──
   const currentActionRef = useRef<string>('Idle');
 
   useEffect(() => {
@@ -141,11 +139,11 @@ export default function AnimatedCharacter({
       const nextAction = actions[target];
 
       if (prevAction) {
-        prevAction.fadeOut(0.18);
+        prevAction.fadeOut(0.15);
       }
 
       if (nextAction) {
-        nextAction.reset().fadeIn(0.18).play();
+        nextAction.reset().fadeIn(0.15).play();
         if (target === 'Jump') {
           nextAction.setLoop(THREE.LoopOnce, 1);
           nextAction.clampWhenFinished = true;
@@ -158,21 +156,8 @@ export default function AnimatedCharacter({
     }
   }, [isMoving, isSprinting, isJumping, actions]);
 
-  // Initial Idle playback
-  useEffect(() => {
-    if (actions['Idle']) {
-      actions['Idle'].reset().fadeIn(0.2).play();
-    }
-  }, [actions]);
-
   return (
-    // Clean position [0, 0, 0] ensures boots rest right on the top plane of the floor
-    <group
-      ref={groupRef}
-      dispose={null}
-      scale={[autoScale, autoScale, autoScale]}
-      position={[0, 0, 0]}
-    >
+    <group ref={groupRef} scale={autoScale} position={[0, 0, 0]}>
       <primitive object={characterModel} />
     </group>
   );
