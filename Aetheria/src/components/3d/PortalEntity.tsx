@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import { useGameStore } from '../../store/useGameStore';
 import { developerProfile } from '../../data/resumeData';
 import { sound } from '../../utils/audio';
-import { ExternalLink, Compass } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import { PortalKey } from '../../types/scene';
 import { getCategoryHeightScale, getCleanPartName } from './WorldScene';
 
@@ -22,11 +22,10 @@ interface PortalEntityProps {
 }
 
 /**
- * Enhanced Dimensional Portal Gate:
- * - Swirling animated energetic vortex disk inside the archway.
- * - Celestial vertical light column visible from across the world.
- * - Dynamic thematic point light illuminating the stone gateway.
- * - Free walk-through physics with proximity HUD prompt and direct teleport.
+ * Clean & Uncluttered Dimensional Portal Gate:
+ * - Pure 3D stone gateway with soft inner vortex (no giant light cylinders).
+ * - Strict close proximity trigger (2.8m).
+ * - Smooth teleport on interaction.
  */
 export default function PortalEntity({
   modelPath,
@@ -95,8 +94,6 @@ export default function PortalEntity({
   }, [colors, clonedScene]);
 
   const vortexRef = useRef<THREE.Mesh>(null);
-  const ringRef = useRef<THREE.Mesh>(null);
-  const pillarRef = useRef<THREE.Mesh>(null);
   const [isNear, setIsNear] = useState(false);
   const { setInteractionPrompt, clearInteractionPrompt, triggerPortalWarp } = useGameStore();
 
@@ -111,22 +108,15 @@ export default function PortalEntity({
     const t = state.clock.getElapsedTime();
 
     if (vortexRef.current) {
-      vortexRef.current.rotation.z = t * 1.5;
-      vortexRef.current.scale.setScalar(1 + Math.sin(t * 3.0) * 0.08);
-    }
-    if (ringRef.current) {
-      ringRef.current.rotation.z = -t * 0.8;
-    }
-    if (pillarRef.current) {
-      pillarRef.current.scale.y = 1 + Math.sin(t * 1.8) * 0.15;
+      vortexRef.current.rotation.z = t * 1.2;
     }
 
     if (playerPosRef && playerPosRef.current) {
       const portalPos = new THREE.Vector3(...position);
       const dist = playerPosRef.current.distanceTo(portalPos);
 
-      // Generous 7.0m proximity radius
-      if (dist < 7.0) {
+      // Strict close proximity: 2.8m
+      if (dist < 2.8) {
         if (!isNear) {
           setIsNear(true);
           setInteractionPrompt({
@@ -147,73 +137,30 @@ export default function PortalEntity({
 
   return (
     <group position={position} rotation={rotation}>
-      {/* ── 3D Architectural Arch Gateway ── */}
+      {/* ── 3D Architectural Gateway (Clean & uncluttered) ── */}
       <group scale={finalScale}>
         <primitive object={clonedScene} />
       </group>
 
-      {/* ── Thematic Dynamic Light Illuminating Gateway ── */}
-      <pointLight
-        position={[0, 2.2, 0]}
-        color={project.themeColor}
-        intensity={isNear ? 6.0 : 3.8}
-        distance={10.0}
-        decay={2}
-      />
-
-      {/* ── 1. Vertical Dimensional Light Pillar (Beacon) ── */}
-      <mesh ref={pillarRef} position={[0, 5.0, 0]}>
-        <cylinderGeometry args={[0.4, 1.2, 10.0, 16, 1, true]} />
-        <meshBasicMaterial
-          color={project.themeColor}
-          transparent
-          opacity={isNear ? 0.42 : 0.25}
-          side={THREE.DoubleSide}
-          depthWrite={false}
-        />
-      </mesh>
-
-      {/* ── 2. Swirling Energetic Vortex Disk inside Portal Ring ── */}
+      {/* ── Subtle Portal Center Disc ── */}
       <mesh ref={vortexRef} position={[0, 1.8, 0]}>
-        <circleGeometry args={[1.1, 32]} />
+        <circleGeometry args={[1.05, 32]} />
         <meshStandardMaterial
           color={project.themeColor}
           emissive={project.themeColor}
-          emissiveIntensity={isNear ? 3.5 : 2.2}
+          emissiveIntensity={isNear ? 2.5 : 1.4}
           transparent
-          opacity={0.88}
+          opacity={0.85}
           side={THREE.DoubleSide}
         />
       </mesh>
 
-      {/* ── 3. Outer Pulsating Portal Rune Ring ── */}
-      <mesh ref={ringRef} position={[0, 1.8, 0]}>
-        <ringGeometry args={[1.15, 1.35, 32]} />
-        <meshBasicMaterial
-          color="#ffffff"
-          transparent
-          opacity={0.9}
-          side={THREE.DoubleSide}
-        />
-      </mesh>
-
-      {/* ── 4. Ground Teleport Halo ── */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.08, 0]}>
-        <ringGeometry args={[1.2, 1.8, 32]} />
-        <meshBasicMaterial
-          color={project.themeColor}
-          transparent
-          opacity={isNear ? 0.95 : 0.6}
-          side={THREE.DoubleSide}
-        />
-      </mesh>
-
-      {/* ── 5. Floating Interactive Project HUD Badge ── */}
+      {/* ── Floating Proximity Badge (Only in 2.8m range) ── */}
       {isNear && (
         <Html
-          position={[0, 3.2, 0]}
+          position={[0, 2.8, 0]}
           center
-          distanceFactor={14}
+          distanceFactor={12}
           style={{ pointerEvents: 'auto' }}
         >
           <div
@@ -221,7 +168,7 @@ export default function PortalEntity({
             onClick={handleEnter}
             style={{
               borderColor: project.themeColor,
-              boxShadow: `0 0 35px ${project.themeColor}77`,
+              boxShadow: `0 0 25px ${project.themeColor}66`,
               cursor: 'pointer'
             }}
           >
@@ -231,9 +178,9 @@ export default function PortalEntity({
             <div className="portal-badge-content">
               <span className="portal-badge-tag">{project.badge}</span>
               <span className="portal-badge-title">{project.title}</span>
-              <span className="portal-badge-hint">Натисніть [E] для переходу в проєкт</span>
+              <span className="portal-badge-hint">Натисніть [E] для переходу</span>
             </div>
-            <ExternalLink size={18} color={project.themeColor} />
+            <ExternalLink size={16} color={project.themeColor} />
           </div>
         </Html>
       )}

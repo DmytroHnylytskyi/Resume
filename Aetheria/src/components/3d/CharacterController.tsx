@@ -8,10 +8,10 @@ import { useGameStore } from '../../store/useGameStore';
 import { sound } from '../../utils/audio';
 import AnimatedCharacter from './AnimatedCharacter';
 
-// Calibrated locomotion speeds for 0.82m avatar
-const MOVE_SPEED = 3.4;
-const SPRINT_SPEED = 6.8;
-const JUMP_FORCE = 5.6;
+// Calibrated, smooth, natural locomotion speeds
+const MOVE_SPEED = 2.4;
+const SPRINT_SPEED = 4.2;
+const JUMP_FORCE = 5.0;
 
 interface CharacterControllerProps {
   playerPosRef: React.MutableRefObject<THREE.Vector3 | null>;
@@ -19,10 +19,11 @@ interface CharacterControllerProps {
 }
 
 /**
- * Enhanced 3rd-Person Character Controller:
- * - Natural grounded physics: zero artificial upward flight/takeoff.
- * - Smooth spherical dome capsule base (Radius: 0.23m) that glides over stone step ramp hulls.
- * - Steadicam Gimbal camera smoothing (ZERO vibration).
+ * Butter-Smooth 3rd-Person Character Controller:
+ * - Natural, controlled walking speed (no sudden flinging or shooting across the map).
+ * - Frame-rate independent velocity smoothing (dt exponential dampening).
+ * - Strict grounded physics with 4.0 linear damping.
+ * - Steadicam Gimbal camera smoothing with full vertical pitch range.
  * - Instant crisp stop on key release.
  */
 export default function CharacterController({
@@ -183,8 +184,8 @@ export default function CharacterController({
     }
 
     // Grounded detection
-    isGrounded.current = Math.abs(linvel.y) < 0.45;
-    setIsJumpingState(!isGrounded.current && Math.abs(linvel.y) > 1.8);
+    isGrounded.current = Math.abs(linvel.y) < 0.35;
+    setIsJumpingState(!isGrounded.current && Math.abs(linvel.y) > 1.4);
 
     // Direction calculation relative to camera yaw
     const fwdInput = (keys.current.forward ? 1 : 0) - (keys.current.backward ? 1 : 0);
@@ -212,8 +213,9 @@ export default function CharacterController({
       const speed = keys.current.shift ? SPRINT_SPEED : MOVE_SPEED;
       const targetVel = moveDirection.multiplyScalar(speed);
 
-      // Fast responsive acceleration
-      currentVelocity.current.lerp(targetVel, 0.45);
+      // Frame-rate independent smooth acceleration (no violent snapping)
+      const smoothFactor = 1.0 - Math.exp(-14.0 * Math.min(delta, 0.1));
+      currentVelocity.current.lerp(targetVel, smoothFactor);
 
       // Natural avatar rotation facing movement direction
       const targetFacingAngle = Math.atan2(moveDirection.x, moveDirection.z);
@@ -227,15 +229,13 @@ export default function CharacterController({
 
       // Footstep sound timing
       const now = performance.now();
-      const stepInterval = keys.current.shift ? 260 : 380;
+      const stepInterval = keys.current.shift ? 300 : 420;
       if (isGrounded.current && now - lastStepTime.current > stepInterval) {
         sound.playFootstep();
         lastStepTime.current = now;
       }
 
-      // Pure Natural Physics Movement:
-      // - Horizontal velocity is driven by player input
-      // - Vertical velocity (gravity / sliding along ramps) is naturally handled by physics engine
+      // Apply controlled horizontal velocity while preserving natural gravity
       rigidBodyRef.current.setLinvel(
         {
           x: currentVelocity.current.x,
@@ -245,7 +245,7 @@ export default function CharacterController({
         true
       );
     } else {
-      // Instant Crisp Stop
+      // Instant Crisp Stop (zero sliding/drifting)
       currentVelocity.current.set(0, 0, 0);
       rigidBodyRef.current.setLinvel(
         {
@@ -295,14 +295,14 @@ export default function CharacterController({
         colliders={false}
         position={spawnPoint}
         enabledRotations={[false, false, false]}
-        friction={0.0}
+        friction={0.6}
         restitution={0.0}
-        linearDamping={1.2}
+        linearDamping={4.0}
         angularDamping={2.0}
         ccd={true}
       >
-        {/* Generous spherical bottom dome (Radius: 0.23m, Height: 0.82m) to effortlessly step up onto stairs */}
-        <CapsuleCollider args={[0.18, 0.23]} position={[0, 0.41, 0]} friction={0.0} />
+        {/* Generous spherical bottom dome (Radius: 0.23m, Height: 0.82m) */}
+        <CapsuleCollider args={[0.18, 0.23]} position={[0, 0.41, 0]} friction={0.6} />
 
         {/* 3D Animated Skinned Character Mesh */}
         <group ref={avatarGroupRef} position={[0, 0, 0]}>

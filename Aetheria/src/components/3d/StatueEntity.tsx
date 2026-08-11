@@ -16,7 +16,6 @@ interface StatueMeta {
   icon: LucideIcon;
   badge: string;
   color: string;
-  lightColor: string;
 }
 
 const STATUE_INFO: Record<StatueKey, StatueMeta> = {
@@ -24,22 +23,19 @@ const STATUE_INFO: Record<StatueKey, StatueMeta> = {
     title: 'Статуя Біографії (Про мене)',
     icon: User,
     badge: 'Біографія & Досвід',
-    color: '#38bdf8',
-    lightColor: '#0ea5e9'
+    color: '#38bdf8'
   },
   contacts: {
     title: "Статуя Зв'язку & Соцмереж",
     icon: Share2,
     badge: "Контакти & Зв'язок",
-    color: '#34d399',
-    lightColor: '#10b981'
+    color: '#34d399'
   },
   skills: {
     title: 'Вівтар Навичок & Технологій',
     icon: Award,
     badge: 'Стек & Навички',
-    color: '#c084fc',
-    lightColor: '#a855f7'
+    color: '#c084fc'
   }
 };
 
@@ -54,11 +50,10 @@ interface StatueEntityProps {
 }
 
 /**
- * Enhanced Interactive Statue Entity:
- * - High-visibility celestial light beacon visible from across the map.
- * - Rotating dual concentric ground rune circles with pulsating glow.
- * - Thematic dynamic point light illuminating the 3D sculpt.
- * - Floating interactive waypoint and [E] proximity modal opener.
+ * Clean & Elegant Interactive Statue Entity:
+ * - Pure 3D sculpture without visual clutter (no giant light cylinders or heavy ground rings).
+ * - Subtle floating rotating crystal marker above the head.
+ * - Strict close-proximity interaction trigger (2.5m).
  */
 export default function StatueEntity({
   modelPath,
@@ -127,15 +122,11 @@ export default function StatueEntity({
     });
   }, [colors, clonedScene]);
 
-  const ring1Ref = useRef<THREE.Mesh>(null);
-  const ring2Ref = useRef<THREE.Mesh>(null);
-  const beaconRef = useRef<THREE.Mesh>(null);
   const diamondRef = useRef<THREE.Group>(null);
   const [isNear, setIsNear] = useState(false);
   const { setActiveModal, setInteractionPrompt, clearInteractionPrompt } = useGameStore();
 
   const info = STATUE_INFO[statueKey] || STATUE_INFO.bio;
-  const Icon = info.icon;
 
   const handleOpen = () => {
     sound.playStatueChime();
@@ -145,28 +136,18 @@ export default function StatueEntity({
   useFrame((state) => {
     const t = state.clock.getElapsedTime();
 
-    if (ring1Ref.current) {
-      ring1Ref.current.rotation.z = t * 0.4;
-      ring1Ref.current.scale.setScalar(1 + Math.sin(t * 2.0) * 0.06);
-    }
-    if (ring2Ref.current) {
-      ring2Ref.current.rotation.z = -t * 0.25;
-      ring2Ref.current.scale.setScalar(1 + Math.cos(t * 1.8) * 0.05);
-    }
-    if (beaconRef.current) {
-      beaconRef.current.scale.y = 1 + Math.sin(t * 1.5) * 0.12;
-    }
+    // Gentle floating & rotating crystal marker
     if (diamondRef.current) {
-      diamondRef.current.position.y = 3.8 + Math.sin(t * 2.2) * 0.18;
-      diamondRef.current.rotation.y = t * 1.2;
+      diamondRef.current.position.y = 3.6 + Math.sin(t * 2.0) * 0.12;
+      diamondRef.current.rotation.y = t * 1.0;
     }
 
     if (playerPosRef && playerPosRef.current) {
       const statuePos = new THREE.Vector3(...position);
       const dist = playerPosRef.current.distanceTo(statuePos);
 
-      // Generous 7.0m proximity radius
-      if (dist < 7.0) {
+      // Strict close proximity: 2.5m
+      if (dist < 2.5) {
         if (!isNear) {
           setIsNear(true);
           setInteractionPrompt({
@@ -192,7 +173,7 @@ export default function StatueEntity({
         <CylinderCollider args={[0.7, 0.9]} />
       </RigidBody>
 
-      {/* ── 3D Sculpt Mesh ── */}
+      {/* ── Pure 3D Sculpt Mesh (No visual clutter / no giant cylinders) ── */}
       <group scale={finalScale}>
         <primitive
           object={clonedScene}
@@ -202,77 +183,26 @@ export default function StatueEntity({
         />
       </group>
 
-      {/* ── Thematic Point Light Illuminating the Statue ── */}
-      <pointLight
-        position={[0, 2.8, 0]}
-        color={info.lightColor}
-        intensity={isNear ? 5.5 : 3.2}
-        distance={9.0}
-        decay={2}
-      />
-
-      {/* ── 1. Vertical Celestial Light Pillar (Beacon) ── */}
-      <mesh ref={beaconRef} position={[0, 4.5, 0]}>
-        <cylinderGeometry args={[0.35, 1.1, 9.0, 16, 1, true]} />
-        <meshBasicMaterial
-          color={info.color}
-          transparent
-          opacity={isNear ? 0.38 : 0.22}
-          side={THREE.DoubleSide}
-          depthWrite={false}
-        />
-      </mesh>
-
-      {/* ── 2. Outer Rotating Rune Ring ── */}
-      <mesh
-        ref={ring1Ref}
-        rotation={[-Math.PI / 2, 0, 0]}
-        position={[0, 0.08, 0]}
-      >
-        <ringGeometry args={[1.3, 1.8, 32]} />
-        <meshBasicMaterial
-          color={info.color}
-          transparent
-          opacity={isNear ? 0.9 : 0.55}
-          side={THREE.DoubleSide}
-        />
-      </mesh>
-
-      {/* ── 3. Inner Counter-Rotating Halo Ring ── */}
-      <mesh
-        ref={ring2Ref}
-        rotation={[-Math.PI / 2, 0, 0]}
-        position={[0, 0.1, 0]}
-      >
-        <ringGeometry args={[0.8, 1.1, 24]} />
-        <meshBasicMaterial
-          color="#ffffff"
-          transparent
-          opacity={isNear ? 0.75 : 0.4}
-          side={THREE.DoubleSide}
-        />
-      </mesh>
-
-      {/* ── 4. Floating Rotating Diamond / Crystal Beacon ── */}
-      <group ref={diamondRef} position={[0, 3.8, 0]}>
+      {/* ── Subtle Floating Crystal Marker ── */}
+      <group ref={diamondRef} position={[0, 3.6, 0]}>
         <mesh>
-          <octahedronGeometry args={[0.3, 0]} />
+          <octahedronGeometry args={[0.22, 0]} />
           <meshStandardMaterial
             color={info.color}
             emissive={info.color}
-            emissiveIntensity={2.5}
-            roughness={0.1}
-            metalness={0.9}
+            emissiveIntensity={isNear ? 2.2 : 1.2}
+            roughness={0.15}
+            metalness={0.85}
           />
         </mesh>
       </group>
 
-      {/* ── 5. Floating Interactive Proximity Badge ── */}
+      {/* ── Floating Proximity Badge (Only in 2.5m range) ── */}
       {isNear && (
         <Html
-          position={[0, 2.8, 0]}
+          position={[0, 2.5, 0]}
           center
-          distanceFactor={13}
+          distanceFactor={11}
           style={{ pointerEvents: 'auto' }}
         >
           <div
@@ -280,7 +210,7 @@ export default function StatueEntity({
             onClick={handleOpen}
             style={{
               borderColor: info.color,
-              boxShadow: `0 0 35px ${info.color}77`,
+              boxShadow: `0 0 25px ${info.color}55`,
               cursor: 'pointer'
             }}
           >
@@ -291,7 +221,7 @@ export default function StatueEntity({
               <span className="badge-action">Взаємодіяти</span>
               <span className="badge-title">{info.badge}</span>
             </div>
-            <Sparkles size={16} color={info.color} />
+            <Sparkles size={15} color={info.color} />
           </div>
         </Html>
       )}
