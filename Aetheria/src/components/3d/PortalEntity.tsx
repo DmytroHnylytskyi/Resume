@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF, Html } from '@react-three/drei';
 import * as THREE from 'three';
@@ -22,9 +22,9 @@ interface PortalEntityProps {
 }
 
 /**
- * Clean & Uncluttered Dimensional Portal Gate:
- * - Pure 3D stone gateway with soft inner vortex (no giant light cylinders).
- * - Strict close proximity trigger (2.8m).
+ * Natural & Clean Dimensional Portal Gate:
+ * - Pure 3D stone gateway model with authentic geometry (zero artificial flat cyan discs or light pillars).
+ * - Close proximity trigger (2.8m).
  * - Smooth teleport on interaction.
  */
 export default function PortalEntity({
@@ -93,7 +93,6 @@ export default function PortalEntity({
     });
   }, [colors, clonedScene]);
 
-  const vortexRef = useRef<THREE.Mesh>(null);
   const [isNear, setIsNear] = useState(false);
   const { setInteractionPrompt, clearInteractionPrompt, triggerPortalWarp } = useGameStore();
 
@@ -104,13 +103,7 @@ export default function PortalEntity({
     triggerPortalWarp(project);
   };
 
-  useFrame((state) => {
-    const t = state.clock.getElapsedTime();
-
-    if (vortexRef.current) {
-      vortexRef.current.rotation.z = t * 1.2;
-    }
-
+  useFrame(() => {
     if (playerPosRef && playerPosRef.current) {
       const portalPos = new THREE.Vector3(...position);
       const dist = playerPosRef.current.distanceTo(portalPos);
@@ -137,23 +130,10 @@ export default function PortalEntity({
 
   return (
     <group position={position} rotation={rotation}>
-      {/* ── 3D Architectural Gateway (Clean & uncluttered) ── */}
+      {/* ── Authentic 3D Architectural Gateway (Clean & Natural) ── */}
       <group scale={finalScale}>
         <primitive object={clonedScene} />
       </group>
-
-      {/* ── Subtle Portal Center Disc ── */}
-      <mesh ref={vortexRef} position={[0, 1.8, 0]}>
-        <circleGeometry args={[1.05, 32]} />
-        <meshStandardMaterial
-          color={project.themeColor}
-          emissive={project.themeColor}
-          emissiveIntensity={isNear ? 2.5 : 1.4}
-          transparent
-          opacity={0.85}
-          side={THREE.DoubleSide}
-        />
-      </mesh>
 
       {/* ── Floating Proximity Badge (Only in 2.8m range) ── */}
       {isNear && (

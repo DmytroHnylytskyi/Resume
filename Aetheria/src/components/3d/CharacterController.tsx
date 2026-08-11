@@ -9,8 +9,8 @@ import { sound } from '../../utils/audio';
 import AnimatedCharacter from './AnimatedCharacter';
 
 // Calibrated, smooth, natural locomotion speeds
-const MOVE_SPEED = 2.4;
-const SPRINT_SPEED = 4.2;
+const MOVE_SPEED = 2.2;
+const SPRINT_SPEED = 3.8;
 const JUMP_FORCE = 5.0;
 
 interface CharacterControllerProps {
@@ -19,10 +19,10 @@ interface CharacterControllerProps {
 }
 
 /**
- * Butter-Smooth 3rd-Person Character Controller:
- * - Natural, controlled walking speed (no sudden flinging or shooting across the map).
- * - Frame-rate independent velocity smoothing (dt exponential dampening).
- * - Strict grounded physics with 4.0 linear damping.
+ * Premium Butter-Smooth 3rd-Person Character Controller:
+ * - Weighted, silky-smooth mouse look (zero camera twitching or snapping).
+ * - Anti-slip slope lock: character firmly stays in place on slopes and edges without sliding.
+ * - Gentle, controlled walking speed.
  * - Steadicam Gimbal camera smoothing with full vertical pitch range.
  * - Instant crisp stop on key release.
  */
@@ -49,7 +49,9 @@ export default function CharacterController({
     shift: false
   });
 
-  // Camera angles & distances
+  // Target & Smoothed Camera Angles
+  const targetYaw = useRef(0.35);
+  const targetPitch = useRef(0.22);
   const cameraYaw = useRef(0.35);
   const cameraPitch = useRef(0.22);
   const cameraDistance = useRef(2.6);
@@ -66,7 +68,7 @@ export default function CharacterController({
 
   const { isRespawning, setIsRespawning, interactionPrompt, isWarping, cameraMode, activeModal } = useGameStore();
 
-  // ── 1. Pointer Lock API ──
+  // ── 1. Pointer Lock API with Weighted Smooth Sensitivity ──
   useEffect(() => {
     const dom = gl.domElement;
 
@@ -78,15 +80,14 @@ export default function CharacterController({
 
     const handleMouseMove = (e: MouseEvent) => {
       if (document.pointerLockElement === dom) {
-        const sensitivity = 0.0024;
-        cameraYaw.current -= e.movementX * sensitivity;
-        // Expanded pitch range (-0.65 to 1.40 rad) allowing player to tilt camera fully UPWARDS at statues and sky
-        cameraPitch.current = Math.max(-0.65, Math.min(1.40, cameraPitch.current + e.movementY * sensitivity));
+        const sensitivity = 0.0014; // Soft, non-twitchy sensitivity
+        targetYaw.current -= e.movementX * sensitivity;
+        targetPitch.current = Math.max(-0.65, Math.min(1.35, targetPitch.current + e.movementY * sensitivity));
       }
     };
 
     const handleWheel = (e: WheelEvent) => {
-      cameraDistance.current = Math.max(1.6, Math.min(7.5, cameraDistance.current + e.deltaY * 0.003));
+      cameraDistance.current = Math.max(1.6, Math.min(7.5, cameraDistance.current + e.deltaY * 0.0025));
     };
 
     dom.addEventListener('click', handleCanvasClick);
@@ -164,6 +165,10 @@ export default function CharacterController({
       playerPosRef.current = new THREE.Vector3(translation.x, translation.y, translation.z);
     }
 
+    // Smooth weighted camera rotation interpolation (no sudden snapping)
+    cameraYaw.current = THREE.MathUtils.lerp(cameraYaw.current, targetYaw.current, 0.22);
+    cameraPitch.current = THREE.MathUtils.lerp(cameraPitch.current, targetPitch.current, 0.22);
+
     // ── Void Fall Detection & Auto-Recovery ──
     if (translation.y < -4.0 && !isRespawning) {
       setIsRespawning(true);
@@ -213,8 +218,8 @@ export default function CharacterController({
       const speed = keys.current.shift ? SPRINT_SPEED : MOVE_SPEED;
       const targetVel = moveDirection.multiplyScalar(speed);
 
-      // Frame-rate independent smooth acceleration (no violent snapping)
-      const smoothFactor = 1.0 - Math.exp(-14.0 * Math.min(delta, 0.1));
+      // Frame-rate independent smooth acceleration (no snapping)
+      const smoothFactor = 1.0 - Math.exp(-10.0 * Math.min(delta, 0.1));
       currentVelocity.current.lerp(targetVel, smoothFactor);
 
       // Natural avatar rotation facing movement direction
@@ -224,12 +229,12 @@ export default function CharacterController({
         let diff = (targetFacingAngle - avatarGroupRef.current.rotation.y) % (Math.PI * 2);
         if (diff < -Math.PI) diff += Math.PI * 2;
         if (diff > Math.PI) diff -= Math.PI * 2;
-        avatarGroupRef.current.rotation.y += diff * 0.22;
+        avatarGroupRef.current.rotation.y += diff * 0.18;
       }
 
       // Footstep sound timing
       const now = performance.now();
-      const stepInterval = keys.current.shift ? 300 : 420;
+      const stepInterval = keys.current.shift ? 320 : 450;
       if (isGrounded.current && now - lastStepTime.current > stepInterval) {
         sound.playFootstep();
         lastStepTime.current = now;
@@ -245,12 +250,13 @@ export default function CharacterController({
         true
       );
     } else {
-      // Instant Crisp Stop (zero sliding/drifting)
+      // ── Anti-Slip Slope Lock ──
+      // Firmly zeroes horizontal velocity so player NEVER slips down hills/edges while standing still
       currentVelocity.current.set(0, 0, 0);
       rigidBodyRef.current.setLinvel(
         {
           x: 0,
-          y: linvel.y > 0 ? linvel.y : Math.max(linvel.y, -2.0),
+          y: linvel.y > 0 ? linvel.y : Math.max(linvel.y, -1.0),
           z: 0
         },
         true
@@ -266,9 +272,9 @@ export default function CharacterController({
 
     // ── Steadicam Gimbal 3rd Person Camera (ZERO SHAKING) ──
     if (cameraMode === 'third_person') {
-      smoothLookTarget.current.x = THREE.MathUtils.lerp(smoothLookTarget.current.x, translation.x, 0.14);
+      smoothLookTarget.current.x = THREE.MathUtils.lerp(smoothLookTarget.current.x, translation.x, 0.12);
       smoothLookTarget.current.y = THREE.MathUtils.lerp(smoothLookTarget.current.y, translation.y + 0.50, 0.06);
-      smoothLookTarget.current.z = THREE.MathUtils.lerp(smoothLookTarget.current.z, translation.z, 0.14);
+      smoothLookTarget.current.z = THREE.MathUtils.lerp(smoothLookTarget.current.z, translation.z, 0.12);
 
       const targetCamX =
         smoothLookTarget.current.x +
@@ -279,9 +285,9 @@ export default function CharacterController({
         smoothLookTarget.current.z +
         cameraDistance.current * Math.cos(cameraYaw.current) * Math.cos(cameraPitch.current);
 
-      smoothCamPos.current.x = THREE.MathUtils.lerp(smoothCamPos.current.x || targetCamX, targetCamX, 0.14);
+      smoothCamPos.current.x = THREE.MathUtils.lerp(smoothCamPos.current.x || targetCamX, targetCamX, 0.12);
       smoothCamPos.current.y = THREE.MathUtils.lerp(smoothCamPos.current.y || targetCamY, targetCamY, 0.06);
-      smoothCamPos.current.z = THREE.MathUtils.lerp(smoothCamPos.current.z || targetCamZ, targetCamZ, 0.14);
+      smoothCamPos.current.z = THREE.MathUtils.lerp(smoothCamPos.current.z || targetCamZ, targetCamZ, 0.12);
 
       camera.position.copy(smoothCamPos.current);
       camera.lookAt(smoothLookTarget.current);
@@ -295,14 +301,14 @@ export default function CharacterController({
         colliders={false}
         position={spawnPoint}
         enabledRotations={[false, false, false]}
-        friction={0.6}
+        friction={0.8}
         restitution={0.0}
-        linearDamping={4.0}
+        linearDamping={6.0}
         angularDamping={2.0}
         ccd={true}
       >
         {/* Generous spherical bottom dome (Radius: 0.23m, Height: 0.82m) */}
-        <CapsuleCollider args={[0.18, 0.23]} position={[0, 0.41, 0]} friction={0.6} />
+        <CapsuleCollider args={[0.18, 0.23]} position={[0, 0.41, 0]} friction={0.8} />
 
         {/* 3D Animated Skinned Character Mesh */}
         <group ref={avatarGroupRef} position={[0, 0, 0]}>
