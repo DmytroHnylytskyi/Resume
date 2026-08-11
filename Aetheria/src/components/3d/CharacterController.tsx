@@ -233,11 +233,16 @@ export default function CharacterController({
         lastStepTime.current = now;
       }
 
-      // ── Ground-Snapping for Descending Stairs ──
-      // Prevents launching or floating into the air when walking down stair slopes
+      // ── Bidirectional Stair & Step Assist ──
       let targetYVel = linvel.y;
-      if (isGrounded.current && linvel.y < 0.1 && linvel.y > -2.5) {
-        targetYVel = -1.8; // Snaps firmly to descending steps
+      if (isGrounded.current) {
+        if (linvel.y >= -0.15 && linvel.y < 0.8) {
+          // Smooth glide up stone step edges and bridge inclines
+          targetYVel = Math.max(linvel.y, 0.45);
+        } else if (linvel.y < -0.15 && linvel.y > -3.0) {
+          // Firm ground-snap when descending stairs (prevents floating/launching)
+          targetYVel = -2.2;
+        }
       }
 
       rigidBodyRef.current.setLinvel(
