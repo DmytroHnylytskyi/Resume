@@ -145,9 +145,19 @@ export function getModelBaseScale(modelPath: string, box: THREE.Box3): number {
 export function normalizeModelGeometry(clonedScene: THREE.Object3D, modelPath: string): NormalizeResult {
   const file = (modelPath || '').toLowerCase();
 
-  // 1. Orientation correction for inverted models:
+  // 1. Precise orientation alignment for specific architectural models:
   if (file.includes('house_bike_stand')) {
     clonedScene.rotation.z += Math.PI;
+  } else if (
+    file.includes('house_flatroof') ||
+    file.includes('slopedroof') ||
+    file.includes('sloping_roof') ||
+    file.includes('house_stone_path') ||
+    file.includes('house_railing') ||
+    file.includes('house_balconny') ||
+    file.includes('gothic_wall2_18')
+  ) {
+    clonedScene.rotation.x -= Math.PI / 2;
   }
 
   const rawBox = new THREE.Box3().setFromObject(clonedScene);
