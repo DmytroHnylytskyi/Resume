@@ -472,5 +472,28 @@ export const useStore = create<FormaStore>()((set, get) => ({
   })),
   removeToast: (id) => set((state) => ({
     toasts: state.toasts.filter(t => t.id !== id)
-  }))
+  })),
+
+  // ---------------------------------------------------------------------------
+  // Client-Side i18n System (0ms Instant Switch)
+  // ---------------------------------------------------------------------------
+  locale: (typeof window !== 'undefined' && (localStorage.getItem('forma_locale') as 'en' | 'uk')) || 'uk',
+  setLocale: (newLocale) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('forma_locale', newLocale);
+      const currentPath = window.location.pathname;
+      let cleanPath = currentPath;
+      if (cleanPath.startsWith('/en') || cleanPath.startsWith('/uk')) {
+        cleanPath = cleanPath.slice(3) || '';
+      }
+      const targetUrl = `/${newLocale}${cleanPath.startsWith('/') ? cleanPath : (cleanPath ? `/${cleanPath}` : '')}`;
+      window.history.replaceState(null, '', targetUrl);
+    }
+    set({ locale: newLocale });
+  },
+  toggleLocale: () => {
+    const current = get().locale;
+    const nextLocale = current === 'en' ? 'uk' : 'en';
+    get().setLocale(nextLocale);
+  }
 }));

@@ -10,8 +10,7 @@
  */
 
 import { useRef, useState } from 'react';
-import { useTranslations, useLocale } from 'next-intl';
-import { useRouter, usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import ColorPicker from '../../components/ColorPicker';
 import AuthModal from '../../components/AuthModal';
 import InstructionModal from '../../components/InstructionModal';
@@ -47,9 +46,6 @@ import {
 export default function Home() {
   const tNav = useTranslations('Navbar');
   const tPlacement = useTranslations('Placement');
-  const locale = useLocale();
-  const router = useRouter();
-  const pathname = usePathname();
   
   /** Reference to hidden file input for JSON import */
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -61,6 +57,8 @@ export default function Home() {
   const [showProfile, setShowProfile] = useState(false);
 
   // Granular state selectors for UI toolbar
+  const locale = useStore((state) => state.locale);
+  const toggleLocale = useStore((state) => state.toggleLocale);
   const authMode = useStore((state) => state.authMode);
   const setAuthMode = useStore((state) => state.setAuthMode);
   const user = useStore((state) => state.user);
@@ -85,22 +83,6 @@ export default function Home() {
   
   // Register global hotkey listeners (Ctrl+D, Delete, 1/2/3, R, Esc)
   useHotkeys();
-
-  /**
-   * Toggles active locale between English ('en') and Ukrainian ('uk').
-   */
-  const toggleLocale = () => {
-    const nextLocale = locale === 'en' ? 'uk' : 'en';
-    const currentPath = typeof window !== 'undefined' ? window.location.pathname : pathname;
-    let cleanPath = currentPath;
-    if (cleanPath.startsWith(`/${locale}`)) {
-      cleanPath = cleanPath.slice(locale.length + 1) || '';
-    } else if (cleanPath.startsWith('/en') || cleanPath.startsWith('/uk')) {
-      cleanPath = cleanPath.slice(3) || '';
-    }
-    const targetUrl = `/${nextLocale}${cleanPath.startsWith('/') ? cleanPath : (cleanPath ? `/${cleanPath}` : '')}`;
-    router.push(targetUrl);
-  };
 
   /** Handles saving current scene state to browser localStorage */
   const handleSave = () => {

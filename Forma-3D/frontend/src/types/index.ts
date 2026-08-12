@@ -111,4 +111,8 @@ export interface FormaStore {
   toasts: Toast[];
   addToast: (message: string, type: 'success' | 'error' | 'info') => void;
   removeToast: (id: string) => void;
+
+  locale: 'en' | 'uk';
+  setLocale: (locale: 'en' | 'uk') => void;
+  toggleLocale: () => void;
 }

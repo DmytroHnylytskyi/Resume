@@ -8,8 +8,7 @@
  * @author 3D Furniture Configurator Team
  */
 
-import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import ClientI18nProvider from '../../components/ClientI18nProvider';
 import "../globals.css";
 import React from 'react';
 
@@ -32,14 +31,13 @@ interface RootLayoutProps {
  */
 export default async function RootLayout({ children, params }: RootLayoutProps): Promise<React.ReactNode> {
   const { locale } = await params;
-  const messages = await getMessages();
   
   return (
     <html lang={locale}>
       <body>
-        <NextIntlClientProvider messages={messages}>
+        <ClientI18nProvider initialLocale={locale}>
           {children}
-        </NextIntlClientProvider>
+        </ClientI18nProvider>
       </body>
     </html>
   );
