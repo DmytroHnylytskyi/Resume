@@ -10,7 +10,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { useStore } from '../store/useStore';
 import { 
   X, 
@@ -41,7 +41,7 @@ interface UserProfileModalProps {
  */
 export default function UserProfileModal({ onClose }: UserProfileModalProps) {
   const tProf = useTranslations('Profile');
-  const locale = useLocale();
+  const locale = useStore(state => state.locale);
   const token = useStore(state => state.token);
   const user = useStore(state => state.user);
   const logout = useStore(state => state.logout);

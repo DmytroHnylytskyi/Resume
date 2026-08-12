@@ -78,7 +78,6 @@ export default function Home() {
   const placingModelPath = useStore((state) => state.placingModelPath);
   const cancelPlacement = useStore((state) => state.cancelPlacement);
   const activeMode = useStore((state) => state.activeMode);
-  const currentProjectName = useStore((state) => state.currentProjectName);
   const addToast = useStore((state) => state.addToast);
   
   // Register global hotkey listeners (Ctrl+D, Delete, 1/2/3, R, Esc)
@@ -200,7 +199,7 @@ export default function Home() {
             title={tNav('presetCleanTooltip')}
           >
             <Sparkles size={15} />
-            <span className="navbar-tool-label">{activeMode === 'custom' ? (currentProjectName === 'Проєкт Приклад' ? tNav('presetExample') : currentProjectName) : tNav('presetClean')}</span>
+            <span className="navbar-tool-label">{tNav('presetClean')}</span>
           </button>
 
           <div className="navbar-toolbar-divider" />

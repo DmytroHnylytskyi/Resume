@@ -15,6 +15,7 @@ import { useTranslations } from 'next-intl';
 import { useStore } from '../store/useStore';
 import { Move, RotateCw, Maximize2, Trash2, Copy, RefreshCw, LucideIcon } from 'lucide-react';
 import { TransformMode, PlacedObject } from '../types';
+import { catalogItems } from '../data/catalogData';
 
 interface ModeOption {
   key: TransformMode;
@@ -30,6 +31,7 @@ interface ModeOption {
  */
 export default function TransformToolbar() {
   const tToolbar = useTranslations('Toolbar');
+  const tCat = useTranslations('Catalog.items');
 
   const { 
     selectedObjectId, placedObjects, transformMode, 
@@ -46,7 +48,17 @@ export default function TransformToolbar() {
   ];
 
   const selectedObj = placedObjects.find((o: PlacedObject) => o.id === selectedObjectId);
-  const objName = selectedObj?.name || 'Object';
+  const catalogItem = selectedObj ? catalogItems.find(c => (selectedObj.modelPath || '').includes(c.file)) : null;
+
+  let objName = selectedObj?.name || 'Object';
+  if (catalogItem) {
+    try {
+      objName = tCat(catalogItem.id);
+    } catch {
+      objName = catalogItem.defaultName;
+    }
+  }
+
   const currentScale = selectedObj?.scale || 1.0;
   const currentDegY = selectedObj?.rotation ? Math.round((selectedObj.rotation[1] * 180) / Math.PI) : 0;
 
