@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   --color-bg: #05140f;
   --color-bg-gradient: radial-gradient(circle at 50% 0%, #0a2e20, #05140f 70%);
   --color-primary: #1ed760;
@@ -67,7 +67,80 @@ nextjs-portal, [data-nextjs-toast], [data-next-badge] {
   font-weight: 600;
 }
 
-/* ── Top Floating Header Navbar ────────────────────────── */
+.auth-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-modal-container {
+  width: 350px;
+  padding: 30px;
+  position: relative;
+}
+
+.auth-modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.auth-modal-title {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.auth-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.auth-modal-input {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.2);
+  color: white;
+}
+
+.auth-modal-error {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.auth-modal-error--success {
+  color: #4ade80;
+}
+
+.auth-modal-error--fail {
+  color: #f87171;
+}
+
+.auth-modal-submit {
+  margin-top: 10px;
+}
+
+.auth-modal-switch {
+  margin-top: 20px;
+  font-size: 0.9rem;
+  text-align: center;
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+/* в”Ђв”Ђ Top Floating Header Navbar в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .top-navbar {
   position: absolute;
   top: 20px;
@@ -134,7 +207,7 @@ nextjs-portal, [data-nextjs-toast], [data-next-badge] {
   display: flex;
 }
 
-/* ── Center Toolbar Controls ────────────────────────── */
+/* в”Ђв”Ђ Center Toolbar Controls в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .navbar-toolbar-controls {
   display: flex;
   align-items: center;
@@ -197,7 +270,7 @@ nextjs-portal, [data-nextjs-toast], [data-next-badge] {
   margin: 0 4px;
 }
 
-/* ── Model Selector Pills ────────────────────────── */
+/* в”Ђв”Ђ Model Selector Pills в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .model-selector-pills {
   display: flex;
   align-items: center;
@@ -236,7 +309,7 @@ nextjs-portal, [data-nextjs-toast], [data-next-badge] {
   box-shadow: 0 0 12px rgba(30, 215, 96, 0.15);
 }
 
-/* ── WASD Camera Hint Badge ────────────────────────── */
+/* в”Ђв”Ђ WASD Camera Hint Badge в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .wasd-hint-badge {
   position: absolute;
   bottom: 24px;
@@ -256,7 +329,7 @@ nextjs-portal, [data-nextjs-toast], [data-next-badge] {
   color: var(--color-primary);
 }
 
-/* ── Transform Toolbar ────────────────────────── */
+/* в”Ђв”Ђ Transform Toolbar в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .transform-toolbar {
   position: absolute;
   bottom: 24px;
@@ -431,7 +504,7 @@ nextjs-portal, [data-nextjs-toast], [data-next-badge] {
   color: #05140f;
 }
 
-/* ── Instruction Modal Styles ────────────────────────── */
+/* в”Ђв”Ђ Instruction Modal Styles в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .instruction-modal-overlay {
   position: fixed;
   top: 0;
@@ -589,7 +662,7 @@ nextjs-portal, [data-nextjs-toast], [data-next-badge] {
   line-height: 1.3;
 }
 
-/* ── Placement Active Banner ────────────────────────── */
+/* в”Ђв”Ђ Placement Active Banner в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .placement-active-banner {
   position: fixed;
   top: 84px;
@@ -641,7 +714,7 @@ nextjs-portal, [data-nextjs-toast], [data-next-badge] {
   color: #fff;
 }
 
-/* ── User Profile Modal Styles ────────────────────────── */
+/* в”Ђв”Ђ User Profile Modal Styles в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .profile-modal-card {
   max-width: 680px;
 }
@@ -894,7 +967,7 @@ nextjs-portal, [data-nextjs-toast], [data-next-badge] {
   }
 }
 
-/* ── Furniture Sidebar & Toggle ────────────────────────── */
+/* в”Ђв”Ђ Furniture Sidebar & Toggle в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .sidebar-toggle-btn {
   position: fixed;
   left: 24px;

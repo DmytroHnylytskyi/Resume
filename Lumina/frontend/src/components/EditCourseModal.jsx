@@ -81,7 +81,7 @@ export default function EditCourseModal({ course, onClose, onCourseUpdated }) {
       });
 
       if (res.ok) {
-        onCourseUpdated();
+        if (onCourseUpdated) onCourseUpdated();
         onClose();
       } else {
         alert(t('app.fail', 'Failed to update course.'));

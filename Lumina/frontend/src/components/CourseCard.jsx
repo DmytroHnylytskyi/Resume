@@ -6,6 +6,30 @@ import { useTranslation } from 'react-i18next';
 import { Edit3, Trash2, BookOpen, CheckCircle2, Calendar, Clock } from 'lucide-react';
 import GlassDateTimePicker from './GlassDateTimePicker';
 
+/**
+ * Course Card Component.
+ *
+ * Renders a glassmorphic curriculum card with cover image, module count,
+ * completion progress bar, study calendar scheduler, and author edit/delete actions.
+ *
+ * @component
+ * @param {Object} props
+ * @param {number} props.id - Unique course ID.
+ * @param {string} props.title - Course title.
+ * @param {string} props.description - Course summary description.
+ * @param {string} [props.image_url] - Optional URL to cover image thumbnail.
+ * @param {number} [props.authorId] - User ID of the course creator.
+ * @param {number} [props.currentUserId] - Currently logged-in user ID.
+ * @param {number} [props.lessonsCount=0] - Total number of lessons in this course.
+ * @param {number} [props.completedCount=0] - Number of lessons marked completed.
+ * @param {number} [props.progress=0] - Overall completion percentage (0 - 100).
+ * @param {string|null} [props.scheduledDate] - ISO string of planned study session.
+ * @param {Function} [props.onScheduleUpdate] - Callback triggered when study date is modified.
+ * @param {Function} [props.onClick] - Click handler navigating to course viewer.
+ * @param {Function} [props.onEdit] - Edit trigger for course author.
+ * @param {Function} [props.onDelete] - Delete trigger for course author.
+ * @returns {JSX.Element} Rendered CourseCard component.
+ */
 export default function CourseCard({ 
   id, 
   title, 

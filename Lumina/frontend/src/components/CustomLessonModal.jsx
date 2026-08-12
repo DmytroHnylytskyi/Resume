@@ -17,7 +17,7 @@ const RESOURCE_TYPES = [
   { value: 'text', label: 'create.type_text' },
 ];
 
-export default function CustomLessonModal({ student, onClose, onCreated }) {
+export default function CustomLessonModal({ student, onClose, onCreated, onLessonCreated }) {
   const { token } = useContext(AuthContext);
   const { t } = useTranslation();
   const [title, setTitle] = useState('');
@@ -56,7 +56,8 @@ export default function CustomLessonModal({ student, onClose, onCreated }) {
     });
 
     if (res.ok) {
-      onCreated();
+      if (onCreated) onCreated();
+      if (onLessonCreated) onLessonCreated();
       onClose();
     } else {
       alert(t('create.fail'));

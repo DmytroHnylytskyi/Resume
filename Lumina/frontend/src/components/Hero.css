@@ -9,6 +9,8 @@
   text-align: center;
   padding: 4rem;
   max-width: 800px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .hero-content p {
@@ -23,4 +25,35 @@
   display: flex;
   gap: 1rem;
   justify-content: center;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+  .hero-section {
+    padding: 2rem 0;
+  }
+
+  .hero-content {
+    padding: 2rem 1.25rem;
+  }
+
+  .hero-content h1 {
+    font-size: 2rem;
+    line-height: 1.2;
+  }
+
+  .hero-content p {
+    font-size: 1.05rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .hero-buttons button,
+  .hero-buttons a {
+    width: 100%;
+  }
 }

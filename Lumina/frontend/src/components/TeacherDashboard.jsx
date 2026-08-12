@@ -1,11 +1,21 @@
-import { API_URL } from '../config';
-import React, { useState, useEffect, useContext } from 'react';
-import { AuthContext } from './AuthContext';
+import React, { useState, useContext } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { 
-  Users, BookOpen, Send, LayoutDashboard, FileCheck, 
-  BarChart, Plus, X, UserPlus, Inbox, GraduationCap, Clock 
+import {
+  Users,
+  BookOpen,
+  Send,
+  LayoutDashboard,
+  FileCheck,
+  BarChart,
+  Plus,
+  X,
+  UserPlus,
+  Inbox,
+  GraduationCap,
 } from 'lucide-react';
+import { teacherApi } from '../api/teacherApi';
+import { AuthContext } from './AuthContext';
 import CreateCourseModal from './CreateCourseModal';
 import CustomLessonModal from './CustomLessonModal';
 import CourseCard from './CourseCard';
@@ -14,119 +24,126 @@ import AttachmentList from './AttachmentList';
 import GlassDateTimePicker from './GlassDateTimePicker';
 import './TeacherDashboard.css';
 
-export default function TeacherDashboard({ courses, schedules = {}, onScheduleUpdate, onCourseClick, onEditCourse, onDeleteCourse }) {
+// Safe date parser
+const safeDate = (dateStr) => {
+  if (!dateStr) return new Date();
+  if (dateStr.endsWith('Z')) return new Date(dateStr);
+  return new Date(dateStr + 'Z');
+};
+
+/**
+ * Teacher Portal Management Dashboard.
+ *
+ * @component
+ * @returns {JSX.Element} Rendered TeacherDashboard.
+ */
+export default function TeacherDashboard({
+  schedules = {},
+  onScheduleUpdate,
+  onCourseClick,
+  onEditCourse,
+  onDeleteCourse,
+}) {
   const { token } = useContext(AuthContext);
   const { t } = useTranslation();
-  const [students, setStudents] = useState([]);
-  const [assignments, setAssignments] = useState([]);
-  const [libraryCourses, setLibraryCourses] = useState([]);
-  const [submissions, setSubmissions] = useState([]);
-  const [assignableCourses, setAssignableCourses] = useState([]);
-  const [error, setError] = useState(null);
+  const queryClient = useQueryClient();
 
-  // Safe date parser
-  const safeDate = (dateStr) => {
-    if (!dateStr) return new Date();
-    if (dateStr.endsWith('Z')) return new Date(dateStr);
-    return new Date(dateStr + 'Z');
-  };
-  
   const [newStudentEmail, setNewStudentEmail] = useState('');
   const [assignStudentId, setAssignStudentId] = useState('');
   const [assignCourseId, setAssignCourseId] = useState('');
   const [lessonDeadlines, setLessonDeadlines] = useState({});
   const [activeTab, setActiveTab] = useState('library');
-  
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [customLessonStudent, setCustomLessonStudent] = useState(null);
 
-  const headers = {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
-  };
+  // Queries
+  const { data: students = [] } = useQuery({
+    queryKey: ['teacher-students', token],
+    queryFn: teacherApi.getStudents,
+    enabled: !!token,
+  });
 
-  const fetchStudents = () => {
-    fetch(`${API_URL}/teacher/students`, { headers })
-      .then(r => r.json()).then(setStudents).catch(() => setError(t('app.error', 'Network error. Please try again.')));
-  };
+  const { data: assignments = [] } = useQuery({
+    queryKey: ['teacher-assignments', token],
+    queryFn: teacherApi.getAssignments,
+    enabled: !!token,
+  });
 
-  const fetchAssignments = () => {
-    fetch(`${API_URL}/teacher/assignments`, { headers })
-      .then(r => r.json()).then(setAssignments).catch(() => setError(t('app.error', 'Network error. Please try again.')));
-  };
+  const { data: libraryCourses = [] } = useQuery({
+    queryKey: ['teacher-library', token],
+    queryFn: teacherApi.getLibrary,
+    enabled: !!token,
+  });
 
-  const fetchLibrary = () => {
-    fetch(`${API_URL}/teacher/library`, { headers })
-      .then(r => r.json()).then(setLibraryCourses).catch(() => setError(t('app.error', 'Network error. Please try again.')));
-    fetch(`${API_URL}/teacher/assignable-courses`, { headers })
-      .then(r => r.json()).then(setAssignableCourses).catch(() => setError(t('app.error', 'Network error. Please try again.')));
-  };
+  const { data: assignableCourses = [] } = useQuery({
+    queryKey: ['teacher-assignable', token],
+    queryFn: teacherApi.getAssignableCourses,
+    enabled: !!token,
+  });
 
-  const fetchSubmissions = () => {
-    fetch(`${API_URL}/teacher/submissions`, { headers })
-      .then(r => r.json()).then(setSubmissions).catch(() => setError(t('app.error', 'Network error. Please try again.')));
-  };
+  const { data: submissions = [] } = useQuery({
+    queryKey: ['teacher-submissions', token],
+    queryFn: teacherApi.getSubmissions,
+    enabled: !!token,
+  });
 
-  useEffect(() => {
-    fetchStudents();
-    fetchAssignments();
-    fetchLibrary();
-    fetchSubmissions();
-  }, []);
-
-  const addStudent = async () => {
-    if (!newStudentEmail.trim()) return;
-    const res = await fetch(`${API_URL}/teacher/students`, {
-      method: 'POST', headers,
-      body: JSON.stringify({ email: newStudentEmail })
-    });
-    if (res.ok) {
+  // Mutations
+  const addStudentMutation = useMutation({
+    mutationFn: (email) => teacherApi.addStudent(email),
+    onSuccess: () => {
       setNewStudentEmail('');
-      fetchStudents();
-    } else {
-      const data = await res.json();
-      alert(data.detail || t('teacher.add_fail'));
-    }
+      queryClient.invalidateQueries({ queryKey: ['teacher-students'] });
+    },
+    onError: (err) => {
+      alert(err.message || t('teacher.add_fail'));
+    },
+  });
+
+  const removeStudentMutation = useMutation({
+    mutationFn: (id) => teacherApi.removeStudent(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['teacher-students'] });
+      queryClient.invalidateQueries({ queryKey: ['teacher-assignments'] });
+    },
+  });
+
+  const assignCourseMutation = useMutation({
+    mutationFn: ({ studentId, courseId, deadlines }) =>
+      teacherApi.assignCourse(studentId, courseId, deadlines),
+    onSuccess: () => {
+      setAssignStudentId('');
+      setAssignCourseId('');
+      setLessonDeadlines({});
+      queryClient.invalidateQueries({ queryKey: ['teacher-assignments'] });
+    },
+    onError: (err) => {
+      alert(err.message || t('teacher.assign_fail'));
+    },
+  });
+
+  const handleAddStudent = () => {
+    if (!newStudentEmail.trim()) return;
+    addStudentMutation.mutate(newStudentEmail.trim());
   };
 
-  const removeStudent = async (id) => {
-    await fetch(`${API_URL}/teacher/students/${id}`, {
-      method: 'DELETE', headers
-    });
-    fetchStudents();
-    fetchAssignments();
-  };
-
-  const assignCourse = async () => {
+  const handleAssignCourse = () => {
     if (!assignStudentId || !assignCourseId) return;
-    
     const deadlinesISO = {};
     for (const [lessonId, val] of Object.entries(lessonDeadlines)) {
       if (val) {
         deadlinesISO[lessonId] = new Date(val).toISOString();
       }
     }
-    
-    const res = await fetch(`${API_URL}/teacher/assign`, {
-      method: 'POST', headers,
-      body: JSON.stringify({ 
-        student_id: parseInt(assignStudentId), 
-        course_id: parseInt(assignCourseId),
-        deadlines: deadlinesISO
-      })
+    assignCourseMutation.mutate({
+      studentId: parseInt(assignStudentId),
+      courseId: parseInt(assignCourseId),
+      deadlines: deadlinesISO,
     });
-    if (res.ok) {
-      setAssignStudentId('');
-      setAssignCourseId('');
-      setLessonDeadlines({});
-      fetchAssignments();
-    } else {
-      const data = await res.json();
-      alert(data.detail || t('teacher.assign_fail'));
-    }
   };
 
-  const selectedCourseForAssign = assignableCourses.find(c => c.id === parseInt(assignCourseId));
+  const selectedCourseForAssign = assignableCourses.find(
+    (c) => c.id === parseInt(assignCourseId)
+  );
 
   const TABS = [
     { id: 'library', label: t('teacher.tab_library'), icon: <BookOpen size={18} />, count: libraryCourses.length },
@@ -134,7 +151,7 @@ export default function TeacherDashboard({ courses, schedules = {}, onScheduleUp
     { id: 'assign', label: t('teacher.tab_assign'), icon: <Send size={18} /> },
     { id: 'overview', label: t('teacher.tab_overview'), icon: <LayoutDashboard size={18} /> },
     { id: 'submissions', label: t('teacher.submissions_tab'), icon: <FileCheck size={18} />, count: submissions.length },
-    { id: 'analytics', label: t('app.analytics'), icon: <BarChart size={18} /> }
+    { id: 'analytics', label: t('app.analytics'), icon: <BarChart size={18} /> },
   ];
 
   return (
@@ -143,11 +160,9 @@ export default function TeacherDashboard({ courses, schedules = {}, onScheduleUp
         <h1 className="teacher-title">{t('teacher.title')}</h1>
         <p className="teacher-subtitle">{t('teacher.subtitle')}</p>
       </div>
-      
-      {error && <div className="error-message" style={{color: '#ef4444', marginBottom: '1rem', textAlign: 'center'}}>{error}</div>}
 
-      <div className="segmented-control-global" style={{marginBottom: '2.5rem'}}>
-        {TABS.map(tab => (
+      <div className="segmented-control-global" style={{ marginBottom: '2.5rem' }}>
+        {TABS.map((tab) => (
           <button
             key={tab.id}
             className={`segmented-btn-global ${activeTab === tab.id ? 'active' : ''}`}
@@ -170,10 +185,12 @@ export default function TeacherDashboard({ courses, schedules = {}, onScheduleUp
                 <Plus size={18} /> {t('create.add_course')}
               </button>
             </div>
-            
-            {libraryCourses.length === 0 ? (
+
+            {assignableCourses.length === 0 ? (
               <div className="empty-state-global">
-                <div className="empty-icon-global"><BookOpen size={48} /></div>
+                <div className="empty-icon-global">
+                  <BookOpen size={48} />
+                </div>
                 <p className="empty-msg-global">{t('teacher.no_library')}</p>
                 <button className="btn-gold mt-4" onClick={() => setShowCreateModal(true)}>
                   {t('create.add_course')}
@@ -181,9 +198,9 @@ export default function TeacherDashboard({ courses, schedules = {}, onScheduleUp
               </div>
             ) : (
               <div className="courses-grid">
-                {libraryCourses.map(course => (
-                  <CourseCard 
-                    key={course.id} 
+                {assignableCourses.map((course) => (
+                  <CourseCard
+                    key={course.id}
                     id={course.id}
                     title={course.title}
                     description={course.description}
@@ -216,40 +233,46 @@ export default function TeacherDashboard({ courses, schedules = {}, onScheduleUp
                     className="glass-input-teacher with-icon"
                     placeholder={t('teacher.student_email_ph')}
                     value={newStudentEmail}
-                    onChange={e => setNewStudentEmail(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && addStudent()}
+                    onChange={(e) => setNewStudentEmail(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleAddStudent()}
                   />
                 </div>
-                <button className="btn-gold" onClick={addStudent}>
-                  {t('teacher.add_student')}
+                <button
+                  className="btn-gold"
+                  onClick={handleAddStudent}
+                  disabled={addStudentMutation.isPending}
+                >
+                  {addStudentMutation.isPending ? t('app.loading') : t('teacher.add_student')}
                 </button>
               </div>
             </div>
 
             {students.length === 0 ? (
               <div className="empty-state-global">
-                <div className="empty-icon-global"><Users size={48} /></div>
+                <div className="empty-icon-global">
+                  <Users size={48} />
+                </div>
                 <p className="empty-msg-global">{t('teacher.no_students')}</p>
               </div>
             ) : (
               <div className="students-grid">
-                {students.map(s => (
+                {students.map((s) => (
                   <div key={s.id} className="student-card modern-card">
                     <div className="student-info">
                       <div className="student-avatar">{s.email[0].toUpperCase()}</div>
                       <span className="student-email">{s.email}</span>
                     </div>
                     <div className="student-actions">
-                      <button 
+                      <button
                         className="btn-glass btn-sm btn-action text-amber"
                         onClick={() => setCustomLessonStudent(s)}
                         title={t('teacher.custom_lesson_btn')}
                       >
                         <Plus size={16} />
                       </button>
-                      <button 
+                      <button
                         className="btn-glass btn-sm btn-action text-red"
-                        onClick={() => removeStudent(s.id)}
+                        onClick={() => removeStudentMutation.mutate(s.id)}
                         title="Remove Student"
                       >
                         <X size={16} />
@@ -268,7 +291,9 @@ export default function TeacherDashboard({ courses, schedules = {}, onScheduleUp
             <h3>{t('teacher.assign_course')}</h3>
             {students.length === 0 ? (
               <div className="empty-state-global">
-                <div className="empty-icon-global"><Send size={48} /></div>
+                <div className="empty-icon-global">
+                  <Send size={48} />
+                </div>
                 <p className="empty-msg-global">{t('teacher.add_students_first')}</p>
               </div>
             ) : (
@@ -280,11 +305,15 @@ export default function TeacherDashboard({ courses, schedules = {}, onScheduleUp
                       <select
                         className="glass-input-teacher"
                         value={assignStudentId}
-                        onChange={e => setAssignStudentId(e.target.value)}
+                        onChange={(e) => setAssignStudentId(e.target.value)}
                       >
-                        <option value="" className="select-placeholder">— {t('teacher.select_student')} —</option>
-                        {students.map(s => (
-                          <option key={s.id} value={s.id}>{s.email}</option>
+                        <option value="" className="select-placeholder">
+                          — {t('teacher.select_student')} —
+                        </option>
+                        {students.map((s) => (
+                          <option key={s.id} value={s.id}>
+                            {s.email}
+                          </option>
                         ))}
                       </select>
                     </div>
@@ -295,41 +324,65 @@ export default function TeacherDashboard({ courses, schedules = {}, onScheduleUp
                       <select
                         className="glass-input-teacher"
                         value={assignCourseId}
-                        onChange={e => setAssignCourseId(e.target.value)}
+                        onChange={(e) => setAssignCourseId(e.target.value)}
                       >
-                        <option value="" className="select-placeholder">— {t('teacher.select_course')} —</option>
-                        {assignableCourses.map(c => (
-                          <option key={c.id} value={c.id}>{c.title}</option>
+                        <option value="" className="select-placeholder">
+                          — {t('teacher.select_course')} —
+                        </option>
+                        {assignableCourses.map((c) => (
+                          <option key={c.id} value={c.id}>
+                            {c.title}
+                          </option>
                         ))}
                       </select>
                     </div>
                   </div>
                 </div>
-                
-                {selectedCourseForAssign && selectedCourseForAssign.lessons && selectedCourseForAssign.lessons.length > 0 && (
-                  <div className="deadlines-section">
-                    <h4>{t('teacher.set_deadlines')}</h4>
-                    <div className="deadlines-list">
-                      {selectedCourseForAssign.lessons.map((lesson, idx) => (
-                        <div key={lesson.id} className="deadline-item">
-                          <span className="lesson-name">
-                            <span className="lesson-index">{idx + 1}</span> {lesson.title}
-                          </span>
-                          <div className="deadline-input-wrapper" style={{ minWidth: '220px' }}>
-                            <GlassDateTimePicker 
-                              value={lessonDeadlines[lesson.id] || ''}
-                              onChange={val => setLessonDeadlines(prev => ({...prev, [lesson.id]: val}))}
-                              popoverDirection="down"
-                            />
+
+                {selectedCourseForAssign &&
+                  selectedCourseForAssign.lessons &&
+                  selectedCourseForAssign.lessons.length > 0 && (
+                    <div className="deadlines-section">
+                      <h4>{t('teacher.set_deadlines')}</h4>
+                      <div className="deadlines-list">
+                        {selectedCourseForAssign.lessons.map((lesson, idx) => (
+                          <div key={lesson.id} className="deadline-item">
+                            <span className="lesson-name">
+                              <span className="lesson-index">{idx + 1}</span> {lesson.title}
+                            </span>
+                            <div
+                              className="deadline-input-wrapper"
+                              style={{ minWidth: '220px' }}
+                            >
+                              <GlassDateTimePicker
+                                value={lessonDeadlines[lesson.id] || ''}
+                                onChange={(val) =>
+                                  setLessonDeadlines((prev) => ({
+                                    ...prev,
+                                    [lesson.id]: val,
+                                  }))
+                                }
+                                popoverDirection="down"
+                              />
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
-                
-                <button className="btn-gold w-full mt-4 btn-lg" onClick={assignCourse} disabled={!assignStudentId || !assignCourseId}>
-                  {t('teacher.assign_btn')}
+                  )}
+
+                <button
+                  className="btn-gold w-full mt-4 btn-lg"
+                  onClick={handleAssignCourse}
+                  disabled={
+                    !assignStudentId ||
+                    !assignCourseId ||
+                    assignCourseMutation.isPending
+                  }
+                >
+                  {assignCourseMutation.isPending
+                    ? t('app.loading')
+                    : t('teacher.assign_btn')}
                 </button>
               </div>
             )}
@@ -342,7 +395,9 @@ export default function TeacherDashboard({ courses, schedules = {}, onScheduleUp
             <h3>{t('teacher.assignments_overview')}</h3>
             {assignments.length === 0 ? (
               <div className="empty-state-global">
-                <div className="empty-icon-global"><LayoutDashboard size={48} /></div>
+                <div className="empty-icon-global">
+                  <LayoutDashboard size={48} />
+                </div>
                 <p className="empty-msg-global">{t('teacher.no_assignments')}</p>
               </div>
             ) : (
@@ -353,10 +408,12 @@ export default function TeacherDashboard({ courses, schedules = {}, onScheduleUp
                   <span>{t('teacher.col_progress')}</span>
                 </div>
                 <div className="grid-body">
-                  {assignments.map(a => (
+                  {assignments.map((a) => (
                     <div key={a.id} className="grid-row">
                       <div className="grid-cell student-cell">
-                        <div className="student-avatar-sm">{a.student_email[0].toUpperCase()}</div>
+                        <div className="student-avatar-sm">
+                          {a.student_email[0].toUpperCase()}
+                        </div>
                         {a.student_email}
                       </div>
                       <div className="grid-cell course-cell">
@@ -365,9 +422,14 @@ export default function TeacherDashboard({ courses, schedules = {}, onScheduleUp
                       </div>
                       <div className="grid-cell progress-cell">
                         <div className="progress-bar-container-teacher">
-                          <div className="progress-bar-teacher" style={{ width: `${a.progress}%` }}></div>
+                          <div
+                            className="progress-bar-teacher"
+                            style={{ width: `${a.progress}%` }}
+                          />
                         </div>
-                        <span className="progress-text">{a.completed_lessons}/{a.total_lessons} ({a.progress}%)</span>
+                        <span className="progress-text">
+                          {a.completed_lessons}/{a.total_lessons} ({a.progress}%)
+                        </span>
                       </div>
                     </div>
                   ))}
@@ -381,23 +443,28 @@ export default function TeacherDashboard({ courses, schedules = {}, onScheduleUp
         {activeTab === 'submissions' && (
           <div className="teacher-panel">
             <h3>{t('teacher.tab_submissions')}</h3>
-            
+
             {submissions.length === 0 ? (
               <div className="empty-state-global">
-                <div className="empty-icon-global"><Inbox size={48} /></div>
+                <div className="empty-icon-global">
+                  <Inbox size={48} />
+                </div>
                 <p className="empty-msg-global">{t('teacher.no_submissions')}</p>
               </div>
             ) : (
               <div className="submissions-list">
-                {submissions.map(sub => (
+                {submissions.map((sub) => (
                   <div key={sub.id} className="submission-card glass-panel-teacher">
                     <div className="submission-header">
                       <div className="submission-meta">
-                        <div className="student-avatar-sm">{sub.student_email[0].toUpperCase()}</div>
+                        <div className="student-avatar-sm">
+                          {sub.student_email[0].toUpperCase()}
+                        </div>
                         <div>
                           <h4 className="submission-student">{sub.student_email}</h4>
                           <p className="submission-course">
-                            {sub.course_title} <span className="separator">•</span> {sub.lesson_title}
+                            {sub.course_title} <span className="separator">•</span>{' '}
+                            {sub.lesson_title}
                           </p>
                         </div>
                       </div>
@@ -405,16 +472,19 @@ export default function TeacherDashboard({ courses, schedules = {}, onScheduleUp
                         {safeDate(sub.submitted_at).toLocaleString()}
                       </div>
                     </div>
-                    
+
                     {sub.content && (
-                      <div className="submission-content">
-                        {sub.content}
-                      </div>
+                      <div className="submission-content">{sub.content}</div>
                     )}
-                    
+
                     {sub.attachments && sub.attachments.length > 0 && (
-                      <div className="submission-attachments" style={{marginTop: '0.75rem'}}>
-                        <h5 style={{marginBottom: '0.5rem'}}>{t('create.attachments')} ({sub.attachments.length}):</h5>
+                      <div
+                        className="submission-attachments"
+                        style={{ marginTop: '0.75rem' }}
+                      >
+                        <h5 style={{ marginBottom: '0.5rem' }}>
+                          {t('create.attachments')} ({sub.attachments.length}):
+                        </h5>
                         <AttachmentList attachments={sub.attachments} />
                       </div>
                     )}
@@ -434,9 +504,14 @@ export default function TeacherDashboard({ courses, schedules = {}, onScheduleUp
       </div>
 
       {showCreateModal && (
-        <CreateCourseModal 
-          onClose={() => setShowCreateModal(false)} 
-          onCourseCreated={() => { setShowCreateModal(false); fetchLibrary(); }} 
+        <CreateCourseModal
+          isPersonal={false}
+          onClose={() => setShowCreateModal(false)}
+          onCourseCreated={() => {
+            setShowCreateModal(false);
+            queryClient.invalidateQueries({ queryKey: ['teacher-library'] });
+            queryClient.invalidateQueries({ queryKey: ['teacher-assignable'] });
+          }}
         />
       )}
 
@@ -444,7 +519,11 @@ export default function TeacherDashboard({ courses, schedules = {}, onScheduleUp
         <CustomLessonModal
           student={customLessonStudent}
           onClose={() => setCustomLessonStudent(null)}
-          onLessonCreated={() => { setCustomLessonStudent(null); fetchLibrary(); fetchAssignments(); }}
+          onLessonCreated={() => {
+            setCustomLessonStudent(null);
+            queryClient.invalidateQueries({ queryKey: ['teacher-assignable'] });
+            queryClient.invalidateQueries({ queryKey: ['teacher-assignments'] });
+          }}
         />
       )}
     </div>

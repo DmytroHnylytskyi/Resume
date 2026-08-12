@@ -1,0 +1,301 @@
+'use client';
+
+/**
+ * @file page.tsx
+ * @module app/[locale]/page
+ * @description Main application page component rendering the 3D Scene Viewport, Top Navbar,
+ * UI overlay modals, bilingual EN/UK locale switcher button, and performance-optimized state management.
+ * 
+ * @author 3D Furniture Configurator Team
+ */
+
+import { useRef, useState } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
+import { useRouter, usePathname } from 'next/navigation';
+import ColorPicker from '../../components/ColorPicker';
+import AuthModal from '../../components/AuthModal';
+import InstructionModal from '../../components/InstructionModal';
+import UserProfileModal from '../../components/UserProfileModal';
+import FurnitureCatalog from '../../components/FurnitureCatalog';
+import TransformToolbar from '../../components/TransformToolbar';
+import SceneViewport from '../../components/SceneViewport';
+import Toast from '../../components/Toast';
+import useHotkeys from '../../hooks/useHotkeys';
+import { useStore } from '../../store/useStore';
+import { 
+  Sparkles, 
+  HelpCircle,
+  Building2,
+  User, 
+  LogOut, 
+  Sun, 
+  Moon, 
+  Magnet, 
+  Save, 
+  RotateCcw, 
+  Download, 
+  Upload,
+  Trash2,
+  Globe
+} from 'lucide-react';
+
+/**
+ * Main 3D Editor & Configurator Page Component.
+ * 
+ * @returns {JSX.Element} The full-page 3D viewport layout.
+ */
+export default function Home() {
+  const tNav = useTranslations('Navbar');
+  const tPlacement = useTranslations('Placement');
+  const locale = useLocale();
+  const router = useRouter();
+  const pathname = usePathname();
+  
+  /** Reference to hidden file input for JSON import */
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  /** State controlling instruction modal visibility */
+  const [showInstruction, setShowInstruction] = useState(false);
+
+  /** State controlling user profile modal visibility */
+  const [showProfile, setShowProfile] = useState(false);
+
+  // Granular state selectors for UI toolbar
+  const authMode = useStore((state) => state.authMode);
+  const setAuthMode = useStore((state) => state.setAuthMode);
+  const user = useStore((state) => state.user);
+  const logout = useStore((state) => state.logout);
+  const placedObjectsCount = useStore((state) => state.placedObjects.length);
+  const snapToGrid = useStore((state) => state.snapToGrid);
+  const toggleSnapToGrid = useStore((state) => state.toggleSnapToGrid);
+  const lightMode = useStore((state) => state.lightMode);
+  const toggleLightMode = useStore((state) => state.toggleLightMode);
+  const saveToLocalStorage = useStore((state) => state.saveToLocalStorage);
+  const loadFromLocalStorage = useStore((state) => state.loadFromLocalStorage);
+  const exportJSON = useStore((state) => state.exportJSON);
+  const importJSON = useStore((state) => state.importJSON);
+  const clearAllPlacedObjects = useStore((state) => state.clearAllPlacedObjects);
+  const loadAntiquePalace = useStore((state) => state.loadAntiquePalace);
+  const loadEmptyCanvas = useStore((state) => state.loadEmptyCanvas);
+  const placingModelPath = useStore((state) => state.placingModelPath);
+  const cancelPlacement = useStore((state) => state.cancelPlacement);
+  const activeMode = useStore((state) => state.activeMode);
+  const currentProjectName = useStore((state) => state.currentProjectName);
+  const addToast = useStore((state) => state.addToast);
+  
+  // Register global hotkey listeners (Ctrl+D, Delete, 1/2/3, R, Esc)
+  useHotkeys();
+
+  /**
+   * Toggles active locale between English ('en') and Ukrainian ('uk').
+   */
+  const toggleLocale = () => {
+    const nextLocale = locale === 'en' ? 'uk' : 'en';
+    const currentPath = typeof window !== 'undefined' ? window.location.pathname : pathname;
+    let cleanPath = currentPath;
+    if (cleanPath.startsWith(`/${locale}`)) {
+      cleanPath = cleanPath.slice(locale.length + 1) || '';
+    } else if (cleanPath.startsWith('/en') || cleanPath.startsWith('/uk')) {
+      cleanPath = cleanPath.slice(3) || '';
+    }
+    const targetUrl = `/${nextLocale}${cleanPath.startsWith('/') ? cleanPath : (cleanPath ? `/${cleanPath}` : '')}`;
+    router.push(targetUrl);
+  };
+
+  /** Handles saving current scene state to browser localStorage */
+  const handleSave = () => {
+    const success = saveToLocalStorage();
+    if (success) {
+      addToast(tNav('savedSuccess'), 'success');
+    }
+  };
+
+  /** Handles loading saved scene state from browser localStorage */
+  const handleLoad = () => {
+    const success = loadFromLocalStorage();
+    if (success) {
+      addToast(tNav('loadedSuccess'), 'success');
+    } else {
+      addToast(tNav('notFound'), 'error');
+    }
+  };
+
+  /**
+   * Handles JSON file selection and imports scene configuration.
+   * @param {React.ChangeEvent<HTMLInputElement>} e - File input change event.
+   */
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const content = event.target?.result;
+      if (typeof content === 'string') {
+        const success = importJSON(content);
+        if (success) {
+          addToast(tNav('importSuccess'), 'success');
+        } else {
+          addToast(tNav('importError'), 'error');
+        }
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  return (
+    <main className="main-viewport">
+      {/* Hidden file input element for JSON project import */}
+      <input 
+        type="file" 
+        ref={fileInputRef} 
+        style={{ display: 'none' }} 
+        accept=".json" 
+        onChange={handleFileUpload} 
+      />
+
+      {/* ── Top Floating Header & Tool Bar ── */}
+      <header className="top-navbar glass-panel">
+        <div className="navbar-brand">
+          <Sparkles className="navbar-brand-icon" size={20} />
+          <h1 className="navbar-title">{tNav('title')}</h1>
+        </div>
+
+        {/* Center Control Toolbar: Day/Night, Magnet Snap, Save/Load/JSON, Language Switcher */}
+        <div className="navbar-toolbar-controls">
+          <button 
+            className={`navbar-tool-btn ${lightMode === 'night' ? 'active' : ''}`}
+            onClick={toggleLightMode}
+            title={lightMode === 'day' ? tNav('dayTooltip') : tNav('nightTooltip')}
+          >
+            {lightMode === 'day' ? <Sun size={16} /> : <Moon size={16} />}
+            <span className="navbar-tool-label">{lightMode === 'day' ? tNav('day') : tNav('night')}</span>
+          </button>
+
+          <button 
+            className={`navbar-tool-btn ${snapToGrid ? 'active' : ''}`}
+            onClick={toggleSnapToGrid}
+            title={tNav('magnetTooltip')}
+          >
+            <Magnet size={16} />
+            <span className="navbar-tool-label">Magnet {snapToGrid ? 'ON' : 'OFF'}</span>
+          </button>
+
+          <button 
+            className="navbar-tool-btn"
+            onClick={() => setShowInstruction(true)}
+            title={tNav('instructionTooltip')}
+          >
+            <HelpCircle size={16} />
+            <span className="navbar-tool-label">{tNav('instruction')}</span>
+          </button>
+
+          <div className="navbar-toolbar-divider" />
+
+          {/* Bilingual Language Switcher Button */}
+          <button 
+            className="navbar-tool-btn active"
+            onClick={toggleLocale}
+            title={locale === 'en' ? 'Switch language to Ukrainian' : 'Змінити мову на англійську'}
+          >
+            <Globe size={16} />
+            <span className="navbar-tool-label">{locale.toUpperCase()}</span>
+          </button>
+
+          <div className="navbar-toolbar-divider" />
+
+          <button 
+            className={`navbar-tool-btn ${activeMode === 'example' ? 'active' : ''}`} 
+            onClick={loadAntiquePalace} 
+            title={tNav('presetExampleTooltip')}
+          >
+            <Building2 size={15} />
+            <span className="navbar-tool-label">{tNav('presetExample')}</span>
+          </button>
+
+          <button 
+            className={`navbar-tool-btn ${activeMode === 'custom' ? 'active' : ''}`} 
+            onClick={loadEmptyCanvas} 
+            title={tNav('presetCleanTooltip')}
+          >
+            <Sparkles size={15} />
+            <span className="navbar-tool-label">{activeMode === 'custom' ? (currentProjectName === 'Проєкт Приклад' ? tNav('presetExample') : currentProjectName) : tNav('presetClean')}</span>
+          </button>
+
+          <div className="navbar-toolbar-divider" />
+
+          <button className="navbar-tool-btn" onClick={handleSave} title={tNav('saveTooltip')}>
+            <Save size={15} />
+            <span className="navbar-tool-label">{tNav('save')}</span>
+          </button>
+
+          <button className="navbar-tool-btn" onClick={handleLoad} title={tNav('restoreTooltip')}>
+            <RotateCcw size={15} />
+            <span className="navbar-tool-label">{tNav('restore')}</span>
+          </button>
+
+          <button className="navbar-tool-btn" onClick={exportJSON} title={tNav('exportJsonTooltip')}>
+            <Download size={15} />
+          </button>
+
+          <button className="navbar-tool-btn" onClick={() => fileInputRef.current?.click()} title={tNav('importJsonTooltip')}>
+            <Upload size={15} />
+          </button>
+
+          {placedObjectsCount > 0 && (
+            <button className="navbar-tool-btn danger" onClick={clearAllPlacedObjects} title={tNav('clearAllTooltip')}>
+              <Trash2 size={15} />
+            </button>
+          )}
+        </div>
+
+        {/* User Auth Info / Login Buttons */}
+        <div className="navbar-actions">
+          {user ? (
+            <div 
+              className="navbar-user-info" 
+              onClick={() => setShowProfile(true)}
+              title={tNav('profileTooltip')}
+              style={{ cursor: 'pointer' }}
+            >
+              <User size={15} />
+              <span className="navbar-username">{user.name}</span>
+              <button 
+                className="glass-button navbar-logout-btn" 
+                onClick={(e) => { e.stopPropagation(); logout(); }} 
+                title={tNav('logout')}
+              >
+                <LogOut size={14} />
+              </button>
+            </div>
+          ) : (
+            <div className="navbar-auth-buttons">
+              <button className="glass-button" onClick={() => setAuthMode('login')}>{tNav('login')}</button>
+              <button className="glass-button primary" onClick={() => setAuthMode('register')}>{tNav('register')}</button>
+            </div>
+          )}
+        </div>
+      </header>
+      
+      {/* Overlay Modals & Color Picker Toolbars */}
+      {authMode && <AuthModal onClose={() => setAuthMode(null)} />}
+      {showInstruction && <InstructionModal onClose={() => setShowInstruction(false)} />}
+      {showProfile && <UserProfileModal onClose={() => setShowProfile(false)} />}
+      <ColorPicker />
+      <FurnitureCatalog />
+      <TransformToolbar />
+      <Toast />
+
+      {/* ── Top Floating 3D Placement Active Banner ── */}
+      {placingModelPath && (
+        <div className="placement-active-banner glass-panel">
+          <Sparkles size={16} className="placement-banner-icon" />
+          <span><b>{tPlacement('active')}</b> {tPlacement('instructions')}</span>
+          <button className="placement-cancel-btn" onClick={cancelPlacement}>{tPlacement('cancel')}</button>
+        </div>
+      )}
+
+      {/* ── WebGL 3D Scene Viewport (Memoized & Isolated) ── */}
+      <SceneViewport />
+    </main>
+  );
+}

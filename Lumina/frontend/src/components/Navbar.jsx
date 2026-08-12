@@ -1,17 +1,33 @@
-import { API_URL } from '../config';
 import React, { useState, useContext } from 'react';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { API_URL } from '../config';
 import './Navbar.css';
 import { AuthContext } from './AuthContext';
 import AuthModal from './AuthModal';
 import { useTranslation } from 'react-i18next';
 import { Leaf, Menu, X } from 'lucide-react';
 
-export default function Navbar({ currentView, onViewChange, onLoginClick }) {
+/**
+ * Main Top Navigation Bar.
+ *
+ * Provides branding links, language selection (EN/UK), dynamic role switching,
+ * mobile responsive drawer, and login/logout modal triggers.
+ *
+ * @component
+ * @param {Object} props
+ * @param {Function} [props.onLoginClick] - Callback to open global authentication modal.
+ * @returns {JSX.Element} Rendered Navbar.
+ */
+export default function Navbar({ onLoginClick }) {
   const { user, token, logout, refreshUser } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const location = useLocation();
   const [showModal, setShowModal] = useState(false);
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { t, i18n } = useTranslation();
+
+  const isTeacherRoute = location.pathname.startsWith('/teacher');
 
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
@@ -30,7 +46,7 @@ export default function Navbar({ currentView, onViewChange, onLoginClick }) {
       refreshUser();
       const data = await res.json();
       if (data.role === 'student') {
-        onViewChange('student');
+        navigate('/');
       }
     }
   };
@@ -39,37 +55,43 @@ export default function Navbar({ currentView, onViewChange, onLoginClick }) {
     <>
       <nav className="glass-nav">
         <div className="nav-container">
-          <div className="logo" onClick={() => onViewChange('student')} style={{cursor:'pointer', display: 'flex', alignItems: 'center', gap: '8px', zIndex: 101}}>
+          <div
+            className="logo"
+            onClick={() => navigate('/')}
+            style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', zIndex: 101 }}
+          >
             <Leaf size={28} />
             <span>{t('app.title')}</span><span className="logo-dot">.</span>
           </div>
-          
+
           <div className="hamburger" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
             {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
           </div>
 
           <div className={`nav-links ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
-            {currentView === 'teacher' && (
-              <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); onViewChange('student'); }}>
-                {t('app.courses')}
-              </a>
-            )}
-            {currentView !== 'teacher' && (
-              <a href="#courses" className="nav-link">{t('app.courses')}</a>
-            )}
+            <Link
+              to="/"
+              className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              {t('app.courses')}
+            </Link>
 
             {user && user.role === 'teacher' && (
               <button
-                className={`nav-link btn-nav-teacher ${currentView === 'teacher' ? 'btn-nav-active' : ''}`}
-                onClick={() => onViewChange(currentView === 'teacher' ? 'student' : 'teacher')}
+                className={`btn-nav-teacher ${isTeacherRoute ? 'btn-nav-teacher--active' : ''}`}
+                onClick={() => {
+                  navigate(isTeacherRoute ? '/' : '/teacher');
+                  setIsMobileMenuOpen(false);
+                }}
               >
                 {t('teacher.dashboard_btn')}
               </button>
             )}
-            
+
             <div className="custom-lang-dropdown">
-              <button 
-                className="lang-toggle" 
+              <button
+                className="lang-toggle"
                 onClick={() => setIsLangOpen(!isLangOpen)}
               >
                 {i18n.language.toUpperCase()}
@@ -93,15 +115,32 @@ export default function Navbar({ currentView, onViewChange, onLoginClick }) {
                     {t('teacher.become')}
                   </button>
                 )}
-                <button className="btn-glass" onClick={() => { logout(); setIsMobileMenuOpen(false); }}>{t('app.logout')}</button>
+                <button
+                  className="btn-glass"
+                  onClick={() => {
+                    logout();
+                    setIsMobileMenuOpen(false);
+                    navigate('/');
+                  }}
+                >
+                  {t('app.logout')}
+                </button>
               </div>
             ) : (
-              <button className="btn-glass" onClick={() => { if(onLoginClick) onLoginClick(); else setShowModal(true); setIsMobileMenuOpen(false); }}>{t('app.signin')}</button>
+              <button
+                className="btn-glass"
+                onClick={() => {
+                  if (onLoginClick) onLoginClick();
+                  else setShowModal(true);
+                  setIsMobileMenuOpen(false);
+                }}
+              >
+                {t('app.signin')}
+              </button>
             )}
           </div>
         </div>
       </nav>
-      {/* AuthModal is now handled by App.jsx, but keeping local fallback just in case */}
       {showModal && !onLoginClick && <AuthModal onClose={() => setShowModal(false)} />}
     </>
   );

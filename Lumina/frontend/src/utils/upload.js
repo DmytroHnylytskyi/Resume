@@ -1,3 +1,20 @@
+/**
+ * Media & File Upload Utility Module.
+ *
+ * Provides functions for single and batch file uploads to the backend API
+ * with authentication and error handling.
+ */
+
+/**
+ * Uploads a single file to the backend API server or Cloudinary integration.
+ *
+ * @async
+ * @function handleFileUploadUtil
+ * @param {File} file - The browser File object selected by the user.
+ * @param {string|null} token - The Bearer JWT authentication token.
+ * @param {string} apiUrl - The base API URL.
+ * @returns {Promise<Object|null>} Object containing url, filename, size, and content_type, or null on failure.
+ */
 export const handleFileUploadUtil = async (file, token, apiUrl) => {
   if (!file) return null;
   const formData = new FormData();
@@ -21,6 +38,16 @@ export const handleFileUploadUtil = async (file, token, apiUrl) => {
   }
 };
 
+/**
+ * Uploads multiple files concurrently using Promise.all.
+ *
+ * @async
+ * @function handleMultipleFileUploadsUtil
+ * @param {File[]} files - Array of browser File objects.
+ * @param {string|null} token - The Bearer JWT authentication token.
+ * @param {string} apiUrl - The base API URL.
+ * @returns {Promise<Array<Object>>} Array of successful upload response objects.
+ */
 export const handleMultipleFileUploadsUtil = async (files, token, apiUrl) => {
   if (!files || files.length === 0) return [];
   

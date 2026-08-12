@@ -6,7 +6,7 @@ import { X } from 'lucide-react';
 import CourseForm from './CourseForm';
 import './CreateCourseModal.css';
 
-export default function CreateCourseModal({ onClose, onCourseCreated }) {
+export default function CreateCourseModal({ onClose, onCourseCreated, onCreated, isPersonal = false }) {
   const { token } = useContext(AuthContext);
   const { t } = useTranslation();
   const [title, setTitle] = useState('');
@@ -60,12 +60,14 @@ export default function CreateCourseModal({ onClose, onCourseCreated }) {
         body: JSON.stringify({
           title,
           description,
+          is_personal: isPersonal,
           lessons: processedLessons
         })
       });
 
       if (res.ok) {
-        onCourseCreated();
+        if (onCourseCreated) onCourseCreated();
+        if (onCreated) onCreated();
         onClose();
       } else {
         alert(t('create.fail'));

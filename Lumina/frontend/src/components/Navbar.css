@@ -29,12 +29,18 @@
   color: var(--text-secondary);
   text-decoration: none;
   font-weight: 500;
-  transition: color 0.2s;
+  transition: color 0.2s, opacity 0.2s;
   font-size: 0.95rem;
+  background: transparent !important;
+  border: none !important;
+  padding: 4px 0;
 }
 
-.nav-link:hover {
+.nav-link:hover,
+.nav-link.active {
   color: var(--text-primary);
+  font-weight: 600;
+  background: transparent !important;
 }
 
 /* Unified Navbar Button Styles */
@@ -62,6 +68,11 @@
 
 .btn-nav-teacher:hover {
   background: rgba(245, 158, 11, 0.2);
+}
+
+.btn-nav-teacher--active {
+  background: rgba(245, 158, 11, 0.25) !important;
+  border-color: #f59e0b !important;
 }
 
 .btn-nav-active {
