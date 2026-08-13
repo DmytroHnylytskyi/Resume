@@ -173,9 +173,10 @@ export default function Home() {
             className="navbar-tool-btn active"
             onClick={toggleLocale}
             title={locale === 'en' ? 'Switch language to Ukrainian' : 'Змінити мову на англійську'}
+            suppressHydrationWarning
           >
             <Globe size={16} />
-            <span className="navbar-tool-label">{locale.toUpperCase()}</span>
+            <span className="navbar-tool-label" suppressHydrationWarning>{locale.toUpperCase()}</span>
           </button>
 
           <div className="navbar-toolbar-divider" />

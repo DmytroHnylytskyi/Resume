@@ -44,7 +44,7 @@ export default function ClientI18nProvider({ children, initialLocale }: ClientI1
   const activeMessages = messagesMap[activeLocale] || messagesMap.en;
 
   return (
-    <NextIntlClientProvider locale={activeLocale} messages={activeMessages}>
+    <NextIntlClientProvider locale={activeLocale} messages={activeMessages} timeZone="UTC">
       {children}
     </NextIntlClientProvider>
   );
