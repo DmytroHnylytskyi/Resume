@@ -151,12 +151,8 @@ export default function InstructionModal({ onClose }: InstructionModalProps) {
             </div>
             <div className="instruction-grid">
               <div className="instruction-item">
-                <span className="instruction-key">{tIns('exampleProject')}</span>
-                <span className="instruction-desc">{tIns('exampleProjectDesc')}</span>
-              </div>
-              <div className="instruction-item">
-                <span className="instruction-key">{tIns('cleanCanvas')}</span>
-                <span className="instruction-desc">{tIns('cleanCanvasDesc')}</span>
+                <span className="instruction-key">{tIns('cloudProjects')}</span>
+                <span className="instruction-desc">{tIns('cloudProjectsDesc')}</span>
               </div>
               <div className="instruction-item">
                 <span className="instruction-key">{tIns('browserSave')}</span>
@@ -165,6 +161,10 @@ export default function InstructionModal({ onClose }: InstructionModalProps) {
               <div className="instruction-item">
                 <span className="instruction-key">{tIns('jsonFile')}</span>
                 <span className="instruction-desc">{tIns('jsonFileDesc')}</span>
+              </div>
+              <div className="instruction-item">
+                <span className="instruction-key">{tIns('clearScene')}</span>
+                <span className="instruction-desc">{tIns('clearSceneDesc')}</span>
               </div>
             </div>
           </div>
