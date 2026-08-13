@@ -3,847 +3,488 @@ import { PlacedObject } from '../types';
 /**
  * @file userAntiqueHouse.ts
  * @module data/userAntiqueHouse
- * @description Clean starter demonstration scene preset with structured modular architecture and decorative statues.
+ * @description Preset demo project data: "Floating Archipelago" (Левитирующий Архипелаг).
+ * A rich atmospheric floating island landscape with rope bridges, portals, ancient altars, and lush vegetation.
  * 
  * @author 3D Furniture Configurator Team
  */
 
 export const userAntiqueHouseObjects: PlacedObject[] = [
   {
-    "id": "e7fac555-ce78-4d5a-8df5-56f112b6792c",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [11.5, 0, 0],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "f744b7e1-20ea-4cb8-aa50-72131cd9da06",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [5, 0, 0],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "d82d089f-bc0c-495d-921d-7636bd60ae2d",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [8.5, 0, 0],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "b6321a5c-1aed-457c-b0bd-52e59c567d0b",
-    "modelPath": "/model/house_railing.glb",
-    "name": "Balcony Railing",
-    "scale": 1,
-    "position": [5.9065982101305625, 0.5532279178428704, 1.7548660886517966],
-    "rotation": [-Math.PI / 2, 0, -Math.PI],
-    "colors": { "Railing": "#ffffff" }
-  },
-  {
-    "id": "40d6435d-44aa-4032-a88c-3b60ee305260",
-    "modelPath": "/model/house_railing.glb",
-    "name": "Balcony Railing",
-    "scale": 1,
-    "position": [7.698688672711853, 0.5532279178428704, 1.755085174844503],
-    "rotation": [-Math.PI / 2, 0, -Math.PI],
-    "colors": { "Railing": "#ffffff" }
-  },
-  {
-    "id": "5e556f86-4c26-46d5-ace1-72e28e93f6ca",
-    "modelPath": "/model/house_railing.glb",
-    "name": "Balcony Railing",
-    "scale": 1,
-    "position": [9.506171704895516, 0.5532279178428704, 1.7536963884569006],
-    "rotation": [-Math.PI / 2, 0, -Math.PI],
-    "colors": { "Railing": "#ffffff" }
-  },
-  {
-    "id": "4fcf9ea2-fbb4-4c74-a6d6-770a8fd1826a",
-    "modelPath": "/model/house_railing.glb",
-    "name": "Balcony Railing",
-    "scale": 1,
-    "position": [13.106807589413132, 0.5532279178428704, 1.7555048277589473],
-    "rotation": [-Math.PI / 2, 0, -Math.PI],
-    "colors": { "Railing": "#ffffff" }
-  },
-  {
-    "id": "aaf8c182-9630-4b50-b47a-b79104e87a51",
-    "modelPath": "/model/house_railing.glb",
-    "name": "Balcony Railing",
-    "scale": 1,
-    "position": [11.303190058409527, 0.5532279178428704, 1.7551347226205465],
-    "rotation": [-Math.PI / 2, 0, -Math.PI],
-    "colors": { "Railing": "#ffffff" }
-  },
-  {
-    "id": "915f8fc5-66d6-49f4-a5e2-c0cc858b3aea",
-    "modelPath": "/model/gothic_statue1_15.glb",
-    "name": "Gothic Statue 1",
-    "scale": 1.25,
-    "position": [14.626101694187849, 0.1162144150623825, 1.4236918258973974],
-    "rotation": [0, -Math.PI, 0],
-    "colors": { "Object": "#a18989" }
-  },
-  {
-    "id": "268a78ca-7496-457d-a0f1-a7030fbc9cfb",
-    "modelPath": "/model/gothic_statue1_15.glb",
-    "name": "Gothic Statue 1",
-    "scale": 1.25,
-    "position": [14.5, 0, -1.5],
-    "rotation": [0, 0, 0],
-    "colors": { "Object": "#54391d" }
-  },
-  {
-    "id": "4b623b90-d7ac-4887-8c28-a16049429899",
-    "modelPath": "/model/house_railing.glb",
-    "name": "Balcony Railing",
-    "scale": 1,
-    "position": [5.898927660783988, 0.5532279178428704, -1.893985335351617],
-    "rotation": [-Math.PI / 2, 0, -Math.PI],
-    "colors": { "Railing": "#ffffff" }
-  },
-  {
-    "id": "c27d08e6-b51a-4d6b-8ae7-a4b24b3b1a30",
-    "modelPath": "/model/house_railing.glb",
-    "name": "Balcony Railing",
-    "scale": 1,
-    "position": [7.704119843740888, 0.5532279178428704, -1.8949689682683992],
-    "rotation": [-Math.PI / 2, 0, -Math.PI],
-    "colors": { "Railing": "#ffffff" }
-  },
-  {
-    "id": "3eeb2c07-802d-44d3-a2f6-b7975c87d119",
-    "modelPath": "/model/house_railing.glb",
-    "name": "Balcony Railing",
-    "scale": 1,
-    "position": [9.51342272221836, 0.5532279178428704, -1.8954785680736415],
-    "rotation": [-Math.PI / 2, 0, -Math.PI],
-    "colors": { "Railing": "#ffffff" }
-  },
-  {
-    "id": "5d9d9584-1a07-45be-8ef3-18acfb20195a",
-    "modelPath": "/model/house_railing.glb",
-    "name": "Balcony Railing",
-    "scale": 1,
-    "position": [11.31309256895828, 0.5532279178428704, -1.8929069128606741],
-    "rotation": [-Math.PI / 2, 0, -Math.PI],
-    "colors": { "Railing": "#ffffff" }
-  },
-  {
-    "id": "0f90db68-31c3-482c-b928-318a40116ac4",
-    "modelPath": "/model/house_railing.glb",
-    "name": "Balcony Railing",
-    "scale": 1,
-    "position": [13.116781255460076, 0.5532279178428704, -1.8939633866723187],
-    "rotation": [-Math.PI / 2, 0, -Math.PI],
-    "colors": { "Railing": "#ffffff" }
-  },
-  {
-    "id": "46c8134d-17a0-4a78-a93a-cad45f3e1144",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [1.2659699770125772, 0, 0.004090436185822721],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "f2b23b64-8f72-4d48-b4fc-c3ea08893116",
-    "modelPath": "/model/gothic_column2_001_5.glb",
-    "name": "Gothic Column",
-    "scale": 1,
-    "position": [4.09275862328478, 0, 0.8214536612526058],
-    "rotation": [0, Math.PI, 0],
-    "colors": { "Object": "#6f6161" }
-  },
-  {
-    "id": "fcd716ee-86c4-44ee-ad32-2073ad1201e1",
-    "modelPath": "/model/gothic_column2_001_5.glb",
-    "name": "Gothic Column",
-    "scale": 1,
-    "position": [4.109713291827315, 0, -0.8219129016589433],
-    "rotation": [0, 4.71238898038469, 0],
-    "colors": { "Object": "#6f6161" }
-  },
-  {
-    "id": "565d6b0e-47d3-43c4-9ed8-98d3698ae7d0",
-    "modelPath": "/model/gothic_corn_2.glb",
-    "name": "Gothic Cornice 1",
-    "scale": 1,
-    "position": [1.5430926836842243, 0, 1.3827599235015753],
-    "rotation": [0, 0, 0],
-    "colors": { "Object": "#6f6161" }
-  },
-  {
-    "id": "7f10df1e-52a7-4e2a-aca1-1e17f0bb1425",
-    "modelPath": "/model/gothic_gik_upperwall_001_17.glb",
-    "name": "Gothic Upper Wall",
-    "scale": 1,
-    "position": [3.112217979200453, 0.10074590460491967, 1.3876438821888761],
-    "rotation": [0, 0, 0],
-    "colors": { "Object": "#6f6161" }
-  },
-  {
-    "id": "01874a95-e7a4-4d35-8452-ba456a452c86",
-    "modelPath": "/model/gothic_corn_2.glb",
-    "name": "Gothic Cornice 1",
-    "scale": 1,
-    "position": [1.5432333599591168, 0, -1.3762842988028599],
-    "rotation": [0, 0, 0],
-    "colors": { "Object": "#6f6161" }
-  },
-  {
-    "id": "dd8542cb-6837-420a-92c9-b379565c6447",
-    "modelPath": "/model/gothic_gik_upperwall_001_17.glb",
-    "name": "Gothic Upper Wall",
-    "scale": 1,
-    "position": [3.106982492165421, 0.10074590460491967, -1.3866018497929529],
-    "rotation": [0, Math.PI, 0],
-    "colors": { "Object": "#6f6161" }
-  },
-  {
-    "id": "f3b819c6-d837-4350-ba02-79538fe2d368",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-2.4697703049612967, 0, 0.0023691315432173843],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "335208d2-436d-4684-8789-f4593fa73343",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-2.4680986785747048, 0, 3.7377808098539775],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "de8c8aac-fdbd-42d2-9ea3-15f2cbd59612",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-2.470874419079954, 0, -3.742687343946152],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "27b11898-bb31-4871-a03c-3c4c9e0031bb",
-    "modelPath": "/model/gothic_column2_001_5.glb",
-    "name": "Gothic Column",
-    "scale": 1,
-    "position": [0.4487315712653682, 0, -4.776723167118617],
-    "rotation": [0, 4.71238898038469, 0],
-    "colors": { "Object": "#6f6161" }
-  },
-  {
-    "id": "a578b4f1-870a-4bd2-8146-b684ed9442e9",
-    "modelPath": "/model/gothic_column2_001_5.glb",
-    "name": "Gothic Column",
-    "scale": 1,
-    "position": [0.4509474179657743, 0, 4.781823797159151],
-    "rotation": [0, Math.PI, 0],
-    "colors": { "Object": "#6f6161" }
-  },
-  {
-    "id": "436335b9-379b-462c-a27d-e2803190bffc",
-    "modelPath": "/model/gothic_corn2_4.glb",
-    "name": "Gothic Cornice 2",
-    "scale": 1,
-    "position": [-1.1624972513493699, 0.0067205795666400725, -5.342285052954493],
-    "rotation": [0, Math.PI / 2, 0],
-    "colors": { "Object": "#6f6161" }
-  },
-  {
-    "id": "778cc25a-f3ee-423e-b65b-8283ee0da43a",
-    "modelPath": "/model/gothic_corn2_4.glb",
-    "name": "Gothic Cornice 2",
-    "scale": 1,
-    "position": [-1.1834975013529436, 0.0067205795666400725, 5.318752086931244],
-    "rotation": [0, Math.PI / 2, 0],
-    "colors": { "Object": "#6f6161" }
-  },
-  {
-    "id": "a214f2ff-4863-4408-8cc0-225835d4a6a1",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [1.217458984394139, 3.9326361914622554, 0.011997228568517482],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "e0fb4be3-f01b-4465-a02d-90934914892a",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-2.5158978082110015, 3.9326361914622554, 0.02276636629152895],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "eaa76b61-78cf-46df-8bf5-a25bac25c824",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-2.5137338764364494, 3.9326361914622554, 3.7344595627968395],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "281bc246-feb0-4fe7-8191-6fbb99f8011a",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-2.5157381264897936, 3.9326361914622554, -3.7268361594777653],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "e4f294fb-c221-4f13-9346-f6ff334c48c2",
-    "modelPath": "/model/gothic_gik_downwall_001_6.glb",
-    "name": "Gothic Lower Wall",
-    "scale": 1.5903394622642821,
-    "position": [-4.359928547187865, 0.11636994671852341, 5.16459982656986],
-    "rotation": [0, 0, 0],
-    "colors": { "Object": "#6f6161" }
-  },
-  {
-    "id": "c3ef49c4-cc35-4b67-842d-e335989ad397",
-    "modelPath": "/model/gothic_gik_downwall_001_6.glb",
-    "name": "Gothic Lower Wall",
-    "scale": 1.5903394622642821,
-    "position": [-4.372706863398521, 0.09105820213512694, -5.1835491561201845],
-    "rotation": [0, Math.PI, 0],
-    "colors": { "Object": "#6f6161" }
-  },
-  {
-    "id": "789548e9-ed1a-4801-829d-aadf02030509",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-9.933145071883786, 3.9326361914622554, -3.7140929451924194],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "5228aaf8-dee9-4cc8-bbb6-fea72c63a338",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-6.226722760551462, 3.9326361914622554, -0.004261790011846678],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "4d25ba94-6d8f-4dc8-99e2-c2e5c77c52c9",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-6.229886722239772, 3.9326361914622554, 3.7357571152672064],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "092d8309-33e8-4d8c-8db1-b012de7a498e",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-6.19661668166051, 0, 3.7403483440853122],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "6fbc35ca-83a3-42e5-8a38-4775ade75b89",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-6.2004642183718, 0, -0.010177401537285191],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "6063000a-3a81-469b-a915-9df7e3ef4d2c",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-6.197966816687317, 0, -3.7517851692364594],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "4589ec78-ed84-4c06-928e-efc3779568d8",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-9.939211023723843, -0.00014716250553770127, 3.7417542696371653],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "1af39055-2078-46a5-a820-ed626acc8145",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-13.662166481066507, 0, -3.732217368539393],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "aeb69861-2aab-41e7-93ce-a319c6905053",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-9.940827658787356, 0, 0.001655576833374195],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "2aab7386-9f19-4a9e-80f0-9b25d8cbe8a4",
-    "modelPath": "/model/gothic_gik_cornerstair1_004_14.glb",
-    "name": "Corner Stairs",
-    "scale": 1,
-    "position": [-10.636899430815863, -0.4984623476620631, 0.2051057037046048],
-    "rotation": [0, 0, 0],
-    "colors": { "Object": "#6f6161" }
-  },
-  {
-    "id": "1c448f03-eb7f-46ba-9340-303c67b712af",
-    "modelPath": "/model/gothic_gik_cornerstair1_004_14.glb",
-    "name": "Corner Stairs",
-    "scale": 1,
-    "position": [-7.245894400812021, -1.7320234291228547, 0.2062241393274843],
-    "rotation": [0, 0, 0],
-    "colors": { "Object": "#6f6161" }
-  },
-  {
-    "id": "686285b1-9756-49d2-98d6-fdcda0a3c55e",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-13.664111802683063, -0.00014716250553770127, 0.009659220178255712],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "67f72f1f-cdf7-4840-a0b2-293196f5fa95",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-13.671678591728407, -0.00014716250553770127, 3.7435078559529815],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "24de3507-71ac-4c0b-8393-7e68df0649ab",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-9.937769511446747, 0, -3.729954930947818],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "f17c1f84-95a1-4280-82e0-1e43f65adcec",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-17.355544993407776, -0.00014716250553770127, 3.7362524760445415],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "48d8fedc-581d-41e8-9003-4cbfa552d8c0",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-17.35940208024971, 0, -3.731503639789949],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "674b04ca-e5bf-4d87-8c30-e16421528a5b",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-17.361026699711996, 0, 0.001360615990005698],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "7f64a2ce-419c-41fa-b75a-5c5969e2cb1f",
-    "modelPath": "/model/gothic_gik_downwall_001_6.glb",
-    "name": "Gothic Lower Wall",
-    "scale": 1.5,
-    "position": [-9.61489507708125, 0.07967395876963534, -5.145873996234366],
-    "rotation": [0, Math.PI, 0],
-    "colors": { "Object": "#8b4444" }
-  },
-  {
-    "id": "1b36ca6a-c6a4-4d01-a7a7-997821e7e9d2",
-    "modelPath": "/model/gothic_gik_downwall_001_6.glb",
-    "name": "Gothic Lower Wall",
-    "scale": 1.5903394622642821,
-    "position": [-13.849652982758847, 0.09919647859341141, -5.15826017606258],
-    "rotation": [0, Math.PI, 0],
-    "colors": { "Object": "#6f6161" }
-  },
-  {
-    "id": "21499998-c9c8-4f7b-8f10-8c7ffd963d45",
-    "modelPath": "/model/gothic_gik_downwall_001_6.glb",
-    "name": "Gothic Lower Wall",
-    "scale": 1.5903394622642821,
-    "position": [-9.601024893414994, 0.1261303003424895, 5.164795374832497],
-    "rotation": [0, 0, 0],
-    "colors": { "Object": "#6f6161" }
-  },
-  {
-    "id": "c34eefef-fda4-4001-802f-eed68d528c41",
-    "modelPath": "/model/gothic_gik_downwall_001_6.glb",
-    "name": "Gothic Lower Wall",
-    "scale": 1.5903394622642821,
-    "position": [-13.838674220449459, 0.1261303003424895, 5.165854625428386],
-    "rotation": [0, 0, 0],
-    "colors": { "Object": "#6f6161" }
-  },
-  {
-    "id": "6122d62d-4b6b-4b4e-a178-0e3f085adc9b",
-    "modelPath": "/model/gothic_gik_downwall_001_6.glb",
-    "name": "Gothic Lower Wall",
-    "scale": 1.5903394622642821,
-    "position": [-16.21740654110358, 0.1261303003424895, 2.765969953003919],
-    "rotation": [0, 4.71238898038469, 0],
-    "colors": { "Object": "#6f6161" }
-  },
-  {
-    "id": "fd319062-6d4f-470c-a933-ad93202e828e",
-    "modelPath": "/model/gothic_gik_downwall_001_6.glb",
-    "name": "Gothic Lower Wall",
-    "scale": 1.721739140705077,
-    "position": [-16.220652702941052, 0.1261303003424895, -2.5094742945784034],
-    "rotation": [0, 4.71238898038469, 0],
-    "colors": { "Object": "#6f6161" }
-  },
-  {
-    "id": "d61d56ad-3635-4142-9477-d57d346f7dce",
-    "modelPath": "/model/gothic_gik_cornerstair1_004_14.glb",
-    "name": "Corner Stairs",
-    "scale": 1,
-    "position": [-14.064582712981526, 0.7510380983662548, 0.20916432979606447],
-    "rotation": [0, 0, 0],
-    "colors": { "Object": "#6f6161" }
-  },
-  {
-    "id": "3924caa7-671c-40ef-b037-7ce68e55a81c",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-9.966046952136555, 3.9326361914622554, 3.7448078775907723],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "b13861de-ab29-4354-93fe-e54d5078d7a5",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-13.693578739631505, 3.9326361914622554, 3.7467824518908057],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "5fd58458-ea63-4f2e-b8ae-e308798e6110",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-16.592738325902058, 3.9326361914622554, 3.755157276460974],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "0e43eaff-265b-4da4-af2e-15a7092aa41d",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-6.189455392932169, 3.9326361914622554, -3.719824504341975],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "c341357e-af55-4cc6-8698-cf7c8550bded",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-13.636604753368262, 3.9326361914622554, -3.713140436748459],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "278d3251-dce8-4955-9188-958b94eeddbd",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-16.593416767389208, 3.9326361914622554, -3.7174723042442195],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "f199fdcc-5010-4ee5-bf0b-95380f02dae6",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-16.59481903693426, 3.9326361914622554, 0.03189962693699755],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "afeb1ab0-7498-47a4-936d-d5b80e514f07",
-    "modelPath": "/model/gothic_corn_2.glb",
-    "name": "Gothic Cornice 1",
-    "scale": 1,
-    "position": [-16.32256840640265, 4.033639232439462, 5.3626106473770845],
-    "rotation": [0, 0, 0],
-    "colors": { "Object": "#6f6161" }
-  },
-  {
-    "id": "7e45c77b-350a-486a-a177-9a4deebb0887",
-    "modelPath": "/model/gothic_corn_2.glb",
-    "name": "Gothic Cornice 1",
-    "scale": 1,
-    "position": [-16.326207585818022, 4.033639232439462, -5.311094231191592],
-    "rotation": [0, 0, 0],
-    "colors": { "Object": "#6f6161" }
-  },
-  {
-    "id": "7adfe84d-a599-43f4-9c05-f6cd1e66fd3b",
-    "modelPath": "/model/gothic_corn_2.glb",
-    "name": "Gothic Cornice 1",
-    "scale": 1,
-    "position": [-5.934214577397026, 4.033639232439462, -5.312970438199693],
-    "rotation": [0, 0, 0],
-    "colors": { "Object": "#6f6161" }
-  },
-  {
-    "id": "5ca203eb-07d8-4837-a757-f32e57c2e339",
-    "modelPath": "/model/gothic_corn_2.glb",
-    "name": "Gothic Cornice 1",
-    "scale": 1,
-    "position": [-5.945932351278495, 4.033639232439462, 5.35838828241605],
-    "rotation": [0, 0, 0],
-    "colors": { "Object": "#6f6161" }
-  },
-  {
-    "id": "f293d15f-cd72-4045-955a-3166265e5bd4",
-    "modelPath": "/model/gothic_corn_2.glb",
-    "name": "Gothic Cornice 1",
-    "scale": 1,
-    "position": [0.9521458163637364, 4.033639232439462, -5.311370211527497],
-    "rotation": [0, 0, 0],
-    "colors": { "Object": "#6f6161" }
-  },
-  {
-    "id": "c70ec619-14a7-45e1-91d1-06f8bdec999e",
-    "modelPath": "/model/gothic_corn_2.glb",
-    "name": "Gothic Cornice 1",
-    "scale": 1,
-    "position": [0.9522594120035279, 4.033639232439462, 5.3350433699135555],
-    "rotation": [0, 0, 0],
-    "colors": { "Object": "#6f6161" }
-  },
-  {
-    "id": "662ee3cc-6065-4738-8da3-0bb29680e8ba",
-    "modelPath": "/model/gothic_corn_2.glb",
-    "name": "Gothic Cornice 1",
-    "scale": 1,
-    "position": [0.9545674646634184, 4.033639232439462, -1.6014114417356606],
-    "rotation": [0, 0, 0],
-    "colors": { "Object": "#6f6161" }
-  },
-  {
-    "id": "944a211e-a64b-4e43-9eea-4657fd07a9ab",
-    "modelPath": "/model/gothic_corn_2.glb",
-    "name": "Gothic Cornice 1",
-    "scale": 1,
-    "position": [0.9632426396920655, 4.033639232439462, 1.613183283122154],
-    "rotation": [0, 0, 0],
-    "colors": { "Object": "#6f6161" }
-  },
-  {
-    "id": "965480ca-0113-488d-870d-11f19dd92076",
-    "modelPath": "/model/gothic_corn_2.glb",
-    "name": "Gothic Cornice 1",
-    "scale": 1,
-    "position": [4.688180267048389, 4.033639232439462, 1.6139484457396414],
-    "rotation": [0, 0, 0],
-    "colors": { "Object": "#6f6161" }
-  },
-  {
-    "id": "8f5ca680-fffb-4dad-be01-f4e437dbe8ae",
-    "modelPath": "/model/gothic_corn_2.glb",
-    "name": "Gothic Cornice 1",
-    "scale": 1,
-    "position": [4.689230697461576, 4.033639232439462, -1.5811566475442396],
-    "rotation": [0, 0, 0],
-    "colors": { "Object": "#6f6161" }
-  },
-  {
-    "id": "1367e39c-4e41-45e4-a721-be40c8ab5361",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-9.466046952136555, 7.983176879377693, 3.768701477786024],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "29117634-f5b5-4c41-bfa1-1450c05dbc88",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-5.724123626507809, 7.983176879377693, 3.772265907195649],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "92b8d466-c926-4818-a3ca-97885eeca8c3",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-2.5469997441168264, 7.983176879377693, 3.7698772666959792],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "d6255c42-82eb-471c-8ad2-436c2d4c6de3",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-13.19807190889942, 7.983176879377693, 3.7701586890865277],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "17c7fa46-311f-4306-b3c5-6c98a747ebd5",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-16.56723531978012, 7.983176879377693, -3.6848600089657975],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "3901d42d-7662-430d-9471-1af974edd6a3",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-16.570231339816864, 7.983176879377693, 3.7694405641245186],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "5c048175-2666-487e-9604-9f7f24885cbb",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-16.572353680790503, 7.983176879377693, 0.04636211566815207],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "7b28e931-e0ce-49d8-a2b8-a804bd85891e",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-12.837443226499325, 7.983176879377693, -3.6869273182255813],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "90d30b22-ffa7-463b-a24d-982df8ee0846",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-9.096590579274729, 7.983176879377693, -3.6876993582708875],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "9bb0d3ff-bcfa-4c36-ab57-6fa65d364a09",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-5.366261108947603, 7.983176879377693, -3.687172506369481],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "133261f6-2b9a-4d03-b540-d4d7fc5bb4a1",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-2.5478476464630524, 7.983176879377693, -3.6866875878165004],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "2efb1a9c-c6e2-4b9e-a546-3ca948bf376c",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-2.5447434950932992, 7.983176879377693, 0.03536234294658058],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "73a062eb-65c8-438c-a5dc-088f79c7372a",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-12.837851349754505, 7.983176879377693, 0.03766872225437279],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "39611a0e-dadf-4179-b922-b758646ea382",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-9.127287177355642, 7.983176879377693, 0.04808331684869627],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "b6ecc340-2243-4179-a4e5-6a769eeaf63b",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [-5.530384913687195, 7.983176879377693, 0.04194828736818845],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "eca1d848-bc00-4115-9934-0e649f906bf0",
-    "modelPath": "/model/house_wall_5x5.glb",
-    "name": "Modern Wall 5x5m",
-    "scale": 0.75,
-    "position": [1.1672527339983843, 7.983176879377693, -0.004474766373154138],
-    "rotation": [-Math.PI, 0, -Math.PI / 2],
-    "colors": { "Wall": "#6f6161" }
-  },
-  {
-    "id": "14f9b6e7-2798-498b-b26c-1977654c0938",
-    "modelPath": "/model/gothic_statue2_16.glb",
-    "name": "Gothic Statue 2",
-    "scale": 0.5,
-    "position": [8.5, 0, -0.5],
-    "rotation": [0, 0, 0],
-    "colors": { "Object": "#562020" }
+    id: "e80c0d81-b130-40ea-ba9e-37749a6f57b6",
+    modelPath: "/model/island_base_main1.glb",
+    name: "Island 1 (Large)",
+    position: [0.5, 0, -0.5],
+    rotation: [0, 0, 0],
+    scale: 13.970218905563236,
+    colors: { polySurface63: "#927373" }
+  },
+  {
+    id: "37fcd94d-8ce4-4509-8cc2-4fba9e6e2ca9",
+    modelPath: "/model/island_base_main2.glb",
+    name: "Island 2 (Rocky)",
+    position: [7.032272513689411, 2.815192337132446, 17.715027686575922],
+    rotation: [0, 0, 0],
+    scale: 7.1520619226872535,
+    colors: { Object: "#b2aaaa" }
+  },
+  {
+    id: "22f17c73-d00f-471a-bfde-cb0926529211",
+    modelPath: "/model/island_base_main3.glb",
+    name: "Island 3 (Medium)",
+    position: [-17.32820419060372, -1.758916081421368, -19.024536921865778],
+    rotation: [-Math.PI, -0.5854093200861777, -Math.PI],
+    scale: 6.903742884302988,
+    colors: { Object: "#150505" }
+  },
+  {
+    id: "a04c97da-810f-40dd-8213-4fca10378ff4",
+    modelPath: "/model/island_base_main4.glb",
+    name: "Island 4 (Small)",
+    position: [-27.6505747342126, -1.3159866411733994, -8.922238485819408],
+    rotation: [0, 1.050384604963978, 0],
+    scale: 10.723060582047422,
+    colors: { Object: "#150505" }
+  },
+  {
+    id: "ad8746e0-f048-4470-815d-16e8525e61f1",
+    modelPath: "/model/island_base_main2.glb",
+    name: "Island 2 (Rocky)",
+    position: [-15.757861976705708, 0.4464031847299035, 25.433931062330192],
+    rotation: [-Math.PI, 1.32677256048086, -Math.PI],
+    scale: 9.6020397832388,
+    colors: { Object: "#a19595" }
+  },
+  {
+    id: "e52c6060-58f6-40cd-a80e-3ce3869ce10a",
+    modelPath: "/model/stone_steps1.glb",
+    name: "Stone Steps 1",
+    position: [-3.2923340625918804, 8.742204476783744, -4.559589105313419],
+    rotation: [-Math.PI, 0.7853981633974485, -Math.PI],
+    scale: 1,
+    colors: { Object: "#4d4848" }
+  },
+  {
+    id: "26e3ab84-1f43-46dd-a233-1bb8d101d7d7",
+    modelPath: "/model/stone_steps1.glb",
+    name: "Stone Steps 1",
+    position: [-4.934962050153341, 7.814521171896427, -6.126661074407466],
+    rotation: [-Math.PI, 0.7872559297404871, -Math.PI],
+    scale: 1,
+    colors: { Object: "#4d4848" }
+  },
+  {
+    id: "1cb2499a-24cd-4509-b744-96bfa3f4945f",
+    modelPath: "/model/stone_steps1.glb",
+    name: "Stone Steps 1",
+    position: [-6.413725290034644, 6.938691148000335, -7.581393301380842],
+    rotation: [-Math.PI, 0.8035836507435202, -Math.PI],
+    scale: 1,
+    colors: { Object: "#4d4848" }
+  },
+  {
+    id: "cc0f351d-3d92-40ed-b0c9-ddaaa83cf815",
+    modelPath: "/model/stone_steps1.glb",
+    name: "Stone Steps 1",
+    position: [-10.715621358597268, 4.287190262571291, -12.074033770594772],
+    rotation: [-Math.PI, 0.8518657879251905, -Math.PI],
+    scale: 1,
+    colors: { Object: "#4d4848" }
+  },
+  {
+    id: "d158433a-06a8-4122-ae0b-bc2ffc431016",
+    modelPath: "/model/stone_steps1.glb",
+    name: "Stone Steps 1",
+    position: [-9.314173686969522, 5.157630661128514, -10.55820622259327],
+    rotation: [-Math.PI, 0.831955539154932, -Math.PI],
+    scale: 1,
+    colors: { Object: "#4d4848" }
+  },
+  {
+    id: "25b86dc9-a10b-4ef2-95c9-7517eacfac03",
+    modelPath: "/model/stone_steps1.glb",
+    name: "Stone Steps 1",
+    position: [-7.878647751708794, 6.037133166726823, -9.06043508283434],
+    rotation: [-Math.PI, 0.8170095246459713, -Math.PI],
+    scale: 1,
+    colors: { Object: "#4d4848" }
+  },
+  {
+    id: "d16bc4ad-64fc-4eec-956b-0e99689feb56",
+    modelPath: "/model/stone_steps1.glb",
+    name: "Stone Steps 1",
+    position: [-23.2268201864425, 5.0444307054551265, -11.243017574401476],
+    rotation: [0, 1.2080352381090078, 0],
+    scale: 1,
+    colors: { Object: "#4d4848" }
+  },
+  {
+    id: "faa8d8c6-7d36-4a83-b605-9e84c24a992c",
+    modelPath: "/model/stone_steps1.glb",
+    name: "Stone Steps 1",
+    position: [-22.51296369332679, 4.17264888562892, -13.180370911610847],
+    rotation: [0, 1.221233554520384, 0],
+    scale: 1,
+    colors: { Object: "#4d4848" }
+  },
+  {
+    id: "ddf4d76a-569c-40a3-8038-ef21004535c3",
+    modelPath: "/model/rope_bridge2.glb",
+    name: "Rope Bridge 2",
+    position: [3.735496149733839, 9.081545264160694, 9.909313472770194],
+    rotation: [0, 0.26433749574578896, 0],
+    scale: 2,
+    colors: { pCube22: "#c8c8c8" }
+  },
+  {
+    id: "bb6363ab-c502-431d-bb78-72b53c06c036",
+    modelPath: "/model/rope_bridge2.glb",
+    name: "Rope Bridge 2",
+    position: [-6.4596253895163915, 8.892598999549739, 19.61396980116661],
+    rotation: [0, -1.1523037570962027, 0],
+    scale: 2,
+    colors: { pCube22: "#c8c8c8" }
+  },
+  {
+    id: "043e3bef-dbeb-48e9-a24c-6db2b8491722",
+    modelPath: "/model/rope_bridge1.glb",
+    name: "Rope Bridge 1",
+    position: [-15.34754086700431, 4.114275093320589, -24.101348812810382],
+    rotation: [0.134226904622877, -0.8146163763511433, 0.09258552956543181],
+    scale: 1,
+    colors: { ropebridge: "#463d3d" }
+  },
+  {
+    id: "144ed388-a319-4d26-817e-d61db18d5c33",
+    modelPath: "/model/stone_steps1.glb",
+    name: "Stone Steps 1",
+    position: [-20.506431280885536, 3.508488207216021, -24.185969204033128],
+    rotation: [0.01263073352304408, 1.0912825806176965, 0.29172220970291174],
+    scale: 1,
+    colors: { Object: "#4d4848" }
+  },
+  {
+    id: "abf6a8f0-0812-479f-b382-ab910c652068",
+    modelPath: "/model/portal_3D_Furniture_Store.glb",
+    name: "Portal 2 (Forma-3D)",
+    position: [-27.678191367199958, 6.001031110508413, -6.991843411552336],
+    rotation: [0, 1.2792225060745082, 0],
+    scale: 2,
+    colors: { Object: "#686175" }
+  },
+  {
+    id: "b1955cba-d2c7-4951-a4cf-d6eee1dfc9b2",
+    modelPath: "/model/portal_MiniLMS.glb",
+    name: "Portal 3 (MiniLMS)",
+    position: [-18.432566512275596, 4.257902713332034, -27.024380215836306],
+    rotation: [0.008618281380007411, -0.2552878029451335, 0.03411618052333506],
+    scale: 2,
+    colors: { Object: "#969476" }
+  },
+  {
+    id: "3f760590-4be4-496f-acd2-7686b91aecb9",
+    modelPath: "/model/portal_GlobeScope.glb",
+    name: "Portal 1 (GlobeScope)",
+    position: [7.071910523946285, 9.380315717284848, 22.14155238168823],
+    rotation: [0, Math.PI, 0],
+    scale: 2,
+    colors: { Object: "#262323" }
+  },
+  {
+    id: "a7192cc9-6930-44a5-a064-497e4d9719bb",
+    modelPath: "/model/statue_bio_hero.glb",
+    name: "Statue 1 (Bio Hero)",
+    position: [-14.674744065905081, 9.397875291056302, 21.751572813775972],
+    rotation: [0, 0, 0],
+    scale: 4.955841055297463,
+    colors: { default: "#595353" }
+  },
+  {
+    id: "fcff7691-5d96-445e-959e-2b2206bd4998",
+    modelPath: "/model/statue_social_oracle.glb",
+    name: "Statue 2 (Social Oracle)",
+    position: [-22.00, 4.68, -19.20],
+    rotation: [0, 1.25, 0],
+    scale: 3.0285478753589383,
+    colors: { socha: "#8b7979" }
+  },
+  {
+    id: "87771940-7a61-41f1-a856-e4809a51dbe7",
+    modelPath: "/model/statue_skills_altar.glb",
+    name: "Altar 1 (Skills)",
+    position: [2.114043830882918, 9.69781600371712, -0.4743151152075957],
+    rotation: [0, Math.PI / 4, 0],
+    scale: 4.032991151290463,
+    colors: { Object: "#343030" }
+  },
+  {
+    id: "88941341-33a5-4fd3-be84-a97cce4c1026",
+    modelPath: "/model/magic_tree2.glb",
+    name: "Tree 1",
+    position: [4.513955301038943, 7.764007613662619, 20.929455548707654],
+    rotation: [0, 0, 0],
+    scale: 8.58609077721283,
+    colors: { old: "#645c5b" }
+  },
+  {
+    id: "7349ed7c-4cc9-4a9c-bbb0-fe6620b88bec",
+    modelPath: "/model/magic_tree2.glb",
+    name: "Tree 1",
+    position: [9.387121071465785, 7.771945342072883, 19.080880991288446],
+    rotation: [0, 0, 0],
+    scale: 8.58609077721283,
+    colors: { old: "#645c5b" }
+  },
+  {
+    id: "88ff116a-fe16-4347-aba6-34da8edf0ced",
+    modelPath: "/model/magic_tree2.glb",
+    name: "Tree 1",
+    position: [4.826517310311733, 7.781180670831116, 15.739625323593685],
+    rotation: [0, 0, 0],
+    scale: 8.58609077721283,
+    colors: { old: "#645c5b" }
+  },
+  {
+    id: "9f5cf0a0-d852-4bad-b53a-25c7019e00c3",
+    modelPath: "/model/magic_tree2.glb",
+    name: "Tree 1",
+    position: [12.898545628040576, 8.305063060206017, 7.196272776107052],
+    rotation: [0, 0, 0],
+    scale: 8.58609077721283,
+    colors: { old: "#645c5b" }
+  },
+  {
+    id: "47cd7ded-d885-44ef-888a-be6b0eac9f32",
+    modelPath: "/model/bush1.glb",
+    name: "Bush 1",
+    position: [-30.26330695367859, 6.357221003194036, -7.85825088855315],
+    rotation: [0, 0, 0],
+    scale: 1,
+    colors: { Lupinus: "#766d6d" }
+  },
+  {
+    id: "86c954a7-6558-4d86-985b-183fcb60941d",
+    modelPath: "/model/bush1.glb",
+    name: "Bush 1",
+    position: [-30.136268581906087, 6.377050851932792, -6.666402801092431],
+    rotation: [0, 0, 0],
+    scale: 1,
+    colors: { Lupinus: "#766d6d" }
+  },
+  {
+    id: "84f6289f-707c-40d4-8a64-783f3412dd7b",
+    modelPath: "/model/bush1.glb",
+    name: "Bush 1",
+    position: [-29.399588839030248, 6.465448833565813, -5.7534856373079695],
+    rotation: [0, 0, 0],
+    scale: 1,
+    colors: { Lupinus: "#766d6d" }
+  },
+  {
+    id: "0c89b056-ba03-4772-b0df-1caf5ede985d",
+    modelPath: "/model/bush1.glb",
+    name: "Bush 1",
+    position: [-31.537212686771074, 6.197831281033781, -6.990785921548294],
+    rotation: [0, 0, 0],
+    scale: 1,
+    colors: { Lupinus: "#766d6d" }
+  },
+  {
+    id: "49bb1928-5abf-4d57-b812-2c46dd1a6c6e",
+    modelPath: "/model/bush1.glb",
+    name: "Bush 1",
+    position: [-31.570885743489328, 6.254243927205755, -8.228076056517647],
+    rotation: [0, 0, 0],
+    scale: 1,
+    colors: { Lupinus: "#766d6d" }
+  },
+  {
+    id: "7f57bddd-ddc0-4a7a-87e6-79997f722d5b",
+    modelPath: "/model/bush1.glb",
+    name: "Bush 1",
+    position: [-30.54843015630109, 6.359652033166564, -9.12734941940846],
+    rotation: [0, 0, 0],
+    scale: 1,
+    colors: { Lupinus: "#766d6d" }
+  },
+  {
+    id: "dfbb999c-89e6-4da4-8272-715c27254a3c",
+    modelPath: "/model/bush1.glb",
+    name: "Bush 1",
+    position: [-31.905232275461994, 6.640723218584219, -9.411083329280912],
+    rotation: [0, 0, 0],
+    scale: 1,
+    colors: { Lupinus: "#766d6d" }
+  },
+  {
+    id: "f7f25391-8997-4b3a-bf9a-f3f7b8ee8928",
+    modelPath: "/model/bush1.glb",
+    name: "Bush 1",
+    position: [-28.268535461808447, 6.600112403321354, -5.1377514735164755],
+    rotation: [0, 0, 0],
+    scale: 1,
+    colors: { Lupinus: "#766d6d" }
+  },
+  {
+    id: "24d9bd1b-c91b-4472-8f11-8f2363355ab8",
+    modelPath: "/model/bush1.glb",
+    name: "Bush 1",
+    position: [-27.15587375505307, 6.674104705546125, -5.420760139794165],
+    rotation: [0, 0, 0],
+    scale: 1,
+    colors: { Lupinus: "#766d6d" }
+  },
+  {
+    id: "e1f07cb8-7c6f-46b5-a961-faf607022a5a",
+    modelPath: "/model/magic_tree2.glb",
+    name: "Tree 1",
+    position: [-25.717666820610738, 7.306726960592912, -3.9016255734065917],
+    rotation: [0, 0, 0],
+    scale: 8.58609077721283,
+    colors: { old: "#645c5b" }
+  },
+  {
+    id: "33808373-1b03-4575-a090-455d858ce4e1",
+    modelPath: "/model/magic_tree2.glb",
+    name: "Tree 1",
+    position: [-24.005918808697565, 4.389672253666774, -9.156050214876807],
+    rotation: [0, Math.PI / 4, 0],
+    scale: 8.58609077721283,
+    colors: { old: "#645c5b" }
+  },
+  {
+    id: "7c3e6fc6-6cc6-482b-ac6b-46d6c836da03",
+    modelPath: "/model/magic_tree2.glb",
+    name: "Tree 1",
+    position: [-30.953039130471446, 4.308232879387096, -11.032388586740462],
+    rotation: [0, -Math.PI / 2, 0],
+    scale: 8.58609077721283,
+    colors: { old: "#645c5b" }
+  },
+  {
+    id: "0aa7e80b-e0e0-4e28-a49b-800db0430c26",
+    modelPath: "/model/magic_tree2.glb",
+    name: "Tree 1",
+    position: [-32.54994191565008, 7.046994388206437, -13.64069244686424],
+    rotation: [0, 0, 0],
+    scale: 8.58609077721283,
+    colors: { old: "#645c5b" }
+  },
+  {
+    id: "ccac72ad-ec33-450a-9e69-0923afbc9175",
+    modelPath: "/model/bush1.glb",
+    name: "Bush 1",
+    position: [-34.52835775532017, 9.260969978868543, -8.686254367497831],
+    rotation: [0, 0, 0],
+    scale: 1,
+    colors: { Lupinus: "#766d6d" }
+  },
+  {
+    id: "4cb3f4ce-c2ad-4ed6-afb6-0f5b62bacc46",
+    modelPath: "/model/bush1.glb",
+    name: "Bush 1",
+    position: [-34.235068495881286, 9.263949913586185, -9.749824699684437],
+    rotation: [0, 0, 0],
+    scale: 1,
+    colors: { Lupinus: "#766d6d" }
+  },
+  {
+    id: "2a9e448e-574a-4c21-9ed7-503eb77d5988",
+    modelPath: "/model/bush1.glb",
+    name: "Bush 1",
+    position: [-34.846197186476324, 9.402580706980832, -7.682093076159688],
+    rotation: [0, 0, 0],
+    scale: 1,
+    colors: { Lupinus: "#766d6d" }
+  },
+  {
+    id: "b8c57e85-9608-4aca-a6f4-2454ab18f29b",
+    modelPath: "/model/magic_tree2.glb",
+    name: "Tree 1",
+    position: [-30.659137952063162, 4.371739591440626, -3.452165540124856],
+    rotation: [0, -Math.PI / 2, 0],
+    scale: 8.58609077721283,
+    colors: { old: "#645c5b" }
+  },
+  {
+    id: "978711c5-01dd-4aeb-8d38-a65a08f5052a",
+    modelPath: "/model/bush1.glb",
+    name: "Bush 1",
+    position: [-32.363024769124735, 6.172909760630699, -3.8980432298729983],
+    rotation: [0, 0, 0],
+    scale: 1,
+    colors: { Lupinus: "#766d6d" }
+  },
+  {
+    id: "5d768625-65cd-4975-89da-650cc2c27dc0",
+    modelPath: "/model/bush1.glb",
+    name: "Bush 1",
+    position: [-31.47200031456016, 6.24823885262769, -3.247807697107244],
+    rotation: [0, 0, 0],
+    scale: 1,
+    colors: { Lupinus: "#766d6d" }
+  },
+  {
+    id: "8ca1a6f5-1e3b-4c66-815e-5943f05c7c19",
+    modelPath: "/model/magic_tree2.glb",
+    name: "Tree 1",
+    position: [-10.500219648910312, 2.67195067898727, -15.433332469788889],
+    rotation: [0, 0, 0],
+    scale: 8.58609077721283,
+    colors: { old: "#645c5b" }
+  },
+  {
+    id: "674ce3b9-d579-4229-ab4b-ef9af3c8a7b6",
+    modelPath: "/model/magic_tree2.glb",
+    name: "Tree 1",
+    position: [-15.77593008211933, 2.8981556546703517, -12.139157991129519],
+    rotation: [0, Math.PI / 4, 0],
+    scale: 8.58609077721283,
+    colors: { old: "#645c5b" }
+  },
+  {
+    id: "a0e70407-023a-452c-903c-491fbc1dbcde",
+    modelPath: "/model/magic_tree4.glb",
+    name: "Tree 3",
+    position: [-12.98109815019448, 3.635490774691286, -21.721351588259143],
+    rotation: [0, 0, 0],
+    scale: 6.7165455727719925,
+    colors: { Fantasy: "#644c4c" }
+  },
+  {
+    id: "9c158c21-ac5b-48f7-a4f7-aa527a739aec",
+    modelPath: "/model/bush1.glb",
+    name: "Bush 1",
+    position: [-22.549463328824835, 4.729888306789272, -17.90635743030032],
+    rotation: [0, 0, 0],
+    scale: 1,
+    colors: { Lupinus: "#766d6d" }
+  },
+  {
+    id: "fadbf7e9-7ace-4673-ae48-8824664d8cac",
+    modelPath: "/model/bush1.glb",
+    name: "Bush 1",
+    position: [-21.334278717083482, 4.63050115848413, -20.57658210720339],
+    rotation: [0, 0, 0],
+    scale: 1,
+    colors: { Lupinus: "#766d6d" }
+  },
+  {
+    id: "f98d6925-a138-4b1d-abff-8bcacb09ae0d",
+    modelPath: "/model/magic_tree4.glb",
+    name: "Tree 3",
+    position: [-17.70757560163631, 9.433953766736108, 20.656368464379348],
+    rotation: [0, Math.PI / 2, 0],
+    scale: 6.7165455727719925,
+    colors: { Fantasy: "#644c4c" }
+  },
+  {
+    id: "35ce5063-c059-4479-80e7-9a2cf135782f",
+    modelPath: "/model/magic_tree4.glb",
+    name: "Tree 3",
+    position: [-10.797230565640497, 9.429395233350117, 23.35960934145456],
+    rotation: [0, 0, 0],
+    scale: 6.7165455727719925,
+    colors: { Fantasy: "#644c4c" }
   }
 ];
