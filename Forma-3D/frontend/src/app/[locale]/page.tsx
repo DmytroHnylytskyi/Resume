@@ -24,7 +24,6 @@ import { useStore } from '../../store/useStore';
 import { 
   Sparkles, 
   HelpCircle,
-  Building2,
   User, 
   LogOut, 
   Sun, 
@@ -73,11 +72,8 @@ export default function Home() {
   const exportJSON = useStore((state) => state.exportJSON);
   const importJSON = useStore((state) => state.importJSON);
   const clearAllPlacedObjects = useStore((state) => state.clearAllPlacedObjects);
-  const loadAntiquePalace = useStore((state) => state.loadAntiquePalace);
-  const loadEmptyCanvas = useStore((state) => state.loadEmptyCanvas);
   const placingModelPath = useStore((state) => state.placingModelPath);
   const cancelPlacement = useStore((state) => state.cancelPlacement);
-  const activeMode = useStore((state) => state.activeMode);
   const addToast = useStore((state) => state.addToast);
   
   // Register global hotkey listeners (Ctrl+D, Delete, 1/2/3, R, Esc)
@@ -180,26 +176,6 @@ export default function Home() {
           >
             <Globe size={16} />
             <span className="navbar-tool-label">{locale.toUpperCase()}</span>
-          </button>
-
-          <div className="navbar-toolbar-divider" />
-
-          <button 
-            className={`navbar-tool-btn ${activeMode === 'example' ? 'active' : ''}`} 
-            onClick={loadAntiquePalace} 
-            title={tNav('presetExampleTooltip')}
-          >
-            <Building2 size={15} />
-            <span className="navbar-tool-label">{tNav('presetExample')}</span>
-          </button>
-
-          <button 
-            className={`navbar-tool-btn ${activeMode === 'custom' ? 'active' : ''}`} 
-            onClick={loadEmptyCanvas} 
-            title={tNav('presetCleanTooltip')}
-          >
-            <Sparkles size={15} />
-            <span className="navbar-tool-label">{tNav('presetClean')}</span>
           </button>
 
           <div className="navbar-toolbar-divider" />

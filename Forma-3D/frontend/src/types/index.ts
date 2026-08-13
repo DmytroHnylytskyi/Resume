@@ -100,8 +100,6 @@ export interface FormaStore {
   removePlacedObject: (id?: string) => void;
   clearAllPlacedObjects: () => void;
 
-  loadAntiquePalace: () => void;
-  loadEmptyCanvas: () => void;
   loadUserProject: (project: CloudProject) => void;
   saveToLocalStorage: () => boolean;
   loadFromLocalStorage: () => boolean;

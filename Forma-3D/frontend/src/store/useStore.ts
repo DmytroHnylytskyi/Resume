@@ -10,7 +10,6 @@
  */
 
 import { create } from 'zustand';
-import { userAntiqueHouseObjects } from '../data/userAntiqueHouse';
 import { FormaStore, PlacedObject, CloudProject } from '../types';
 
 /**
@@ -80,18 +79,18 @@ export const useStore = create<FormaStore>()((set, get) => ({
   /** Sets active transform gizmo mode */
   setTransformMode: (mode) => set({ transformMode: mode }),
 
-  /** @type {'example' | 'custom'} Active project environment preset label */
-  activeMode: 'example',
+  /** @type {'custom'} Active project workspace mode */
+  activeMode: 'custom',
 
   /** @type {string} Human-readable current project title */
-  currentProjectName: 'Проєкт Приклад',
+  currentProjectName: 'Forma 3D Workspace',
 
   // ---------------------------------------------------------------------------
   // 3D Scene Objects & Selection Hierarchy
   // ---------------------------------------------------------------------------
 
   /** @type {PlacedObject[]} List of all active placed 3D objects in scene */
-  placedObjects: userAntiqueHouseObjects,
+  placedObjects: [],
 
   /** @type {string | null} Currently selected object UUID string */
   selectedObjectId: null,
@@ -327,28 +326,6 @@ export const useStore = create<FormaStore>()((set, get) => ({
   // ---------------------------------------------------------------------------
   // Project Persistence Actions (localStorage & Cloud DB)
   // ---------------------------------------------------------------------------
-
-  /**
-   * Loads preset demo "Проєкт Приклад" 3D palace scene layout.
-   */
-  loadAntiquePalace: () => set({
-    placedObjects: userAntiqueHouseObjects,
-    activeMode: 'example',
-    currentProjectName: 'Проєкт Приклад',
-    selectedObjectId: null,
-    selectedObjectPart: null
-  }),
-
-  /**
-   * Clears scene to load empty "Чистий Простір" workspace.
-   */
-  loadEmptyCanvas: () => set({
-    placedObjects: [],
-    activeMode: 'custom',
-    currentProjectName: 'Чистий Простір',
-    selectedObjectId: null,
-    selectedObjectPart: null
-  }),
 
   /**
    * Loads project configuration fetched from FastAPI cloud database.
