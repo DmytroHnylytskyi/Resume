@@ -174,7 +174,7 @@ export const userAntiqueHouseObjects: PlacedObject[] = [
   },
   {
     id: "b1955cba-d2c7-4951-a4cf-d6eee1dfc9b2",
-    modelPath: "/model/portal_MiniLMS.glb",
+    modelPath: "/model/portal_MiniLMS..glb",
     name: "Portal 3 (MiniLMS)",
     position: [-18.432566512275596, 4.257902713332034, -27.024380215836306],
     rotation: [0.008618281380007411, -0.2552878029451335, 0.03411618052333506],
@@ -203,8 +203,8 @@ export const userAntiqueHouseObjects: PlacedObject[] = [
     id: "fcff7691-5d96-445e-959e-2b2206bd4998",
     modelPath: "/model/statue_social_oracle.glb",
     name: "Statue 2 (Social Oracle)",
-    position: [-22.00, 4.68, -19.20],
-    rotation: [0, 1.25, 0],
+    position: [-34.26630397754049, 4.547506939363881, -31.54186422541727],
+    rotation: [0, Math.PI / 4, 0],
     scale: 3.0285478753589383,
     colors: { socha: "#8b7979" }
   },

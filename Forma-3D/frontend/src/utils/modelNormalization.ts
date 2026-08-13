@@ -175,10 +175,24 @@ export function normalizeModelGeometry(clonedScene: THREE.Object3D, modelPath: s
   const center = new THREE.Vector3();
   rawBox.getCenter(center);
 
-  // Center horizontally (X, Z) and ground vertically (Y)
-  clonedScene.position.x -= center.x;
-  clonedScene.position.z -= center.z;
-  clonedScene.position.y -= rawBox.min.y;
+  // For standalone furniture and decor items, center on X/Z and sit on floor Y=0
+  // Preserve authored relative origin (0,0,0) for terrain, bridges, steps, and modular scenes
+  const isEnvironmentOrModular = 
+    file.includes('island_') || 
+    file.includes('rope_bridge') || 
+    file.includes('stone_steps') || 
+    file.includes('portal_') ||
+    file.includes('magic_tree') ||
+    file.includes('bush1') ||
+    file.includes('statue_') ||
+    file.includes('house_') ||
+    file.includes('gothic_');
+
+  if (!isEnvironmentOrModular) {
+    clonedScene.position.x -= center.x;
+    clonedScene.position.z -= center.z;
+    clonedScene.position.y -= rawBox.min.y;
+  }
 
   const wrapper = new THREE.Group();
   wrapper.add(clonedScene);
