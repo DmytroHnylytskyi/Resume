@@ -1,77 +1,70 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useProgress } from '@react-three/drei';
-import { Compass } from 'lucide-react';
+import { useGameStore } from '../../store/useGameStore';
+import { translations } from '../../data/resumeData';
+import { Loader2 } from 'lucide-react';
 
 export default function LoadingScreen(): React.ReactElement | null {
-  const { active, progress, item } = useProgress();
-  const [isDone, setIsDone] = useState(false);
-  const [hasStarted, setHasStarted] = useState(false);
+  const { progress, active } = useProgress();
+  const { language, isSceneLoaded, setSceneLoaded, viewMode } = useGameStore();
+  const [displayProgress, setDisplayProgress] = useState(0);
+  const [fadeOut, setFadeOut] = useState(false);
+
+  const t = translations[language].loading;
 
   useEffect(() => {
-    if (active) {
-      setHasStarted(true);
-    }
-  }, [active]);
+    setDisplayProgress((prev) => Math.max(prev, Math.round(progress)));
+  }, [progress]);
 
   useEffect(() => {
-    if (progress >= 100 || (hasStarted && !active)) {
-      const timeout = setTimeout(() => {
-        setIsDone(true);
+    // If progress hits 100% or loading completes
+    if (displayProgress >= 100 || !active) {
+      const timer = setTimeout(() => {
+        setFadeOut(true);
+        const doneTimer = setTimeout(() => {
+          setSceneLoaded(true);
+        }, 500);
+        return () => clearTimeout(doneTimer);
       }, 400);
-      return () => clearTimeout(timeout);
+      return () => clearTimeout(timer);
     }
-  }, [progress, active, hasStarted]);
+  }, [displayProgress, active, setSceneLoaded]);
 
-  // Safety fallback: auto-dismiss after 2.5s maximum so user never gets blocked
-  useEffect(() => {
-    const safetyTimer = setTimeout(() => {
-      setIsDone(true);
-    }, 2500);
-    return () => clearTimeout(safetyTimer);
-  }, []);
-
-  if (isDone) return null;
-
-  const displayProgress = Math.min(100, Math.round(progress || 0));
+  // Don't show loading screen if already loaded or in classic view mode
+  if (isSceneLoaded || viewMode === 'classic') return null;
 
   return (
-    <div
-      className="loading-overlay-screen"
-      style={{
-        transition: 'opacity 0.4s ease-out',
-        opacity: isDone ? 0 : 1,
-        pointerEvents: isDone ? 'none' : 'auto'
-      }}
-    >
-      <div className="loading-content-card glass-panel">
-        <div className="loading-icon-ring">
-          <Compass size={32} color="#38bdf8" className="loading-compass-spin" />
+    <div className={`loading-screen-backdrop ${fadeOut ? 'fade-out' : ''}`}>
+      <div className="loading-content glass-panel">
+        <div className="loading-brand">
+          <div className="brand-dot pulse" />
+          <span className="loading-brand-title">AETHERIA 3D</span>
         </div>
-        <h3 className="loading-title">Завантаження Aetheria 3D...</h3>
-        <p className="loading-subtitle">
-          Генерація летального архіпелагу, фізики Rapier 3D та небесного середовища
-        </p>
 
-        <div className="loading-bar-track">
+        <div className="loading-spinner-wrapper">
+          <Loader2 className="loading-spinner-icon" size={28} />
+        </div>
+
+        <div className="loading-text-group">
+          <h2 className="loading-title">{t.title}</h2>
+          <p className="loading-subtitle">{t.subtitle}</p>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="loading-bar-container">
           <div
             className="loading-bar-fill"
-            style={{ width: `${Math.max(12, displayProgress)}%` }}
+            style={{ width: `${Math.min(100, Math.max(12, displayProgress))}%` }}
           />
         </div>
 
-        <div className="loading-meta-info">
-          <span>Ресурси світу</span>
-          <span className="loading-percent">{displayProgress}%</span>
+        <div className="loading-progress-number">
+          {Math.min(100, Math.max(12, displayProgress))}%
         </div>
 
-        {item && (
-          <div className="loading-current-file">
-            <span>Файл:</span>
-            <span>{item.split('/').pop()}</span>
-          </div>
-        )}
+        <p className="loading-tip">{t.tip}</p>
       </div>
     </div>
   );

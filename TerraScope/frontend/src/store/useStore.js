@@ -50,13 +50,15 @@ const useStore = create((set) => ({
   /** Hydrates stored auth token and profile from localStorage on client mount */
   initAuth: () => {
     if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('globescope_token');
-      const userStr = localStorage.getItem('globescope_user');
+      const token = localStorage.getItem('terrascope_token') || localStorage.getItem('globescope_token');
+      const userStr = localStorage.getItem('terrascope_user') || localStorage.getItem('globescope_user');
       if (token && userStr) {
         try {
           const user = JSON.parse(userStr);
           set({ user, token });
         } catch (e) {
+          localStorage.removeItem('terrascope_token');
+          localStorage.removeItem('terrascope_user');
           localStorage.removeItem('globescope_token');
           localStorage.removeItem('globescope_user');
         }
@@ -150,8 +152,8 @@ const useStore = create((set) => ({
    */
   setAuth: (user, token) => {
     if (typeof window !== 'undefined') {
-      if (token) localStorage.setItem('globescope_token', token);
-      if (user) localStorage.setItem('globescope_user', JSON.stringify(user));
+      if (token) localStorage.setItem('terrascope_token', token);
+      if (user) localStorage.setItem('terrascope_user', JSON.stringify(user));
     }
     set({ user, token });
   },
@@ -159,6 +161,8 @@ const useStore = create((set) => ({
   /** Logs out current user and clears session tokens from localStorage */
   logout: () => {
     if (typeof window !== 'undefined') {
+      localStorage.removeItem('terrascope_token');
+      localStorage.removeItem('terrascope_user');
       localStorage.removeItem('globescope_token');
       localStorage.removeItem('globescope_user');
     }

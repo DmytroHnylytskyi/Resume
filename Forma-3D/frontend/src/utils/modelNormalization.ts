@@ -72,7 +72,9 @@ export function getModelBaseScale(modelPath: string, box: THREE.Box3): number {
     file.includes('gothic') ||
     file.includes('house_') ||
     file.includes('stone_steps') ||
-    file.includes('rope_bridge')
+    file.includes('rope_bridge') ||
+    file.includes('kaykit') ||
+    file.includes('halloween')
   ) {
     // Specific adjustment for small accessories vs modular wall packs
     if (file.includes('house_bike_stand')) return unitScale;

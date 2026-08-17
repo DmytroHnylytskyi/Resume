@@ -11,6 +11,7 @@ import { CatalogCategory, CatalogItem } from '../types';
 
 export const catalogCategories: CatalogCategory[] = [
   { id: 'all', key: 'all' },
+  { id: 'halloween', key: 'halloween' },
   { id: 'islands', key: 'islands' },
   { id: 'portals', key: 'portals' },
   { id: 'statues', key: 'statues' },
@@ -728,5 +729,401 @@ export const catalogItems: CatalogItem[] = [
     "file": "Monitor1.glb",
     "category": "decor",
     "defaultName": "Desktop Monitor 1"
+  },
+  {
+    "id": "halloween_arch_gate",
+    "file": "kaykit_halloween/Arch Gate.glb",
+    "category": "halloween",
+    "defaultName": "Arch Gate"
+  },
+  {
+    "id": "halloween_arch",
+    "file": "kaykit_halloween/Arch.glb",
+    "category": "halloween",
+    "defaultName": "Stone Arch"
+  },
+  {
+    "id": "halloween_pine_1",
+    "file": "kaykit_halloween/Autumn pine-8wkRed6jU9.glb",
+    "category": "halloween",
+    "defaultName": "Autumn Pine 1"
+  },
+  {
+    "id": "halloween_pine_2",
+    "file": "kaykit_halloween/Autumn pine-MOuuN8sEWx.glb",
+    "category": "halloween",
+    "defaultName": "Autumn Pine 2"
+  },
+  {
+    "id": "halloween_pine_3",
+    "file": "kaykit_halloween/Autumn pine-TTXhwPOkpJ.glb",
+    "category": "halloween",
+    "defaultName": "Autumn Pine 3"
+  },
+  {
+    "id": "halloween_pine_4",
+    "file": "kaykit_halloween/Autumn pine-UBWV4jb52N.glb",
+    "category": "halloween",
+    "defaultName": "Autumn Pine 4"
+  },
+  {
+    "id": "halloween_pine_5",
+    "file": "kaykit_halloween/Autumn pine-UopgJkSuo9.glb",
+    "category": "halloween",
+    "defaultName": "Autumn Pine 5"
+  },
+  {
+    "id": "halloween_pine",
+    "file": "kaykit_halloween/Autumn pine.glb",
+    "category": "halloween",
+    "defaultName": "Autumn Pine"
+  },
+  {
+    "id": "halloween_bench_deco",
+    "file": "kaykit_halloween/Bench-cp2QnHh7bf.glb",
+    "category": "halloween",
+    "defaultName": "Bench (Decorated)"
+  },
+  {
+    "id": "halloween_bench",
+    "file": "kaykit_halloween/Bench.glb",
+    "category": "halloween",
+    "defaultName": "Bench"
+  },
+  {
+    "id": "halloween_bone_1",
+    "file": "kaykit_halloween/Bone-2jLwMoAb2y.glb",
+    "category": "halloween",
+    "defaultName": "Bone 1"
+  },
+  {
+    "id": "halloween_bone_2",
+    "file": "kaykit_halloween/Bone-gVT6iydSY6.glb",
+    "category": "halloween",
+    "defaultName": "Bone 2"
+  },
+  {
+    "id": "halloween_bone",
+    "file": "kaykit_halloween/Bone.glb",
+    "category": "halloween",
+    "defaultName": "Bone"
+  },
+  {
+    "id": "halloween_broken_pillar",
+    "file": "kaykit_halloween/Broken Fence Pillar.glb",
+    "category": "halloween",
+    "defaultName": "Broken Fence Pillar"
+  },
+  {
+    "id": "halloween_candle_melted",
+    "file": "kaykit_halloween/Candle Melted.glb",
+    "category": "halloween",
+    "defaultName": "Candle Melted"
+  },
+  {
+    "id": "halloween_candle_1",
+    "file": "kaykit_halloween/Candle-fYtyVjkX3y.glb",
+    "category": "halloween",
+    "defaultName": "Candle 1"
+  },
+  {
+    "id": "halloween_candle",
+    "file": "kaykit_halloween/Candle.glb",
+    "category": "halloween",
+    "defaultName": "Candle"
+  },
+  {
+    "id": "halloween_candles_group",
+    "file": "kaykit_halloween/Candles.glb",
+    "category": "halloween",
+    "defaultName": "Candles Group"
+  },
+  {
+    "id": "halloween_cobblestone_tile",
+    "file": "kaykit_halloween/Cobblestone tile.glb",
+    "category": "halloween",
+    "defaultName": "Cobblestone Floor Tile"
+  },
+  {
+    "id": "halloween_coffin_open",
+    "file": "kaykit_halloween/Coffin-ySERERWPgE.glb",
+    "category": "halloween",
+    "defaultName": "Coffin (Open)"
+  },
+  {
+    "id": "halloween_coffin",
+    "file": "kaykit_halloween/Coffin.glb",
+    "category": "halloween",
+    "defaultName": "Coffin (Closed)"
+  },
+  {
+    "id": "halloween_crypt",
+    "file": "kaykit_halloween/Crypt.glb",
+    "category": "halloween",
+    "defaultName": "Crypt / Mausoleum"
+  },
+  {
+    "id": "halloween_damaged_grave",
+    "file": "kaykit_halloween/Damaged Grave.glb",
+    "category": "halloween",
+    "defaultName": "Damaged Grave"
+  },
+  {
+    "id": "halloween_damaged_iron_fence",
+    "file": "kaykit_halloween/Damaged Iron fence.glb",
+    "category": "halloween",
+    "defaultName": "Damaged Iron Fence"
+  },
+  {
+    "id": "halloween_dead_tree_1",
+    "file": "kaykit_halloween/Dead tree-68VK0NzgEZ.glb",
+    "category": "halloween",
+    "defaultName": "Dead Tree 1"
+  },
+  {
+    "id": "halloween_dead_tree",
+    "file": "kaykit_halloween/Dead tree.glb",
+    "category": "halloween",
+    "defaultName": "Dead Tree"
+  },
+  {
+    "id": "halloween_dirt_tile",
+    "file": "kaykit_halloween/Dirt Floor Tile.glb",
+    "category": "halloween",
+    "defaultName": "Dirt Floor Tile"
+  },
+  {
+    "id": "halloween_fence_broken",
+    "file": "kaykit_halloween/Fence Broken.glb",
+    "category": "halloween",
+    "defaultName": "Fence Broken"
+  },
+  {
+    "id": "halloween_fence_gate",
+    "file": "kaykit_halloween/Fence Gate.glb",
+    "category": "halloween",
+    "defaultName": "Fence Gate"
+  },
+  {
+    "id": "halloween_fence_pillar",
+    "file": "kaykit_halloween/Fence Pillar.glb",
+    "category": "halloween",
+    "defaultName": "Fence Pillar"
+  },
+  {
+    "id": "halloween_fence",
+    "file": "kaykit_halloween/Fence.glb",
+    "category": "halloween",
+    "defaultName": "Fence"
+  },
+  {
+    "id": "halloween_floor_dirt_small",
+    "file": "kaykit_halloween/Floor Dirt Small.glb",
+    "category": "halloween",
+    "defaultName": "Floor Dirt Small"
+  },
+  {
+    "id": "halloween_grave_marker",
+    "file": "kaykit_halloween/Grave Marker.glb",
+    "category": "halloween",
+    "defaultName": "Grave Marker"
+  },
+  {
+    "id": "halloween_grave_1",
+    "file": "kaykit_halloween/Grave-Yg8Yz6T8A6.glb",
+    "category": "halloween",
+    "defaultName": "Grave 1"
+  },
+  {
+    "id": "halloween_grave",
+    "file": "kaykit_halloween/Grave.glb",
+    "category": "halloween",
+    "defaultName": "Grave"
+  },
+  {
+    "id": "halloween_gravemarker_col",
+    "file": "kaykit_halloween/Gravemarker.glb",
+    "category": "halloween",
+    "defaultName": "Gravemarker Column"
+  },
+  {
+    "id": "halloween_gravestone_1",
+    "file": "kaykit_halloween/Gravestone-lrEHKjTy29.glb",
+    "category": "halloween",
+    "defaultName": "Gravestone 1"
+  },
+  {
+    "id": "halloween_gravestone",
+    "file": "kaykit_halloween/Gravestone.glb",
+    "category": "halloween",
+    "defaultName": "Gravestone"
+  },
+  {
+    "id": "halloween_hanging_lantern",
+    "file": "kaykit_halloween/Hanging Lantern.glb",
+    "category": "halloween",
+    "defaultName": "Hanging Lantern"
+  },
+  {
+    "id": "halloween_iron_fence",
+    "file": "kaykit_halloween/Iron Fence.glb",
+    "category": "halloween",
+    "defaultName": "Iron Fence"
+  },
+  {
+    "id": "halloween_jackolantern",
+    "file": "kaykit_halloween/Jackolantern.glb",
+    "category": "halloween",
+    "defaultName": "Jack O'Lantern"
+  },
+  {
+    "id": "halloween_lantern",
+    "file": "kaykit_halloween/Lantern.glb",
+    "category": "halloween",
+    "defaultName": "Lantern"
+  },
+  {
+    "id": "halloween_path_1",
+    "file": "kaykit_halloween/Path-BibMU0BCgk.glb",
+    "category": "halloween",
+    "defaultName": "Cobble Path 1"
+  },
+  {
+    "id": "halloween_path",
+    "file": "kaykit_halloween/Path.glb",
+    "category": "halloween",
+    "defaultName": "Cobble Path"
+  },
+  {
+    "id": "halloween_pillar",
+    "file": "kaykit_halloween/Pillar.glb",
+    "category": "halloween",
+    "defaultName": "Stone Pillar"
+  },
+  {
+    "id": "halloween_plaque_candles",
+    "file": "kaykit_halloween/Plaque Candles.glb",
+    "category": "halloween",
+    "defaultName": "Plaque with Candles"
+  },
+  {
+    "id": "halloween_plaque",
+    "file": "kaykit_halloween/Plaque.glb",
+    "category": "halloween",
+    "defaultName": "Plaque"
+  },
+  {
+    "id": "halloween_post_lantern",
+    "file": "kaykit_halloween/Post Lantern.glb",
+    "category": "halloween",
+    "defaultName": "Post Lantern"
+  },
+  {
+    "id": "halloween_post_skull",
+    "file": "kaykit_halloween/Post With Skull.glb",
+    "category": "halloween",
+    "defaultName": "Post with Skull"
+  },
+  {
+    "id": "halloween_post",
+    "file": "kaykit_halloween/Post.glb",
+    "category": "halloween",
+    "defaultName": "Wooden Post"
+  },
+  {
+    "id": "halloween_pumpkin_orange_jacko",
+    "file": "kaykit_halloween/Pumpkin Orange Jacko.glb",
+    "category": "halloween",
+    "defaultName": "Pumpkin Jack O'Lantern"
+  },
+  {
+    "id": "halloween_pumpkin",
+    "file": "kaykit_halloween/Pumpkin.glb",
+    "category": "halloween",
+    "defaultName": "Pumpkin (Plain)"
+  },
+  {
+    "id": "halloween_ribcage",
+    "file": "kaykit_halloween/Ribcage.glb",
+    "category": "halloween",
+    "defaultName": "Ribcage Skeleton"
+  },
+  {
+    "id": "halloween_rocks",
+    "file": "kaykit_halloween/Rocks.glb",
+    "category": "halloween",
+    "defaultName": "Rocks / Stones"
+  },
+  {
+    "id": "halloween_shrine_1",
+    "file": "kaykit_halloween/Shrine-Qq8M5LSXQ2.glb",
+    "category": "halloween",
+    "defaultName": "Shrine 1"
+  },
+  {
+    "id": "halloween_shrine",
+    "file": "kaykit_halloween/Shrine.glb",
+    "category": "halloween",
+    "defaultName": "Shrine / Altar"
+  },
+  {
+    "id": "halloween_skull_candle",
+    "file": "kaykit_halloween/Skull Candle.glb",
+    "category": "halloween",
+    "defaultName": "Skull with Candle"
+  },
+  {
+    "id": "halloween_skull",
+    "file": "kaykit_halloween/Skull.glb",
+    "category": "halloween",
+    "defaultName": "Skull"
+  },
+  {
+    "id": "halloween_small_dead_tree",
+    "file": "kaykit_halloween/Small Dead tree.glb",
+    "category": "halloween",
+    "defaultName": "Small Dead Tree"
+  },
+  {
+    "id": "halloween_small_pumpkin_1",
+    "file": "kaykit_halloween/Small Pumpkin-KnfqSrTtUX.glb",
+    "category": "halloween",
+    "defaultName": "Small Pumpkin 1"
+  },
+  {
+    "id": "halloween_small_pumpkin",
+    "file": "kaykit_halloween/Small Pumpkin.glb",
+    "category": "halloween",
+    "defaultName": "Small Pumpkin"
+  },
+  {
+    "id": "halloween_tree_dead_large",
+    "file": "kaykit_halloween/Tree Dead Large Deco.glb",
+    "category": "halloween",
+    "defaultName": "Large Dead Tree"
+  },
+  {
+    "id": "halloween_yellow_pumpkin",
+    "file": "kaykit_halloween/Yellow pumpkin.glb",
+    "category": "halloween",
+    "defaultName": "Yellow Pumpkin"
+  },
+  {
+    "id": "halloween_angel_statue",
+    "file": "kaykit_halloween/AngelStatue by Zsky - 6v4CL0nKfT.glb",
+    "category": "halloween",
+    "defaultName": "Angel Statue (Zsky)"
+  },
+  {
+    "id": "halloween_hero_statue",
+    "file": "kaykit_halloween/Statue by Zsky - gieXYyUTYr.glb",
+    "category": "halloween",
+    "defaultName": "Hero Statue (Zsky)"
+  },
+  {
+    "id": "halloween_stag_statue",
+    "file": "kaykit_halloween/Stag Statue by Quaternius - cKloIsNcT8.glb",
+    "category": "halloween",
+    "defaultName": "Stag Totem Statue (Quaternius)"
   }
 ];

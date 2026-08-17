@@ -1,12 +1,15 @@
 """
-Saved Globe Views Sub-Router Module.
+Saved Globe Views Sub-Router Module for TerraScope.
 
-Provides endpoints for creating, listing, retrieving, and deleting personalized 3D globe
+Provides async endpoints for creating, listing, retrieving, and deleting personalized 3D globe
 camera position presets and active layer filter state snapshots for authenticated users.
+
+Author: TerraScope 3D Geospatial Intelligence Team
 """
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from typing import List
 
 from .. import models, schemas, database, auth_utils
@@ -14,32 +17,32 @@ from .. import models, schemas, database, auth_utils
 router = APIRouter(tags=["views"])
 
 @router.get("/", response_model=List[schemas.SavedViewResponse])
-def get_user_views(
-    db: Session = Depends(database.get_db),
+async def get_user_views(
+    db: AsyncSession = Depends(database.get_db),
     current_user: models.User = Depends(auth_utils.get_current_user)
 ):
     """
     Retrieves all saved 3D globe views belonging to the authenticated user.
 
     Args:
-        db (Session): Database session dependency.
+        db (AsyncSession): Async database session dependency.
         current_user (models.User): Authenticated user dependency.
 
     Returns:
         List[schemas.SavedViewResponse]: Array of saved view objects ordered by creation date desc.
     """
-    views = (
-        db.query(models.SavedView)
-        .filter(models.SavedView.user_id == current_user.id)
+    result = await db.execute(
+        select(models.SavedView)
+        .where(models.SavedView.user_id == current_user.id)
         .order_by(models.SavedView.created_at.desc())
-        .all()
     )
+    views = result.scalars().all()
     return views
 
 @router.post("/", response_model=schemas.SavedViewResponse, status_code=status.HTTP_201_CREATED)
-def create_saved_view(
+async def create_saved_view(
     view_in: schemas.SavedViewCreate,
-    db: Session = Depends(database.get_db),
+    db: AsyncSession = Depends(database.get_db),
     current_user: models.User = Depends(auth_utils.get_current_user)
 ):
     """
@@ -47,7 +50,7 @@ def create_saved_view(
 
     Args:
         view_in (schemas.SavedViewCreate): View configuration input payload.
-        db (Session): Database session dependency.
+        db (AsyncSession): Async database session dependency.
         current_user (models.User): Authenticated user dependency.
 
     Returns:
@@ -63,14 +66,14 @@ def create_saved_view(
         layer_filters=view_in.layer_filters
     )
     db.add(new_view)
-    db.commit()
-    db.refresh(new_view)
+    await db.commit()
+    await db.refresh(new_view)
     return new_view
 
 @router.get("/{id}", response_model=schemas.SavedViewResponse)
-def get_saved_view_by_id(
+async def get_saved_view_by_id(
     id: int,
-    db: Session = Depends(database.get_db),
+    db: AsyncSession = Depends(database.get_db),
     current_user: models.User = Depends(auth_utils.get_current_user)
 ):
     """
@@ -78,7 +81,7 @@ def get_saved_view_by_id(
 
     Args:
         id (int): Saved view primary key ID.
-        db (Session): Database session dependency.
+        db (AsyncSession): Async database session dependency.
         current_user (models.User): Authenticated user dependency.
 
     Returns:
@@ -87,7 +90,8 @@ def get_saved_view_by_id(
     Raises:
         HTTPException: 404 Not Found if view missing, 403 Forbidden if user is not owner.
     """
-    view = db.query(models.SavedView).filter(models.SavedView.id == id).first()
+    result = await db.execute(select(models.SavedView).where(models.SavedView.id == id))
+    view = result.scalar_one_or_none()
     if not view:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -101,9 +105,9 @@ def get_saved_view_by_id(
     return view
 
 @router.delete("/{id}", status_code=status.HTTP_200_OK)
-def delete_saved_view(
+async def delete_saved_view(
     id: int,
-    db: Session = Depends(database.get_db),
+    db: AsyncSession = Depends(database.get_db),
     current_user: models.User = Depends(auth_utils.get_current_user)
 ):
     """
@@ -113,7 +117,7 @@ def delete_saved_view(
 
     Args:
         id (int): Saved view primary key ID.
-        db (Session): Database session dependency.
+        db (AsyncSession): Async database session dependency.
         current_user (models.User): Authenticated user dependency.
 
     Returns:
@@ -122,7 +126,8 @@ def delete_saved_view(
     Raises:
         HTTPException: 404 Not Found if view missing, 403 Forbidden if user is not owner.
     """
-    view = db.query(models.SavedView).filter(models.SavedView.id == id).first()
+    result = await db.execute(select(models.SavedView).where(models.SavedView.id == id))
+    view = result.scalar_one_or_none()
     if not view:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -134,6 +139,6 @@ def delete_saved_view(
             detail="Not authorized to delete this view"
         )
     
-    db.delete(view)
-    db.commit()
+    await db.delete(view)
+    await db.commit()
     return {"detail": "Saved view deleted successfully"}

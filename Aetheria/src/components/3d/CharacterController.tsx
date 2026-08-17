@@ -5,41 +5,30 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { RigidBody, CapsuleCollider, RapierRigidBody } from '@react-three/rapier';
 import * as THREE from 'three';
 import { useGameStore } from '../../store/useGameStore';
-import { sound } from '../../utils/audio';
 import AnimatedCharacter from './AnimatedCharacter';
 
-// Calibrated, smooth, natural locomotion speeds
-const MOVE_SPEED = 2.2;
-const SPRINT_SPEED = 3.8;
-const JUMP_FORCE = 5.2;
+const WALK_SPEED = 2.6;
+const RUN_SPEED = 4.6;
+const JUMP_FORCE = 5.5;
 
 interface CharacterControllerProps {
-  playerPosRef: React.MutableRefObject<THREE.Vector3 | null>;
+  playerPosRef?: React.MutableRefObject<THREE.Vector3 | null>;
   spawnPoint?: [number, number, number];
 }
 
-/**
- * Premium 3rd-Person Character Controller:
- * - Anti-Air-Jump Lock: 450ms cooldown strictly preventing jump spam flight / double jumping.
- * - Solid ground detection & natural jump arc.
- * - Anti-slip slope lock: character firmly stays in place on slopes and edges.
- * - Steadicam Gimbal camera smoothing with full vertical pitch range.
- * - Instant crisp stop on key release.
- */
 export default function CharacterController({
   playerPosRef,
-  spawnPoint = [1.0, 10.2, -0.5]
+  spawnPoint = [0.0, 1.0, 14.0]
 }: CharacterControllerProps): React.ReactElement {
   const rigidBodyRef = useRef<RapierRigidBody>(null);
   const avatarGroupRef = useRef<THREE.Group>(null);
   const { camera, gl } = useThree();
+  const { activeModal, interactionPrompt } = useGameStore();
 
-  // Locomotion state for animations
   const [isMoving, setIsMoving] = useState(false);
   const [isSprinting, setIsSprinting] = useState(false);
-  const [isJumpingState, setIsJumpingState] = useState(false);
+  const [isJumping, setIsJumping] = useState(false);
 
-  // Keyboard state
   const keys = useRef({
     forward: false,
     backward: false,
@@ -49,46 +38,55 @@ export default function CharacterController({
     shift: false
   });
 
-  // Target & Smoothed Camera Angles
-  const targetYaw = useRef(0.35);
-  const targetPitch = useRef(0.22);
-  const cameraYaw = useRef(0.35);
-  const cameraPitch = useRef(0.22);
-  const cameraDistance = useRef(2.6);
+  // Camera angles: Looking forward into negative Z (cemetery/island)
+  const targetYaw = useRef(0.0);
+  const targetPitch = useRef(0.32); // 18° downward angle to view character & ground
+  const cameraYaw = useRef(0.0);
+  const cameraPitch = useRef(0.32);
+  const cameraDistance = useRef(4.0);
 
-  // Steadicam Smooth Gimbal Buffers
-  const smoothLookTarget = useRef(new THREE.Vector3(spawnPoint[0], spawnPoint[1] + 0.5, spawnPoint[2]));
-  const smoothCamPos = useRef(new THREE.Vector3());
-
-  // Velocity buffers
+  // Steadicam buffers (reusable — zero GC pressure)
+  const smoothLookTarget = useRef(new THREE.Vector3(spawnPoint[0], spawnPoint[1] + 0.8, spawnPoint[2]));
+  const smoothCamPos = useRef(new THREE.Vector3(spawnPoint[0], spawnPoint[1] + 2.2, spawnPoint[2] + 4.0));
   const currentVelocity = useRef(new THREE.Vector3());
-
-  const lastStepTime = useRef(0);
-  const lastJumpTime = useRef(0);
   const isGrounded = useRef(true);
+  const lastJumpTime = useRef(0);
 
-  const { isRespawning, setIsRespawning, interactionPrompt, isWarping, cameraMode, activeModal } = useGameStore();
+  // ── Reusable per-frame scratch vectors (ZERO allocations per frame) ──
+  const _playerVec = useRef(new THREE.Vector3());
+  const _moveDir = useRef(new THREE.Vector3());
 
-  // ── 1. Pointer Lock API with Weighted Smooth Sensitivity ──
+  // ── Previous state tracking (only trigger React setState on actual change) ──
+  const prevMoving = useRef(false);
+  const prevSprinting = useRef(false);
+  const prevJumping = useRef(false);
+
+  // ── 1. Mouse Look with Pointer Lock ──
   useEffect(() => {
     const dom = gl.domElement;
 
     const handleCanvasClick = () => {
       if (!activeModal && document.pointerLockElement !== dom) {
-        dom.requestPointerLock();
+        try {
+          const p = dom.requestPointerLock();
+          if (p && 'catch' in p) p.catch(() => {});
+        } catch (_) {}
       }
     };
 
     const handleMouseMove = (e: MouseEvent) => {
       if (document.pointerLockElement === dom) {
-        const sensitivity = 0.0014;
-        targetYaw.current -= e.movementX * sensitivity;
-        targetPitch.current = Math.max(-0.65, Math.min(1.35, targetPitch.current + e.movementY * sensitivity));
+        const sensitivity = 0.0016;
+        const movX = Number.isFinite(e.movementX) ? e.movementX : 0;
+        const movY = Number.isFinite(e.movementY) ? e.movementY : 0;
+        targetYaw.current -= movX * sensitivity;
+        targetPitch.current = Math.max(-0.2, Math.min(0.95, targetPitch.current + movY * sensitivity));
       }
     };
 
     const handleWheel = (e: WheelEvent) => {
-      cameraDistance.current = Math.max(1.6, Math.min(7.5, cameraDistance.current + e.deltaY * 0.0025));
+      const delta = Number.isFinite(e.deltaY) ? e.deltaY : 0;
+      cameraDistance.current = Math.max(2.2, Math.min(7.0, cameraDistance.current + delta * 0.002));
     };
 
     dom.addEventListener('click', handleCanvasClick);
@@ -105,11 +103,13 @@ export default function CharacterController({
   // Release pointer lock when opening modals
   useEffect(() => {
     if (activeModal && document.pointerLockElement) {
-      document.exitPointerLock();
+      try {
+        document.exitPointerLock();
+      } catch (_) {}
     }
   }, [activeModal]);
 
-  // ── 2. Keyboard Listeners ──
+  // ── 2. Keyboard Event Handlers ──
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement)?.tagName)) return;
@@ -148,183 +148,193 @@ export default function CharacterController({
     };
   }, [interactionPrompt]);
 
-  // ── 3. Main Physics & Camera Frame Loop ──
-  useFrame((state, delta) => {
-    if (!rigidBodyRef.current || isWarping) return;
+  // ── 3. Physics & Camera Update Frame Loop ──
+  useFrame(() => {
+    if (!rigidBodyRef.current) return;
 
     const translation = rigidBodyRef.current.translation();
     const linvel = rigidBodyRef.current.linvel();
     const now = performance.now();
 
-    if (!Number.isFinite(translation.x) || !Number.isFinite(translation.y) || !Number.isFinite(translation.z)) {
-      rigidBodyRef.current.setTranslation({ x: spawnPoint[0], y: spawnPoint[1], z: spawnPoint[2] }, true);
-      rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
+    if (
+      !translation ||
+      !linvel ||
+      !Number.isFinite(translation.x) ||
+      !Number.isFinite(translation.y) ||
+      !Number.isFinite(translation.z)
+    ) {
       return;
     }
 
-    // Broadcast player coordinates
+    // Broadcast player coordinate — REUSE existing Vector3, zero GC
     if (playerPosRef) {
-      playerPosRef.current = new THREE.Vector3(translation.x, translation.y, translation.z);
+      if (!playerPosRef.current) {
+        playerPosRef.current = new THREE.Vector3();
+      }
+      playerPosRef.current.set(translation.x, translation.y, translation.z);
     }
 
-    // Smooth weighted camera rotation interpolation
+    // Smooth camera angles with finiteness guards
+    if (!Number.isFinite(targetYaw.current)) targetYaw.current = 0.0;
+    if (!Number.isFinite(targetPitch.current)) targetPitch.current = 0.32;
+
     cameraYaw.current = THREE.MathUtils.lerp(cameraYaw.current, targetYaw.current, 0.22);
     cameraPitch.current = THREE.MathUtils.lerp(cameraPitch.current, targetPitch.current, 0.22);
 
-    // ── Void Fall Detection & Auto-Recovery ──
-    if (translation.y < -4.0 && !isRespawning) {
-      setIsRespawning(true);
-      sound.playVoidWind();
+    if (!Number.isFinite(cameraYaw.current)) cameraYaw.current = 0.0;
+    if (!Number.isFinite(cameraPitch.current)) cameraPitch.current = 0.32;
+    if (!Number.isFinite(cameraDistance.current)) cameraDistance.current = 4.0;
 
-      rigidBodyRef.current.setTranslation(
-        { x: spawnPoint[0], y: spawnPoint[1] + 1.2, z: spawnPoint[2] },
-        true
-      );
+    // Void Fall Recovery
+    if (translation.y < -3.0) {
+      rigidBodyRef.current.setTranslation({ x: spawnPoint[0], y: spawnPoint[1], z: spawnPoint[2] }, true);
       rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
-      rigidBodyRef.current.setAngvel({ x: 0, y: 0, z: 0 }, true);
-      currentVelocity.current.set(0, 0, 0);
-
-      setTimeout(() => {
-        setIsRespawning(false);
-      }, 400);
+      smoothLookTarget.current.set(spawnPoint[0], spawnPoint[1] + 0.8, spawnPoint[2]);
+      smoothCamPos.current.set(spawnPoint[0], spawnPoint[1] + 2.2, spawnPoint[2] + 4.0);
       return;
     }
 
-    // Strict Grounded Detection (Cooldown prevents apex air jumps)
-    const timeSinceLastJump = now - lastJumpTime.current;
-    isGrounded.current = Math.abs(linvel.y) < 0.25 && timeSinceLastJump > 450;
-    setIsJumpingState(!isGrounded.current && timeSinceLastJump < 650);
+    // Ground check
+    const timeSinceJump = now - lastJumpTime.current;
+    isGrounded.current = Math.abs(linvel.y) < 0.25 && timeSinceJump > 400;
+    const jumpingNow = !isGrounded.current && timeSinceJump < 600;
+
+    // Only trigger React re-render when state ACTUALLY changes
+    if (jumpingNow !== prevJumping.current) {
+      prevJumping.current = jumpingNow;
+      setIsJumping(jumpingNow);
+    }
 
     // Direction calculation relative to camera yaw
     const fwdInput = (keys.current.forward ? 1 : 0) - (keys.current.backward ? 1 : 0);
     const sideInput = (keys.current.right ? 1 : 0) - (keys.current.left ? 1 : 0);
 
-    const forwardX = -Math.sin(cameraYaw.current);
-    const forwardZ = -Math.cos(cameraYaw.current);
-
+    const fwdX = -Math.sin(cameraYaw.current);
+    const fwdZ = -Math.cos(cameraYaw.current);
     const rightX = Math.cos(cameraYaw.current);
     const rightZ = -Math.sin(cameraYaw.current);
 
-    const moveDirection = new THREE.Vector3(
-      forwardX * fwdInput + rightX * sideInput,
+    // Reuse scratch Vector3 — zero GC
+    const moveDir = _moveDir.current;
+    moveDir.set(
+      fwdX * fwdInput + rightX * sideInput,
       0,
-      forwardZ * fwdInput + rightZ * sideInput
+      fwdZ * fwdInput + rightZ * sideInput
     );
 
-    const moving = moveDirection.lengthSq() > 0.01;
-    setIsMoving(moving);
-    setIsSprinting(keys.current.shift && moving);
+    const moving = moveDir.lengthSq() > 0.01;
+    const sprinting = keys.current.shift && moving;
+
+    // Only trigger React re-render when state ACTUALLY changes
+    if (moving !== prevMoving.current) {
+      prevMoving.current = moving;
+      setIsMoving(moving);
+    }
+    if (sprinting !== prevSprinting.current) {
+      prevSprinting.current = sprinting;
+      setIsSprinting(sprinting);
+    }
 
     if (moving) {
-      moveDirection.normalize();
+      moveDir.normalize();
+      const speed = keys.current.shift ? RUN_SPEED : WALK_SPEED;
+      moveDir.multiplyScalar(speed);
 
-      const speed = keys.current.shift ? SPRINT_SPEED : MOVE_SPEED;
-      const targetVel = moveDirection.multiplyScalar(speed);
+      currentVelocity.current.lerp(moveDir, 0.2);
 
-      // Frame-rate independent smooth acceleration
-      const smoothFactor = 1.0 - Math.exp(-10.0 * Math.min(delta, 0.1));
-      currentVelocity.current.lerp(targetVel, smoothFactor);
-
-      // Natural avatar rotation facing movement direction
-      const targetFacingAngle = Math.atan2(moveDirection.x, moveDirection.z);
-
+      // Face movement direction smoothly
+      const facingAngle = Math.atan2(moveDir.x, moveDir.z);
       if (avatarGroupRef.current) {
-        let diff = (targetFacingAngle - avatarGroupRef.current.rotation.y) % (Math.PI * 2);
+        let diff = (facingAngle - avatarGroupRef.current.rotation.y) % (Math.PI * 2);
         if (diff < -Math.PI) diff += Math.PI * 2;
         if (diff > Math.PI) diff -= Math.PI * 2;
-        avatarGroupRef.current.rotation.y += diff * 0.18;
+        avatarGroupRef.current.rotation.y += diff * 0.2;
       }
 
-      // Footstep sound timing
-      const stepInterval = keys.current.shift ? 320 : 450;
-      if (isGrounded.current && now - lastStepTime.current > stepInterval) {
-        sound.playFootstep();
-        lastStepTime.current = now;
-      }
-
-      // Apply controlled horizontal velocity while preserving natural gravity
       rigidBodyRef.current.setLinvel(
-        {
-          x: currentVelocity.current.x,
-          y: linvel.y,
-          z: currentVelocity.current.z
-        },
+        { x: currentVelocity.current.x, y: linvel.y, z: currentVelocity.current.z },
         true
       );
     } else {
-      // ── Anti-Slip Slope Lock ──
       currentVelocity.current.set(0, 0, 0);
-      rigidBodyRef.current.setLinvel(
-        {
-          x: 0,
-          y: linvel.y > 0 ? linvel.y : Math.max(linvel.y, -1.0),
-          z: 0
-        },
-        true
-      );
+      rigidBodyRef.current.setLinvel({ x: 0, y: linvel.y, z: 0 }, true);
     }
 
-    // ── Safe Jump Trigger with 450ms Cooldown (NO AIR FLYING) ──
-    if (keys.current.jump && isGrounded.current && timeSinceLastJump > 450) {
+    // Jump
+    if (keys.current.jump && isGrounded.current && timeSinceJump > 400) {
       rigidBodyRef.current.setLinvel({ x: linvel.x, y: JUMP_FORCE, z: linvel.z }, true);
-      sound.playJump();
       lastJumpTime.current = now;
       isGrounded.current = false;
-      setIsJumpingState(true);
+      prevJumping.current = true;
+      setIsJumping(true);
       keys.current.jump = false;
     }
 
-    // ── Steadicam Gimbal 3rd Person Camera (ZERO SHAKING) ──
-    if (cameraMode === 'third_person') {
-      smoothLookTarget.current.x = THREE.MathUtils.lerp(smoothLookTarget.current.x, translation.x, 0.12);
-      smoothLookTarget.current.y = THREE.MathUtils.lerp(smoothLookTarget.current.y, translation.y + 0.50, 0.06);
-      smoothLookTarget.current.z = THREE.MathUtils.lerp(smoothLookTarget.current.z, translation.z, 0.12);
+    // ── 3rd-Person Camera: Perfect perspective over character looking down into island ──
+    smoothLookTarget.current.x = THREE.MathUtils.lerp(smoothLookTarget.current.x, translation.x, 0.12);
+    smoothLookTarget.current.y = THREE.MathUtils.lerp(smoothLookTarget.current.y, translation.y + 0.85, 0.10);
+    smoothLookTarget.current.z = THREE.MathUtils.lerp(smoothLookTarget.current.z, translation.z, 0.12);
 
-      const targetCamX =
-        smoothLookTarget.current.x +
-        cameraDistance.current * Math.sin(cameraYaw.current) * Math.cos(cameraPitch.current);
-      const targetCamY =
-        smoothLookTarget.current.y + cameraDistance.current * Math.sin(cameraPitch.current);
-      const targetCamZ =
-        smoothLookTarget.current.z +
-        cameraDistance.current * Math.cos(cameraYaw.current) * Math.cos(cameraPitch.current);
+    const cosPitch = Math.cos(cameraPitch.current);
+    const sinPitch = Math.sin(cameraPitch.current);
 
-      smoothCamPos.current.x = THREE.MathUtils.lerp(smoothCamPos.current.x || targetCamX, targetCamX, 0.12);
-      smoothCamPos.current.y = THREE.MathUtils.lerp(smoothCamPos.current.y || targetCamY, targetCamY, 0.06);
-      smoothCamPos.current.z = THREE.MathUtils.lerp(smoothCamPos.current.z || targetCamZ, targetCamZ, 0.12);
+    const targetCamX = smoothLookTarget.current.x + cameraDistance.current * Math.sin(cameraYaw.current) * cosPitch;
+    const targetCamY = smoothLookTarget.current.y + cameraDistance.current * sinPitch;
+    const targetCamZ = smoothLookTarget.current.z + cameraDistance.current * Math.cos(cameraYaw.current) * cosPitch;
 
+    smoothCamPos.current.x = THREE.MathUtils.lerp(smoothCamPos.current.x, targetCamX, 0.12);
+    smoothCamPos.current.y = THREE.MathUtils.lerp(smoothCamPos.current.y, targetCamY, 0.10);
+    smoothCamPos.current.z = THREE.MathUtils.lerp(smoothCamPos.current.z, targetCamZ, 0.12);
+
+    if (
+      Number.isFinite(smoothCamPos.current.x) &&
+      Number.isFinite(smoothCamPos.current.y) &&
+      Number.isFinite(smoothCamPos.current.z)
+    ) {
       camera.position.copy(smoothCamPos.current);
+    }
+
+    if (
+      Number.isFinite(smoothLookTarget.current.x) &&
+      Number.isFinite(smoothLookTarget.current.y) &&
+      Number.isFinite(smoothLookTarget.current.z)
+    ) {
       camera.lookAt(smoothLookTarget.current);
     }
   });
 
   return (
-    <>
-      <RigidBody
-        ref={rigidBodyRef}
-        colliders={false}
-        position={spawnPoint}
-        enabledRotations={[false, false, false]}
-        friction={0.8}
-        restitution={0.0}
-        linearDamping={4.0}
-        angularDamping={2.0}
-        ccd={true}
-      >
-        {/* Generous spherical bottom dome (Radius: 0.23m, Height: 0.82m) */}
-        <CapsuleCollider args={[0.18, 0.23]} position={[0, 0.41, 0]} friction={0.8} />
+    <RigidBody
+      ref={rigidBodyRef}
+      colliders={false}
+      position={spawnPoint}
+      enabledRotations={[false, false, false]}
+      friction={0.8}
+      restitution={0.0}
+      linearDamping={2.5}
+      angularDamping={2.5}
+      ccd={true}
+    >
+      <CapsuleCollider args={[0.54, 0.30]} position={[0, 0.84, 0]} friction={0.8} />
 
-        {/* 3D Animated Skinned Character Mesh */}
-        <group ref={avatarGroupRef} position={[0, 0, 0]}>
-          <Suspense fallback={null}>
-            <AnimatedCharacter
-              isMoving={isMoving}
-              isSprinting={isSprinting}
-              isJumping={isJumpingState}
-            />
-          </Suspense>
-        </group>
-      </RigidBody>
-    </>
+      <group ref={avatarGroupRef} position={[0, 0, 0]} rotation={[0, Math.PI, 0]}>
+        <Suspense
+          fallback={
+            <group position={[0, 0.8, 0]}>
+              <mesh>
+                <capsuleGeometry args={[0.25, 0.95, 8, 16]} />
+                <meshBasicMaterial color="#38bdf8" transparent opacity={0.7} />
+              </mesh>
+            </group>
+          }
+        >
+          <AnimatedCharacter
+            isMoving={isMoving}
+            isSprinting={isSprinting}
+            isJumping={isJumping}
+          />
+        </Suspense>
+      </group>
+    </RigidBody>
   );
 }

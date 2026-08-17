@@ -1,13 +1,16 @@
 """
-Authentication Endpoints Sub-Router Module.
+Authentication Endpoints Sub-Router Module for TerraScope.
 
-Provides endpoints for user registration (/register), OAuth2 password token login (/token),
-and current profile lookup (/me).
+Provides async endpoints for user registration (/register), OAuth2 password token login (/token),
+token refresh (/refresh), and current profile lookup (/me).
+
+Author: TerraScope 3D Geospatial Intelligence Team
 """
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from datetime import timedelta
 
 from .. import models, schemas, database, auth_utils
@@ -15,7 +18,7 @@ from .. import models, schemas, database, auth_utils
 router = APIRouter(tags=["auth"])
 
 @router.post("/register", response_model=schemas.UserResponse, status_code=status.HTTP_201_CREATED)
-def register(user_in: schemas.UserCreate, db: Session = Depends(database.get_db)):
+async def register(user_in: schemas.UserCreate, db: AsyncSession = Depends(database.get_db)):
     """
     Registers a new user account with email and password.
 
@@ -24,7 +27,7 @@ def register(user_in: schemas.UserCreate, db: Session = Depends(database.get_db)
 
     Args:
         user_in (schemas.UserCreate): User registration input payload.
-        db (Session): Database session dependency.
+        db (AsyncSession): Async database session dependency.
 
     Returns:
         schemas.UserResponse: Created user profile object.
@@ -32,14 +35,8 @@ def register(user_in: schemas.UserCreate, db: Session = Depends(database.get_db)
     Raises:
         HTTPException: 400 Bad Request if email address is already registered.
     """
-    # Basic email format validation
-    if "@" not in user_in.email or "." not in user_in.email.split("@")[-1]:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Please enter a valid email address with a domain (e.g., name@example.com)"
-        )
-
-    existing_user = db.query(models.User).filter(models.User.email == user_in.email).first()
+    result = await db.execute(select(models.User).where(models.User.email == user_in.email))
+    existing_user = result.scalar_one_or_none()
     if existing_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -52,21 +49,21 @@ def register(user_in: schemas.UserCreate, db: Session = Depends(database.get_db)
         hashed_password=hashed_password
     )
     db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
+    await db.commit()
+    await db.refresh(new_user)
     return new_user
 
 @router.post("/token", response_model=schemas.Token)
-def login_for_access_token(
+async def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
-    db: Session = Depends(database.get_db)
+    db: AsyncSession = Depends(database.get_db)
 ):
     """
     Authenticates user credentials and issues an OAuth2 JWT Bearer access token.
 
     Args:
         form_data (OAuth2PasswordRequestForm): Standard OAuth2 form containing username (email) and password.
-        db (Session): Database session dependency.
+        db (AsyncSession): Async database session dependency.
 
     Returns:
         dict: Access token string and token_type ('bearer').
@@ -74,7 +71,8 @@ def login_for_access_token(
     Raises:
         HTTPException: 401 Unauthorized if authentication fails.
     """
-    user = db.query(models.User).filter(models.User.email == form_data.username).first()
+    result = await db.execute(select(models.User).where(models.User.email == form_data.username))
+    user = result.scalar_one_or_none()
     if not user or not auth_utils.verify_password(form_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -89,8 +87,25 @@ def login_for_access_token(
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
+@router.post("/refresh", response_model=schemas.Token)
+async def refresh_access_token(
+    current_user: models.User = Depends(auth_utils.get_current_user)
+):
+    """
+    Refreshes active JWT session token for authenticated user.
+    
+    Returns:
+        dict: Fresh JWT token string and token_type.
+    """
+    access_token_expires = timedelta(minutes=auth_utils.ACCESS_TOKEN_EXPIRE_MINUTES)
+    new_token = auth_utils.create_access_token(
+        data={"sub": current_user.email},
+        expires_delta=access_token_expires
+    )
+    return {"access_token": new_token, "token_type": "bearer"}
+
 @router.get("/me", response_model=schemas.UserResponse)
-def read_users_me(current_user: models.User = Depends(auth_utils.get_current_user)):
+async def read_users_me(current_user: models.User = Depends(auth_utils.get_current_user)):
     """
     Retrieves profile details of the currently authenticated user.
 

@@ -1,9 +1,11 @@
 """
-Geospatial Data Layers Sub-Router Module.
+Geospatial Data Layers Sub-Router Module for TerraScope.
 
 Provides cached API endpoints for live earthquakes (USGS), airborne flights (OpenSky),
 weather metrics (Open-Meteo), country borders/capitals (REST Countries), and asteroids (NASA NeoWs).
-Implements database-backed SQLite caching with fallback datasets for 100% availability.
+Implements database-backed async SQLite caching with fallback datasets for 100% availability.
+
+Author: TerraScope 3D Geospatial Intelligence Team
 """
 
 import json
@@ -14,7 +16,8 @@ from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, Optional, List
 import httpx
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
 from .. import database, models
 
@@ -151,7 +154,7 @@ FALLBACK_NEO = {
 }
 
 async def get_cached_or_fetch(
-    db: Session,
+    db: AsyncSession,
     cache_key: str,
     ttl_seconds: int,
     fetch_url: str,
@@ -163,7 +166,7 @@ async def get_cached_or_fetch(
     and asyncio.Lock to prevent Cache Stampede. Avoids double JSON serialization by returning Response.
 
     Args:
-        db (Session): Database session dependency.
+        db (AsyncSession): Async database session dependency.
         cache_key (str): Unique cache lookup key.
         ttl_seconds (int): Cache validity duration in seconds.
         fetch_url (str): Remote API URL to query.
@@ -176,7 +179,8 @@ async def get_cached_or_fetch(
     now = datetime.now(timezone.utc)
     
     # Fast path: Check SQLite cache table for unexpired entry
-    cache_entry = db.query(models.CacheEntry).filter(models.CacheEntry.cache_key == cache_key).first()
+    result = await db.execute(select(models.CacheEntry).where(models.CacheEntry.cache_key == cache_key))
+    cache_entry = result.scalar_one_or_none()
     if cache_entry and cache_entry.expires_at.replace(tzinfo=timezone.utc) > now:
         return Response(content=cache_entry.data, media_type="application/json")
 
@@ -184,8 +188,8 @@ async def get_cached_or_fetch(
     lock = get_lock_for_key(cache_key)
     async with lock:
         # Re-check cache after acquiring lock in case another request populated it
-        db.expire_all()
-        cache_entry = db.query(models.CacheEntry).filter(models.CacheEntry.cache_key == cache_key).first()
+        result = await db.execute(select(models.CacheEntry).where(models.CacheEntry.cache_key == cache_key))
+        cache_entry = result.scalar_one_or_none()
         if cache_entry and cache_entry.expires_at.replace(tzinfo=timezone.utc) > now:
             return Response(content=cache_entry.data, media_type="application/json")
 
@@ -198,7 +202,9 @@ async def get_cached_or_fetch(
                     resp = await client.get(fetch_url, headers=headers)
                     
             if resp.status_code == 200:
-                data = resp.json()
+                parsed = resp.json()
+                if isinstance(parsed, list) or (isinstance(parsed, dict) and parsed.get("success") is not False):
+                    data = parsed
         except Exception as e:
             logger.warning(f"Fetch failed for {cache_key}: {e}")
 
@@ -228,11 +234,11 @@ async def get_cached_or_fetch(
             )
             db.add(cache_entry)
         
-        db.commit()
+        await db.commit()
         return Response(content=json_data, media_type="application/json")
 
 @router.get("/earthquakes")
-async def get_earthquakes(db: Session = Depends(database.get_db)):
+async def get_earthquakes(db: AsyncSession = Depends(database.get_db)):
     """
     Fetches real-time seismic data from USGS GeoJSON API.
 
@@ -247,14 +253,14 @@ async def get_earthquakes(db: Session = Depends(database.get_db)):
     )
 
 @router.get("/flights")
-async def get_flights(db: Session = Depends(database.get_db)):
+async def get_flights(db: AsyncSession = Depends(database.get_db)):
     """
     Fetches live commercial flight state vectors from OpenSky Network API.
 
     Cache TTL: 30 Seconds.
     """
     url = "https://opensky-network.org/api/states/all"
-    headers = {"User-Agent": "GlobeScope/1.0 (https://globescope.app)"}
+    headers = {"User-Agent": "TerraScope/1.0 (https://terrascope.app)"}
     return await get_cached_or_fetch(
         db=db,
         cache_key="flights",
@@ -264,9 +270,9 @@ async def get_flights(db: Session = Depends(database.get_db)):
     )
 
 @router.get("/weather")
-async def get_weather(db: Session = Depends(database.get_db)):
+async def get_weather(db: AsyncSession = Depends(database.get_db)):
     """
-    Fetches live, genuine 100% real weather metrics across global capital cities from Open-Meteo API.
+    Fetches live weather metrics across global capital cities from Open-Meteo API.
 
     Cache TTL: 15 Minutes (900 seconds).
     """
@@ -274,14 +280,15 @@ async def get_weather(db: Session = Depends(database.get_db)):
     cache_key = "weather_openmeteo_70v1"
     
     # Check SQLite cache
-    cache_entry = db.query(models.CacheEntry).filter(models.CacheEntry.cache_key == cache_key).first()
+    result = await db.execute(select(models.CacheEntry).where(models.CacheEntry.cache_key == cache_key))
+    cache_entry = result.scalar_one_or_none()
     if cache_entry and cache_entry.expires_at.replace(tzinfo=timezone.utc) > now:
         return Response(content=cache_entry.data, media_type="application/json")
 
     lock = get_lock_for_key(cache_key)
     async with lock:
-        db.expire_all()
-        cache_entry = db.query(models.CacheEntry).filter(models.CacheEntry.cache_key == cache_key).first()
+        result = await db.execute(select(models.CacheEntry).where(models.CacheEntry.cache_key == cache_key))
+        cache_entry = result.scalar_one_or_none()
         if cache_entry and cache_entry.expires_at.replace(tzinfo=timezone.utc) > now:
             return Response(content=cache_entry.data, media_type="application/json")
 
@@ -328,7 +335,7 @@ async def get_weather(db: Session = Depends(database.get_db)):
                     cache_entry.created_at = now
                 else:
                     db.add(models.CacheEntry(cache_key=cache_key, data=json_data, expires_at=expires_at, created_at=now))
-                db.commit()
+                await db.commit()
                 return Response(content=json_data, media_type="application/json")
 
         except Exception as e:
@@ -339,23 +346,23 @@ async def get_weather(db: Session = Depends(database.get_db)):
         return Response(content=json.dumps(FALLBACK_CITIES), media_type="application/json")
 
 @router.get("/countries")
-async def get_countries(db: Session = Depends(database.get_db)):
+async def get_countries(db: AsyncSession = Depends(database.get_db)):
     """
     Fetches international country profiles, population, and capitals from REST Countries API.
 
     Cache TTL: 24 Hours (86400 seconds).
     """
-    url = "https://files-03.restcountries.com/countries.00/legacy.json?fields=name,capital,population,area,flags,latlng,region,subregion,currencies,languages"
+    url = "https://restcountries.com/v3.1/all?fields=name,capital,population,area,flags,latlng,region,subregion,currencies,languages"
     return await get_cached_or_fetch(
         db=db,
-        cache_key="countries",
+        cache_key="countries_v3",
         ttl_seconds=86400,
         fetch_url=url,
         fallback_data=FALLBACK_COUNTRIES_LIST
     )
 
 @router.get("/neo")
-async def get_near_earth_objects(db: Session = Depends(database.get_db)):
+async def get_near_earth_objects(db: AsyncSession = Depends(database.get_db)):
     """
     Fetches near-Earth asteroids and orbital trajectory data from NASA NeoWs API.
 

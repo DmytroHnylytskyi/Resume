@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useRef, useEffect, useMemo } from 'react';
-import { useFBX, useAnimations } from '@react-three/drei';
+import { useFrame } from '@react-three/fiber';
+import { useFBX, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 import { clone as cloneSkeleton } from 'three/examples/jsm/utils/SkeletonUtils.js';
 
@@ -11,121 +12,110 @@ interface AnimatedCharacterProps {
   isJumping: boolean;
 }
 
-const TARGET_AVATAR_HEIGHT = 0.82;
+const TARGET_HEIGHT = 1.65;
 
-/**
- * Enhanced Skeletal Animated Character Component (Mixamo Arissa):
- * - Smooth animation blending between Idle, Walk, Run, and Jump.
- * - Clean non-stuttering jump animation playback with instant landing recovery.
- * - Ground-level boot alignment.
- */
 export default function AnimatedCharacter({
   isMoving,
   isSprinting,
   isJumping
 }: AnimatedCharacterProps): React.ReactElement {
-  // ── 1. Load FBX Assets ──
-  const idleFbx = useFBX('/model/Idle.fbx');
-  const walkFbx = useFBX('/model/Walking.fbx');
-  const runFbx = useFBX('/model/Running.fbx');
-  const jumpFbx = useFBX('/model/Jumping.fbx');
+  // ── 1. Load Character Textures ──
+  const [diffuseMap, normalMap, specularMap] = useTexture([
+    '/model/kaykit_halloween/Arissa_diffuse.png',
+    '/model/kaykit_halloween/Arissa_normal.png',
+    '/model/kaykit_halloween/Arissa_specular.png'
+  ]);
 
-  const groupRef = useRef<THREE.Group>(null);
+  // Configure texture color space and filtering
+  diffuseMap.colorSpace = THREE.SRGBColorSpace;
+  diffuseMap.generateMipmaps = true;
+  diffuseMap.minFilter = THREE.LinearMipmapLinearFilter;
+  diffuseMap.magFilter = THREE.LinearFilter;
 
-  // ── 2. SkinnedMesh Cloning & Ground Height Snapping ──
-  const { characterModel, animations, autoScale } = useMemo(() => {
+  // ── 2. Load FBX Animation Clips ──
+  const idleFbx = useFBX('/model/kaykit_halloween/Idle.fbx');
+  const walkFbx = useFBX('/model/kaykit_halloween/Walking.fbx');
+  const runFbx = useFBX('/model/kaykit_halloween/Running.fbx');
+  const jumpFbx = useFBX('/model/kaykit_halloween/Jumping.fbx');
+
+  // ── 3. Build Skeletal Mesh with Authentic Texturing & AnimationMixer ──
+  const { characterModel, mixer, actionsMap, autoScale } = useMemo(() => {
     const clone = cloneSkeleton(idleFbx) as THREE.Group;
+
+    // Rotation is controlled by avatarGroupRef in CharacterController
+    clone.rotation.y = 0;
 
     // Measure raw bounding box height
     const box = new THREE.Box3().setFromObject(clone);
     const size = box.getSize(new THREE.Vector3());
     const rawHeight = size.y;
+    const scaleFactor = rawHeight > 0 ? TARGET_HEIGHT / rawHeight : 0.0092;
 
-    const normalizedScale = rawHeight > 0 ? TARGET_AVATAR_HEIGHT / rawHeight : 0.005;
-
-    // Snap feet of character directly to ground level Y=0
-    if (!box.isEmpty()) {
-      clone.position.y -= box.min.y;
-    }
+    // Optimized material: FrontSide only, no shadows (shadows disabled globally)
+    const characterMaterial = new THREE.MeshStandardMaterial({
+      map: diffuseMap,
+      normalMap: normalMap,
+      roughnessMap: specularMap,
+      roughness: 0.5,
+      metalness: 0.25,
+      side: THREE.FrontSide
+    });
 
     clone.traverse((child) => {
-      if ((child as THREE.SkinnedMesh).isMesh || (child as THREE.SkinnedMesh).isSkinnedMesh) {
+      if ((child as THREE.SkinnedMesh).isSkinnedMesh || (child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.SkinnedMesh;
-        mesh.castShadow = true;
-        mesh.receiveShadow = true;
-        mesh.frustumCulled = false;
-
-        if (mesh.material) {
-          const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-          mats.forEach((mat) => {
-            if (mat instanceof THREE.MeshStandardMaterial || mat instanceof THREE.MeshPhongMaterial) {
-              mat.side = THREE.DoubleSide;
-              if ('roughness' in mat) mat.roughness = 0.55;
-              if ('metalness' in mat) mat.metalness = 0.15;
-              if (mat.map) {
-                mat.map.colorSpace = THREE.SRGBColorSpace;
-                mat.map.needsUpdate = true;
-              }
-            }
-          });
-        }
+        mesh.castShadow = false;
+        mesh.receiveShadow = false;
+        mesh.frustumCulled = false; // Required for skinned mesh animation
+        mesh.material = characterMaterial;
       }
     });
 
-    const animList: THREE.AnimationClip[] = [];
+    const animMixer = new THREE.AnimationMixer(clone);
+    const actions: Record<string, THREE.AnimationAction> = {};
 
-    if (idleFbx.animations && idleFbx.animations[0]) {
-      const clip = idleFbx.animations[0].clone();
-      clip.name = 'Idle';
-      animList.push(clip);
+    if (idleFbx.animations?.[0]) {
+      const a = animMixer.clipAction(idleFbx.animations[0]);
+      a.setLoop(THREE.LoopRepeat, Infinity);
+      actions['Idle'] = a;
     }
 
-    if (walkFbx.animations && walkFbx.animations[0]) {
-      const clip = walkFbx.animations[0].clone();
-      clip.name = 'Walk';
-      animList.push(clip);
+    if (walkFbx.animations?.[0]) {
+      const a = animMixer.clipAction(walkFbx.animations[0]);
+      a.timeScale = 1.15;
+      a.setLoop(THREE.LoopRepeat, Infinity);
+      actions['Walk'] = a;
     }
 
-    if (runFbx.animations && runFbx.animations[0]) {
-      const clip = runFbx.animations[0].clone();
-      clip.name = 'Run';
-      animList.push(clip);
+    if (runFbx.animations?.[0]) {
+      const a = animMixer.clipAction(runFbx.animations[0]);
+      a.timeScale = 1.10;
+      a.setLoop(THREE.LoopRepeat, Infinity);
+      actions['Run'] = a;
     }
 
-    if (jumpFbx.animations && jumpFbx.animations[0]) {
-      const clip = jumpFbx.animations[0].clone();
-      clip.name = 'Jump';
-      animList.push(clip);
+    if (jumpFbx.animations?.[0]) {
+      const a = animMixer.clipAction(jumpFbx.animations[0]);
+      a.timeScale = 1.25;
+      a.setLoop(THREE.LoopOnce, 1);
+      a.clampWhenFinished = true;
+      actions['Jump'] = a;
     }
+
+    // Start playing default Idle
+    actions['Idle']?.play();
 
     return {
       characterModel: clone,
-      animations: animList,
-      autoScale: normalizedScale
+      mixer: animMixer,
+      actionsMap: actions,
+      autoScale: scaleFactor
     };
-  }, [idleFbx, walkFbx, runFbx, jumpFbx]);
+  }, [idleFbx, walkFbx, runFbx, jumpFbx, diffuseMap, normalMap, specularMap]);
 
-  const { actions } = useAnimations(animations, groupRef);
-
-  // ── 3. Animation Cadence & Speeds ──
-  useEffect(() => {
-    if (actions['Walk']) {
-      actions['Walk'].timeScale = 1.15;
-    }
-    if (actions['Run']) {
-      actions['Run'].timeScale = 1.10;
-    }
-    if (actions['Idle']) {
-      actions['Idle'].timeScale = 1.0;
-    }
-    if (actions['Jump']) {
-      actions['Jump'].timeScale = 1.25;
-    }
-  }, [actions]);
-
-  // ── 4. Robust Animation State Machine ──
   const currentActionRef = useRef<string>('Idle');
 
+  // ── 4. Smooth State Machine Crossfading ──
   useEffect(() => {
     let target = 'Idle';
     if (isJumping) {
@@ -134,31 +124,33 @@ export default function AnimatedCharacter({
       target = isSprinting ? 'Run' : 'Walk';
     }
 
-    if (currentActionRef.current !== target) {
-      const prevAction = actions[currentActionRef.current];
-      const nextAction = actions[target];
+    if (currentActionRef.current !== target && actionsMap[target]) {
+      const prevAction = actionsMap[currentActionRef.current];
+      const nextAction = actionsMap[target];
 
-      if (prevAction) {
-        prevAction.fadeOut(0.15);
-      }
-
-      if (nextAction) {
-        nextAction.reset().fadeIn(0.15).play();
-        if (target === 'Jump') {
-          nextAction.setLoop(THREE.LoopOnce, 1);
-          nextAction.clampWhenFinished = true;
-        } else {
-          nextAction.setLoop(THREE.LoopRepeat, Infinity);
-        }
-      }
+      if (prevAction) prevAction.fadeOut(0.18);
+      if (nextAction) nextAction.reset().fadeIn(0.18).play();
 
       currentActionRef.current = target;
     }
-  }, [isMoving, isSprinting, isJumping, actions]);
+  }, [isMoving, isSprinting, isJumping, actionsMap]);
+
+  // ── 5. Frame Update ──
+  useFrame((_, delta) => {
+    mixer.update(Math.min(delta, 0.1));
+  });
 
   return (
-    <group ref={groupRef} scale={autoScale} position={[0, 0, 0]}>
+    <group scale={autoScale} position={[0, 0, 0]}>
       <primitive object={characterModel} />
     </group>
   );
 }
+
+useTexture.preload('/model/kaykit_halloween/Arissa_diffuse.png');
+useTexture.preload('/model/kaykit_halloween/Arissa_normal.png');
+useTexture.preload('/model/kaykit_halloween/Arissa_specular.png');
+useFBX.preload('/model/kaykit_halloween/Idle.fbx');
+useFBX.preload('/model/kaykit_halloween/Walking.fbx');
+useFBX.preload('/model/kaykit_halloween/Running.fbx');
+useFBX.preload('/model/kaykit_halloween/Jumping.fbx');

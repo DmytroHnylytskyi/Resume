@@ -104,6 +104,13 @@ export default function NeoLayer() {
     });
   }, [neos]);
 
+  // Dispose previous orbit geometries to ensure zero GPU memory leakage
+  useEffect(() => {
+    return () => {
+      orbitRings.forEach((ring) => ring.geometry.dispose());
+    };
+  }, [orbitRings]);
+
   useEffect(() => {
     if (meshRef.current && count > 0) {
       neos.forEach((neo, i) => {

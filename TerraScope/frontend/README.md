@@ -1,6 +1,6 @@
-# 🎨 GlobeScope Frontend — Next.js 15 & React Three Fiber
+# 🎨 TerraScope Frontend — Next.js 16 & React Three Fiber
 
-This folder contains the **Next.js 15 App Router** frontend for **GlobeScope**, rendering a hardware-accelerated 3D WebGL Earth visualization canvas.
+This folder contains the **Next.js 16 App Router** frontend for **TerraScope**, rendering a hardware-accelerated 3D WebGL Earth visualization canvas using **React 19**, **Three.js**, and **React Three Fiber (R3F)**.
 
 ---
 
@@ -27,7 +27,7 @@ npm run dev
 ```
 src/
 ├── app/
-│   ├── layout.js              # Global HTML layout shell
+│   ├── layout.js              # Global HTML layout shell & SEO metadata
 │   ├── page.js                # Main application page mounting R3F Canvas & Cockpit UI
 │   └── globals.css            # Glassmorphism design tokens & global CSS resets
 │
@@ -36,11 +36,12 @@ src/
 │   │   ├── Globe.jsx          # R3F Canvas container with OrbitControls & Lighting
 │   │   ├── Earth.jsx          # Earth sphere mesh with custom GLSL ShaderMaterial
 │   │   ├── Atmosphere.jsx     # Fresnel atmospheric glowing outer halo mesh
-│   │   └── PostProcessing.jsx # EffectComposer with Bloom & Vignette
+│   │   ├── PostProcessing.jsx # EffectComposer with Bloom & Vignette
+│   │   └── ErrorBoundary.jsx  # WebGL Canvas Crash Fallback Barrier
 │   │
 │   ├── layers/
 │   │   ├── EarthquakeLayer.jsx# Instanced 3D magnitude columns (USGS dataset)
-│   │   ├── FlightLayer.jsx    # Instanced 3D airplane meshes (OpenSky dataset)
+│   │   ├── FlightLayer.jsx    # Instanced 3D airplane sprites (OpenSky dataset)
 │   │   ├── WeatherLayer.jsx   # Instanced capital weather indicator orbs
 │   │   ├── NeoLayer.jsx       # Instanced near-Earth asteroids & orbital rings
 │   │   ├── CapitalsLayer.jsx  # Instanced 16-segment tapered capital pins
@@ -50,8 +51,8 @@ src/
 │       ├── Navbar.jsx         # Top navigation bar with mode switcher & auth buttons
 │       ├── LayerPanel.jsx     # Left drawer for toggling data layers & filters
 │       ├── DetailPanel.jsx    # Right inspection drawer showing selected 3D marker metadata
-│       ├── AuthModal.jsx      # Login / Register glassmorphism modal
-│       ├── SavedViewsModal.jsx# User saved globe views modal
+│       ├── AuthModal.jsx      # Login and account registration glassmorphism modal
+│       ├── SavedViewsModal.jsx# Saved 3D camera presets and active layers modal
 │       └── StatusBar.jsx      # Bottom status dock showing active layers & FPS
 │
 ├── hooks/
@@ -71,4 +72,6 @@ src/
 2. **Zero Allocation in Frame Loop (`useFrame`)**:
    Dummy `THREE.Object3D` instances and math helpers (`Vector3`, `Matrix4`, `Color`) are allocated at module scope. The 60Hz render loop performs zero heap allocations, eliminating Garbage Collection (GC) pauses.
 3. **Custom Single-Pass Earth GLSL Shader**:
-   [`Earth.jsx`](file:///c:/Dev/Resume/GlobeScope/frontend/src/components/globe/Earth.jsx) calculates day/night blending and golden twilight scattering in a single fragment shader pass, avoiding heavy multi-light passes.
+   Calculates day/night blending and golden twilight scattering in a single fragment shader pass, avoiding heavy multi-light passes.
+4. **GPU Memory Lifecycle Management**:
+   Dynamic orbital path buffers and geometry allocations are explicitly disposed in `useEffect` teardowns to avoid VRAM bloat.

@@ -50,7 +50,7 @@ export default function Navbar() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <GlobeIcon size={24} color="var(--accent)" />
           <span className="gradient-text" style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.5px' }}>
-            GlobeScope
+            TerraScope
           </span>
           <span className="badge badge-accent" style={{ marginLeft: '4px', fontSize: '0.7rem' }}>
             LIVE 3D

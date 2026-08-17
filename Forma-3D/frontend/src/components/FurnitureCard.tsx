@@ -23,12 +23,16 @@ import {
   Image as ImageIcon, 
   Monitor, 
   Plus, 
-  Box,
-  Layers,
-  Grid,
-  DoorClosed,
-  Maximize2,
-  LucideIcon
+  Box, 
+  Layers, 
+  Grid, 
+  DoorClosed, 
+  Maximize2, 
+  Flame, 
+  Landmark, 
+  Trees, 
+  Sparkles, 
+  LucideIcon 
 } from 'lucide-react';
 
 export interface FurnitureCardItem {
@@ -54,12 +58,19 @@ export interface FurnitureCardProps {
 export function getFurnitureIcon(name: string = ''): { icon: LucideIcon, color: string } {
   const n = name.toLowerCase();
   
+  if (n.includes('pumpkin') || n.includes('jacko')) return { icon: Flame, color: '#f97316' };
+  if (n.includes('candle')) return { icon: Flame, color: '#fbbf24' };
+  if (n.includes('statue') || n.includes('angel') || n.includes('stag')) return { icon: Landmark, color: '#38bdf8' };
+  if (n.includes('crypt') || n.includes('shrine') || n.includes('arch')) return { icon: Landmark, color: '#a855f7' };
+  if (n.includes('tree') || n.includes('pine')) return { icon: Trees, color: '#ea580c' };
+  if (n.includes('skull') || n.includes('grave') || n.includes('coffin') || n.includes('bone')) return { icon: Sparkles, color: '#cbd5e1' };
+  if (n.includes('fence') || n.includes('pillar')) return { icon: Layers, color: '#94a3b8' };
+  if (n.includes('tile') || n.includes('path') || n.includes('floor') || n.includes('підлога')) return { icon: Grid, color: '#fb923c' };
+
   if (n.includes('стіна') || n.includes('wall')) return { icon: Layers, color: '#38bdf8' };
-  if (n.includes('підлога') || n.includes('floor')) return { icon: Grid, color: '#fb923c' };
   if (n.includes('двері') || n.includes('door')) return { icon: DoorClosed, color: '#a3e635' };
   if (n.includes('вікно') || n.includes('window')) return { icon: Maximize2, color: '#38bdf8' };
   if (n.includes('дах') || n.includes('roof')) return { icon: Box, color: '#94a3b8' };
-  if (n.includes('арка') || n.includes('arch')) return { icon: Layers, color: '#c084fc' };
   
   if (n.includes('sofa')) return { icon: Sofa, color: '#1ed760' };
   if (n.includes('chair') || n.includes('pouf') || n.includes('stool')) return { icon: Armchair, color: '#34d399' };

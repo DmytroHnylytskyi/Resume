@@ -1,39 +1,75 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useGameStore } from '../../store/useGameStore';
-import { sound } from '../../utils/audio';
-import {
-  Volume2,
-  VolumeX,
-  Compass,
-  RotateCcw,
-  Sparkles,
-  User,
-  Share2,
-  Award,
-  Zap,
-  MousePointer
-} from 'lucide-react';
+import { developerProfiles, translations } from '../../data/resumeData';
+import { User, Share2, Award, FileText, Sun, Moon } from 'lucide-react';
+
+function FpsBadge(): React.ReactElement {
+  const [fps, setFps] = useState(60);
+  const frameCount = useRef(0);
+  const lastTime = useRef(performance.now());
+
+  useEffect(() => {
+    let animId: number;
+    const loop = (now: number) => {
+      frameCount.current++;
+      const elapsed = now - lastTime.current;
+      if (elapsed >= 400) {
+        setFps(Math.round((frameCount.current * 1000) / elapsed));
+        frameCount.current = 0;
+        lastTime.current = now;
+      }
+      animId = requestAnimationFrame(loop);
+    };
+    animId = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(animId);
+  }, []);
+
+  return (
+    <div
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '6px',
+        background: 'var(--badge-bg)',
+        border: '1px solid var(--border-subtle)',
+        borderRadius: '20px',
+        padding: '3px 9px',
+        fontSize: '11px',
+        fontWeight: 700,
+        fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
+        color: 'var(--text-primary)'
+      }}
+    >
+      <span
+        style={{
+          width: '6px',
+          height: '6px',
+          borderRadius: '50%',
+          backgroundColor: 'var(--text-primary)',
+          opacity: 0.8
+        }}
+      />
+      <span>{fps} FPS</span>
+    </div>
+  );
+}
 
 export default function ControlsHUD(): React.ReactElement {
   const {
-    isAudioMuted,
-    toggleAudio,
     setActiveModal,
-    isRespawning,
-    toastMessage,
     interactionPrompt,
-    cameraMode,
-    toggleCameraMode,
-    isPixelArt,
-    togglePixelArt
+    language,
+    setLanguage,
+    setViewMode,
+    viewMode,
+    theme,
+    toggleTheme
   } = useGameStore();
 
-  const handleAudioToggle = () => {
-    toggleAudio();
-    sound.setMuted(!isAudioMuted);
-  };
+  const profile = developerProfiles[language];
+  const t = translations[language].nav;
 
   return (
     <>
@@ -41,141 +77,78 @@ export default function ControlsHUD(): React.ReactElement {
       <header className="island-top-bar glass-panel">
         <div className="brand-badge">
           <div className="brand-dot" />
-          <span className="brand-name">Гнилицький Дмитро</span>
-          <span className="brand-tag">Aetheria 3D</span>
+          <span className="brand-name">{profile.name}</span>
+          <span className="brand-tag">{t.brandTag}</span>
+          <FpsBadge />
         </div>
 
-        {/* Quick Nav Shortcut Buttons */}
+        {/* Quick Nav, Theme & Mode Controls */}
         <div className="top-nav-shortcuts">
+          {/* Switch to Classic Resume */}
           <button
-            className="nav-shortcut-btn"
-            onClick={() => setActiveModal('bio')}
-            title="Про мене & Резюме"
+            className="nav-shortcut-btn mode-switch-btn"
+            onClick={() => setViewMode(viewMode === '3d' ? 'classic' : '3d')}
+            title={t.viewClassic}
           >
+            <FileText size={15} />
+            <span>{t.viewClassic}</span>
+          </button>
+
+          {/* Quick Modals */}
+          <button className="nav-shortcut-btn" onClick={() => setActiveModal('bio')}>
             <User size={15} />
-            <span>Про мене</span>
+            <span>{t.bio}</span>
           </button>
 
-          <button
-            className="nav-shortcut-btn"
-            onClick={() => setActiveModal('contacts')}
-            title="Контакти & Соцмережі"
-          >
-            <Share2 size={15} />
-            <span>Контакти</span>
-          </button>
-
-          <button
-            className="nav-shortcut-btn"
-            onClick={() => setActiveModal('skills')}
-            title="Стек технологій"
-          >
+          <button className="nav-shortcut-btn" onClick={() => setActiveModal('skills')}>
             <Award size={15} />
-            <span>Навички</span>
+            <span>{t.skills}</span>
           </button>
 
-          <button
-            className={`nav-shortcut-btn ${cameraMode === 'bird_eye' ? 'active' : ''}`}
-            onClick={toggleCameraMode}
-            title="Перемкнути між видом від 3-ї особи та оглядом всього острова з висоти"
-          >
-            <Compass size={15} />
-            <span>{cameraMode === 'bird_eye' ? 'Вигляд Гравця' : 'Огляд Карти'}</span>
-          </button>
-        </div>
-
-        {/* Top Right Controls: Pixel Art & Audio Toggle */}
-        <div className="top-bar-right">
-          <button
-            className={`nav-shortcut-btn ${isPixelArt ? 'active' : ''}`}
-            onClick={togglePixelArt}
-            title={isPixelArt ? 'Вимкнути Pixel Art режим' : 'Увімкнути Retro 3D Pixel Art'}
-            style={{
-              borderColor: isPixelArt ? '#38bdf8' : 'rgba(255,255,255,0.15)',
-              background: isPixelArt ? 'rgba(56, 189, 248, 0.2)' : 'rgba(15, 23, 42, 0.6)'
-            }}
-          >
-            <span>{isPixelArt ? '👾 Pixel: ON' : '✨ 3D Crisp'}</span>
+          <button className="nav-shortcut-btn" onClick={() => setActiveModal('contacts')}>
+            <Share2 size={15} />
+            <span>{t.contacts}</span>
           </button>
 
+          {/* Theme Toggle */}
           <button
-            className={`audio-toggle-btn ${isAudioMuted ? 'muted' : ''}`}
-            onClick={handleAudioToggle}
-            title={isAudioMuted ? 'Увімкнути 3D звук' : 'Вимкнути 3D звук'}
+            className="nav-shortcut-btn theme-toggle-btn"
+            onClick={toggleTheme}
+            title={theme === 'dark' ? 'Світла тема' : 'Темна тема'}
           >
-            {isAudioMuted ? <VolumeX size={17} /> : <Volume2 size={17} />}
-            <span className="audio-label">{isAudioMuted ? 'Muted' : '3D Sound'}</span>
+            {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
           </button>
+
+          {/* Language Switcher */}
+          <div className="lang-toggle-group mini">
+            <button
+              className={`lang-btn ${language === 'uk' ? 'active' : ''}`}
+              onClick={() => setLanguage('uk')}
+              title="Українська"
+            >
+              UA
+            </button>
+            <button
+              className={`lang-btn ${language === 'en' ? 'active' : ''}`}
+              onClick={() => setLanguage('en')}
+              title="English"
+            >
+              EN
+            </button>
+          </div>
         </div>
       </header>
 
-      {/* ── Bottom Floating Controls HUD ── */}
-      <div className="bottom-controls-guide glass-panel">
-        <div className="control-key-item">
-          <kbd>W</kbd>
-          <kbd>A</kbd>
-          <kbd>S</kbd>
-          <kbd>D</kbd>
-          <span>Рух</span>
-        </div>
-        <div className="hud-divider" />
-        <div className="control-key-item">
-          <kbd>🖱️</kbd>
-          <span>Огляд 360°</span>
-        </div>
-        <div className="hud-divider" />
-        <div className="control-key-item">
-          <kbd>Shift</kbd>
-          <span>Біг</span>
-        </div>
-        <div className="hud-divider" />
-        <div className="control-key-item">
-          <kbd>Пробіл</kbd>
-          <span>Стрибок</span>
-        </div>
-        <div className="hud-divider" />
-        <div className="control-key-item">
-          <kbd>E</kbd>
-          <span>Дія</span>
-        </div>
-        <div className="hud-divider" />
-        <div className="control-key-item">
-          <kbd>Esc</kbd>
-          <span>Курсор</span>
-        </div>
-      </div>
-
-      {/* ── Proximity Active Prompt Bar ── */}
+      {/* ── Minimalist Clean Floating Interaction Pill ── */}
       {interactionPrompt && (
-        <div
-          className="bottom-interaction-prompt glass-panel"
-          onClick={interactionPrompt.action}
-          style={{ cursor: 'pointer' }}
-        >
-          <div className="prompt-key-badge">E</div>
-          <div className="prompt-text-group">
-            <span className="prompt-action-label">Натисніть E або клікніть:</span>
-            <span className="prompt-target-title">{interactionPrompt.title}</span>
+        <div className="minimal-interaction-pill-wrapper">
+          <div
+            className="minimal-interaction-pill glass-panel"
+            onClick={interactionPrompt.action}
+          >
+            <kbd className="interaction-key">E</kbd>
+            <span className="interaction-title">{interactionPrompt.title}</span>
           </div>
-          <Zap size={16} className="prompt-zap-icon" />
-        </div>
-      )}
-
-      {/* ── Void Fall Respawn Fade Screen ── */}
-      {isRespawning && (
-        <div className="void-respawn-overlay">
-          <div className="respawn-content">
-            <RotateCcw size={32} className="spin-respawn" />
-            <span>Повернення на острів...</span>
-          </div>
-        </div>
-      )}
-
-      {/* ── Toast Notification Banner ── */}
-      {toastMessage && (
-        <div className="island-toast glass-panel">
-          <Sparkles size={16} color="#38bdf8" />
-          <span>{toastMessage}</span>
         </div>
       )}
     </>

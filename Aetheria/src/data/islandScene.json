@@ -1,444 +1,6475 @@
 {
   "version": "1.0",
-  "timestamp": "2026-08-08T15:21:31.981Z",
-  "projectName": "Floating Archipelago",
-  "spawnPoint": [1.0, 10.2, -0.5],
+  "timestamp": "2026-08-16T07:32:10.599Z",
+  "projectName": "Чистий Простір",
   "placedObjects": [
     {
-      "id": "e80c0d81-b130-40ea-ba9e-37749a6f57b6",
-      "modelPath": "/model/island_base_main1.glb",
-      "position": [0.5, 0, -0.5],
-      "rotation": [0, 0, 0],
-      "scale": 13.970218905563236,
-      "colors": { "polySurface63": "#927373" }
-    },
-    {
-      "id": "37fcd94d-8ce4-4509-8cc2-4fba9e6e2ca9",
-      "modelPath": "/model/island_base_main2.glb",
-      "position": [7.032272513689411, 2.815192337132446, 17.715027686575922],
-      "rotation": [0, 0, 0],
-      "scale": 7.1520619226872535,
-      "colors": { "Object": "#b2aaaa" }
-    },
-    {
-      "id": "22f17c73-d00f-471a-bfde-cb0926529211",
-      "modelPath": "/model/island_base_main3.glb",
-      "position": [-17.32820419060372, -1.758916081421368, -19.024536921865778],
-      "rotation": [-3.141592653589793, -0.5854093200861777, -3.141592653589793],
-      "scale": 6.903742884302988,
-      "colors": { "Object": "#150505" }
-    },
-    {
-      "id": "a04c97da-810f-40dd-8213-4fca10378ff4",
-      "modelPath": "/model/island_base_main4.glb",
-      "position": [-27.6505747342126, -1.3159866411733994, -8.922238485819408],
-      "rotation": [0, 1.050384604963978, 0],
-      "scale": 10.723060582047422,
-      "colors": { "Object": "#150505" }
-    },
-    {
-      "id": "ad8746e0-f048-4470-815d-16e8525e61f1",
-      "modelPath": "/model/island_base_main2.glb",
-      "position": [-15.757861976705708, 0.4464031847299035, 25.433931062330192],
-      "rotation": [-3.141592653589793, 1.32677256048086, -3.141592653589793],
-      "scale": 9.6020397832388,
-      "colors": { "Object": "#a19595" }
-    },
-    {
-      "id": "e52c6060-58f6-40cd-a80e-3ce3869ce10a",
-      "modelPath": "/model/stone_steps1.glb",
-      "position": [-3.2923340625918804, 8.742204476783744, -4.559589105313419],
-      "rotation": [-3.141592653589793, 0.7853981633974485, -3.141592653589793],
+      "id": "96542494-dab7-4e69-8f9e-c9a98e8ddcca",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        2,
+        0,
+        2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
       "scale": 1,
-      "colors": { "Object": "#4d4848" }
+      "hiddenParts": [],
+      "colors": {}
     },
     {
-      "id": "26e3ab84-1f43-46dd-a233-1bb8d101d7d7",
-      "modelPath": "/model/stone_steps1.glb",
-      "position": [-4.934962050153341, 7.814521171896427, -6.126661074407466],
-      "rotation": [-3.141592653589793, 0.7872559297404871, -3.141592653589793],
+      "id": "7acd43a0-2e1f-4325-98b3-569bb1ff76ad",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        2,
+        0,
+        -2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
       "scale": 1,
-      "colors": { "Object": "#4d4848" }
+      "hiddenParts": [],
+      "colors": {}
     },
     {
-      "id": "1cb2499a-24cd-4509-b744-96bfa3f4945f",
-      "modelPath": "/model/stone_steps1.glb",
-      "position": [-6.413725290034644, 6.938691148000335, -7.581393301380842],
-      "rotation": [-3.141592653589793, 0.8035836507435202, -3.141592653589793],
+      "id": "46d1d19b-9fd1-4874-91b0-e33e907b9e25",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -2,
+        0,
+        -2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
       "scale": 1,
-      "colors": { "Object": "#4d4848" }
+      "hiddenParts": [],
+      "colors": {}
     },
     {
-      "id": "cc0f351d-3d92-40ed-b0c9-ddaaa83cf815",
-      "modelPath": "/model/stone_steps1.glb",
-      "position": [-10.715621358597268, 4.287190262571291, -12.074033770594772],
-      "rotation": [-3.141592653589793, 0.8518657879251905, -3.141592653589793],
+      "id": "2d25b4fa-e58c-4d88-8a64-811fc724ab82",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -2,
+        0,
+        2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
       "scale": 1,
-      "colors": { "Object": "#4d4848" }
+      "hiddenParts": [],
+      "colors": {}
     },
     {
-      "id": "d158433a-06a8-4122-ae0b-bc2ffc431016",
-      "modelPath": "/model/stone_steps1.glb",
-      "position": [-9.314173686969522, 5.157630661128514, -10.55820622259327],
-      "rotation": [-3.141592653589793, 0.831955539154932, -3.141592653589793],
+      "id": "461d5636-a67d-47f9-b25d-0fd056fd54e3",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        2,
+        0,
+        -6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
       "scale": 1,
-      "colors": { "Object": "#4d4848" }
+      "hiddenParts": [],
+      "colors": {}
     },
     {
-      "id": "25b86dc9-a10b-4ef2-95c9-7517eacfac03",
-      "modelPath": "/model/stone_steps1.glb",
-      "position": [-7.878647751708794, 6.037133166726823, -9.06043508283434],
-      "rotation": [-3.141592653589793, 0.8170095246459713, -3.141592653589793],
+      "id": "2253daba-fee6-4b8b-9c9b-193183b980f5",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        6,
+        0,
+        -6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
       "scale": 1,
-      "colors": { "Object": "#4d4848" }
+      "hiddenParts": [],
+      "colors": {}
     },
     {
-      "id": "d16bc4ad-64fc-4eec-956b-0e99689feb56",
-      "modelPath": "/model/stone_steps1.glb",
-      "position": [-23.2268201864425, 5.0444307054551265, -11.243017574401476],
-      "rotation": [0, 1.2080352381090078, 0],
+      "id": "1f3a69b3-5a5e-4f66-878e-3748208dd049",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        6,
+        0,
+        -2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
       "scale": 1,
-      "colors": { "Object": "#4d4848" }
+      "hiddenParts": [],
+      "colors": {}
     },
     {
-      "id": "faa8d8c6-7d36-4a83-b605-9e84c24a992c",
-      "modelPath": "/model/stone_steps1.glb",
-      "position": [-22.51296369332679, 4.17264888562892, -13.180370911610847],
-      "rotation": [0, 1.221233554520384, 0],
+      "id": "3ca3e4fc-94e5-4220-b698-c39cc2b4c62b",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        6,
+        0,
+        2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
       "scale": 1,
-      "colors": { "Object": "#4d4848" }
+      "hiddenParts": [],
+      "colors": {}
     },
     {
-      "id": "ddf4d76a-569c-40a3-8038-ef21004535c3",
-      "modelPath": "/model/rope_bridge2.glb",
-      "position": [3.735496149733839, 9.081545264160694, 9.909313472770194],
-      "rotation": [0, 0.26433749574578896, 0],
+      "id": "da4a11f6-ff0d-4ef0-a5e8-068a5d8709f3",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -2,
+        0,
+        -6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "3aeee936-869f-453b-8130-1fed6d5cf9cf",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -6,
+        0,
+        -6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "cba39f56-fbed-4ef2-b86c-0b8d306cfd71",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -6,
+        0,
+        -2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "d5ebb430-4c22-4199-9606-460cb365f59d",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -6,
+        0,
+        2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "906fc76f-52cd-4b6f-bf16-50627baa72ea",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -6,
+        0,
+        6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "faee4ce8-e7ee-4e92-90bb-1d738d2b3eb4",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -2,
+        0,
+        6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "05225c6d-df90-4bb0-b8ed-6ed51464011f",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        2,
+        0,
+        6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "ba9829a5-066a-4bf3-9423-dc9adb460e52",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        6,
+        0,
+        6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "d8c52867-d6b7-4688-9d05-db0e59ac4fec",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -6,
+        0,
+        -10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "bcf1d19d-5ab0-44b1-a427-d3df74cee995",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -2,
+        0,
+        -10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "5ff7c1ce-bff3-4dc9-89b1-f89680c599d3",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        2,
+        0,
+        -10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "438db558-184c-48b0-8238-cbec20eaa677",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        6,
+        0,
+        -10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "2bd69f1a-2f4a-468b-8e8e-23469deb4ba1",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        10,
+        0,
+        -10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "f3e3ccef-bae2-4c89-88ff-54145bbd5193",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        10,
+        0,
+        -6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "356f2fcb-4bf6-48ce-a445-213d6969879a",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        10,
+        0,
+        -2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {
+        "floor": "#795b5b"
+      }
+    },
+    {
+      "id": "330a1af4-0427-4ba1-a839-6081007747f5",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        10,
+        0,
+        2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "35adbfcf-0618-418d-ac68-c71abdbda156",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        10,
+        0,
+        6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "18da1919-796a-4aa6-9058-512e9d481eb7",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        10,
+        0,
+        10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "f2b347df-9985-4852-9af4-bc803683345a",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        6,
+        0,
+        10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "cab1d4e4-448e-4481-895b-cb5db2525ebf",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        2,
+        0,
+        10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "4c8f776d-f34c-4948-a0c3-60da15c3079e",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -2,
+        0,
+        10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "584a0928-e6f0-46e6-9e68-0ea6d058de96",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -6,
+        0,
+        10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "3882f4c0-244a-48c6-9571-b0cae12e82d6",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -10,
+        0,
+        10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "bf301ef4-d98d-4df5-90cf-54e85a57ec65",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -10,
+        0,
+        6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "35f1fd1d-0484-40e1-ab59-72bb697ac12b",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -10,
+        0,
+        2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "e400e2e2-5477-44c4-8a90-a0e4a7908d36",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -10,
+        0,
+        -2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "e95fb552-8461-4758-95da-39c7f2007257",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -10,
+        0,
+        -6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "f0ea7137-74af-4cc7-af13-5e9f0364be4f",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -10,
+        0,
+        -10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "89647bd8-464b-44fe-a754-02b983f12703",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -10,
+        0,
+        -14
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "760da930-c6bd-46e6-a9ac-122a406a5ad6",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -6,
+        0,
+        -14
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "937d73b8-4778-4601-b2df-1a1cf5553fb0",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -2,
+        0,
+        -14
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "c9285599-5306-4201-a05c-18abef879705",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        2,
+        0,
+        -14
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "88483c19-257c-40c9-b65f-0c1e063875e5",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        6,
+        0,
+        -14
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "ef13ca96-c6e4-4edb-8f89-28196861731b",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        10,
+        0,
+        -14
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "e4b3ea10-02cf-4dd3-9563-b7364528330c",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        14,
+        0,
+        -14
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "064462bd-ca57-4a2f-9fe0-441873651e47",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        14,
+        0,
+        -10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "a695b775-9214-422f-95fb-80d9bd61de06",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        14,
+        0,
+        -6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "ecbdbd03-ebe3-4cc2-8f4c-ebfcbc9ea053",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        14,
+        0,
+        -2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "e6370da4-2b58-4e0e-9a26-facec74e8f0f",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        14,
+        0,
+        2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "4d85dd71-4de4-47d9-abeb-6e7c75584758",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        14,
+        0,
+        6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "94cd55d0-9308-4be9-89dd-2b3f013f81f6",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        14,
+        0,
+        10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "d0fd67f6-e456-4731-9bef-bd23b0c854ea",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        14,
+        0,
+        14
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "0564a756-d470-4335-ab98-7250caca776c",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        10,
+        0,
+        14
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "45cfffbb-f6e2-4782-8453-84e3e0b1ebdd",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        6,
+        0,
+        14
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "46ec7418-95df-4ea6-9c12-f9da6a481e23",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        2,
+        0,
+        14
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "7d7c87b8-7552-4e39-90da-314f59c177d4",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -2,
+        0,
+        14
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "e45dbba7-01c1-44f0-8e1d-7a11ff1af008",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -6,
+        0,
+        14
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "df633317-09e5-4421-96f2-2c62bd618e7c",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -10,
+        0,
+        14
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "973ba0dc-9a7c-4d78-abf6-15fa49507879",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -14,
+        0,
+        14
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "93eacc68-0bcc-4a3b-994f-7d5650b9154d",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -14,
+        0,
+        10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "5d7d12cd-0bd7-4bfd-bf63-88a7608d4392",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -14,
+        0,
+        6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "81f9c3cd-13f5-4963-9068-cc9382596950",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -14,
+        0,
+        2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "3094074a-8159-4a86-b7dd-466c8f600e05",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -14,
+        0,
+        -2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "929b890f-ab80-45c7-be69-a075770ec54f",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -14,
+        0,
+        -6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "cfdd2ecf-da92-4732-b3e5-acaab56bc4b8",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -14,
+        0,
+        -10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "b20c63e1-b26a-417c-8f4c-3d9160e1fac8",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -14,
+        0,
+        -14
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "32b8e127-2149-4305-9ff1-6d355062a53e",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -14,
+        0,
+        -18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "b5fd807d-0108-4737-aa43-d75de186be95",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -10,
+        0,
+        -18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "9d40bab8-8251-4c7d-b6d2-e2c60c16f31f",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -6,
+        0,
+        -18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "1ac1b596-fc77-4fb1-8e2c-5064bb1aef46",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -2,
+        0,
+        -18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "b8a64834-571c-46f9-ac6a-d8f521290dde",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        2,
+        0,
+        -18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "d84d1167-79af-4e52-a4e6-5620f32fbd36",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        6,
+        0,
+        -18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "6e02923e-2748-45f9-a33a-de0c976f6047",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        10,
+        0,
+        -18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "c9b457c7-5c46-48f3-ab9d-46a2cecd4c0c",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        14,
+        0,
+        -18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "8388f05d-1fd7-4bc1-ad1b-d1954ea18df1",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        18,
+        0,
+        -18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "0965c53c-b397-41db-9c4e-b71b5e7998c6",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        22,
+        0,
+        -18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "47ace45d-1b0a-4dcb-8bed-01b8ecc4320d",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        26,
+        0,
+        -18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "ffa18199-d731-4d98-bd80-259b89069144",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -18,
+        0,
+        -18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "70b2495d-41dd-44eb-8e3f-88d8b053249f",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -22,
+        0,
+        -18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "389830d3-0b93-4ef1-a2c8-5da3f861e74c",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -26,
+        0,
+        -18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "01ba9235-ab39-423a-9190-e6e72c4b9cef",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -14,
+        0,
+        -22
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "c7af2ded-d7a6-4182-9432-f27199dbed02",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -14,
+        0,
+        -26
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "152cdedf-e060-405a-8941-7f0a3b0fa089",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -14,
+        0,
+        18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "8a646745-2ed1-4c50-953e-27af733c584d",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -14,
+        0,
+        22
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "8f290c15-5fee-44bd-9abe-5a56849ba427",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -14,
+        0,
+        26
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "b302f25b-f140-4c49-ab47-dc8e0ed14d23",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -18,
+        0,
+        14
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "cf5cc6b5-a26b-4a72-b4ef-6acd29405ed5",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -22,
+        0,
+        14
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "9239d9f1-e48c-4011-9037-c89ae66b8a84",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -26,
+        0,
+        14
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "43b8bff9-a62d-45e0-82de-57a2cc74ec08",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        18,
+        0,
+        14
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "246d1726-808c-4eea-9777-37b6d965b489",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        22,
+        0,
+        14
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "b6447bf2-4d4d-4b33-a70f-88eae1dab8d6",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        26,
+        0,
+        14
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "97e93155-38d7-44a3-bf12-67f01cfaad61",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        14,
+        0,
+        22
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "bbd23517-a55e-48da-9f56-172facf1f74e",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        14,
+        0,
+        26
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "3083178e-9095-48e6-9537-1d87ce4da251",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        14,
+        0,
+        -22
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "8c8ff5e8-19ef-44f2-b34f-dfbd1e57c48f",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        14,
+        0,
+        -26
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "109c79a8-8fed-4f13-bfec-89d30530b025",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -10,
+        0,
+        -26
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "cdc94888-3a39-4fef-8588-163f6d2d93c6",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -6,
+        0,
+        -26
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "7d647309-31b7-4618-9d59-f7437e4f897b",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -2,
+        0,
+        -26
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "55ff02c5-552a-4003-961c-4a2e4bf87dbf",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        2,
+        0,
+        -26
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "5b7111dd-5b34-4610-bf42-177e9cbc1918",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        6,
+        0,
+        -26
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "4d491bef-a168-419b-8899-9c77d80d50b3",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        10,
+        0,
+        -26
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "321f9e11-03ac-4be8-8ffb-c2c8b999cce9",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        18,
+        0,
+        -26
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "2c01326a-c483-4fc2-b68a-693a5311973e",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        22,
+        0,
+        -26
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "c764096f-46e3-47c0-bf06-d7d50684a53c",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        26,
+        0,
+        -26
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "ffe84bd1-ba2a-4df9-96cc-f4739673d351",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        26,
+        0,
+        -22
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "8f1ce3b0-af95-444b-ad2f-a84d427b2297",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        26,
+        0,
+        10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "d3f6d332-51ee-48cb-aa04-e2dd300d5cb4",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        26,
+        0,
+        6
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "d97c7408-bc52-4255-abe3-41b569befdde",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        26,
+        0,
+        2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "44bac85a-40af-48f4-a410-36dbf595f407",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        26,
+        0,
+        -2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "07d2cb17-f2f2-4955-a009-eac3b8b28e95",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        26,
+        0,
+        -6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "e03ffa0c-6442-4eb1-8b12-88ae4f504901",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        26,
+        0,
+        -10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "3c838269-095d-4141-8343-4712d32bc654",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        26,
+        0,
+        -14
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "4cc7fec1-c88d-4cd2-92bd-2d7d08a3862b",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        18,
+        0,
+        26
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "058026b4-6534-4bec-9222-021a0b31d3f9",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        22,
+        0,
+        26
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "04e5b915-9397-4093-8124-c1d599cb1fd1",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        26,
+        0,
+        26
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "15d6fa38-2f62-4128-a2bc-f66f53feecba",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        26,
+        0,
+        22
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "1907aad8-1132-4e91-b4d0-6103d716f4ce",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        26,
+        0,
+        18
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "0e2537fa-877a-43c0-aae2-a31b3a438328",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -10,
+        0,
+        26
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "3f125a97-32f9-401a-b7df-d6c7581fa19e",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -6,
+        0,
+        26
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "56e9596c-7483-43b9-ad7a-ea26efb6b2e1",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -2,
+        0,
+        26
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "4e211144-6303-48c6-8057-36307eaf726e",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        2,
+        0,
+        26
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "f80be23a-9a00-4c40-842f-bd14fb4e2e60",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        6,
+        0,
+        26
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "e41bd3b5-748e-4b85-a05b-3dc7fc770030",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        10,
+        0,
+        26
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "6b0984ab-7bb5-4553-b794-58ee30484736",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -26,
+        0,
+        18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "dfff359f-176c-4c55-a7c1-60bba9a75f64",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -26,
+        0,
+        22
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "669f2756-1881-4337-8fc0-b6ade1e21c51",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -26,
+        0,
+        26
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "c079c7a8-6768-463e-879d-ce8e28667b90",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -22,
+        0,
+        26
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "2fbe431d-85f5-43b3-9f5c-8d5292a7fb9b",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -18,
+        0,
+        26
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "1f7da83e-eb6b-4136-b85b-83983811c878",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -26,
+        0,
+        10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "b8067375-a4d9-4223-8472-30afc5b722a3",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -26,
+        0,
+        6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "699a3f08-13e4-4739-a59c-0b601d091f4c",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -26,
+        0,
+        2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "f269b908-f5f8-4c09-a4d4-cd9e2427c9c8",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -26,
+        0,
+        -2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "3ac0a0f1-4472-4ce8-a7d6-4f361fcd2c62",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -26,
+        0,
+        -6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "6086c085-8da2-46ec-8355-372543e8fc0d",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -26,
+        0,
+        -10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "88fe1e73-7316-4d42-a061-a6e24cd45e11",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -26,
+        0,
+        -14
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "14c2a7af-0ccc-460e-8674-bcc5ec8f9766",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -26,
+        0,
+        -22
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "d5c39259-1444-45ec-bfd7-95d6caa40517",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -26,
+        0,
+        -26
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "015988ee-166b-4a9e-b3fd-27c454a8439f",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -22,
+        0,
+        -26
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "183b036e-73c8-43b4-92e7-aca1545384f9",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -18,
+        0,
+        -26
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "e89c16ae-8d4d-4dc6-bd30-1920d8b42eba",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -22,
+        0,
+        -22
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "152e5509-c0ba-4977-b9fc-e6a07f0a60e4",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -18,
+        0,
+        -22
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "b6cda1c6-06da-4dd0-9279-c3302d1a354b",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -10,
+        0,
+        -22
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "61c4dc9f-49c4-427c-a31e-4b92c1be8e71",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -6,
+        0,
+        -22
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "12381122-6f28-4819-b717-18e056637a4a",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -2,
+        0,
+        -22
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "86559500-a59a-4480-b6d2-b37fcad515a9",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        2,
+        0,
+        -22
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "d54a7506-622c-4e6f-bd5b-acc7b3f4c67c",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        6,
+        0,
+        -22
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "d8bf5437-94ef-4e7e-aafb-b94d1d7fb21d",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        10,
+        0,
+        -22
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "7ab04b77-762a-4249-b789-a5fd8f8b93fe",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        18,
+        0,
+        -22
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "d85c4e2c-134b-45e1-a449-6b7a66b89708",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        22,
+        0,
+        -22
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "8e8532a3-29c4-4788-ae7c-a4fff5251b75",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        22,
+        0,
+        -14
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "1c5ac097-e519-4ead-ad25-3795d3bd8c8e",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        22,
+        0,
+        10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "cf50c957-29ff-4b9c-89ec-fc862e852c79",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        18,
+        0,
+        10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "902afa3a-dacc-46c3-82e8-05a566bca61f",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        18,
+        0,
+        6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "ae069a51-9f57-4755-9944-32de2c736e57",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        22,
+        0,
+        6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {
+        "floor": "#936767"
+      }
+    },
+    {
+      "id": "cb0bbbf8-b274-44d6-ab32-d6f3101287ab",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        18,
+        0,
+        -14
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "c3903e03-4986-4571-8515-b40495071b46",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        18,
+        0,
+        -10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "2a7257cf-ee6f-473a-85ac-e59472007166",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        22,
+        0,
+        -10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "d4eb7d71-5521-43a0-92d0-6c2f91de3ad1",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        22,
+        0,
+        -6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "4a2289b0-805b-4d90-8ae8-3e4a812ec373",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        18,
+        0,
+        -6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "01d80344-fa68-4ca4-9b02-de2a29801b2a",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        18,
+        0,
+        2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "533f2d8b-43c2-4cf2-adc1-c6b55a26f204",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        22,
+        0,
+        -2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "5b1fa763-c6d8-4ff4-8639-7abf0d23a350",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        22,
+        0,
+        2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "ce05a1c8-c25c-421f-9f5a-b1a58e194766",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        18,
+        0,
+        -2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "921e2116-9b7f-4c36-aae4-27b1c1447381",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        18,
+        0,
+        18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "738b7864-5f71-42c3-b818-12263ee484d5",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        22,
+        0,
+        22
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "701f0880-7344-46d4-b929-7d4b75f499b5",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        22,
+        0,
+        18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "ec2f6e51-1e51-4016-b7f3-f0fd6dc320fa",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        18,
+        0,
+        22
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "770ecb8e-6294-41df-9e94-4b4d3a2c5bf2",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        10,
+        0,
+        18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "ae7ce782-2081-4561-8649-8c661a36316c",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        10,
+        0,
+        22
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "1d8d5a23-8839-4b91-b8d6-3f9d48134ee4",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        6,
+        0.024551662579871847,
+        18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "7c80334f-dd86-454f-b775-523c499d0fa6",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        6,
+        0,
+        22
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "12e9d415-e596-47dd-b7b0-b55dadbc9097",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        2,
+        0,
+        18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "4ab2f658-a92c-457f-a90d-6cae036c037f",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        2,
+        0,
+        22
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "7a92dea3-0e7f-4382-95bf-96d38088dfde",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -2,
+        0,
+        22
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "aae5f972-c17e-4fd0-b16c-be0f983dab76",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -2,
+        0,
+        18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "6588beb0-a6a7-4d6a-94d8-2023ac02e38d",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -10,
+        0,
+        18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "bf099683-0988-4192-b5a9-5828dfbf5d71",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -6,
+        0,
+        18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "a7a8aa86-9d71-4563-bcd4-f1a901c0f0e5",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -6,
+        0,
+        22
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "abb1eb32-4cbe-42bf-b9f1-3cf3ac80f75b",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -10,
+        0,
+        22
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "4b72829f-88a5-4f5f-8b08-4d113084311a",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -18,
+        0,
+        22
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "f8e01d97-a666-4c1b-97c7-05ac067bfe94",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -18,
+        0,
+        18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "ac45c769-49b2-42c9-b6e2-48cd9e573eff",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -22,
+        0,
+        18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "8827994c-b778-4ea5-8daf-17ca81cff830",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -22,
+        0,
+        22
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "98838a23-bc79-42fc-b98d-69352f43860c",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -18,
+        0,
+        10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "c13bf339-522b-4ee2-a787-ad3a54852165",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -22,
+        0,
+        10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "ae3c43f6-5040-4540-9c03-2c8e4167cbbd",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -22,
+        0,
+        6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "7d36f398-25a6-422c-b573-8f88e5fc0d3a",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -22,
+        0,
+        2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "2bc4444d-efbf-4d88-bdad-5bf1ac121647",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -18,
+        0,
+        2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "021abf2d-1687-477b-ba67-db7c32379ac9",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -18,
+        0,
+        6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "a850bcd0-736a-4047-b978-10863bd9c53a",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -18,
+        0,
+        -14
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "3613a9df-e1a0-4d5c-a3d3-d26f2383aa99",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -22,
+        0,
+        -14
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "b15c3cf3-4a3b-42df-ab76-fa32547a51dc",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -22,
+        0,
+        -10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "25e033ae-327a-438e-ae84-052b1bdd1381",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -18,
+        0,
+        -10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "494d2b3c-2ace-4343-bcd6-b2971d8b5f56",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -18,
+        0,
+        -6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "c27748f6-fc7d-469d-ba50-414ab49648a0",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -22,
+        0,
+        -6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "a3e1703e-be25-4838-a0e8-0a0c98b9aa22",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -22,
+        0,
+        -2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "1fc47843-8827-4b57-8ec2-f0d9d27279eb",
+      "modelPath": "/model/kaykit_halloween/Dirt Floor Tile.glb",
+      "position": [
+        -18,
+        0,
+        -2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "1627387e-180d-48d7-844a-69196e240b54",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        -24,
+        0.5,
+        -14
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "40a8edc1-1d72-451e-8ee7-a0e42c5d182e",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        -24,
+        0.5,
+        -10
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "66e165d2-3fb3-46b4-90a5-da919db2d5f6",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        -24,
+        0.5,
+        -6
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "c3429691-2ed5-4fe3-80fc-603425ad755b",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        -24,
+        0.5,
+        -2
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "41ca00cd-b395-4cbd-9ff0-a242bad23d84",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        -24,
+        0.5,
+        2
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "fea64943-00eb-4b4b-964c-f096a931e933",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        -24,
+        0.5,
+        6
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "56a4624a-1c83-4c52-ace1-d20ebd1805b1",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        -24,
+        0.5,
+        10
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "f1eaf2ea-f8e6-4900-828a-1ec107c66b09",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        -24,
+        0.5,
+        14
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "4ad33e8f-d000-4ff1-b7a6-a73f8e269c41",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        -24,
+        0.5,
+        18
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "01082260-c62f-477d-b19b-c9cf7e0e9dd3",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        -24,
+        0.5,
+        22
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "4438cfc5-d6c2-4f8b-9286-d82e412fcdbc",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        -24,
+        0.5,
+        -18
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "5f20fbd7-016b-4045-bba5-ab73f9230a9a",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        -24,
+        0.5,
+        -22
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "6bc3dec3-90b9-4981-89a9-cec60828b1c7",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        -22,
+        0.5,
+        -24
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "2ce5a03f-7741-44ff-969d-586b8bd18d97",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        -18,
+        0.5,
+        -24
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "bad5a725-a485-4b9b-a3ca-e5f5947dde54",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        -14,
+        0.5,
+        -24
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "62cbe587-8368-4063-bd78-79e6f94a8b47",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        -10,
+        0.5,
+        -24
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "14eb402e-5b46-49a9-87e9-4b0cc036fdff",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        -6,
+        0.5,
+        -24
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "83c9ffa2-a4a7-4c73-b3be-f94379100652",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        -2,
+        0.5,
+        -24
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "2921e2ec-ec41-46fa-9fc3-c03860662c60",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        2,
+        0.5,
+        -24
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "e6168932-3689-468e-be6f-ff2e2ab40972",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        6,
+        0.5,
+        -24
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "2b97bbb7-9055-4f5a-8d93-fe5d10feb3d2",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        10,
+        0.5,
+        -24
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "fc4ba586-d530-4321-a28a-055753a6a04d",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        14,
+        0.5,
+        -24
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "aad44622-fdb1-4bd1-a3e7-f31aea218f40",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        18,
+        0.5,
+        -24
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "f6d2d825-0abc-4ef8-ad3a-552eeb6aad8f",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        22,
+        0.5,
+        -24
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "5f92f22d-8355-4964-89d2-76b912978bb3",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        24,
+        0.5,
+        -22
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "3f734129-2381-4c24-bc45-cf6b26a60c44",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        24,
+        0.5,
+        -18
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "bf81e167-2029-43ce-8a4a-102e54ccf620",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        24,
+        0.5,
+        -14
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "bf2cde30-4b2d-458e-9c7e-1a0b91c0b448",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        24,
+        0.5,
+        -10
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "8500096d-2641-4aa2-997b-fa2c27f3f6c6",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        24,
+        0.5,
+        -6
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "b6c71c38-ec58-46e4-8357-f4c700bdeaec",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        24,
+        0.5,
+        -2
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "0a4c142c-0a3d-40ed-ae76-bba529fb8e01",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        24,
+        0.5,
+        2
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "ba6670f3-a33b-4c26-ae41-063dce788d68",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        24,
+        0.5,
+        6
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "da49d85b-9d77-4066-b27d-8c40314568f3",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        24,
+        0.5,
+        10
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "f22a938e-f927-4622-bb06-75cc6f6dea6c",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        24,
+        0.5,
+        14
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "9d844a2f-9915-49a7-b8d8-c94cb705780c",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        24,
+        0.5,
+        18
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "d9c97792-87e3-4bec-9ab2-899204865607",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        24,
+        0.5,
+        22
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "c426c064-61e2-4be8-a768-80547d8f5d0e",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        22,
+        0.5,
+        24
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "003aee33-a134-4a4f-ae14-e77d920e1c2a",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        18,
+        0.5,
+        24
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "cc4db6c4-e039-4c18-826f-5b7f2e2073df",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        14,
+        0.5,
+        24
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "8dceabb8-7f08-45e4-bda3-bf3343405c88",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        10,
+        0.5,
+        24
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "5cb0111d-c093-436f-b022-ac0d1a36a3a2",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        6,
+        0.5,
+        24
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {
+        "fence": "#929379"
+      }
+    },
+    {
+      "id": "b8d49a7d-a4de-45e0-945a-0e7caedb84d4",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        -6,
+        0.5,
+        24
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "18601bd5-fb76-43f7-8296-4dc9b54a0c0b",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        -10,
+        0.5,
+        24
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "60d2cbf8-2694-47ce-9b25-538c073d123e",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        -14,
+        0.5,
+        24
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "9ea9e2a6-d19d-4e85-ae22-b328ceecfecc",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        -18,
+        0.5,
+        24
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "e2e52874-9756-4b5c-b6e1-fc575c9fcffa",
+      "modelPath": "/model/kaykit_halloween/Fence.glb",
+      "position": [
+        -22,
+        0.5,
+        24
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "60067398-e44c-4bda-8f05-8024e3c5d510",
+      "modelPath": "/model/kaykit_halloween/Crypt.glb",
+      "position": [
+        -16,
+        0.5,
+        -8.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "769e92f6-5eae-49c7-a392-663af302463c",
+      "modelPath": "/model/kaykit_halloween/Crypt.glb",
+      "position": [
+        0,
+        0.5,
+        -16
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "15cb0f83-6e8d-41a8-a79a-e31e5548dc2a",
+      "modelPath": "/model/kaykit_halloween/Crypt.glb",
+      "position": [
+        16,
+        0.5,
+        -8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {
+        "crypt": "#4b4067"
+      }
+    },
+    {
+      "id": "29a7ba62-01d9-4c9b-8448-2f287dc49d99",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        0,
+        0.5,
+        -11.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "59febf2b-5bc6-449d-b80e-e966293ce1c1",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        0,
+        0.5,
+        -9.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "2436d116-3cc1-40f4-8c0e-ba141a367d24",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        0,
+        0.5,
+        -7.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "8670d540-8c5a-4185-bdfa-59ea617f5f23",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        0,
+        0.5,
+        -5.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "f2adf198-d676-4b2d-9cda-ab4872e879ef",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        0,
+        0.5,
+        -3.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "60849eeb-0a0e-403a-96de-784fc150d90d",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        0,
+        0.5,
+        -1.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "19cfe581-6acb-48db-a5cb-9abdc079576d",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        0,
+        0.5,
+        0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "03badafe-b0f7-410a-84b9-e17dd3ceefc5",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        0,
+        0.5,
+        2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "0265f41e-0187-46a8-a8bf-2a0020fbead3",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        16,
+        0.5,
+        -3.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "53c47bec-6285-4744-8501-dd7e6fe65772",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        16,
+        0.5,
+        -1.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "0e943061-92e2-48fe-83e2-8cf72f15b0be",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        16,
+        0.5,
+        0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "6eb54fb0-d0dc-42eb-ae21-2738eea94b4b",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        16,
+        0.5,
+        2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "3bd06439-b7a5-460f-8715-b41a9341bcb3",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        14,
+        0.5,
+        2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "5c26ae24-d1df-4882-9bb0-8ed3dfd046ae",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        12,
+        0.5,
+        2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "278f7439-ee36-491d-a324-92b7148aced4",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        10,
+        0.5,
+        2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "56526de2-374e-4e28-bba4-ef48ffeb976a",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        8,
+        0.5,
+        2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "bf8620e6-be7a-474e-b065-84b4c2ac5412",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        6,
+        0.5,
+        2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "6fa7d81b-357a-4fef-981c-e699073f7874",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        2,
+        0.5,
+        2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "f351bf27-4801-455f-8ede-0f0074f2dc34",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        4,
+        0.5,
+        2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "aea169eb-0d30-47a6-b41c-9d27222c061f",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        2,
+        0.5,
+        0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "bbe48185-827f-406a-8cd3-9b4c47cc9efb",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        2,
+        0.5,
+        -1.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "265561a4-6e61-4e4b-9acc-4ba21bd848af",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        4,
+        0.5,
+        0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {
+        "path": "#c8c8c8"
+      }
+    },
+    {
+      "id": "d9b11a71-a656-459b-bec9-6d46261e8f72",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        14,
+        0.5,
+        0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "ff28468d-acc6-4446-a965-151ece775f6c",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        12,
+        0.5,
+        0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "3a6dbf50-4b6f-42f3-8d92-3822d10e2d50",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        14,
+        0.5,
+        -1.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "f0094339-1c5a-4b66-9949-8438b84cf7b7",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        18,
+        0.5,
+        -1.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "b7e7a70f-d7db-4893-a7b1-fc3cedb41625",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        18,
+        0.5,
+        0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "2b1f1148-58ed-4efb-9950-47cdbe9cced1",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        18,
+        0.5,
+        2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "3d30bc90-75f9-41bf-880b-38ddf0ca9be7",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        20,
+        0.5,
+        2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "5a5e985a-161e-402a-9d96-b51a68e299b1",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        20,
+        0.5,
+        0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "784b5f85-bfdc-4403-a3f8-cacb0d6bcc7d",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        -16,
+        0.5,
+        -3.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "877d72aa-6c16-4f6a-9bbb-2fa05c1cdd9c",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        -16,
+        0.5,
+        -1.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "be5a52d6-d70d-4657-8366-9be604c08ec8",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        -16,
+        0.5,
+        0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "d0a58555-3be7-4f09-b4e1-3326f9133b12",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        -16,
+        0.5,
+        2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "6ecb2489-4e8e-468e-b32e-ddb85fbef9e2",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        -14,
+        0.5,
+        2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "c803911c-5c4b-4e13-b521-6f2e76d78c26",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        -12,
+        0.5,
+        2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "8c6142f9-69ae-45dd-af17-b82236e61301",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        -10,
+        0.5,
+        2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "84e70bb6-57ec-4edb-af5d-5b6635fa4d82",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        -8,
+        0.5,
+        2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "724ce7ab-ba37-4810-a14c-77072835aad3",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        -6,
+        0.5,
+        2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "abd07d72-3af7-4c50-87b1-f4452f008306",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        -4,
+        0.5,
+        2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "a78a4081-5a30-4759-a82b-71cbbf6e8b61",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        -2,
+        0.5,
+        2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "5cde3e56-4a40-4f24-8322-fa5056a7467c",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        -2,
+        0.5,
+        0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "ed5b3158-17c6-42a4-b0fe-191a42a9637c",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        -2,
+        0.5,
+        -1.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "6963bef3-4df1-40d2-8eea-60776a2dfcba",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        -4,
+        0.5,
+        0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "edcfceaa-bb51-46b6-abef-ef3ded9cc581",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        22,
+        0.5,
+        2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "a605f895-a1b6-445b-bab4-e9b7b37dd357",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        -14,
+        0.5,
+        0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "14a661dd-0c5a-442f-8302-3565635feabf",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        -12,
+        0.5,
+        0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "86ae1355-5a1c-4360-91f4-5b38fb5315e9",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        -14,
+        0.5,
+        -1.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "6fc7f013-63b0-4a89-90cc-28b43f423ef4",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        -18,
+        0.5,
+        2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "0a853364-1497-421a-8268-ac2799676acb",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        -18,
+        0.5,
+        0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "e06020cf-ebdc-4dc5-8ed7-56125c92ddf2",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        -18,
+        0.5,
+        -1.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "6e2be278-deff-4664-a502-e2f489d8c897",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        -20,
+        0.5,
+        0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "c0fcb542-ea05-48cf-af06-fbd069cc5ad1",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        -20,
+        0.5,
+        2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "aff29ac3-f29c-493b-b2ac-777a86b07277",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        -22,
+        0.5,
+        2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "ef47f099-4ad6-4d81-9bee-b1d7e929fbc4",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        -4,
+        0.5,
+        4.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "fb54c481-46bd-45b8-96eb-762a18d2f1b4",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        -2,
+        0.5,
+        4.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "f1b441a6-8725-473d-a26b-dc4e0853069b",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        0,
+        0.5,
+        4.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "5bf251a3-6bf9-486e-8cee-e9007087489c",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        2,
+        0.5,
+        4.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "94490250-3a54-46cd-a6b9-97d2493dd43c",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        4,
+        0.5,
+        4.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "b731e509-5691-404c-8c3c-ea03537ed935",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        -2,
+        0.5,
+        6.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "052a3f57-3908-4f02-99f0-fda574160c71",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        0,
+        0.5,
+        6.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "c8623d84-f847-40c5-972b-8a9b8fff783c",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        2,
+        0.5,
+        6.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "0965bc03-8cce-4b6b-b835-00651ce12f9b",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        0,
+        0.5,
+        8.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "6df44fe9-09ca-4fd0-8424-73d91cb59163",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        0,
+        0.5,
+        10.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "497efea9-f3df-475a-bdc0-935be9b306ab",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        0,
+        0.5,
+        12.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "a515e5d3-ff86-4f05-a3eb-eef23e2f55f1",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        0,
+        0.5,
+        14.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "240fbb7e-22aa-4899-ab17-deb57b5fee91",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        0,
+        0.5,
+        16.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "ed3f2cfb-b3c1-4308-81dc-fa140592e557",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        0,
+        0.5,
+        18.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "3e79d527-1552-43aa-9a9b-3156b8840249",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        0,
+        0.5,
+        20.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "607952f0-b547-4f16-bc1c-5d18e2e4cccc",
+      "modelPath": "/model/kaykit_halloween/Cobblestone tile.glb",
+      "position": [
+        0,
+        0.5,
+        22.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "db194b15-d0f9-43be-a705-80e84c44048d",
+      "modelPath": "/model/kaykit_halloween/Arch.glb",
+      "position": [
+        0,
+        0.5,
+        24
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
       "scale": 2,
-      "colors": { "pCube22": "#c8c8c8" }
+      "hiddenParts": [],
+      "colors": {
+        "arch": "#929379"
+      }
     },
     {
-      "id": "bb6363ab-c502-431d-bb78-72b53c06c036",
-      "modelPath": "/model/rope_bridge2.glb",
-      "position": [-6.4596253895163915, 8.892598999549739, 19.61396980116661],
-      "rotation": [0, -1.1523037570962027, 0],
-      "scale": 2,
-      "colors": { "pCube22": "#c8c8c8" }
-    },
-    {
-      "id": "043e3bef-dbeb-48e9-a24c-6db2b8491722",
-      "modelPath": "/model/rope_bridge1.glb",
-      "position": [-15.34754086700431, 4.114275093320589, -24.101348812810382],
-      "rotation": [0.134226904622877, -0.8146163763511433, 0.09258552956543181],
+      "id": "a81c7ab3-c554-4305-881f-548badb69005",
+      "modelPath": "/model/kaykit_halloween/Autumn pine-MOuuN8sEWx.glb",
+      "position": [
+        -3,
+        0.5,
+        -0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
       "scale": 1,
-      "colors": { "ropebridge": "#463d3d" }
+      "hiddenParts": [],
+      "colors": {}
     },
     {
-      "id": "144ed388-a319-4d26-817e-d61db18d5c33",
-      "modelPath": "/model/stone_steps1.glb",
-      "position": [-20.506431280885536, 3.508488207216021, -24.185969204033128],
-      "rotation": [0.01263073352304408, 1.0912825806176965, 0.29172220970291174],
+      "id": "10bb749c-228f-4fc0-b371-4c6012f711c4",
+      "modelPath": "/model/kaykit_halloween/Autumn pine-MOuuN8sEWx.glb",
+      "position": [
+        3,
+        0.5,
+        -0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
       "scale": 1,
-      "colors": { "Object": "#4d4848" }
+      "hiddenParts": [],
+      "colors": {}
     },
     {
-      "id": "abf6a8f0-0812-479f-b382-ab910c652068",
-      "modelPath": "/model/portal_3D_Furniture_Store.glb",
-      "position": [-27.678191367199958, 6.001031110508413, -6.991843411552336],
-      "rotation": [0, 1.2792225060745082, 0],
-      "scale": 2,
-      "type": "portal",
-      "portalKey": "forma",
-      "colors": { "Object": "#686175" }
-    },
-    {
-      "id": "b1955cba-d2c7-4951-a4cf-d6eee1dfc9b2",
-      "modelPath": "/model/portal_MiniLMS.glb",
-      "position": [-18.432566512275596, 4.257902713332034, -27.024380215836306],
-      "rotation": [0.008618281380007411, -0.2552878029451335, 0.03411618052333506],
-      "scale": 2,
-      "type": "portal",
-      "portalKey": "lumina",
-      "colors": { "Object": "#969476" }
-    },
-    {
-      "id": "3f760590-4be4-496f-acd2-7686b91aecb9",
-      "modelPath": "/model/portal_GlobeScope.glb",
-      "position": [7.071910523946285, 9.380315717284848, 22.14155238168823],
-      "rotation": [0, 3.141592653589793, 0],
-      "scale": 2,
-      "type": "portal",
-      "portalKey": "terrascope",
-      "colors": { "Object": "#262323" }
-    },
-    {
-      "id": "a7192cc9-6930-44a5-a064-497e4d9719bb",
-      "modelPath": "/model/statue_bio_hero.glb",
-      "position": [-14.674744065905081, 9.397875291056302, 21.751572813775972],
-      "rotation": [0, 0, 0],
-      "scale": 4.955841055297463,
-      "type": "statue",
-      "statueKey": "bio",
-      "colors": { "default": "#595353" }
-    },
-    {
-      "id": "fcff7691-5d96-445e-959e-2b2206bd4998",
-      "modelPath": "/model/statue_social_oracle.glb",
-      "position": [-22.00, 4.68, -19.20],
-      "rotation": [0, 1.25, 0],
-      "scale": 3.0285478753589383,
-      "type": "statue",
-      "statueKey": "contacts",
-      "colors": { "socha": "#8b7979" }
-    },
-    {
-      "id": "87771940-7a61-41f1-a856-e4809a51dbe7",
-      "modelPath": "/model/statue_skills_altar.glb",
-      "position": [2.114043830882918, 9.69781600371712, -0.4743151152075957],
-      "rotation": [0, 0.7853981633974483, 0],
-      "scale": 4.032991151290463,
-      "type": "statue",
-      "statueKey": "skills",
-      "colors": { "Object": "#343030" }
-    },
-    {
-      "id": "88941341-33a5-4fd3-be84-a97cce4c1026",
-      "modelPath": "/model/magic_tree2.glb",
-      "position": [4.513955301038943, 7.764007613662619, 20.929455548707654],
-      "rotation": [0, 0, 0],
-      "scale": 8.58609077721283,
-      "colors": { "old": "#645c5b" }
-    },
-    {
-      "id": "7349ed7c-4cc9-4a9c-bbb0-fe6620b88bec",
-      "modelPath": "/model/magic_tree2.glb",
-      "position": [9.387121071465785, 7.771945342072883, 19.080880991288446],
-      "rotation": [0, 0, 0],
-      "scale": 8.58609077721283,
-      "colors": { "old": "#645c5b" }
-    },
-    {
-      "id": "88ff116a-fe16-4347-aba6-34da8edf0ced",
-      "modelPath": "/model/magic_tree2.glb",
-      "position": [4.826517310311733, 7.781180670831116, 15.739625323593685],
-      "rotation": [0, 0, 0],
-      "scale": 8.58609077721283,
-      "colors": { "old": "#645c5b" }
-    },
-    {
-      "id": "9f5cf0a0-d852-4bad-b53a-25c7019e00c3",
-      "modelPath": "/model/magic_tree2.glb",
-      "position": [12.898545628040576, 8.305063060206017, 7.196272776107052],
-      "rotation": [0, 0, 0],
-      "scale": 8.58609077721283,
-      "colors": { "old": "#645c5b" }
-    },
-    {
-      "id": "47cd7ded-d885-44ef-888a-be6b0eac9f32",
-      "modelPath": "/model/bush1.glb",
-      "position": [-30.26330695367859, 6.357221003194036, -7.85825088855315],
-      "rotation": [0, 0, 0],
+      "id": "a9325ef2-844c-4e62-b190-2fee14758f04",
+      "modelPath": "/model/kaykit_halloween/Bench.glb",
+      "position": [
+        6,
+        0.5,
+        4
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
       "scale": 1,
-      "colors": { "Lupinus": "#766d6d" }
+      "hiddenParts": [],
+      "colors": {}
     },
     {
-      "id": "86c954a7-6558-4d86-985b-183fcb60941d",
-      "modelPath": "/model/bush1.glb",
-      "position": [-30.136268581906087, 6.377050851932792, -6.666402801092431],
-      "rotation": [0, 0, 0],
+      "id": "1c9510fe-3eeb-400d-8b9e-9a040fd75109",
+      "modelPath": "/model/kaykit_halloween/Bench.glb",
+      "position": [
+        18,
+        0.5,
+        4
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
       "scale": 1,
-      "colors": { "Lupinus": "#766d6d" }
+      "hiddenParts": [],
+      "colors": {}
     },
     {
-      "id": "84f6289f-707c-40d4-8a64-783f3412dd7b",
-      "modelPath": "/model/bush1.glb",
-      "position": [-29.399588839030248, 6.465448833565813, -5.7534856373079695],
-      "rotation": [0, 0, 0],
+      "id": "a98fa078-fb14-456a-9cae-60c8f02262b4",
+      "modelPath": "/model/kaykit_halloween/Bench-cp2QnHh7bf.glb",
+      "position": [
+        11.5,
+        0.5,
+        4
+      ],
+      "rotation": [
+        0,
+        3.141592653589793,
+        0
+      ],
       "scale": 1,
-      "colors": { "Lupinus": "#766d6d" }
+      "hiddenParts": [],
+      "colors": {}
     },
     {
-      "id": "0c89b056-ba03-4772-b0df-1caf5ede985d",
-      "modelPath": "/model/bush1.glb",
-      "position": [-31.537212686771074, 6.197831281033781, -6.990785921548294],
-      "rotation": [0, 0, 0],
+      "id": "3e6cfb24-10d3-4e93-a71d-ec8acaba822e",
+      "modelPath": "/model/kaykit_halloween/Bone-gVT6iydSY6.glb",
+      "position": [
+        5.5,
+        1,
+        4
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
       "scale": 1,
-      "colors": { "Lupinus": "#766d6d" }
+      "hiddenParts": [],
+      "colors": {}
     },
     {
-      "id": "49bb1928-5abf-4d57-b812-2c46dd1a6c6e",
-      "modelPath": "/model/bush1.glb",
-      "position": [-31.570885743489328, 6.254243927205755, -8.228076056517647],
-      "rotation": [0, 0, 0],
+      "id": "ef84c37e-9681-4dc0-b545-20be04dd1015",
+      "modelPath": "/model/kaykit_halloween/Bone-2jLwMoAb2y.glb",
+      "position": [
+        6.5,
+        1,
+        4
+      ],
+      "rotation": [
+        0,
+        0.7853981633974483,
+        0
+      ],
       "scale": 1,
-      "colors": { "Lupinus": "#766d6d" }
+      "hiddenParts": [],
+      "colors": {}
     },
     {
-      "id": "7f57bddd-ddc0-4a7a-87e6-79997f722d5b",
-      "modelPath": "/model/bush1.glb",
-      "position": [-30.54843015630109, 6.359652033166564, -9.12734941940846],
-      "rotation": [0, 0, 0],
+      "id": "7ebca1a0-5744-4822-8130-7338b75778a2",
+      "modelPath": "/model/kaykit_halloween/Candle Melted.glb",
+      "position": [
+        17.5,
+        1,
+        4
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
       "scale": 1,
-      "colors": { "Lupinus": "#766d6d" }
+      "hiddenParts": [],
+      "colors": {}
     },
     {
-      "id": "dfbb999c-89e6-4da4-8272-715c27254a3c",
-      "modelPath": "/model/bush1.glb",
-      "position": [-31.905232275461994, 6.640723218584219, -9.411083329280912],
-      "rotation": [0, 0, 0],
+      "id": "e7199e16-6077-478c-946e-3d1845557a18",
+      "modelPath": "/model/kaykit_halloween/Candles.glb",
+      "position": [
+        13,
+        0.5,
+        -3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
       "scale": 1,
-      "colors": { "Lupinus": "#766d6d" }
+      "hiddenParts": [],
+      "colors": {}
     },
     {
-      "id": "f7f25391-8997-4b3a-bf9a-f3f7b8ee8928",
-      "modelPath": "/model/bush1.glb",
-      "position": [-28.268535461808447, 6.600112403321354, -5.1377514735164755],
-      "rotation": [0, 0, 0],
+      "id": "9a022b9c-7066-4135-87a3-0fc83e1c4cab",
+      "modelPath": "/model/kaykit_halloween/Coffin-ySERERWPgE.glb",
+      "position": [
+        4,
+        0.5,
+        -14
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
       "scale": 1,
-      "colors": { "Lupinus": "#766d6d" }
+      "hiddenParts": [],
+      "colors": {}
     },
     {
-      "id": "24d9bd1b-c91b-4472-8f11-8f2363355ab8",
-      "modelPath": "/model/bush1.glb",
-      "position": [-27.15587375505307, 6.674104705546125, -5.420760139794165],
-      "rotation": [0, 0, 0],
+      "id": "67e3880f-44ad-4e56-9d95-afb10266f9f7",
+      "modelPath": "/model/kaykit_halloween/Coffin-ySERERWPgE.glb",
+      "position": [
+        5.5,
+        0.5,
+        -17
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
       "scale": 1,
-      "colors": { "Lupinus": "#766d6d" }
+      "hiddenParts": [],
+      "colors": {}
     },
     {
-      "id": "e1f07cb8-7c6f-46b5-a961-faf607022a5a",
-      "modelPath": "/model/magic_tree2.glb",
-      "position": [-25.717666820610738, 7.306726960592912, -3.9016255734065917],
-      "rotation": [0, 0, 0],
-      "scale": 8.58609077721283,
-      "colors": { "old": "#645c5b" }
-    },
-    {
-      "id": "33808373-1b03-4575-a090-455d858ce4e1",
-      "modelPath": "/model/magic_tree2.glb",
-      "position": [-24.005918808697565, 4.389672253666774, -9.156050214876807],
-      "rotation": [0, 0.7853981633974483, 0],
-      "scale": 8.58609077721283,
-      "colors": { "old": "#645c5b" }
-    },
-    {
-      "id": "7c3e6fc6-6cc6-482b-ac6b-46d6c836da03",
-      "modelPath": "/model/magic_tree2.glb",
-      "position": [-30.953039130471446, 4.308232879387096, -11.032388586740462],
-      "rotation": [0, -1.5707963267948966, 0],
-      "scale": 8.58609077721283,
-      "colors": { "old": "#645c5b" }
-    },
-    {
-      "id": "0aa7e80b-e0e0-4e28-a49b-800db0430c26",
-      "modelPath": "/model/magic_tree2.glb",
-      "position": [-32.54994191565008, 7.046994388206437, -13.64069244686424],
-      "rotation": [0, 0, 0],
-      "scale": 8.58609077721283,
-      "colors": { "old": "#645c5b" }
-    },
-    {
-      "id": "ccac72ad-ec33-450a-9e69-0923afbc9175",
-      "modelPath": "/model/bush1.glb",
-      "position": [-34.52835775532017, 9.260969978868543, -8.686254367497831],
-      "rotation": [0, 0, 0],
+      "id": "1b26cfed-84df-4213-9f1f-073547bdcd9f",
+      "modelPath": "/model/kaykit_halloween/Coffin-ySERERWPgE.glb",
+      "position": [
+        6,
+        0.5,
+        -13.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
       "scale": 1,
-      "colors": { "Lupinus": "#766d6d" }
+      "hiddenParts": [],
+      "colors": {}
     },
     {
-      "id": "4cb3f4ce-c2ad-4ed6-afb6-0f5b62bacc46",
-      "modelPath": "/model/bush1.glb",
-      "position": [-34.235068495881286, 9.263949913586185, -9.749824699684437],
-      "rotation": [0, 0, 0],
+      "id": "ae06b99f-49e8-41b2-a309-bd7a19df95c6",
+      "modelPath": "/model/kaykit_halloween/Damaged Grave.glb",
+      "position": [
+        5.5,
+        0.5,
+        10.5
+      ],
+      "rotation": [
+        0,
+        -0.7853981633974483,
+        0
+      ],
       "scale": 1,
-      "colors": { "Lupinus": "#766d6d" }
+      "hiddenParts": [],
+      "colors": {}
     },
     {
-      "id": "2a9e448e-574a-4c21-9ed7-503eb77d5988",
-      "modelPath": "/model/bush1.glb",
-      "position": [-34.846197186476324, 9.402580706980832, -7.682093076159688],
-      "rotation": [0, 0, 0],
+      "id": "4624db8a-9114-4bfb-bf50-df41ded83a5c",
+      "modelPath": "/model/kaykit_halloween/Damaged Grave.glb",
+      "position": [
+        22,
+        0.5,
+        6
+      ],
+      "rotation": [
+        0,
+        4.71238898038469,
+        0
+      ],
       "scale": 1,
-      "colors": { "Lupinus": "#766d6d" }
+      "hiddenParts": [],
+      "colors": {}
     },
     {
-      "id": "b8c57e85-9608-4aca-a6f4-2454ab18f29b",
-      "modelPath": "/model/magic_tree2.glb",
-      "position": [-30.659137952063162, 4.371739591440626, -3.452165540124856],
-      "rotation": [0, -1.5707963267948966, 0],
-      "scale": 8.58609077721283,
-      "colors": { "old": "#645c5b" }
-    },
-    {
-      "id": "978711c5-01dd-4aeb-8d38-a65a08f5052a",
-      "modelPath": "/model/bush1.glb",
-      "position": [-32.363024769124735, 6.172909760630699, -3.8980432298729983],
-      "rotation": [0, 0, 0],
+      "id": "c1f1e5fa-4b30-4100-a621-2197aa974086",
+      "modelPath": "/model/kaykit_halloween/Dead tree.glb",
+      "position": [
+        8.5,
+        0.5,
+        8.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
       "scale": 1,
-      "colors": { "Lupinus": "#766d6d" }
+      "hiddenParts": [],
+      "colors": {}
     },
     {
-      "id": "5d768625-65cd-4975-89da-650cc2c27dc0",
-      "modelPath": "/model/bush1.glb",
-      "position": [-31.47200031456016, 6.24823885262769, -3.247807697107244],
-      "rotation": [0, 0, 0],
+      "id": "c67e42db-5d10-411e-9f3c-482c7572324f",
+      "modelPath": "/model/kaykit_halloween/Dead tree.glb",
+      "position": [
+        6.5,
+        0.5,
+        14.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
       "scale": 1,
-      "colors": { "Lupinus": "#766d6d" }
+      "hiddenParts": [],
+      "colors": {}
     },
     {
-      "id": "8ca1a6f5-1e3b-4c66-815e-5943f05c7c19",
-      "modelPath": "/model/magic_tree2.glb",
-      "position": [-10.500219648910312, 2.67195067898727, -15.433332469788889],
-      "rotation": [0, 0, 0],
-      "scale": 8.58609077721283,
-      "colors": { "old": "#645c5b" }
-    },
-    {
-      "id": "674ce3b9-d579-4229-ab4b-ef9af3c8a7b6",
-      "modelPath": "/model/magic_tree2.glb",
-      "position": [-15.77593008211933, 2.8981556546703517, -12.139157991129519],
-      "rotation": [0, 0.7853981633974483, 0],
-      "scale": 8.58609077721283,
-      "colors": { "old": "#645c5b" }
-    },
-    {
-      "id": "a0e70407-023a-452c-903c-491fbc1dbcde",
-      "modelPath": "/model/magic_tree4.glb",
-      "position": [-12.98109815019448, 3.635490774691286, -21.721351588259143],
-      "rotation": [0, 0, 0],
-      "scale": 6.7165455727719925,
-      "colors": { "Fantasy": "#644c4c" }
-    },
-    {
-      "id": "9c158c21-ac5b-48f7-a4f7-aa527a739aec",
-      "modelPath": "/model/bush1.glb",
-      "position": [-22.549463328824835, 4.729888306789272, -17.90635743030032],
-      "rotation": [0, 0, 0],
+      "id": "aceef5c6-78f0-4e86-971a-4ed0f7ac458c",
+      "modelPath": "/model/kaykit_halloween/Dead tree.glb",
+      "position": [
+        18,
+        0.5,
+        14.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
       "scale": 1,
-      "colors": { "Lupinus": "#766d6d" }
+      "hiddenParts": [],
+      "colors": {}
     },
     {
-      "id": "fadbf7e9-7ace-4673-ae48-8824664d8cac",
-      "modelPath": "/model/bush1.glb",
-      "position": [-21.334278717083482, 4.63050115848413, -20.57658210720339],
-      "rotation": [0, 0, 0],
+      "id": "f03a1a16-c188-4d43-bd83-537565c3ae55",
+      "modelPath": "/model/kaykit_halloween/Dead tree-68VK0NzgEZ.glb",
+      "position": [
+        10,
+        0.5,
+        18.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
       "scale": 1,
-      "colors": { "Lupinus": "#766d6d" }
+      "hiddenParts": [],
+      "colors": {}
     },
     {
-      "id": "f98d6925-a138-4b1d-abff-8bcacb09ae0d",
-      "modelPath": "/model/magic_tree4.glb",
-      "position": [-17.70757560163631, 9.433953766736108, 20.656368464379348],
-      "rotation": [0, 1.5707963267948966, 0],
-      "scale": 6.7165455727719925,
-      "colors": { "Fantasy": "#644c4c" }
+      "id": "6cd445da-799b-4d44-9d29-5b91b1b9fbad",
+      "modelPath": "/model/kaykit_halloween/Dead tree-68VK0NzgEZ.glb",
+      "position": [
+        14.5,
+        0.5,
+        10.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
     },
     {
-      "id": "35ce5063-c059-4479-80e7-9a2cf135782f",
-      "modelPath": "/model/magic_tree4.glb",
-      "position": [-10.797230565640497, 9.429395233350117, 23.35960934145456],
-      "rotation": [0, 0, 0],
-      "scale": 6.7165455727719925,
-      "colors": { "Fantasy": "#644c4c" }
+      "id": "f306da32-feef-4251-8946-8f12528d1523",
+      "modelPath": "/model/kaykit_halloween/Grave Marker.glb",
+      "position": [
+        10,
+        0.5,
+        13
+      ],
+      "rotation": [
+        0,
+        3.141592653589793,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "166e3e0e-6499-43c4-a360-76ae427d72af",
+      "modelPath": "/model/kaykit_halloween/Grave Marker.glb",
+      "position": [
+        11.5,
+        0.5,
+        13
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "dbc7df7c-8b46-498a-bce7-4a65c1cb8dc9",
+      "modelPath": "/model/kaykit_halloween/Grave Marker.glb",
+      "position": [
+        13,
+        0.5,
+        13
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "bd37e382-18c5-4cea-bc1c-7d72d47c6d36",
+      "modelPath": "/model/kaykit_halloween/Grave-Yg8Yz6T8A6.glb",
+      "position": [
+        14,
+        -0.9320025497455089,
+        18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {
+        "floor": "#795b5b"
+      }
+    },
+    {
+      "id": "cae50eef-44d5-4033-868d-065797472ff5",
+      "modelPath": "/model/kaykit_halloween/Gravestone-lrEHKjTy29.glb",
+      "position": [
+        18.070651549539,
+        0.5000005306258896,
+        16.5790175070726
+      ],
+      "rotation": [
+        0,
+        3.141592653589793,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "f28425b0-6fc5-438b-8f85-aec14fee9615",
+      "modelPath": "/model/kaykit_halloween/Hanging Lantern.glb",
+      "position": [
+        10.5,
+        2,
+        18.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "1549894e-090b-4e27-8ae6-f64207697653",
+      "modelPath": "/model/kaykit_halloween/Jackolantern.glb",
+      "position": [
+        2.5,
+        0.5,
+        18.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "b19e2e63-1650-4f97-8d11-055120f95614",
+      "modelPath": "/model/kaykit_halloween/Jackolantern.glb",
+      "position": [
+        -2.5,
+        0.5,
+        22.5
+      ],
+      "rotation": [
+        0,
+        0.7853981633974483,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "a1146a26-4ffb-4dbc-b88d-bd4d9934a5ff",
+      "modelPath": "/model/kaykit_halloween/Lantern.glb",
+      "position": [
+        1.5,
+        0.5,
+        23
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "fbacdb2e-9a84-41bb-9d58-89370f8851b0",
+      "modelPath": "/model/kaykit_halloween/Plaque Candles.glb",
+      "position": [
+        15,
+        0.5,
+        14
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "44048778-caaa-4f4a-8e78-e76cde980ad8",
+      "modelPath": "/model/kaykit_halloween/Post Lantern.glb",
+      "position": [
+        -11.5,
+        0.5,
+        13
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "7055ec7e-c90e-4b01-b25c-c089ab1be4b8",
+      "modelPath": "/model/kaykit_halloween/Post With Skull.glb",
+      "position": [
+        11,
+        0.5,
+        -2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "f9858765-e9dd-4ace-88f8-4672031b53f0",
+      "modelPath": "/model/kaykit_halloween/Pumpkin Orange Jacko.glb",
+      "position": [
+        -1.5,
+        0.5,
+        -10.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "4d2a2d96-adf9-49b2-aef6-aea11e57367d",
+      "modelPath": "/model/kaykit_halloween/Ribcage.glb",
+      "position": [
+        -10.5,
+        0.5,
+        13.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "1eaf9076-740c-4854-b84a-f7607be404f0",
+      "modelPath": "/model/kaykit_halloween/Shrine-Qq8M5LSXQ2.glb",
+      "position": [
+        -17.5,
+        0.5,
+        19
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "ba302fb1-55ba-4136-8bec-0a7dd53eb336",
+      "modelPath": "/model/kaykit_halloween/Skull.glb",
+      "position": [
+        -14.5,
+        0.5,
+        -3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "51312574-fd3c-4576-a73e-cc2528d4bc07",
+      "modelPath": "/model/kaykit_halloween/Skull.glb",
+      "position": [
+        -17.5,
+        0.5,
+        -3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "70b984d5-496a-4478-a7c9-a33376f40861",
+      "modelPath": "/model/kaykit_halloween/Skull Candle.glb",
+      "position": [
+        -21.5,
+        0.5,
+        5.5
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "63cf9f8b-d66c-4db1-bf3d-5d7a58caaac6",
+      "modelPath": "/model/kaykit_halloween/Tree Dead Large Deco.glb",
+      "position": [
+        -22,
+        0.5,
+        19.5
+      ],
+      "rotation": [
+        0,
+        2.356194490192345,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "09002b4b-d154-4976-9c9e-f39db902b435",
+      "modelPath": "/model/kaykit_halloween/Coffin.glb",
+      "position": [
+        -20,
+        0.5,
+        -5.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "c5882cb4-f298-4c62-9147-3df0463bf608",
+      "modelPath": "/model/kaykit_halloween/Coffin.glb",
+      "position": [
+        -11.5,
+        0.5,
+        -6.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "ce66d6dc-667c-46b3-b9ae-62c0ccdc3c72",
+      "modelPath": "/model/kaykit_halloween/Coffin.glb",
+      "position": [
+        -11.5,
+        0.5,
+        -10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "2fbcb6c5-f2c1-403d-a701-50cb037cd093",
+      "modelPath": "/model/kaykit_halloween/Coffin.glb",
+      "position": [
+        -11.5,
+        1.5,
+        -8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "3477cce1-af38-4a22-af5e-766b91c9ee2f",
+      "modelPath": "/model/kaykit_halloween/Broken Fence Pillar.glb",
+      "position": [
+        -15,
+        0.5,
+        4.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "4d6b2cb4-eb0a-4e36-960f-40810500c1f4",
+      "modelPath": "/model/kaykit_halloween/Broken Fence Pillar.glb",
+      "position": [
+        -17,
+        0.5,
+        4.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "c7973fa7-6332-4fa5-93d1-c99b2cf56550",
+      "modelPath": "/model/kaykit_halloween/Autumn pine-8wkRed6jU9.glb",
+      "position": [
+        -21,
+        0.5,
+        10.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "212885ef-5128-4a26-adb5-fc35cda5cb72",
+      "modelPath": "/model/kaykit_halloween/Autumn pine-8wkRed6jU9.glb",
+      "position": [
+        -6.5,
+        0.5,
+        10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "4f8d5930-7b05-4998-b8f7-99269f8b8644",
+      "modelPath": "/model/kaykit_halloween/Autumn pine-MOuuN8sEWx.glb",
+      "position": [
+        -17.5,
+        0.5,
+        15
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "cead78c8-422c-4846-96e0-0415bf8686b3",
+      "modelPath": "/model/kaykit_halloween/Autumn pine-TTXhwPOkpJ.glb",
+      "position": [
+        -14.5,
+        0.5,
+        10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "64c504ea-c252-4fc4-991d-8d7bc98d34a6",
+      "modelPath": "/model/kaykit_halloween/Autumn pine-MOuuN8sEWx.glb",
+      "position": [
+        -9,
+        0.5,
+        15.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "5dd98504-6657-4f51-8aa0-db2c3f2f44ff",
+      "modelPath": "/model/kaykit_halloween/Autumn pine-MOuuN8sEWx.glb",
+      "position": [
+        -10,
+        0.5,
+        11.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "61866502-8bc6-4154-afef-e71df3c53dec",
+      "modelPath": "/model/kaykit_halloween/Autumn pine-8wkRed6jU9.glb",
+      "position": [
+        -14,
+        0.5,
+        15
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "ffc7d90f-a8eb-44bf-bd1e-f8f48803ded6",
+      "modelPath": "/model/kaykit_halloween/Bench.glb",
+      "position": [
+        -17.5,
+        0.5,
+        20.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "db590f18-3572-4fc4-8e51-9e2aa3275d6d",
+      "modelPath": "/model/kaykit_halloween/Autumn pine-UopgJkSuo9.glb",
+      "position": [
+        -12,
+        0.5,
+        20
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "7ba4ec61-9654-4bcd-afb7-c10a9ec21f35",
+      "modelPath": "/model/kaykit_halloween/Autumn pine-UopgJkSuo9.glb",
+      "position": [
+        -4,
+        0.5,
+        18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "33f47626-89c6-4cfe-a0ff-91c3e2637f23",
+      "modelPath": "/model/kaykit_halloween/Autumn pine-MOuuN8sEWx.glb",
+      "position": [
+        17.5,
+        0.5,
+        10.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "2029cb95-5ed7-48b4-9ac8-a5191376835d",
+      "modelPath": "/model/kaykit_halloween/Autumn pine-8wkRed6jU9.glb",
+      "position": [
+        10.5,
+        0.5,
+        11
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "f7b0d0f3-1657-4859-b6c8-fa5911648ba6",
+      "modelPath": "/model/kaykit_halloween/Autumn pine-TTXhwPOkpJ.glb",
+      "position": [
+        7,
+        0.5,
+        18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "199da28d-e7f6-40ca-8606-bf8036b25afb",
+      "modelPath": "/model/kaykit_halloween/Autumn pine-UopgJkSuo9.glb",
+      "position": [
+        16,
+        0.5,
+        20
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "eb3911b1-c813-4b05-bbea-0c1e32dd58dc",
+      "modelPath": "/model/kaykit_halloween/Autumn pine-UopgJkSuo9.glb",
+      "position": [
+        22,
+        0.5,
+        16
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "5f0641ca-ba47-40aa-80e1-9c1f7ee954df",
+      "modelPath": "/model/kaykit_halloween/Bench-cp2QnHh7bf.glb",
+      "position": [
+        -8,
+        0.5,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "df809546-a17e-4b67-8855-28c954e9741f",
+      "modelPath": "/model/kaykit_halloween/Damaged Grave.glb",
+      "position": [
+        -6,
+        0.5,
+        -17
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "2a00827f-7b79-4472-a9c2-13839f968124",
+      "modelPath": "/model/kaykit_halloween/AngelStatue by Zsky - 6v4CL0nKfT.glb",
+      "position": [
+        7,
+        0.5,
+        -6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {
+        "Angel": "#3b2746"
+      }
+    },
+    {
+      "id": "6a629770-d8df-424c-af63-16892d58a780",
+      "modelPath": "/model/kaykit_halloween/Stag Statue by Quaternius - cKloIsNcT8.glb",
+      "position": [
+        2.5,
+        0.5,
+        10
+      ],
+      "rotation": [
+        0,
+        -0.7853981633974483,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {
+        "Statue": "#393636"
+      }
+    },
+    {
+      "id": "5231295f-121a-4f89-817a-b06d40ce6caf",
+      "modelPath": "/model/kaykit_halloween/Statue by Zsky - gieXYyUTYr.glb",
+      "position": [
+        -6,
+        0.5,
+        -6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 3.220917990286813,
+      "hiddenParts": [],
+      "colors": {
+        "Statue4": "#390303"
+      }
     }
+  ],
+  "spawnPoint": [
+    0,
+    0.8,
+    14
   ]
 }

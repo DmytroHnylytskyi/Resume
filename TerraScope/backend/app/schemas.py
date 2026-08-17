@@ -13,7 +13,7 @@ from datetime import datetime
 
 class UserBase(BaseModel):
     """Base user schema containing email address string."""
-    email: str
+    email: EmailStr
 
 class UserCreate(UserBase):
     """Schema for incoming user registration requests with password constraints."""
@@ -45,7 +45,7 @@ class SavedViewBase(BaseModel):
     description: Optional[str] = Field(None, max_length=500)
     camera_position: Optional[Union[List[float], Dict[str, Any]]] = None
     camera_target: Optional[Union[List[float], Dict[str, Any]]] = None
-    active_layers: Optional[List[str]] = None
+    active_layers: Optional[Union[List[str], Dict[str, Any]]] = None
     layer_filters: Optional[Dict[str, Any]] = None
 
 class SavedViewCreate(SavedViewBase):
@@ -58,7 +58,7 @@ class SavedViewUpdate(BaseModel):
     description: Optional[str] = Field(None, max_length=500)
     camera_position: Optional[Union[List[float], Dict[str, Any]]] = None
     camera_target: Optional[Union[List[float], Dict[str, Any]]] = None
-    active_layers: Optional[List[str]] = None
+    active_layers: Optional[Union[List[str], Dict[str, Any]]] = None
     layer_filters: Optional[Dict[str, Any]] = None
 
 class SavedViewResponse(SavedViewBase):

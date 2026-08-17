@@ -13,7 +13,7 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "GlobeScope | Interactive Data Globe",
+  title: "TerraScope | Interactive 3D Geospatial Intelligence Platform",
   description: "Explore real-time global data on an interactive 3D globe — earthquakes, flights, weather, country statistics, and near-Earth objects.",
 };
 

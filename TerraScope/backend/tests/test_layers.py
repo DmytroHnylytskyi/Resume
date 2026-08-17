@@ -1,27 +1,62 @@
 """
-Geospatial Data Layers Unit Tests Module.
+Geospatial Data Layers Unit Tests for TerraScope Backend.
 
-Tests cached endpoints for earthquakes, flights, weather, countries, and NEO asteroids.
+Tests:
+    - Live earthquakes endpoint (/api/layers/earthquakes).
+    - Real-time weather endpoint (/api/layers/weather).
+    - Countries reference endpoint (/api/layers/countries).
+    - Near-Earth Objects asteroids endpoint (/api/layers/neo).
 """
 
-from fastapi.testclient import TestClient
-from app.main import app
+import pytest
+from httpx import AsyncClient
 
-client = TestClient(app)
 
-def test_get_weather_endpoint():
+@pytest.mark.asyncio
+async def test_get_earthquakes_layer(client: AsyncClient):
+    """Verify earthquakes GeoJSON endpoint returns 200 OK with valid feature data."""
+    resp = await client.get("/api/layers/earthquakes")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "type" in data or "features" in data
+
+
+@pytest.mark.asyncio
+async def test_get_flights_layer(client: AsyncClient):
+    """Verify live OpenSky flights endpoint returns 200 OK."""
+    resp = await client.get("/api/layers/flights")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert isinstance(data, dict)
+
+
+@pytest.mark.asyncio
+async def test_get_weather_layer(client: AsyncClient):
     """Verify live Open-Meteo weather endpoint returns valid array of capital metrics."""
-    response = client.get("/api/layers/weather")
-    assert response.status_code == 200
-    data = response.json()
+    resp = await client.get("/api/layers/weather")
+    assert resp.status_code == 200
+    data = resp.json()
     assert isinstance(data, list)
     assert len(data) > 0
-    assert "temp" in data[0]
-    assert "desc" in data[0]
+    first = data[0]
+    assert "name" in first
+    assert "temp" in first
+    assert "desc" in first
 
-def test_get_earthquakes_endpoint():
-    """Verify USGS earthquakes GeoJSON endpoint returns valid FeatureCollection."""
-    response = client.get("/api/layers/earthquakes")
-    assert response.status_code == 200
-    data = response.json()
-    assert "features" in data or "type" in data
+
+@pytest.mark.asyncio
+async def test_get_countries_layer(client: AsyncClient):
+    """Verify countries metadata endpoint returns 200 OK."""
+    resp = await client.get("/api/layers/countries")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert isinstance(data, list)
+
+
+@pytest.mark.asyncio
+async def test_get_neo_asteroids_layer(client: AsyncClient):
+    """Verify NASA NEO asteroids endpoint returns 200 OK."""
+    resp = await client.get("/api/layers/neo")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "near_earth_objects" in data or "element_count" in data

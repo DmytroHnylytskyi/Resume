@@ -1,145 +1,53 @@
 'use client';
 
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React from 'react';
 import { useGameStore } from '../../store/useGameStore';
-import { developerProfile } from '../../data/resumeData';
-import {
-  X,
-  Award,
-  Layers,
-  Sparkles,
-  Box,
-  Cuboid,
-  Activity,
-  Code2,
-  FileCode,
-  Database,
-  Terminal,
-  Server,
-  HardDrive,
-  Cpu,
-  LucideIcon
-} from 'lucide-react';
-
-const ICON_MAP: Record<string, LucideIcon> = {
-  Box,
-  Cuboid,
-  Activity,
-  Layers,
-  Code2,
-  FileCode,
-  Database,
-  Sparkles,
-  Terminal,
-  Server,
-  HardDrive,
-  Cpu
-};
+import { developerProfiles, translations } from '../../data/resumeData';
+import { X, Award, CheckCircle2 } from 'lucide-react';
 
 export default function SkillsModal(): React.ReactElement | null {
-  const { activeModal, closeModal } = useGameStore();
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-
+  const { activeModal, setActiveModal, language } = useGameStore();
   if (activeModal !== 'skills') return null;
 
-  const categories = Object.keys(developerProfile.skillsMatrix);
+  const profile = developerProfiles[language];
+  const t = translations[language].modals;
 
   return (
-    <AnimatePresence>
-      <div className="modal-backdrop" onClick={closeModal}>
-        <motion.div
-          className="glass-modal-card skills-modal"
-          initial={{ opacity: 0, scale: 0.92, y: 25 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.92, y: 20 }}
-          transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <button className="modal-close-btn" onClick={closeModal} aria-label="Close">
-            <X size={20} />
-          </button>
-
-          <div className="modal-header-section">
-            <div className="icon-badge-glow purple">
-              <Award size={26} color="#c084fc" />
+    <div className="modal-backdrop-blur" onClick={() => setActiveModal(null)}>
+      <div className="resume-modal-card glass-panel" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <div className="modal-badge-group">
+            <div className="modal-badge-icon" style={{ backgroundColor: 'rgba(192, 132, 252, 0.15)', color: '#c084fc' }}>
+              <Award size={18} />
             </div>
             <div>
-              <h2 className="modal-headline">Стек Технологій & Навички</h2>
-              <p className="modal-subtext">
-                Інженерний арсенал для побудови сучасних, 3D та високонавантажених додатків
-              </p>
+              <h2 className="modal-title">{t.skillsAndTech}</h2>
+              <p className="modal-subtitle">{language === 'uk' ? 'Навички та Інструменти' : 'Core Skills & Tooling'}</p>
             </div>
           </div>
+          <button className="modal-close-btn" onClick={() => setActiveModal(null)} title={t.close}>
+            <X size={18} />
+          </button>
+        </div>
 
-          {/* Category Filter Pills */}
-          <div className="category-filter-pills">
-            <button
-              className={`filter-pill ${selectedCategory === 'all' ? 'active' : ''}`}
-              onClick={() => setSelectedCategory('all')}
-            >
-              Всі Навички
-            </button>
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                className={`filter-pill ${selectedCategory === cat ? 'active' : ''}`}
-                onClick={() => setSelectedCategory(cat)}
-              >
-                {cat}
-              </button>
+        <div className="modal-body">
+          <div className="skills-grid">
+            {profile.skills.map((group, idx) => (
+              <div key={idx} className="skill-category-card">
+                <h3 className="skill-category-title">{group.category}</h3>
+                <div className="skill-tags-wrap">
+                  {group.items.map((skill, sIdx) => (
+                    <span key={sIdx} className="skill-tag-pill">
+                      <CheckCircle2 size={12} className="skill-check-icon" />
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
-
-          <div className="modal-divider" />
-
-          {/* Skills Grid */}
-          <div className="skills-scroll-container">
-            {categories
-              .filter((cat) => selectedCategory === 'all' || selectedCategory === cat)
-              .map((cat) => (
-                <div key={cat} className="skill-category-group">
-                  <h3 className="category-header-title">{cat}</h3>
-                  <div className="skill-items-grid">
-                    {developerProfile.skillsMatrix[cat].map((skill) => {
-                      const Icon = ICON_MAP[skill.icon] || Box;
-
-                      return (
-                        <div key={skill.name} className="skill-card glass-panel">
-                          <div className="skill-card-top">
-                            <div className="skill-icon-bubble">
-                              <Icon size={18} />
-                            </div>
-                            <div className="skill-name-wrap">
-                              <span className="skill-title">{skill.name}</span>
-                              <span className="skill-desc">{skill.desc}</span>
-                            </div>
-                            <span className="skill-percent">{skill.level}%</span>
-                          </div>
-
-                          {/* Progress Meter Bar */}
-                          <div className="skill-meter-track">
-                            <motion.div
-                              className="skill-meter-fill"
-                              initial={{ width: 0 }}
-                              animate={{ width: `${skill.level}%` }}
-                              transition={{ duration: 0.9, ease: 'easeOut' }}
-                            />
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
-          </div>
-
-          <div className="skills-footer-note">
-            <Sparkles size={15} color="#c084fc" />
-            <span>Фокус на чистій архітектурі, продуктивності 60 FPS та преміальній естетиці UI/UX</span>
-          </div>
-        </motion.div>
+        </div>
       </div>
-    </AnimatePresence>
+    </div>
   );
 }

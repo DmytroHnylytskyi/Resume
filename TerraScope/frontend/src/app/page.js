@@ -18,7 +18,7 @@ const Globe = dynamic(() => import('../components/globe/Globe'), { ssr: false })
 import ErrorBoundary from '../components/globe/ErrorBoundary';
 
 /**
- * Main GlobeScope Application Page component.
+ * Main TerraScope Application Page component.
  * @returns {JSX.Element} Main viewport container mounting R3F canvas and cockpit UI overlays.
  */
 export default function Home() {

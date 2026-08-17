@@ -1,8 +1,10 @@
 """
-Security & Authentication Utilities Module.
+Security & Authentication Utilities Module for TerraScope.
 
 Provides direct Bcrypt password hashing, verification, PyJWT token generation,
-and FastAPI get_current_user security dependency.
+and FastAPI async get_current_user security dependency.
+
+Author: TerraScope 3D Geospatial Intelligence Team
 """
 
 import bcrypt
@@ -11,7 +13,8 @@ from typing import Optional
 import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 import os
 from dotenv import load_dotenv
 
@@ -20,7 +23,7 @@ from . import database, models
 load_dotenv()
 
 # JWT configuration constants
-DEFAULT_SECRET = "globescope-super-secret-jwt-key-2026"
+DEFAULT_SECRET = "terrascope-super-secret-jwt-key-2026"
 SECRET_KEY = os.getenv("SECRET_KEY", DEFAULT_SECRET)
 ENV_MODE = os.getenv("ENV_MODE", "development")
 
@@ -65,9 +68,6 @@ def get_password_hash(password: str) -> str:
     Returns:
         str: Salted bcrypt hash string.
     """
-    if len(password.encode('utf-8')) > 72:
-        # Note: Bcrypt specification truncates at 72 bytes
-        pass
     pwd_bytes = password.encode('utf-8')[:72]
     salt = bcrypt.gensalt()
     return bcrypt.hashpw(pwd_bytes, salt).decode('utf-8')
@@ -92,19 +92,19 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-def get_current_user(
+async def get_current_user(
     token: str = Depends(oauth2_scheme),
-    db: Session = Depends(database.get_db)
+    db: AsyncSession = Depends(database.get_db)
 ) -> models.User:
     """
     FastAPI Security Dependency validating incoming JWT Bearer tokens.
 
     Decodes JWT payload, validates subject email claim, and retrieves matching
-    User model instance from SQLite database.
+    User model instance from async database.
 
     Args:
         token (str): OAuth2 Bearer token string extracted from Authorization header.
-        db (Session): Database session dependency.
+        db (AsyncSession): Async database session dependency.
 
     Returns:
         models.User: Authenticated SQLAlchemy User model instance.
@@ -125,7 +125,8 @@ def get_current_user(
     except jwt.PyJWTError:
         raise credentials_exception
     
-    user = db.query(models.User).filter(models.User.email == email).first()
+    result = await db.execute(select(models.User).where(models.User.email == email))
+    user = result.scalar_one_or_none()
     if user is None:
         raise credentials_exception
     return user

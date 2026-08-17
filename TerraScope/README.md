@@ -1,121 +1,179 @@
-# 🌐 GlobeScope — Interactive 3D Geospatial Intelligence Platform
+# 🌐 TerraScope — Interactive 3D Geospatial Intelligence Platform
 
-![GlobeScope Banner](https://img.shields.io/badge/GlobeScope-3D%20Interactive%20Globe-38bdf8?style=for-the-badge&logo=react)
-![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)
-![Three.js](https://img.shields.io/badge/Three.js-R3F-black?style=for-the-badge&logo=three.js)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688?style=for-the-badge&logo=fastapi)
-![SQLite](https://img.shields.io/badge/SQLite-3-003B57?style=for-the-badge&logo=sqlite)
+<div align="center">
 
-**GlobeScope** is a high-performance, real-time 3D Earth visualization platform built with **Next.js 15**, **React Three Fiber (R3F)**, and **FastAPI**. It renders dynamic global datasets — including live seismic activity, airborne flights, global weather metrics, political borders, and near-Earth asteroids — using hardware-accelerated GPU instancing and custom GLSL shaders.
+[![Next.js](https://img.shields.io/badge/Next.js-16.3-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19.0-61dafb?style=for-the-badge&logo=react)](https://react.dev/)
+[![Three.js](https://img.shields.io/badge/Three.js-R3F-black?style=for-the-badge&logo=three.js)](https://threejs.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.141+-009688?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
+[![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.0%20Async-d71f00?style=for-the-badge&logo=sqlalchemy)](https://www.sqlalchemy.org/)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker)](https://www.docker.com/)
 
----
+[**English**](#english-version) | [**Українська**](#українська-версія)
 
-## ✨ Features
-
-- **🌐 Photorealistic 3D Earth & Atmosphere**:
-  - **Dynamic Sun Terminator**: Real-time astronomical day/night boundary with soft atmospheric twilight gradients and golden dusk scattering.
-  - **Surface Map Modes**: Seamless toggling between **Day Map**, **Night City Lights**, **Dynamic Real-time Day/Night**, and **Political Map Mode**.
-  - **Custom GLSL Shader**: Performs single-pass GPU blending without extra light passes, ensuring locked 60 FPS performance.
-
-- **📊 Real-Time Data Layers**:
-  - 🌋 **Earthquakes**: 3D magnitude-scaled surface columns color-coded by focal depth (Shallow/Medium/Deep) powered by USGS.
-  - ✈️ **Live Flights**: 3D airplane meshes positioned in 3D airspace with realistic altitude offset, heading rotation, and flight metadata powered by OpenSky Network.
-  - 🌡️ **Global Weather**: Temperature, wind speed, and humidity indicators across 177 world capitals powered by Open-Meteo.
-  - ☄️ **Near-Earth Objects (NEOs)**: Real-time 3D asteroid orbital trajectories around Earth powered by NASA NeoWs.
-  - 🏛️ **Political Map & Capitals**: Vector country borders and 16-segment tapered 3D architectural pins marking world capitals.
-
-- **🎨 Cockpit UI & User Features**:
-  - **Glassmorphic UI Overlay**: Integrated drawer panels (`LayerPanel`, `DetailPanel`) built with Framer Motion and Lucide icons.
-  - **Saved Globe Views**: Registered users can save custom combinations of active data layers and camera viewports to their personal account.
-  - **JWT Authentication**: Secure user registration and login backed by direct `bcrypt` hashing and OAuth2 Bearer tokens.
+</div>
 
 ---
 
-## 🏗️ Architecture Overview
+<a name="english-version"></a>
+## 🇬🇧 English Version
+
+### 📖 Overview
+
+**TerraScope** is a real-time, hardware-accelerated 3D planetary visualization and geospatial intelligence platform. Engineered with **Next.js 16 (React 19)**, **React Three Fiber (R3F)**, **Three.js**, and an async **FastAPI** backend with **SQLAlchemy 2.0 (aiosqlite)**, TerraScope enables users to explore live global phenomena across multiple interactive 3D layers with locked 60 FPS performance.
+
+---
+
+### ✨ Key Features
+
+- **🌐 Photorealistic 3D Earth & Custom GLSL Shaders**:
+  - **Dynamic Sun Terminator**: Astronomical day/night computation in real-time with golden twilight atmospheric scattering in a single shader pass.
+  - **4 Surface Modes**: Seamless switching between *Daytime Satellite*, *Night City Lights*, *Dynamic Day/Night*, and *Political Borders*.
+  - **Atmospheric Glow**: Soft Fresnel outer glow and starfield background.
+
+- **📊 Hardware-Accelerated Data Layers (GPU Instancing)**:
+  - 🌋 **Earthquakes**: 3D extruded seismic columns scaled by magnitude ($M_w$) and color-coded by focal depth (Shallow, Medium, Deep) via USGS GeoJSON API.
+  - ✈️ **Live Flights**: 3D airplane sprites oriented in real-time along flight headings with realistic altitude offsets via OpenSky Network API.
+  - 🌡️ **Global Weather**: Live temperatures, wind speeds, and weather conditions across 70 world capitals via Open-Meteo API.
+  - ☄️ **Near-Earth Objects (NEOs)**: 3D orbiting asteroids with interactive hover-freeze trajectories via NASA NeoWs API.
+  - 🏛️ **Political Map & Capitals**: Vector country borders and 3D architectural markers for world capitals.
+
+- **⚡ High-Concurrency Async Backend**:
+  - **Cache Stampede Prevention**: `asyncio.Lock` per cache key ensures external APIs are queried at most once per TTL window during traffic spikes.
+  - **Resilient Fallbacks**: 100% offline availability with curated emergency fallback datasets.
+  - **Security & Rate Limiting**: SlowAPI rate limiting, `X-Request-ID` transaction tracking, and Bcrypt + OAuth2 JWT authentication.
+  - **User Presets**: Authenticated users can save custom globe camera angles and active layer presets.
+
+---
+
+### 🏗️ Architecture
 
 ```mermaid
 graph TD
-    User([User Browser]) --> Frontend[Next.js 15 Frontend - App Router]
-    Frontend --> R3F[React Three Fiber / Three.js Canvas]
-    Frontend --> Zustand[Zustand 5 State Management]
-    Frontend --> FastAPI[FastAPI Backend - Python 3.13]
+    Client([User Browser]) --> NextApp[Next.js 16 / React 19 Frontend]
+    NextApp --> R3F[React Three Fiber Canvas]
+    R3F --> Shaders[Custom GLSL Day/Night Terminator Shader]
+    R3F --> InstancedMeshes[GPU Instanced 3D Layers]
+    NextApp --> Zustand[Zustand 5 State Management]
+    NextApp --> FastAPIServer[FastAPI Async Backend]
     
-    FastAPI --> CacheDB[(SQLite Cache & Users DB)]
-    FastAPI --> USGS[USGS Earthquake API]
-    FastAPI --> OpenSky[OpenSky Live Flights API]
-    FastAPI --> OpenMeteo[Open-Meteo Weather API]
-    FastAPI --> NASA[NASA NeoWs Asteroids API]
-    FastAPI --> RESTCountries[REST Countries API]
+    FastAPIServer --> AsyncDB[(Async SQLite / aiosqlite)]
+    FastAPIServer --> USGS[USGS Earthquakes API]
+    FastAPIServer --> OpenSky[OpenSky Flights API]
+    FastAPIServer --> OpenMeteo[Open-Meteo Weather API]
+    FastAPIServer --> NASA[NASA NeoWs Asteroids API]
+    FastAPIServer --> RESTCountries[REST Countries API]
 ```
 
 ---
 
-## 🚀 Quick Start
+### 🚀 Quick Start with Docker Compose
 
-### Prerequisites
-- **Node.js**: `v18.0.0` or higher
-- **Python**: `v3.10` or higher
+```bash
+# Clone repository and launch complete stack
+docker compose up --build
+```
+- **Frontend**: `http://localhost:3000`
+- **Backend API Docs**: `http://localhost:8000/docs`
 
-### 1. Clone & Setup Backend
+---
+
+### 💻 Local Development Setup
+
+#### 1. Backend (FastAPI + Python 3.13)
 ```bash
 cd backend
 python -m venv venv
-# On Windows:
-venv\Scripts\activate
-# On macOS/Linux:
+# Windows:
+.\venv\Scripts\activate
+# macOS/Linux:
 # source venv/bin/activate
 
 pip install -r requirements.txt
+alembic upgrade head
 uvicorn app.main:app --reload --port 8000
 ```
-Backend will start at `http://localhost:8000` (API Docs at `http://localhost:8000/docs`).
 
-### 2. Setup Frontend
+#### 2. Frontend (Next.js 16 + React 19)
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-Frontend will start at `http://localhost:3000`.
 
 ---
 
-## 🛠️ Technology Stack
+### 🧪 Automated Testing
 
-| Layer | Technologies |
+```bash
+# Backend Pytest Suite (AsyncClient + ASGITransport)
+cd backend
+.\venv\Scripts\python -m pytest
+
+# Frontend Production Build (Turbopack)
+cd frontend
+npm run build
+```
+
+---
+
+### 📡 API Reference
+
+| Method | Endpoint | Description | Auth Required |
+| :--- | :--- | :--- | :---: |
+| `GET` | `/health` | Kubernetes container health check | ❌ |
+| `POST` | `/api/auth/register` | User registration | ❌ |
+| `POST` | `/api/auth/token` | OAuth2 password login (JWT) | ❌ |
+| `POST` | `/api/auth/refresh` | Rotate active JWT session token | ✅ |
+| `GET` | `/api/auth/me` | Current authenticated user profile | ✅ |
+| `GET` | `/api/layers/earthquakes` | Live USGS earthquakes GeoJSON | ❌ |
+| `GET` | `/api/layers/flights` | Live OpenSky flight vectors | ❌ |
+| `GET` | `/api/layers/weather` | Live Open-Meteo world capital weather | ❌ |
+| `GET` | `/api/layers/countries` | REST Countries geographic metadata | ❌ |
+| `GET` | `/api/layers/neo` | NASA Near-Earth Objects asteroid telemetry | ❌ |
+| `GET` | `/api/views/` | List user's saved 3D camera presets | ✅ |
+| `POST` | `/api/views/` | Create saved 3D camera viewport preset | ✅ |
+| `DELETE` | `/api/views/{id}` | Delete saved 3D camera preset | ✅ |
+
+---
+
+<a name="українська-версія"></a>
+## 🇺🇦 Українська Версія
+
+### 📖 Опис Проєкту
+
+**TerraScope** — високопродуктивна платформа для інтерактивної 3D-візуалізації геопросторових даних у реальному часі. Побудована на базі **Next.js 16 (React 19)**, **React Three Fiber (R3F)**, **Three.js** та асинхронного бекенду **FastAPI** з **SQLAlchemy 2.0 (aiosqlite)**. TerraScope дозволяє в реальному часі досліджувати глобальні земні явища з апаратним прискоренням GPU та стабільною частотою 60 FPS.
+
+---
+
+### ✨ Ключові Можливості
+
+- **🌐 Фотореалістична 3D Земля та GLSL-шейдери**:
+  - **Динамічний сонячний термінатор**: Обчислення астрономічної межі дня і ночі в реальному часі з атмосферним розсіюванням заходу сонця за один прохід шейдера.
+  - **4 Режими поверхні**: Денна супутникова карта, нічні вогні міст, динамічний день/ніч та політичні кордони.
+  - **Атмосферне сяйво**: Реалістичний ефект Френеля та зоряний фон.
+
+- **📊 Апаратно-прискорені Шари Даних (GPU Instancing)**:
+  - 🌋 **Землетруси**: 3D-колони, масштабовані за магнітудою ($M_w$) з кодуванням за глибиною осередку (USGS GeoJSON API).
+  - ✈️ **Авіарейси**: 3D-літаки в повітряному просторі з реальними курсами та висотою (OpenSky Network API).
+  - 🌡️ **Погода**: Температура, швидкість вітру та погодні умови для 70 світових столиць (Open-Meteo API).
+  - ☄️ **Астероїди (NEO)**: 3D-траєкторії навколоземних об'єктів з фіксацією при наведенні (NASA NeoWs API).
+  - 🏛️ **Політична карта**: Векторні кордони країн та 3D-маркери столиць.
+
+- **⚡ Високонадійний Асинхронний Бекенд**:
+  - **Захист від Cache Stampede**: `asyncio.Lock` на кожен ключ кешу гарантує, що зовнішні API не перевантажуються при сплесках трафіку.
+  - **Резервні дані (Fallbacks)**: 100% доступність інтерфейсу навіть при тимчасовій недоступності зовнішніх провайдерів.
+  - **Безпека**: Лімітування запитів (SlowAPI), трасування транзакцій `X-Request-ID`, авторизація Bcrypt + OAuth2 JWT.
+  - **Збережені пресети**: Можливість зберігати власні ракурси камери та комбінації шарів.
+
+---
+
+### 🛠️ Технологічний Стек
+
+| Рівень | Технології |
 | :--- | :--- |
-| **Frontend** | Next.js 15, React 19, React Three Fiber, Three.js, Drei, Zustand 5, Framer Motion, Lucide React |
-| **Styling** | Vanilla CSS Glassmorphic Design System, CSS Variables, Responsive Layouts |
-| **Backend** | Python 3.13, FastAPI, SQLAlchemy ORM, SQLite 3, PyJWT, Bcrypt, HTTPX Async Client |
-| **APIs Integrated** | USGS Earthquake API, OpenSky Network, Open-Meteo, NASA NeoWs, REST Countries |
-
----
-
-## 📁 Repository Structure
-
-```
-GlobeScope/
-├── backend/
-│   ├── app/
-│   │   ├── main.py             # FastAPI Application & Router Mounting
-│   │   ├── database.py         # SQLAlchemy Engine & Session Setup
-│   │   ├── models.py           # SQLite Database Models (User, SavedView, CacheEntry)
-│   │   ├── schemas.py          # Pydantic Request/Response Models
-│   │   ├── auth_utils.py       # Bcrypt Hashing & JWT Token Generation
-│   │   └── routers/            # API Route Handlers (auth.py, layers.py, views.py)
-│   ├── requirements.txt        # Python Dependencies
-│   └── README.md               # Backend Specific Documentation
-│
-├── frontend/
-│   ├── src/
-│   │   ├── app/                # Next.js App Router (page.js, layout.js, globals.css)
-│   │   ├── components/
-│   │   │   ├── globe/          # R3F Canvas, Earth Shader, Atmosphere, PostProcessing
-│   │   │   ├── layers/         # Instanced 3D Layers (Earthquake, Flight, Weather, NEO, Capitals)
-│   │   │   └── ui/             # Cockpit UI Overlays (Navbar, LayerPanel, DetailPanel, Modals)
-│   │   ├── hooks/              # Custom Hooks (useLayerData.js, useGeoConvert.js)
-│   │   └── store/              # Zustand State Management (useStore.js)
-│   ├── package.json            # Node Dependencies
-│   └── README.md               # Frontend Specific Documentation
-│
-```
+| **Frontend** | Next.js 16, React 19, React Three Fiber, Three.js, Drei, Zustand 5, Framer Motion, Lucide React, JSDoc |
+| **Стилізація** | Vanilla CSS Glassmorphic Design System, CSS Custom Properties |
+| **Backend** | Python 3.13, FastAPI, SQLAlchemy 2.0 Async, aiosqlite, Alembic, SlowAPI, PyJWT, Bcrypt, HTTPX |
+| **DevOps & QA** | Docker, Docker Compose, Pytest, Pytest-Asyncio, Turbopack |
+| **Інтегровані API** | USGS Earthquakes, OpenSky Network, Open-Meteo, NASA NeoWs, REST Countries |

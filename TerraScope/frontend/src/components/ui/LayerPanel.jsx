@@ -36,7 +36,7 @@ export default function LayerPanel() {
     if (!layer || !layer.data) return null;
     if (id === 'earthquakes') return layer.data.features?.length || 0;
     if (id === 'flights') return 400; // active flights
-    if (id === 'weather') return 177; // world capitals
+    if (id === 'weather') return Array.isArray(layer.data) ? layer.data.length : 70; // world capitals weather
     if (id === 'neo') {
       if (!layer.data.near_earth_objects) return 0;
       return Object.values(layer.data.near_earth_objects).flat().length;
