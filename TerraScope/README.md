@@ -117,26 +117,6 @@ npm run build
 
 ---
 
-### 📡 API Reference
-
-| Method | Endpoint | Description | Auth Required |
-| :--- | :--- | :--- | :---: |
-| `GET` | `/health` | Kubernetes container health check | ❌ |
-| `POST` | `/api/auth/register` | User registration | ❌ |
-| `POST` | `/api/auth/token` | OAuth2 password login (JWT) | ❌ |
-| `POST` | `/api/auth/refresh` | Rotate active JWT session token | ✅ |
-| `GET` | `/api/auth/me` | Current authenticated user profile | ✅ |
-| `GET` | `/api/layers/earthquakes` | Live USGS earthquakes GeoJSON | ❌ |
-| `GET` | `/api/layers/flights` | Live OpenSky flight vectors | ❌ |
-| `GET` | `/api/layers/weather` | Live Open-Meteo world capital weather | ❌ |
-| `GET` | `/api/layers/countries` | REST Countries geographic metadata | ❌ |
-| `GET` | `/api/layers/neo` | NASA Near-Earth Objects asteroid telemetry | ❌ |
-| `GET` | `/api/views/` | List user's saved 3D camera presets | ✅ |
-| `POST` | `/api/views/` | Create saved 3D camera viewport preset | ✅ |
-| `DELETE` | `/api/views/{id}` | Delete saved 3D camera preset | ✅ |
-
----
-
 <a name="українська-версія"></a>
 ## 🇺🇦 Українська Версія
 
