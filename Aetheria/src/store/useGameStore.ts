@@ -23,6 +23,9 @@ export const useGameStore = create<GameState>((set) => ({
   activeModal: null,
   setActiveModal: (modal: StatueKey | null) => set({ activeModal: modal }),
 
+  selectedProject: null,
+  setSelectedProject: (projectId: string | null) => set({ selectedProject: projectId }),
+
   interactionPrompt: null,
   setInteractionPrompt: (prompt) => set({ interactionPrompt: prompt }),
 

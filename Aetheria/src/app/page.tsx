@@ -7,6 +7,7 @@ import ControlsHUD from '../components/ui/ControlsHUD';
 import BioModal from '../components/ui/BioModal';
 import ContactsModal from '../components/ui/ContactsModal';
 import SkillsModal from '../components/ui/SkillsModal';
+import ProjectModal from '../components/ui/ProjectModal';
 import WelcomeModal from '../components/ui/WelcomeModal';
 import LoadingScreen from '../components/ui/LoadingScreen';
 import ClassicLandingView from '../components/ui/ClassicLandingView';
@@ -26,6 +27,9 @@ export default function HomePage(): React.ReactElement {
     <main className="portfolio-app-container" data-theme={theme}>
       {/* ── Mode Selection Welcome Screen (First visit) ── */}
       <WelcomeModal />
+
+      {/* ── Project Details Modal (Can open from both 3D & Classic) ── */}
+      <ProjectModal />
 
       {/* ── VIEW MODE A: Classic Web Resume Landing ── */}
       {viewMode === 'classic' && <ClassicLandingView />}

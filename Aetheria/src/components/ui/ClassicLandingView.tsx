@@ -15,9 +15,13 @@ import {
   Layers,
   Code2,
   Cpu,
-  Globe,
+  Wrench,
   Sun,
-  Moon
+  Moon,
+  GraduationCap,
+  ShieldCheck,
+  CheckCircle2,
+  Sparkles
 } from 'lucide-react';
 
 function GithubIcon({ size = 16 }: { size?: number }) {
@@ -29,28 +33,28 @@ function GithubIcon({ size = 16 }: { size?: number }) {
   );
 }
 
-function LinkedinIcon({ size = 16 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-      <rect width="4" height="12" x="2" y="9" />
-      <circle cx="4" cy="4" r="2" />
-    </svg>
-  );
-}
-
 export default function ClassicLandingView(): React.ReactElement {
-  const { language, setLanguage, setViewMode, theme, toggleTheme } = useGameStore();
+  const { language, setLanguage, setViewMode, setSelectedProject, theme, toggleTheme } = useGameStore();
   const [copiedEmail, setCopiedEmail] = useState(false);
 
   const profile = developerProfiles[language];
   const t = translations[language].landing;
   const navT = translations[language].nav;
+  const edu = profile.education[0];
 
   const handleCopyEmail = () => {
     navigator.clipboard.writeText(profile.contacts.email);
     setCopiedEmail(true);
     setTimeout(() => setCopiedEmail(false), 2200);
+  };
+
+  const getCategoryIcon = (idx: number) => {
+    switch (idx) {
+      case 0: return <Code2 size={18} className="skill-icon" />;
+      case 1: return <Layers size={18} className="skill-icon" />;
+      case 2: return <Cpu size={18} className="skill-icon" />;
+      default: return <Wrench size={18} className="skill-icon" />;
+    }
   };
 
   return (
@@ -65,6 +69,8 @@ export default function ClassicLandingView(): React.ReactElement {
 
         <nav className="classic-nav-links">
           <a href="#about" className="classic-nav-link">{t.aboutTitle}</a>
+          <a href="#education" className="classic-nav-link">{t.educationTitle}</a>
+          <a href="#certifications" className="classic-nav-link">{t.certificationsTitle}</a>
           <a href="#skills" className="classic-nav-link">{t.skillsTitle}</a>
           <a href="#projects" className="classic-nav-link">{t.projectsTitle}</a>
           <a href="#contacts" className="classic-nav-link">{t.contactsTitle}</a>
@@ -113,8 +119,8 @@ export default function ClassicLandingView(): React.ReactElement {
         {/* ── HERO SECTION ── */}
         <section className="classic-hero-section">
           <div className="hero-badge">
-            <span className="status-dot" />
-            <span>{t.availableForWork}</span>
+            <span className="status-dot pulse-dot" />
+            <span>{profile.status}</span>
           </div>
 
           <h1 className="hero-name">{profile.name}</h1>
@@ -168,6 +174,65 @@ export default function ClassicLandingView(): React.ReactElement {
           </div>
         </section>
 
+        {/* ── EDUCATION SECTION ── */}
+        {edu && (
+          <section id="education" className="classic-section">
+            <div className="section-header">
+              <h2 className="section-title">{t.educationTitle}</h2>
+              <p className="section-subtitle">{t.educationSubtitle}</p>
+            </div>
+
+            <div className="education-classic-card glass-panel">
+              <div className="education-classic-header">
+                <div className="edu-icon-circle">
+                  <GraduationCap size={22} />
+                </div>
+                <div className="edu-header-text">
+                  <h3 className="edu-classic-institution">{edu.institution}</h3>
+                  <p className="edu-classic-faculty">{edu.faculty}</p>
+                </div>
+                <span className="edu-period-badge">{edu.period}</span>
+              </div>
+              <div className="edu-classic-body">
+                <div className="edu-badge-row">
+                  <span className="edu-spec-tag">
+                    <Briefcase size={14} />
+                    <span>{edu.specialty}</span>
+                  </span>
+                  <span className="edu-status-tag">{edu.degree} • {edu.status}</span>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ── CERTIFICATIONS SECTION ── */}
+        <section id="certifications" className="classic-section">
+          <div className="section-header">
+            <h2 className="section-title">{t.certificationsTitle}</h2>
+            <p className="section-subtitle">{t.certificationsSubtitle}</p>
+          </div>
+
+          <div className="certifications-classic-grid">
+            {profile.certifications.map((cert) => (
+              <div key={cert.id} className="cert-classic-card glass-panel">
+                <div className="cert-classic-top">
+                  <span className="cert-classic-issuer">{cert.issuer}</span>
+                  <span className="cert-classic-level">{cert.level}</span>
+                </div>
+                <h3 className="cert-classic-title">{cert.title}</h3>
+                <div className="cert-classic-bottom">
+                  <span className="cert-verified-tag">
+                    <CheckCircle2 size={13} />
+                    <span>{language === 'uk' ? 'Підтверджено' : 'Verified'}</span>
+                  </span>
+                  <span className="cert-category-label">{cert.category}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* ── SKILLS & TECH STACK SECTION ── */}
         <section id="skills" className="classic-section">
           <div className="section-header">
@@ -179,9 +244,7 @@ export default function ClassicLandingView(): React.ReactElement {
             {profile.skills.map((cat, idx) => (
               <div key={idx} className="skills-group-card glass-panel">
                 <div className="skills-group-header">
-                  {idx === 0 && <Layers size={18} className="skill-icon" />}
-                  {idx === 1 && <Code2 size={18} className="skill-icon" />}
-                  {idx === 2 && <Cpu size={18} className="skill-icon" />}
+                  {getCategoryIcon(idx)}
                   <h3 className="skills-group-title">{cat.category}</h3>
                 </div>
                 <div className="skill-tags-list">
@@ -241,12 +304,20 @@ export default function ClassicLandingView(): React.ReactElement {
 
                 {/* Action Links */}
                 <div className="project-actions">
+                  <button
+                    className="project-btn primary"
+                    onClick={() => setSelectedProject(proj.id)}
+                  >
+                    <Sparkles size={14} />
+                    <span>{translations[language].modals.projectDetails}</span>
+                  </button>
+
                   {proj.url && (
                     <a
                       href={proj.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="project-btn primary"
+                      className="project-btn secondary"
                     >
                       <span>{t.liveDemo}</span>
                       <ExternalLink size={14} />
@@ -303,8 +374,8 @@ export default function ClassicLandingView(): React.ReactElement {
                   <Send size={20} />
                 </div>
                 <div className="channel-info">
-                  <span className="channel-name">Telegram</span>
-                  <span className="channel-value">@dmytrossss</span>
+                  <span className="channel-name">Telegram (Primary)</span>
+                  <span className="channel-value">@mokydjin</span>
                 </div>
                 <ExternalLink size={16} className="channel-arrow" />
               </a>
@@ -320,23 +391,7 @@ export default function ClassicLandingView(): React.ReactElement {
                 </div>
                 <div className="channel-info">
                   <span className="channel-name">GitHub</span>
-                  <span className="channel-value">github.com/Dmytrossss</span>
-                </div>
-                <ExternalLink size={16} className="channel-arrow" />
-              </a>
-
-              <a
-                href={profile.contacts.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="contact-channel-btn"
-              >
-                <div className="channel-icon-box">
-                  <LinkedinIcon size={20} />
-                </div>
-                <div className="channel-info">
-                  <span className="channel-name">LinkedIn</span>
-                  <span className="channel-value">dmytro-hnylitskiy</span>
+                  <span className="channel-value">github.com/DmytroHnylytskyi</span>
                 </div>
                 <ExternalLink size={16} className="channel-arrow" />
               </a>
@@ -353,3 +408,4 @@ export default function ClassicLandingView(): React.ReactElement {
     </div>
   );
 }
+

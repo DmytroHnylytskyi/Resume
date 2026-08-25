@@ -23,7 +23,8 @@ export default function CharacterController({
   const rigidBodyRef = useRef<RapierRigidBody>(null);
   const avatarGroupRef = useRef<THREE.Group>(null);
   const { camera, gl } = useThree();
-  const { activeModal, interactionPrompt } = useGameStore();
+  const { activeModal, selectedProject, isInitialWelcomeOpen, interactionPrompt } = useGameStore();
+  const isAnyModalOpen = Boolean(activeModal || selectedProject || isInitialWelcomeOpen);
 
   const [isMoving, setIsMoving] = useState(false);
   const [isSprinting, setIsSprinting] = useState(false);
@@ -66,7 +67,7 @@ export default function CharacterController({
     const dom = gl.domElement;
 
     const handleCanvasClick = () => {
-      if (!activeModal && document.pointerLockElement !== dom) {
+      if (!isAnyModalOpen && document.pointerLockElement !== dom) {
         try {
           const p = dom.requestPointerLock();
           if (p && 'catch' in p) p.catch(() => {});
@@ -75,7 +76,7 @@ export default function CharacterController({
     };
 
     const handleMouseMove = (e: MouseEvent) => {
-      if (document.pointerLockElement === dom) {
+      if (!isAnyModalOpen && document.pointerLockElement === dom) {
         const sensitivity = 0.0016;
         const movX = Number.isFinite(e.movementX) ? e.movementX : 0;
         const movY = Number.isFinite(e.movementY) ? e.movementY : 0;
@@ -85,6 +86,7 @@ export default function CharacterController({
     };
 
     const handleWheel = (e: WheelEvent) => {
+      if (isAnyModalOpen) return;
       const delta = Number.isFinite(e.deltaY) ? e.deltaY : 0;
       cameraDistance.current = Math.max(2.2, Math.min(7.0, cameraDistance.current + delta * 0.002));
     };
@@ -98,21 +100,34 @@ export default function CharacterController({
       document.removeEventListener('mousemove', handleMouseMove);
       dom.removeEventListener('wheel', handleWheel);
     };
-  }, [gl, activeModal]);
+  }, [gl, isAnyModalOpen]);
 
-  // Release pointer lock when opening modals
+  // Release pointer lock and reset keys whenever ANY modal opens
   useEffect(() => {
-    if (activeModal && document.pointerLockElement) {
-      try {
-        document.exitPointerLock();
-      } catch (_) {}
+    if (isAnyModalOpen) {
+      if (document.pointerLockElement) {
+        try {
+          document.exitPointerLock();
+        } catch (_) {}
+      }
+      keys.current.forward = false;
+      keys.current.backward = false;
+      keys.current.left = false;
+      keys.current.right = false;
+      keys.current.jump = false;
+      keys.current.shift = false;
+      setIsMoving(false);
+      setIsSprinting(false);
+      setIsJumping(false);
     }
-  }, [activeModal]);
+  }, [isAnyModalOpen]);
 
   // ── 2. Keyboard Event Handlers ──
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement)?.tagName)) return;
+      if (isAnyModalOpen) return;
+
       const code = e.code;
       if (code === 'KeyW' || code === 'ArrowUp') keys.current.forward = true;
       if (code === 'KeyS' || code === 'ArrowDown') keys.current.backward = true;
@@ -131,6 +146,7 @@ export default function CharacterController({
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
+      if (isAnyModalOpen) return;
       const code = e.code;
       if (code === 'KeyW' || code === 'ArrowUp') keys.current.forward = false;
       if (code === 'KeyS' || code === 'ArrowDown') keys.current.backward = false;
@@ -146,7 +162,7 @@ export default function CharacterController({
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [interactionPrompt]);
+  }, [interactionPrompt, isAnyModalOpen]);
 
   // ── 3. Physics & Camera Update Frame Loop ──
   useFrame(() => {

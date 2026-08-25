@@ -35,6 +35,8 @@ export interface GameState {
   // 3D Modals & Prompts
   activeModal: StatueKey | null;
   setActiveModal: (modal: StatueKey | null) => void;
+  selectedProject: string | null;
+  setSelectedProject: (projectId: string | null) => void;
   interactionPrompt: InteractionPrompt | null;
   setInteractionPrompt: (prompt: InteractionPrompt | null) => void;
 

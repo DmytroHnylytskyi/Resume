@@ -2,157 +2,311 @@ import { DeveloperProfile, Locale, Translations } from '../types/portfolio';
 
 export const developerProfiles: Record<Locale, DeveloperProfile> = {
   uk: {
-    name: "Гнилицький Дмитро",
-    role: "Full-Stack & 3D Creative Developer",
-    location: "Київ, Україна",
-    bio: "Full-Stack розробник із глибокою пристрастю до сучасного 3D-вебу, WebGL, Three.js та високопродуктивних React/Next.js додатків. Створюю інтерактивні 3D-світи, конфігуратори меблів, складні платформи та інтуїтивні користувацькі інтерфейси.",
+    name: "Дмитро Гнилицький",
+    role: "Full-Stack & Creative 3D Developer",
+    location: "Київ, Україна (100% Remote)",
+    status: "Відкритий до нових пропозицій",
+    bio: "Full-Stack інженер із фокусом на сучасних високопродуктивних веб-додатках (React 19 / Next.js 16), асинхронних бекенд-системах (FastAPI / PostgreSQL) та інтерактивній 3D-графіці (Three.js, WebGL, GLSL). Маю практичний досвід розробки складних 3D-конфігураторів, геопросторових систем аналітики та LMS-платформ.",
     summary: [
-      "3+ роки комерційного та продуктового досвіду у веб-розробці.",
-      "Спеціалізація: React, Next.js 15, TypeScript, Three.js, React Three Fiber, WebGL, TailwindCSS, Node.js, Python/FastAPI.",
-      "Досвід розробки реальних 3D-конфігураторів (Forma-3D), геопросторових платформ (TerraScope) та LMS-систем (Lumina)."
+      "2+ роки продуктової розробки: створення комплексних веб-сервісів від проєктування БД до інтерактивного WebGL-клієнта.",
+      "Експертиза у 3D WebGL & Creative Tech: просторові обчислення, Raycasting, процедурні GLSL-шейдери, GPU Instancing та фізика Rapier 3D.",
+      "Високопродуктивний асинхронний бекенд: проектування non-blocking API на FastAPI, Async SQLAlchemy 2.0, JWT з ротацією токенів та rate limiting.",
+      "Сучасна фронтенд-архітектура: суворий TypeScript, TanStack Query v5 (Optimistic UI), Zustand 5, TailwindCSS та 60 FPS рендеринг."
+    ],
+    education: [
+      {
+        institution: "НТУУ «Київський політехнічний інститут імені Ігоря Сікорського» (КПІ)",
+        faculty: "НН ІАТЕ (Інститут атомної та теплової енергетики)",
+        specialty: "121 «Інженерія програмного забезпечення»",
+        degree: "Бакалавр",
+        period: "2023 — 2027",
+        status: "4 курс (в процесі навчання)",
+        location: "Київ, Україна"
+      }
+    ],
+    certifications: [
+      {
+        id: "hackerrank-react",
+        title: "Frontend Developer (React)",
+        issuer: "HackerRank",
+        level: "Verified Skill",
+        category: "Frontend",
+        verified: true
+      },
+      {
+        id: "hackerrank-js",
+        title: "JavaScript (Intermediate)",
+        issuer: "HackerRank",
+        level: "Intermediate",
+        category: "Frontend",
+        verified: true
+      },
+      {
+        id: "hackerrank-node",
+        title: "Node.js (Intermediate)",
+        issuer: "HackerRank",
+        level: "Intermediate",
+        category: "Backend",
+        verified: true
+      },
+      {
+        id: "hackerrank-sql",
+        title: "SQL (Advanced)",
+        issuer: "HackerRank",
+        level: "Advanced",
+        category: "Databases",
+        verified: true
+      },
+      {
+        id: "hackerrank-rest",
+        title: "REST API (Intermediate)",
+        issuer: "HackerRank",
+        level: "Intermediate",
+        category: "Backend",
+        verified: true
+      },
+      {
+        id: "hackerrank-python",
+        title: "Python (Basic)",
+        issuer: "HackerRank",
+        level: "Basic",
+        category: "Backend",
+        verified: true
+      },
+      {
+        id: "efset-english",
+        title: "EF SET English Certificate",
+        issuer: "EF Standard English Test",
+        level: "International Standard",
+        category: "Languages",
+        verified: true
+      }
     ],
     skills: [
       {
-        category: "3D & WebGL",
-        items: ["Three.js", "React Three Fiber", "Drei", "Rapier 3D Physics", "GLSL Shaders", "Blender", "Mixamo Animations", "FBX / GLTF Pipelines"]
+        category: "Frontend Core & State",
+        items: ["React 19", "Next.js 16 (App Router)", "TypeScript (Strict)", "JavaScript (ESNext)", "TailwindCSS", "Zustand 5", "TanStack Query v5", "Framer Motion", "HTML5 / CSS3"]
       },
       {
-        category: "Frontend Core",
-        items: ["React 19", "Next.js 15 (App Router)", "TypeScript", "JavaScript (ESNext)", "TailwindCSS", "Zustand", "Framer Motion", "HTML5 / CSS3"]
+        category: "3D & Creative WebGL",
+        items: ["Three.js", "React Three Fiber (R3F)", "Drei", "Rapier 3D Physics", "Custom GLSL Shaders", "Raycasting & Snapping", "GPU Instancing", "Blender"]
       },
       {
-        category: "Backend & Tools",
-        items: ["Node.js", "Express", "Python", "FastAPI", "PostgreSQL", "Prisma / SQLAlchemy", "Git & GitHub", "Vite", "Docker"]
+        category: "Backend & Databases",
+        items: ["Python 3.12+", "FastAPI (Async)", "Async SQLAlchemy 2.0", "PostgreSQL 16 (asyncpg)", "SQLite (aiosqlite)", "Node.js", "Express", "Alembic"]
+      },
+      {
+        category: "DevOps & Architecture",
+        items: ["Docker & Compose", "Git & GitHub", "Vite", "REST API Design", "JWT Auth (Token Rotation)", "Cloudinary CDN", "SlowAPI (Rate Limiting)"]
       }
     ],
     contacts: {
-      email: "dmitriy.hnylitskiy@gmail.com",
-      telegram: "https://t.me/dmytrossss",
-      github: "https://github.com/Dmytrossss",
-      linkedin: "https://linkedin.com/in/dmytro-hnylitskiy"
+      email: "dmitrijgnilickij7@gmail.com",
+      telegram: "https://t.me/mokydjin",
+      github: "https://github.com/DmytroHnylytskyi",
+      linkedin: "https://github.com/DmytroHnylytskyi"
     },
     projects: {
       forma: {
         id: "forma",
-        title: "Forma-3D (3D Furniture Store & Configurator)",
-        tagline: "Інтерактивний 3D-конфігуратор меблів та редактор кімнат",
-        description: "Повноцінний 3D інтернет-магазин та редактор інтер'єру з підтримкою зміни текстур, матеріалів, розмірів, модульного розміщення об'єктів та фізичного простору.",
-        tags: ["Three.js", "React Three Fiber", "Next.js 15", "TypeScript", "TailwindCSS", "Zustand"],
+        title: "Forma-3D (Spatial Builder & Object Configurator)",
+        tagline: "Модульний 3D-редактор простору та універсальний конфігуратор об'єктів",
+        description: "Комерційно-орієнтований full-stack 3D-редактор сцени та просторовий конфігуратор для будь-яких 3D-об'єктів (меблі, архітектура, декор) з автоматичним стекуванням поверхонь, гнучким налаштуванням матеріалів та хмарною синхронізацією.",
+        tags: ["Three.js", "React Three Fiber", "Next.js 16", "TypeScript", "FastAPI", "PostgreSQL", "Docker"],
         url: "http://localhost:3001",
-        githubUrl: "https://github.com/Dmytrossss",
-        color: "#ffffff",
+        githubUrl: "https://github.com/DmytroHnylytskyi",
+        color: "#34d399",
         features: [
-          "Модульний 3D редактор кімнат та розташування об'єктів на сітці",
-          "Динамічна зміна кольорів, дерева, шкіри та металу",
-          "Експорт 3D сцени у формат JSON"
+          "Алгоритм Surface Snapping (Raycasting) для автоматичного розміщення та стекування об'єктів на поверхнях",
+          "Режим польоту камери у стилі Unreal Engine 5 (RMB + WASD + Shift Boost + Focus F)",
+          "Динамічна зміна матеріалів суб-мешів (кольори, текстури, метал, дерево) у реальному часі",
+          "Асинхронний бекенд на FastAPI + PostgreSQL з JWT-авторизацією та збереженням сцен"
         ]
       },
       terrascope: {
         id: "terrascope",
-        title: "TerraScope (3D Earth & Analytics)",
-        tagline: "Інтерактивна 3D геопросторова платформа візуалізації",
-        description: "Аналітична 3D платформа глобальних супутникових та просторових даних із кастомними шейдерами атмосфери Землі та маркерами активності.",
-        tags: ["Three.js", "WebGL Shaders", "React", "FastAPI", "GIS Data"],
+        title: "TerraScope (3D Geospatial Intelligence)",
+        tagline: "Інтерактивна 3D-платформа геопросторової візуалізації та супутникових даних",
+        description: "Апаратна 3D-візуалізація планети Земля з кастомними GLSL-шейдерами атмосфери та шарами супутникових даних у реальному часі зі стабільними 60 FPS.",
+        tags: ["Three.js", "GLSL Shaders", "Next.js 16", "FastAPI", "Zustand 5", "Docker"],
         url: "http://localhost:3002",
-        githubUrl: "https://github.com/Dmytrossss",
-        color: "#ffffff",
+        githubUrl: "https://github.com/DmytroHnylytskyi",
+        color: "#60a5fa",
         features: [
-          "Фотореалістична 3D Земля з процедурною атмосферою",
-          "Інтерактивна навігація орбітальною камерою",
-          "Візуалізація просторових гео-даних"
+          "Кастомний GLSL Day/Night Terminator шейдер із реальним розрахунком сонячного світла та Fresnel світіння",
+          "GPU Instanced шари даних: живі землетруси (USGS), авіарейси (OpenSky), погода (Open-Meteo), астероїди (NASA NEOs)",
+          "Захист від Cache Stampede на бекенді через asyncio.Lock для високошвидкісного кешування"
         ]
       },
       lumina: {
         id: "lumina",
-        title: "Lumina (MiniLMS Learning Platform)",
-        tagline: "Сучасна освітня платформа та система управління навчанням",
-        description: "Платформа дистанційної освіти з інтерактивними курсами, тестуванням, аналітикою прогресу студентів та модульними уроками.",
-        tags: ["Next.js 15", "TypeScript", "PostgreSQL", "Prisma", "TailwindCSS"],
+        title: "Lumina (Full-Stack LMS Learning Platform)",
+        tagline: "Сучасна асинхронна освітня платформа дистанційного навчання",
+        description: "Освітня система для викладачів і студентів із модульними інтерактивними курсами, системою дедлайнів, завантаженням домашніх робіт та візуальною аналітикою прогресу.",
+        tags: ["React 19", "Vite", "TanStack Query v5", "FastAPI", "PostgreSQL", "TailwindCSS"],
         url: "http://localhost:3003",
-        githubUrl: "https://github.com/Dmytrossss",
-        color: "#ffffff",
+        githubUrl: "https://github.com/DmytroHnylytskyi",
+        color: "#fb7185",
         features: [
-          "Модульна структура курсів та уроків",
-          "Система відстеження прогресу та оцінювання",
-          "Адаптивний та швидкий інтерфейс"
+          "Оптимістичний UI та миттєве кешування стану на клієнті через TanStack Query v5",
+          "Рольова модель (Студент / Викладач) із захистом маршрутів та ротацією JWT токенів",
+          "Інтерактивний медіаплеєр уроків із підтримкою відео, PDF, Google Drive та Cloudinary",
+          "Аналітичні графіки успішності та динаміка навчання на базі Recharts"
         ]
       }
     }
   },
   en: {
-    name: "Dmytro Hnylitskiy",
-    role: "Full-Stack & 3D Creative Developer",
-    location: "Kyiv, Ukraine",
-    bio: "Full-Stack developer with a strong focus on the modern 3D web, WebGL, Three.js, and high-performance React/Next.js applications. Creating interactive 3D worlds, furniture configurators, data-intensive platforms, and intuitive interfaces.",
+    name: "Dmytro Hnylytskyi",
+    role: "Full-Stack & Creative 3D Developer",
+    location: "Kyiv, Ukraine (100% Remote)",
+    status: "Open to Remote Opportunities",
+    bio: "Full-Stack engineer specializing in high-performance modern web applications (React 19 / Next.js 16), asynchronous backend architectures (FastAPI / PostgreSQL), and interactive 3D WebGL experiences (Three.js / React Three Fiber / GLSL). Hands-on experience building complex 3D configurators, geospatial analytics engines, and educational LMS platforms.",
     summary: [
-      "3+ years of commercial and product engineering experience in web development.",
-      "Core stack: React, Next.js 15, TypeScript, Three.js, React Three Fiber, WebGL, TailwindCSS, Node.js, Python/FastAPI.",
-      "Proven track record building interactive 3D configurators (Forma-3D), geospatial engines (TerraScope), and LMS platforms (Lumina)."
+      "2+ years of hands-on product engineering: crafting complete web applications from database schemas to interactive WebGL clients.",
+      "Creative 3D & WebGL mastery: spatial computing, raycasting engines, custom GLSL procedural shaders, GPU instancing, and Rapier 3D physics.",
+      "High-concurrency backend design: building non-blocking FastAPI services, Async SQLAlchemy 2.0, JWT auth with token rotation, and rate limiting.",
+      "Modern frontend architecture: strict TypeScript, TanStack Query v5 (Optimistic UI), Zustand 5, TailwindCSS, and locked 60 FPS WebGL."
+    ],
+    education: [
+      {
+        institution: "National Technical University of Ukraine 'Igor Sikorsky Kyiv Polytechnic Institute' (KPI)",
+        faculty: "Institute of Atomic and Thermal Energy (IATE)",
+        specialty: "121 'Software Engineering'",
+        degree: "Bachelor's Degree",
+        period: "2023 — 2027",
+        status: "4th Year (In progress)",
+        location: "Kyiv, Ukraine"
+      }
+    ],
+    certifications: [
+      {
+        id: "hackerrank-react",
+        title: "Frontend Developer (React)",
+        issuer: "HackerRank",
+        level: "Verified Skill",
+        category: "Frontend",
+        verified: true
+      },
+      {
+        id: "hackerrank-js",
+        title: "JavaScript (Intermediate)",
+        issuer: "HackerRank",
+        level: "Intermediate",
+        category: "Frontend",
+        verified: true
+      },
+      {
+        id: "hackerrank-node",
+        title: "Node.js (Intermediate)",
+        issuer: "HackerRank",
+        level: "Intermediate",
+        category: "Backend",
+        verified: true
+      },
+      {
+        id: "hackerrank-sql",
+        title: "SQL (Advanced)",
+        issuer: "HackerRank",
+        level: "Advanced",
+        category: "Databases",
+        verified: true
+      },
+      {
+        id: "hackerrank-rest",
+        title: "REST API (Intermediate)",
+        issuer: "HackerRank",
+        level: "Intermediate",
+        category: "Backend",
+        verified: true
+      },
+      {
+        id: "hackerrank-python",
+        title: "Python (Basic)",
+        issuer: "HackerRank",
+        level: "Basic",
+        category: "Backend",
+        verified: true
+      },
+      {
+        id: "efset-english",
+        title: "EF SET English Certificate",
+        issuer: "EF Standard English Test",
+        level: "International Standard",
+        category: "Languages",
+        verified: true
+      }
     ],
     skills: [
       {
-        category: "3D & WebGL",
-        items: ["Three.js", "React Three Fiber", "Drei", "Rapier 3D Physics", "GLSL Shaders", "Blender", "Mixamo Animations", "FBX / GLTF Pipelines"]
+        category: "Frontend Core & State",
+        items: ["React 19", "Next.js 16 (App Router)", "TypeScript (Strict)", "JavaScript (ESNext)", "TailwindCSS", "Zustand 5", "TanStack Query v5", "Framer Motion", "HTML5 / CSS3"]
       },
       {
-        category: "Frontend Core",
-        items: ["React 19", "Next.js 15 (App Router)", "TypeScript", "JavaScript (ESNext)", "TailwindCSS", "Zustand", "Framer Motion", "HTML5 / CSS3"]
+        category: "3D & Creative WebGL",
+        items: ["Three.js", "React Three Fiber (R3F)", "Drei", "Rapier 3D Physics", "Custom GLSL Shaders", "Raycasting & Snapping", "GPU Instancing", "Blender"]
       },
       {
-        category: "Backend & Tools",
-        items: ["Node.js", "Express", "Python", "FastAPI", "PostgreSQL", "Prisma / SQLAlchemy", "Git & GitHub", "Vite", "Docker"]
+        category: "Backend & Databases",
+        items: ["Python 3.12+", "FastAPI (Async)", "Async SQLAlchemy 2.0", "PostgreSQL 16 (asyncpg)", "SQLite (aiosqlite)", "Node.js", "Express", "Alembic"]
+      },
+      {
+        category: "DevOps & Architecture",
+        items: ["Docker & Compose", "Git & GitHub", "Vite", "REST API Design", "JWT Auth (Token Rotation)", "Cloudinary CDN", "SlowAPI (Rate Limiting)"]
       }
     ],
     contacts: {
-      email: "dmitriy.hnylitskiy@gmail.com",
-      telegram: "https://t.me/dmytrossss",
-      github: "https://github.com/Dmytrossss",
-      linkedin: "https://linkedin.com/in/dmytro-hnylitskiy"
+      email: "dmitrijgnilickij7@gmail.com",
+      telegram: "https://t.me/mokydjin",
+      github: "https://github.com/DmytroHnylytskyi",
+      linkedin: "https://github.com/DmytroHnylytskyi"
     },
     projects: {
       forma: {
         id: "forma",
-        title: "Forma-3D (3D Furniture Store & Configurator)",
-        tagline: "Interactive 3D furniture configurator & room planner",
-        description: "Full-featured 3D e-commerce store and interior planner with dynamic texture swapping, materials, custom dimensions, grid placement, and spatial physics.",
-        tags: ["Three.js", "React Three Fiber", "Next.js 15", "TypeScript", "TailwindCSS", "Zustand"],
+        title: "Forma-3D (Spatial Builder & Object Configurator)",
+        tagline: "Modular 3D spatial scene builder & universal object configurator",
+        description: "Commercial-grade full-stack 3D interior & spatial room configurator for placing, stacking, and customizing any 3D assets with real-time materials swapping, surface raycasting, and async cloud synchronization.",
+        tags: ["Three.js", "React Three Fiber", "Next.js 16", "TypeScript", "FastAPI", "PostgreSQL", "Docker"],
         url: "http://localhost:3001",
-        githubUrl: "https://github.com/Dmytrossss",
-        color: "#ffffff",
+        githubUrl: "https://github.com/DmytroHnylytskyi",
+        color: "#34d399",
         features: [
-          "Modular 3D room planner with grid object positioning",
-          "Real-time material, color, wood, leather, and metal swapping",
-          "JSON export & state persistence"
+          "Raycasting Surface Snapping for automatic object positioning and height stacking",
+          "Unreal Engine 5 style freefly camera controls (RMB + WASD + Shift Speed Boost + Focus F)",
+          "Real-time sub-mesh material and color swapping (wood, leather, metal, custom hues)",
+          "Fully asynchronous backend powered by FastAPI + PostgreSQL with JWT auth and scene sync"
         ]
       },
       terrascope: {
         id: "terrascope",
-        title: "TerraScope (3D Earth & Analytics)",
-        tagline: "Interactive 3D geospatial visualization platform",
-        description: "Global satellite analytics platform with custom atmospheric GLSL shaders, orbital camera navigation, and real-time spatial marker rendering.",
-        tags: ["Three.js", "WebGL Shaders", "React", "FastAPI", "GIS Data"],
+        title: "TerraScope (3D Geospatial Intelligence)",
+        tagline: "Interactive 3D geospatial intelligence and live satellite analytics",
+        description: "Hardware-accelerated 3D planetary Earth visualization with custom atmospheric GLSL shaders, orbital navigation, and real-time live data layers locked at 60 FPS.",
+        tags: ["Three.js", "GLSL Shaders", "Next.js 16", "FastAPI", "Zustand 5", "Docker"],
         url: "http://localhost:3002",
-        githubUrl: "https://github.com/Dmytrossss",
-        color: "#ffffff",
+        githubUrl: "https://github.com/DmytroHnylytskyi",
+        color: "#60a5fa",
         features: [
-          "Photorealistic 3D Earth globe with procedural atmosphere",
-          "Smooth orbital camera navigation & zoom",
-          "Geospatial data layer visualization"
+          "Custom GLSL Day/Night Terminator shader with dynamic solar computation and Fresnel atmosphere glow",
+          "GPU-instanced data layers: USGS earthquakes, OpenSky live flights, Open-Meteo weather, and NASA NEOs",
+          "Cache stampede protection on FastAPI backend via asyncio.Lock for high-throughput caching"
         ]
       },
       lumina: {
         id: "lumina",
-        title: "Lumina (MiniLMS Learning Platform)",
-        tagline: "Modern e-learning and student management platform",
-        description: "Comprehensive distance learning platform featuring interactive course authoring, automated testing, student analytics, and modular curricula.",
-        tags: ["Next.js 15", "TypeScript", "PostgreSQL", "Prisma", "TailwindCSS"],
+        title: "Lumina (Full-Stack LMS Learning Platform)",
+        tagline: "Modern asynchronous e-learning and student management platform",
+        description: "Comprehensive educational platform featuring interactive course authoring, automated testing, homework submission pipelines, and visual progress analytics.",
+        tags: ["React 19", "Vite", "TanStack Query v5", "FastAPI", "PostgreSQL", "TailwindCSS"],
         url: "http://localhost:3003",
-        githubUrl: "https://github.com/Dmytrossss",
-        color: "#ffffff",
+        githubUrl: "https://github.com/DmytroHnylytskyi",
+        color: "#fb7185",
         features: [
-          "Modular course and lesson management",
-          "Automated grading and analytics progress tracker",
-          "Responsive, ultra-fast interface"
+          "Optimistic UI and instant client state caching via TanStack Query v5",
+          "Role-based access (Student / Teacher) with JWT rotation and rate limiting",
+          "Interactive lesson media player supporting video, PDF, Google Drive, and Cloudinary CDN",
+          "Visual student progress curves and study schedules powered by Recharts"
         ]
       }
     }
@@ -178,7 +332,7 @@ export const translations: Record<Locale, Translations> = {
       mode3DDesc: "Досліджуйте 3D-острів, керуйте персонажем та взаємодійте з порталами проєктів та статуями знань.",
       mode3DBtn: "Увійти в 3D світ",
       modeClassicTitle: "Класичне Резюме",
-      modeClassicDesc: "Швидкий та зручний формат звичного лендінгу з детальним описом досвіду, технологічного стеку та проєктів.",
+      modeClassicDesc: "Швидкий та зручний формат звичного лендінгу з детальним описом досвіду, освіти, сертифікатів та проєктів.",
       modeClassicBtn: "Читати як Резюме",
       selectLanguage: "Мова / Language"
     },
@@ -189,20 +343,24 @@ export const translations: Record<Locale, Translations> = {
     },
     landing: {
       heroGreeting: "Привіт, я",
-      availableForWork: "Відкритий до нових пропозицій",
+      availableForWork: "100% Remote • Відкритий до пропозицій",
       contactMe: "Зв'язатися",
       viewIn3D: "Відкрити в 3D",
       aboutTitle: "Про мене",
-      aboutSubtitle: "Досвід, підхід до розробки та ключові компетенції",
+      aboutSubtitle: "Інженерний підхід, архітектура та ключові компетенції",
+      educationTitle: "Освіта & Академічний бекграунд",
+      educationSubtitle: "Профільна вища інженерна освіта",
+      certificationsTitle: "Підтверджені Сертифікації",
+      certificationsSubtitle: "Міжнародні та технічні оцінки кваліфікації (HackerRank & EF SET)",
       skillsTitle: "Стек & Навички",
-      skillsSubtitle: "Технології та інструменти, з якими я працюю щодня",
+      skillsSubtitle: "Технології та інструменти, з якими я будую щодня",
       projectsTitle: "Вибрані Проєкти",
-      projectsSubtitle: "Реальні комерційні та інженерні рішення",
-      keyFeatures: "Ключові можливості:",
+      projectsSubtitle: "Реальні full-stack та 3D-інженерні рішення",
+      keyFeatures: "Ключові архітектурні фічі:",
       liveDemo: "Переглянути проєкт",
       sourceCode: "Вихідний код",
       contactsTitle: "Контакти",
-      contactsSubtitle: "Готовий до обговорення нових викликів та співпраці",
+      contactsSubtitle: "Завжди відкритий до цікавих віддалених проєктів та пропозицій",
       copyEmail: "Скопіювати Email",
       copied: "Скопійовано!",
       openLink: "Відкрити",
@@ -210,10 +368,17 @@ export const translations: Record<Locale, Translations> = {
     },
     modals: {
       close: "Закрити",
-      biography: "Біографія та досвід",
-      skillsAndTech: "Стек та технології",
-      contactsAndSocial: "Контакти та соціальні мережі",
-      visitSite: "Відвідати сайт"
+      biography: "Біографія та Інженерний Досвід",
+      skillsAndTech: "Стек технологій & Сертифікати",
+      contactsAndSocial: "Контакти та Зв'язок",
+      education: "Освіта",
+      certifications: "Сертифікації",
+      projectDetails: "Деталі Проєкту",
+      visitSite: "Відвідати сайт",
+      viewDemo: "Live Demo",
+      viewCode: "GitHub Репозиторій",
+      copySuccess: "Скопійовано в буфер!",
+      statusLabel: "Статус доступності"
     },
     interaction: {
       actionKey: "E",
@@ -238,13 +403,13 @@ export const translations: Record<Locale, Translations> = {
     },
     welcome: {
       title: "Welcome to Aetheria",
-      subtitle: "Interactive 3D Portfolio & Resume of Dmytro Hnylitskiy",
+      subtitle: "Interactive 3D Portfolio & Resume of Dmytro Hnylytskyi",
       chooseMode: "Choose your preferred viewing experience:",
       mode3DTitle: "Interactive 3D World",
       mode3DDesc: "Explore the 3D island, control your character, and interact with project portals and skill altars.",
       mode3DBtn: "Enter 3D World",
       modeClassicTitle: "Classic Resume",
-      modeClassicDesc: "Fast and structured web landing page with complete overview of experience, tech stack, and projects.",
+      modeClassicDesc: "Fast and structured web landing page with complete overview of experience, education, certificates, and projects.",
       modeClassicBtn: "Read Classic Resume",
       selectLanguage: "Language / Мова"
     },
@@ -255,20 +420,24 @@ export const translations: Record<Locale, Translations> = {
     },
     landing: {
       heroGreeting: "Hello, I am",
-      availableForWork: "Available for new opportunities",
+      availableForWork: "100% Remote • Open to Opportunities",
       contactMe: "Get in Touch",
       viewIn3D: "Explore in 3D",
       aboutTitle: "About Me",
-      aboutSubtitle: "Background, engineering philosophy, and core focus",
+      aboutSubtitle: "Engineering philosophy, architecture, and core focus",
+      educationTitle: "Education & Academic Background",
+      educationSubtitle: "Formal software engineering higher education",
+      certificationsTitle: "Verified Certifications",
+      certificationsSubtitle: "International & technical skill assessments (HackerRank & EF SET)",
       skillsTitle: "Tech Stack & Skills",
       skillsSubtitle: "Technologies and tools I use on a daily basis",
       projectsTitle: "Featured Projects",
-      projectsSubtitle: "Real-world commercial and engineering applications",
+      projectsSubtitle: "Real-world full-stack & 3D engineering applications",
       keyFeatures: "Key Highlights:",
       liveDemo: "View Project",
       sourceCode: "Source Code",
       contactsTitle: "Contact & Links",
-      contactsSubtitle: "Always open to exciting projects and engineering collaborations",
+      contactsSubtitle: "Always open to exciting remote roles & engineering collaborations",
       copyEmail: "Copy Email",
       copied: "Copied!",
       openLink: "Open Link",
@@ -277,9 +446,16 @@ export const translations: Record<Locale, Translations> = {
     modals: {
       close: "Close",
       biography: "Biography & Background",
-      skillsAndTech: "Skills & Technologies",
-      contactsAndSocial: "Contacts & Social Links",
-      visitSite: "Visit Website"
+      skillsAndTech: "Skills & Verified Credentials",
+      contactsAndSocial: "Contacts & Direct Reach",
+      education: "Education",
+      certifications: "Certifications",
+      projectDetails: "Project Details",
+      visitSite: "Visit Website",
+      viewDemo: "Live Demo",
+      viewCode: "Source Code",
+      copySuccess: "Copied to clipboard!",
+      statusLabel: "Current Availability"
     },
     interaction: {
       actionKey: "E",

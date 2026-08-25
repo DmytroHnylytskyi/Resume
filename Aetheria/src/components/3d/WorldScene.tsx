@@ -351,12 +351,11 @@ function ProximityManager({
 }: {
   playerPosRef?: React.MutableRefObject<THREE.Vector3 | null>;
 }): null {
-  const { setActiveModal, setInteractionPrompt, language } = useGameStore();
+  const { setActiveModal, setSelectedProject, setInteractionPrompt, language } = useGameStore();
   const currentPromptTitleRef = useRef<string | null>(null);
 
   const targets = useMemo<InteractiveTarget[]>(() => {
     const t = translations[language].interaction;
-    const profile = developerProfiles[language];
 
     return [
       {
@@ -385,33 +384,24 @@ function ProximityManager({
         title: t.portalForma,
         position: [0, 0.5, -16],
         radiusSq: 20.0,
-        action: () => {
-          const p = profile.projects.forma;
-          if (p?.url) window.open(p.url, '_blank');
-        }
+        action: () => setSelectedProject('forma')
       },
       {
         id: 'portal-terrascope',
         title: t.portalTerrascope,
         position: [-16, 0.5, -8.5],
         radiusSq: 20.0,
-        action: () => {
-          const p = profile.projects.terrascope;
-          if (p?.url) window.open(p.url, '_blank');
-        }
+        action: () => setSelectedProject('terrascope')
       },
       {
         id: 'portal-lumina',
         title: t.portalLumina,
         position: [16, 0.5, -8],
         radiusSq: 20.0,
-        action: () => {
-          const p = profile.projects.lumina;
-          if (p?.url) window.open(p.url, '_blank');
-        }
+        action: () => setSelectedProject('lumina')
       }
     ];
-  }, [setActiveModal, language]);
+  }, [setActiveModal, setSelectedProject, language]);
 
   useFrame(() => {
     if (!playerPosRef || !playerPosRef.current) return;

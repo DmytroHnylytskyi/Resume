@@ -1155,78 +1155,163 @@ html, body {
   color: var(--text-muted);
 }
 
-/* ── 3D Modals Styling (Bio, Skills, Contacts) ── */
+/* ── 3D & Web Modals (Obsidian Cyber-Glass Architecture) ── */
 .modal-backdrop-blur {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 400;
+  z-index: 500;
   padding: 20px;
-  animation: fade-in 0.25s ease;
+  animation: modal-fade-in 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 [data-theme='light'] .modal-backdrop-blur {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(240, 240, 245, 0.88);
 }
 
-.resume-modal-card {
+@keyframes modal-fade-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(0.85); }
+}
+
+.resume-modal-card.obsidian-modal {
   width: 100%;
-  max-width: 580px;
-  max-height: 85vh;
-  overflow-y: auto;
-  border-radius: 24px;
-  padding: 28px;
+  max-width: 640px;
+  max-height: 88vh;
+  position: relative;
+  overflow: hidden;
+  border-radius: 26px;
+  padding: 28px 30px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
+  background: rgba(13, 13, 16, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.92), 0 0 1px rgba(255, 255, 255, 0.3);
 }
 
+[data-theme='light'] .resume-modal-card.obsidian-modal {
+  background: rgba(255, 255, 255, 0.97);
+  border-color: rgba(0, 0, 0, 0.12);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.14), 0 0 1px rgba(0, 0, 0, 0.2);
+}
+
+/* Ambient Top Accent Lines */
+.modal-accent-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 10;
+}
+
+.modal-accent-line.gold {
+  background: linear-gradient(90deg, transparent 5%, #fbbf24 50%, transparent 95%);
+}
+
+.modal-accent-line.violet {
+  background: linear-gradient(90deg, transparent 5%, #c084fc 50%, transparent 95%);
+}
+
+.modal-accent-line.cyan {
+  background: linear-gradient(90deg, transparent 5%, #38bdf8 50%, transparent 95%);
+}
+
+.modal-accent-line.emerald {
+  background: linear-gradient(90deg, transparent 5%, #34d399 50%, transparent 95%);
+}
+
+.modal-accent-line.sapphire {
+  background: linear-gradient(90deg, transparent 5%, #60a5fa 50%, transparent 95%);
+}
+
+.modal-accent-line.coral {
+  background: linear-gradient(90deg, transparent 5%, #fb7185 50%, transparent 95%);
+}
+
+.modal-accent-line.multi-gradient {
+  background: linear-gradient(90deg, #fbbf24, #c084fc, #38bdf8, #34d399);
+}
+
+/* Modal Header */
 .modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--border-subtle);
   padding-bottom: 16px;
+  gap: 14px;
 }
 
 .modal-badge-group {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
+  flex: 1;
 }
 
 .modal-badge-icon {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--badge-bg);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-primary);
+  flex-shrink: 0;
+}
+
+.gold-badge {
+  background: rgba(251, 191, 36, 0.14);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.violet-badge {
+  background: rgba(192, 132, 252, 0.14);
+  color: #c084fc;
+  border: 1px solid rgba(192, 132, 252, 0.3);
+}
+
+.cyan-badge {
+  background: rgba(56, 189, 248, 0.14);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.emerald-badge {
+  background: rgba(52, 211, 153, 0.14);
+  color: #34d399;
+  border: 1px solid rgba(52, 211, 153, 0.3);
 }
 
 .modal-title {
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 19px;
+  font-weight: 800;
   color: var(--text-primary);
+  letter-spacing: -0.2px;
 }
 
 .modal-subtitle {
   font-size: 12.5px;
   color: var(--text-secondary);
+  margin-top: 2px;
 }
 
 .modal-close-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
   background: var(--badge-bg);
   border: 1px solid var(--border-subtle);
   color: var(--text-secondary);
@@ -1235,175 +1320,885 @@ html, body {
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
 .modal-close-btn:hover {
   background: var(--bg-card-hover);
   color: var(--text-primary);
+  transform: scale(1.05);
 }
 
+/* Modal Body & Custom Scrollbar */
 .modal-body {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
-.bio-location-tag {
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 4px;
+}
+
+/* Tags & Status Row */
+.modal-tags-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.modal-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  background: rgba(52, 211, 153, 0.12);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  color: #34d399;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.live-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #34d399;
+  display: inline-block;
+}
+
+.live-status-dot.pulse {
+  box-shadow: 0 0 8px #34d399;
+  animation: pulseGlow 1.8s infinite;
+}
+
+.modal-meta-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
-  color: var(--text-secondary);
+  padding: 5px 12px;
+  border-radius: 20px;
   background: var(--badge-bg);
   border: 1px solid var(--border-subtle);
-  padding: 4px 10px;
-  border-radius: 10px;
-  width: fit-content;
+  color: var(--text-secondary);
+  font-size: 11.5px;
+  font-weight: 600;
 }
 
-.bio-main-text {
-  font-size: 14px;
+.modal-bio-quote {
+  padding: 14px 18px;
+  border-radius: 16px;
+  background: var(--badge-bg);
+  border-left: 3px solid #fbbf24;
+  border-top: 1px solid var(--border-subtle);
+  border-right: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 13.5px;
   line-height: 1.6;
   color: var(--text-primary);
-  opacity: 0.9;
 }
 
-.modal-section-title {
-  font-size: 14.5px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-top: 4px;
-}
-
-.bio-summary-list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.bio-summary-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  font-size: 13px;
-  color: var(--text-secondary);
-  line-height: 1.45;
-}
-
-.bullet-sparkle {
-  color: var(--text-primary);
-  margin-top: 3px;
-  flex-shrink: 0;
-  opacity: 0.7;
-}
-
-/* Skills Modal Specific */
-.skills-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.skill-category-card {
+/* Education Subcard */
+.modal-subcard.education-card {
+  padding: 16px 18px;
+  border-radius: 18px;
   background: var(--badge-bg);
   border: 1px solid var(--border-subtle);
-  border-radius: 14px;
-  padding: 14px;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.skill-category-title {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.skill-tags-wrap {
+.subcard-header {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.skill-tag-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 11.5px;
-  padding: 4px 10px;
+.subcard-icon-box {
+  width: 32px;
+  height: 32px;
   border-radius: 10px;
-  background: var(--badge-bg);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-primary);
-}
-
-.skill-check-icon {
-  color: var(--text-primary);
-  opacity: 0.8;
-}
-
-/* Contacts Modal Specific */
-.contacts-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.contact-card-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  border-radius: 14px;
-  background: var(--badge-bg);
-  border: 1px solid var(--border-subtle);
-  text-decoration: none;
-  color: var(--text-primary);
-  transition: all 0.2s ease;
-}
-
-.contact-card-item:hover {
-  background: var(--bg-card-hover);
-  border-color: var(--border-strong);
-}
-
-.contact-icon-box {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  background: var(--badge-bg);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-primary);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.contact-text-box {
+.subcard-icon-box.gold {
+  background: rgba(251, 191, 36, 0.14);
+  color: #fbbf24;
+}
+
+.subcard-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.subcard-period {
+  font-size: 11.5px;
+  color: #fbbf24;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+}
+
+.education-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.edu-institution {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.edu-faculty {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.edu-specialty-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* Highlights Block */
+.modal-highlights-block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.section-sparkle-icon.gold { color: #fbbf24; }
+.section-sparkle-icon.violet { color: #c084fc; }
+.section-sparkle-icon.cyan { color: #38bdf8; }
+.section-sparkle-icon.emerald { color: #34d399; }
+.section-sparkle-icon.sapphire { color: #60a5fa; }
+.section-sparkle-icon.coral { color: #fb7185; }
+
+.highlights-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.highlight-item-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--badge-bg);
+  border: 1px solid var(--border-subtle);
+  transition: all 0.2s ease;
+}
+
+.highlight-item-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-strong);
+}
+
+.highlight-index-badge {
+  font-size: 11px;
+  font-weight: 800;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.12);
+  padding: 2px 7px;
+  border-radius: 6px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.highlight-text {
+  font-size: 12.8px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* Modal Footer Actions */
+.modal-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 16px;
+}
+
+.modal-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px 18px;
+  border-radius: 14px;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  flex: 1;
+}
+
+.modal-action-btn.primary {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  border: none;
+}
+
+.modal-action-btn.primary:hover {
+  background: var(--btn-primary-hover);
+  transform: translateY(-1px);
+}
+
+.modal-action-btn.secondary {
+  background: var(--badge-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+}
+
+.modal-action-btn.secondary:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-strong);
+  transform: translateY(-1px);
+}
+
+/* ── Modal Tabs (Skills / Certifications) ── */
+.modal-tabs-bar {
+  display: flex;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 16px;
+  background: var(--badge-bg);
+  border: 1px solid var(--border-subtle);
+}
+
+.modal-tab-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 12px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.modal-tab-btn.active {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+.tab-count-badge {
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.modal-tab-btn.active .tab-count-badge {
+  background: rgba(0, 0, 0, 0.18);
+}
+
+/* Modern Skills Grid */
+.skills-grid-modern {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skill-category-box {
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: var(--badge-bg);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skill-category-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.category-icon-wrapper {
+  color: #c084fc;
+}
+
+.skill-category-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.skill-tags-modern-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.skill-tag-pill-modern {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 10px;
+  background: var(--badge-bg);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  transition: all 0.15s ease;
+}
+
+.skill-tag-pill-modern:hover {
+  border-color: rgba(192, 132, 252, 0.4);
+  background: var(--bg-card-hover);
+  transform: translateY(-1px);
+}
+
+.skill-check-bullet {
+  color: #c084fc;
+}
+
+/* Modern Certifications Grid */
+.certifications-grid-modern {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.certifications-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(192, 132, 252, 0.08);
+  border: 1px solid rgba(192, 132, 252, 0.25);
+}
+
+.cert-banner-icon {
+  color: #c084fc;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.cert-banner-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.cert-banner-desc {
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin-top: 2px;
+}
+
+.cert-cards-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+@media (max-width: 600px) {
+  .cert-cards-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cert-item-card {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--badge-bg);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.cert-item-card:hover {
+  background: var(--bg-card-hover);
+  border-color: rgba(192, 132, 252, 0.35);
+  transform: translateY(-2px);
+}
+
+.cert-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cert-issuer-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #c084fc;
+  background: rgba(192, 132, 252, 0.12);
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+
+.cert-level-badge {
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+
+.cert-item-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.35;
+}
+
+.cert-footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.cert-verified-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10.5px;
+  color: #34d399;
+  font-weight: 600;
+}
+
+.cert-category-tag {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── Contacts Modal Stack ── */
+.contacts-status-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: var(--badge-bg);
+  border: 1px solid var(--border-subtle);
+}
+
+.status-live-indicator {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #34d399;
+}
+
+.contacts-timezone-pill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.contacts-cards-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.contact-card-modern {
+  display: flex;
+  align-items: center;
+  border-radius: 16px;
+  background: var(--badge-bg);
+  border: 1px solid var(--border-subtle);
+  transition: all 0.2s ease;
+  overflow: hidden;
+}
+
+.contact-card-modern:hover {
+  background: var(--bg-card-hover);
+  border-color: rgba(56, 189, 248, 0.35);
+  transform: translateY(-2px);
+}
+
+.contact-card-modern.highlight {
+  border-color: rgba(56, 189, 248, 0.25);
+  background: rgba(56, 189, 248, 0.04);
+}
+
+.contact-card-main-link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  flex: 1;
+  text-decoration: none;
+  color: var(--text-primary);
+}
+
+.contact-icon-box-modern {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.contact-icon-box-modern.tg {
+  background: rgba(0, 136, 204, 0.15);
+  color: #38bdf8;
+}
+
+.contact-icon-box-modern.email {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+}
+
+.contact-icon-box-modern.gh {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+.contact-info-block {
   display: flex;
   flex-direction: column;
   gap: 2px;
   flex: 1;
 }
 
-.contact-label {
+.contact-role-label {
   font-size: 11px;
-  color: var(--text-secondary);
-}
-
-.contact-value {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.contact-arrow-icon {
   color: var(--text-muted);
 }
 
-/* Responsive adjustments */
+.contact-primary-text {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.contact-link-arrow {
+  color: var(--text-muted);
+  transition: transform 0.2s ease;
+}
+
+.contact-card-modern:hover .contact-link-arrow {
+  color: var(--text-primary);
+  transform: translateX(2px);
+}
+
+.contact-quick-copy-btn {
+  padding: 0 16px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-left: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.contact-quick-copy-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+}
+
+.copied-icon {
+  color: #34d399;
+}
+
+/* ── Project Details Modal Styling ── */
+.project-modal-card {
+  max-width: 680px !important;
+}
+
+.project-modal-pill-tag {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  display: block;
+}
+
+.project-modal-desc-box {
+  padding: 14px 18px;
+  border-radius: 16px;
+  background: var(--badge-bg);
+  border: 1px solid var(--border-subtle);
+}
+
+.project-modal-desc-text {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--text-primary);
+}
+
+.project-modal-features-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.project-modal-features-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.project-feature-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--badge-bg);
+  border: 1px solid var(--border-subtle);
+}
+
+.feature-dot-accent {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+
+.feature-dot-accent.emerald { background: #34d399; box-shadow: 0 0 6px #34d399; }
+.feature-dot-accent.sapphire { background: #60a5fa; box-shadow: 0 0 6px #60a5fa; }
+.feature-dot-accent.coral { background: #fb7185; box-shadow: 0 0 6px #fb7185; }
+
+.feature-card-text {
+  font-size: 12.8px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+.project-modal-stack-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.project-tags-modal-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.project-modal-tech-tag {
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 10px;
+  background: var(--badge-bg);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+}
+
+.project-modal-footer {
+  display: flex;
+  gap: 10px;
+}
+
+/* ── Classic Landing: Education & Certifications Styles ── */
+.education-classic-card {
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.education-classic-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.edu-icon-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: var(--badge-bg);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+}
+
+.edu-header-text {
+  flex: 1;
+}
+
+.edu-classic-institution {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.edu-classic-faculty {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.edu-period-badge {
+  font-size: 12px;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  padding: 4px 12px;
+  border-radius: 12px;
+  background: var(--badge-bg);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+}
+
+.edu-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.edu-spec-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.edu-status-tag {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.certifications-classic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+.cert-classic-card {
+  border-radius: 18px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.cert-classic-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-strong);
+}
+
+.cert-classic-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cert-classic-issuer {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 8px;
+  background: var(--badge-bg);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+}
+
+.cert-classic-level {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.cert-classic-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.cert-classic-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 4px;
+}
+
+.cert-verified-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: #34d399;
+  font-weight: 600;
+}
+
+.cert-category-label {
+  font-size: 10.5px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── Responsive adjustments ── */
 @media (max-width: 768px) {
   .island-top-bar {
     top: 10px;
@@ -1439,5 +2234,15 @@ html, body {
 
   .hero-role {
     font-size: 18px;
+  }
+
+  .resume-modal-card.obsidian-modal {
+    padding: 22px 18px;
+    width: 95%;
+  }
+
+  .modal-action-btn {
+    padding: 9px 12px;
+    font-size: 11.5px;
   }
 }

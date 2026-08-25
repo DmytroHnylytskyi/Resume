@@ -12,12 +12,34 @@ export interface ProjectItem {
   features: string[];
 }
 
+export interface EducationItem {
+  institution: string;
+  faculty: string;
+  specialty: string;
+  degree: string;
+  period: string;
+  status: string;
+  location: string;
+}
+
+export interface CertificationItem {
+  id: string;
+  title: string;
+  issuer: string;
+  level?: string;
+  category: string;
+  verified: boolean;
+}
+
 export interface DeveloperProfile {
   name: string;
   role: string;
   location: string;
+  status: string;
   bio: string;
   summary: string[];
+  education: EducationItem[];
+  certifications: CertificationItem[];
   skills: {
     category: string;
     items: string[];
@@ -26,7 +48,7 @@ export interface DeveloperProfile {
     email: string;
     telegram: string;
     github: string;
-    linkedin: string;
+    linkedin?: string;
   };
   projects: Record<string, ProjectItem>;
 }
@@ -65,6 +87,10 @@ export interface Translations {
     viewIn3D: string;
     aboutTitle: string;
     aboutSubtitle: string;
+    educationTitle: string;
+    educationSubtitle: string;
+    certificationsTitle: string;
+    certificationsSubtitle: string;
     skillsTitle: string;
     skillsSubtitle: string;
     projectsTitle: string;
@@ -84,7 +110,14 @@ export interface Translations {
     biography: string;
     skillsAndTech: string;
     contactsAndSocial: string;
+    education: string;
+    certifications: string;
+    projectDetails: string;
     visitSite: string;
+    viewDemo: string;
+    viewCode: string;
+    copySuccess: string;
+    statusLabel: string;
   };
   interaction: {
     actionKey: string;

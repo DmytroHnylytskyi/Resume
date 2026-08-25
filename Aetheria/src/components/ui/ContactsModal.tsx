@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useGameStore } from '../../store/useGameStore';
 import { developerProfiles, translations } from '../../data/resumeData';
-import { X, Share2, Mail, Send, ExternalLink, Globe } from 'lucide-react';
+import { X, Share2, Mail, Send, ExternalLink, Copy, Check, Clock, Globe } from 'lucide-react';
 
 function GithubIcon({ size = 18 }: { size?: number }) {
   return (
@@ -14,66 +14,58 @@ function GithubIcon({ size = 18 }: { size?: number }) {
   );
 }
 
-function LinkedinIcon({ size = 18 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-      <rect width="4" height="12" x="2" y="9" />
-      <circle cx="4" cy="4" r="2" />
-    </svg>
-  );
-}
-
 export default function ContactsModal(): React.ReactElement | null {
   const { activeModal, setActiveModal, language } = useGameStore();
+  const [copiedEmail, setCopiedEmail] = useState(false);
+  const [copiedTg, setCopiedTg] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && activeModal === 'contacts') {
+        setActiveModal(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeModal, setActiveModal]);
+
   if (activeModal !== 'contacts') return null;
 
   const profile = developerProfiles[language];
   const t = translations[language].modals;
 
-  const contactsList = [
-    {
-      label: 'Email',
-      value: profile.contacts.email,
-      href: `mailto:${profile.contacts.email}`,
-      icon: Mail,
-      color: '#38bdf8'
-    },
-    {
-      label: 'Telegram',
-      value: '@dmytrossss',
-      href: profile.contacts.telegram,
-      icon: Send,
-      color: '#0088cc'
-    },
-    {
-      label: 'GitHub',
-      value: 'github.com/Dmytrossss',
-      href: profile.contacts.github,
-      icon: GithubIcon,
-      color: '#f8fafc'
-    },
-    {
-      label: 'LinkedIn',
-      value: 'linkedin.com/in/dmytro-hnylitskiy',
-      href: profile.contacts.linkedin,
-      icon: LinkedinIcon,
-      color: '#0a66c2'
-    }
-  ];
+  const handleCopyEmail = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigator.clipboard.writeText(profile.contacts.email);
+    setCopiedEmail(true);
+    setTimeout(() => setCopiedEmail(false), 2200);
+  };
+
+  const handleCopyTg = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigator.clipboard.writeText('@mokydjin');
+    setCopiedTg(true);
+    setTimeout(() => setCopiedTg(false), 2200);
+  };
 
   return (
     <div className="modal-backdrop-blur" onClick={() => setActiveModal(null)}>
-      <div className="resume-modal-card glass-panel" onClick={(e) => e.stopPropagation()}>
+      <div className="resume-modal-card obsidian-modal glass-panel" onClick={(e) => e.stopPropagation()}>
+        {/* Ambient Top Glow Line */}
+        <div className="modal-accent-line cyan" />
+
+        {/* Modal Header */}
         <div className="modal-header">
           <div className="modal-badge-group">
-            <div className="modal-badge-icon" style={{ backgroundColor: 'rgba(52, 211, 153, 0.15)', color: '#34d399' }}>
-              <Share2 size={18} />
+            <div className="modal-badge-icon cyan-badge">
+              <Share2 size={20} />
             </div>
             <div>
               <h2 className="modal-title">{t.contactsAndSocial}</h2>
               <p className="modal-subtitle">
-                {language === 'uk' ? 'Відкритий до нових пропозицій та проєктів' : 'Open to exciting roles & collaborations'}
+                {language === 'uk' ? 'Прямий зв\'язок та відкритість до співпраці' : 'Direct reach & open to new opportunities'}
               </p>
             </div>
           </div>
@@ -82,32 +74,94 @@ export default function ContactsModal(): React.ReactElement | null {
           </button>
         </div>
 
-        <div className="modal-body">
-          <div className="contacts-list">
-            {contactsList.map((c, idx) => {
-              const IconComponent = c.icon;
-              return (
-                <a
-                  key={idx}
-                  href={c.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="contact-card-item"
-                >
-                  <div className="contact-icon-box" style={{ color: c.color }}>
-                    <IconComponent size={18} />
-                  </div>
-                  <div className="contact-text-box">
-                    <span className="contact-label">{c.label}</span>
-                    <span className="contact-value">{c.value}</span>
-                  </div>
-                  <ExternalLink size={15} className="contact-arrow-icon" />
-                </a>
-              );
-            })}
+        {/* Modal Body */}
+        <div className="modal-body custom-scrollbar">
+          {/* Status Badge */}
+          <div className="contacts-status-banner">
+            <div className="status-live-indicator">
+              <span className="live-status-dot pulse" />
+              <span className="status-text">{profile.status}</span>
+            </div>
+            <div className="contacts-timezone-pill">
+              <Clock size={13} />
+              <span>Kyiv (UTC+2 / UTC+3)</span>
+            </div>
+          </div>
+
+          {/* Contacts Interactive Cards */}
+          <div className="contacts-cards-stack">
+            {/* Telegram Card */}
+            <div className="contact-card-modern highlight">
+              <a
+                href={profile.contacts.telegram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="contact-card-main-link"
+              >
+                <div className="contact-icon-box-modern tg">
+                  <Send size={20} />
+                </div>
+                <div className="contact-info-block">
+                  <span className="contact-role-label">Telegram (Швидка відповідь / Primary)</span>
+                  <span className="contact-primary-text">@mokydjin</span>
+                </div>
+                <ExternalLink size={16} className="contact-link-arrow" />
+              </a>
+              <button
+                className="contact-quick-copy-btn"
+                onClick={handleCopyTg}
+                title="Скопіювати @mokydjin"
+              >
+                {copiedTg ? <Check size={14} className="copied-icon" /> : <Copy size={14} />}
+              </button>
+            </div>
+
+            {/* Email Card */}
+            <div className="contact-card-modern">
+              <a
+                href={`mailto:${profile.contacts.email}`}
+                className="contact-card-main-link"
+              >
+                <div className="contact-icon-box-modern email">
+                  <Mail size={20} />
+                </div>
+                <div className="contact-info-block">
+                  <span className="contact-role-label">Email (Офіційні пропозиції)</span>
+                  <span className="contact-primary-text">{profile.contacts.email}</span>
+                </div>
+                <ExternalLink size={16} className="contact-link-arrow" />
+              </a>
+              <button
+                className="contact-quick-copy-btn"
+                onClick={handleCopyEmail}
+                title="Скопіювати Email"
+              >
+                {copiedEmail ? <Check size={14} className="copied-icon" /> : <Copy size={14} />}
+              </button>
+            </div>
+
+            {/* GitHub Card */}
+            <div className="contact-card-modern">
+              <a
+                href={profile.contacts.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="contact-card-main-link"
+              >
+                <div className="contact-icon-box-modern gh">
+                  <GithubIcon size={20} />
+                </div>
+                <div className="contact-info-block">
+                  <span className="contact-role-label">GitHub (Вихідний код та репозиторії)</span>
+                  <span className="contact-primary-text">github.com/DmytroHnylytskyi</span>
+                </div>
+                <ExternalLink size={16} className="contact-link-arrow" />
+              </a>
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
 }
+

@@ -3,8 +3,7 @@
 import React from 'react';
 import { useGameStore } from '../../store/useGameStore';
 import { translations, developerProfiles } from '../../data/resumeData';
-import { Compass, FileText, Globe, ArrowRight, Sun, Moon } from 'lucide-react';
-import { Locale } from '../../types/portfolio';
+import { Compass, FileText, Globe, ArrowRight, Sun, Moon, Sparkles } from 'lucide-react';
 
 export default function WelcomeModal(): React.ReactElement | null {
   const {
@@ -34,7 +33,10 @@ export default function WelcomeModal(): React.ReactElement | null {
 
   return (
     <div className="welcome-modal-backdrop">
-      <div className="welcome-modal-card glass-panel">
+      <div className="welcome-modal-card obsidian-modal glass-panel">
+        {/* Ambient Top Glow Line */}
+        <div className="modal-accent-line multi-gradient" />
+
         {/* Language & Theme selector in top corner */}
         <div className="welcome-lang-bar">
           <div className="welcome-lang-label">
@@ -70,7 +72,7 @@ export default function WelcomeModal(): React.ReactElement | null {
         <div className="welcome-header">
           <div className="welcome-brand-badge">
             <div className="brand-dot" />
-            <span>{profile.name}</span>
+            <span>{profile.name} • {profile.role}</span>
           </div>
           <h1 className="welcome-title">{t.title}</h1>
           <p className="welcome-subtitle">{t.subtitle}</p>
@@ -82,11 +84,11 @@ export default function WelcomeModal(): React.ReactElement | null {
         <div className="welcome-cards-grid">
           {/* 3D World Card */}
           <div className="mode-selection-card primary" onClick={handleSelect3D}>
-            <div className="mode-card-icon-box">
+            <div className="mode-card-icon-box gold">
               <Compass size={24} />
             </div>
             <div className="mode-card-body">
-              <div className="mode-card-tag">Interactive</div>
+              <div className="mode-card-tag">Interactive 3D Engine</div>
               <h3 className="mode-card-title">{t.mode3DTitle}</h3>
               <p className="mode-card-desc">{t.mode3DDesc}</p>
             </div>
@@ -116,3 +118,4 @@ export default function WelcomeModal(): React.ReactElement | null {
     </div>
   );
 }
+
