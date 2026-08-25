@@ -1,4 +1,4 @@
-# 3D Furniture Store — Frontend Architecture & Guide
+# Forma-3D — Frontend Architecture & Guide
 
 > **Interactive 3D Interior & Architectural Configurator Frontend Application built with Next.js 16 (App Router), React 19, Three.js, and Zustand.**
 
@@ -78,7 +78,7 @@ In the `frontend` directory:
 
 - **Next.js 16.2**: Режим App Router з локалізацією через `next-intl` (`src/app/[locale]/`) та `proxy.js`.
 - **React 19.2**: Сумісні UI компоненти та Хуки.
-- **Three.js & R3F**: Рендеринг 3D WebGL сцен, авто-укладка на поверхності (Surface Snapping) та інспектування моделей.
+- **Three.js & R3F**: Рендеринг 3D WebGL сцен, авто-укладка на поверхні (Surface Snapping) та інспектування моделей.
 - **Zustand 5**: Глобальне управління станом (3D-об'єкти, трансформи, авторизація, режими освітлення, сітка magnet snap).
 - **Lucide React & Framer Motion**: Сучасний UI з ефектами матового скла (Glassmorphism), плавними переходами та чистими SVG-іконками.
 

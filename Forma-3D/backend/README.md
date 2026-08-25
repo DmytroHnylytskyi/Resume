@@ -1,4 +1,4 @@
-# 3D Furniture Store — Backend API Specification & Guide
+# Forma-3D — Backend API Specification & Guide
 
 > **FastAPI Python Backend Application for User Authentication and Cloud 3D Scene Storage.**
 
@@ -85,9 +85,9 @@ Interactive Swagger UI documentation is automatically available at: **http://loc
 
 ## 🇺🇦 Українська версія
 
-### 🛠️ Стек Технологій Бэкенду
+### 🛠️ Стек Технологій Бекенду
 
-- **FastAPI**: Вывод REST API, автогенерація Swagger та OpenAPI документації.
+- **FastAPI**: Побудова REST API, автогенерація Swagger та OpenAPI документації.
 - **SQLAlchemy**: Реляційна ORM для роботи з базами даних.
 - **SQLite**: Легковагова файлова СУБД (`sql_app.db`).
 - **Alembic**: Управління міграціями структури БД.
@@ -96,7 +96,7 @@ Interactive Swagger UI documentation is automatically available at: **http://loc
 
 ---
 
-### ⚡ Запуск та Разработка
+### ⚡ Запуск та Розробка
 
 ```bash
 cd backend
