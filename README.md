@@ -73,8 +73,4 @@ Launch all 4 projects simultaneously in development mode with one command:
 * **Email:** [dmitrijgnilickij7@gmail.com](mailto:dmitrijgnilickij7@gmail.com)
 * **GitHub:** [github.com/DmytroHnylytskyi](https://github.com/DmytroHnylytskyi)
 
----
 
-## 📄 License / Ліцензія
-
-Distributed under the **MIT License**.

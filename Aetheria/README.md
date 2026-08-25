@@ -6,7 +6,6 @@
 [![React](https://img.shields.io/badge/React-19.2-61dafb?style=for-the-badge&logo=react)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+_(Strict)-3178C6?style=for-the-badge&logo=typescript)](tsconfig.json)
 [![Three.js](https://img.shields.io/badge/Three.js-R3F-black?style=for-the-badge&logo=three.js)](https://threejs.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](#license)
 
 [**English**](#english-version) | [**Українська**](#українська-версія)
 
@@ -70,8 +69,4 @@ npm run dev
 - **🎨 Теми Оформлення:** Повноцінна підтримка темної та світлої теми на базі CSS-змінних.
 - **📜 Підтверджені Сертифікати:** Інформація про освіту (КПІ «Інженерія ПЗ») та верифіковані сертифікати HackerRank.
 
----
 
-## 📄 License / Ліцензія
-
-Distributed under the **MIT License**.

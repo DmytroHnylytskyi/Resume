@@ -7,7 +7,6 @@
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI_0.115+_(Async)-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
 [![Docker](https://img.shields.io/badge/DevOps-Docker_|_Compose-2496ED?logo=docker)](docker-compose.yml)
 [![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL_16_(asyncpg)-336791?logo=postgresql)](https://www.postgresql.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](#license)
 
 > **Forma-3D** is a commercial-grade, asynchronous full-stack 3D interior design and architectural room configurator built with **Next.js 16 (App Router)**, **React 19**, **Three.js (React Three Fiber & Drei)**, **Zustand 5**, and **FastAPI (Async SQLAlchemy 2.0)**.
 
@@ -176,8 +175,4 @@ docker compose up --build -d
 * **Документація API (Swagger):** [http://localhost:8000/docs](http://localhost:8000/docs)
 * **Перевірка стану (Health Check):** [http://localhost:8000/health](http://localhost:8000/health)
 
----
 
-## 📄 License / Ліцензія
-
-Project is distributed under MIT License.
