@@ -1,1 +1,1 @@
-# GlobeScope Backend Test Suite Package
+# TerraScope Backend Test Suite Package

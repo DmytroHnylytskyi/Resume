@@ -10,7 +10,7 @@ import { create } from 'zustand';
  */
 
 /**
- * Global Zustand application store for GlobeScope.
+ * Global Zustand application store for TerraScope.
  * Manages 3D globe data layers, active inspection selections, camera targets,
  * map display modes (day/night/dynamic/political), and user authentication state.
  */

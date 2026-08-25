@@ -1,1 +1,1 @@
-# GlobeScope App Package
+# TerraScope App Package

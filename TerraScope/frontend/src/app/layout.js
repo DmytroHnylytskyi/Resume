@@ -1,7 +1,7 @@
 /**
  * @file layout.js
- * @description Next.js 15 Root Layout shell component.
- * Sets HTML metadata, font definitions, and viewport settings for GlobeScope.
+ * @description Next.js 16 Root Layout shell component.
+ * Sets HTML metadata, font definitions, and viewport settings for TerraScope.
  */
 
 import { Inter } from "next/font/google";
