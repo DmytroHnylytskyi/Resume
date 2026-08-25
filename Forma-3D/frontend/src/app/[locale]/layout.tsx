@@ -5,7 +5,7 @@
  * Configures internationalization (`next-intl`), loads global styling rules (`globals.css`),
  * and sets SEO metadata tags.
  * 
- * @author 3D Furniture Configurator Team
+ * @author Forma-3D Team
  */
 
 import ClientI18nProvider from '../../components/ClientI18nProvider';

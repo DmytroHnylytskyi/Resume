@@ -10,7 +10,7 @@
  *    are normalized to balanced scene proportions.
  * 3. Base Orientation Alignment: Corrects axis discrepancies for models exported with non-standard coordinates.
  * 
- * @author 3D Furniture Configurator Team
+ * @author Forma-3D Team
  */
 
 import * as THREE from 'three';

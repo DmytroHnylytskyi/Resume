@@ -6,7 +6,7 @@
  * @description Modal component for displaying user account information, saving current 3D scenes to cloud DB,
  * and managing/loading saved user projects via the FastAPI backend. Supports full i18n localization.
  * 
- * @author 3D Furniture Configurator Team
+ * @author Forma-3D Team
  */
 
 import React, { useState, useEffect } from 'react';

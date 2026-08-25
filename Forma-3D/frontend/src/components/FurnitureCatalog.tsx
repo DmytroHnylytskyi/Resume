@@ -7,7 +7,7 @@
  * Features real-time bilingual text search, horizontal category scroll controls, and an interactive 3D Inspector preview box
  * that dynamically auto-scales and rotates hovered GLB models using centralized normalizeModelGeometry.
  * 
- * @author 3D Furniture Configurator Team
+ * @author Forma-3D Team
  */
 
 import { useState, useRef, Suspense, useMemo } from 'react';

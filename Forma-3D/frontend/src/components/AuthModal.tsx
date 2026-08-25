@@ -7,7 +7,7 @@
  * Interacts with FastAPI REST API endpoints (`/register`, `/token`, `/users/me/`) to authenticate users,
  * store Bearer JWT tokens, and set user profile state in Zustand. Supports full i18n localization.
  * 
- * @author 3D Furniture Configurator Team
+ * @author Forma-3D Team
  */
 
 import React, { useState } from 'react';

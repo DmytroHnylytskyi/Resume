@@ -5,7 +5,7 @@ Provides utilities for:
     - PyJWT access and refresh token encoding with HS256 algorithm and expiration windows.
     - Async FastAPI dependency get_current_user for JWT token authorization.
 
-Author: 3D Furniture Configurator Team
+Author: Forma-3D Team
 """
 
 import os

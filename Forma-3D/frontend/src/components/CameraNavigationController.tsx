@@ -7,7 +7,7 @@
  * Features smooth dampening lerp vectors for WASD flight, elevation control (Q/E), Shift speed boost,
  * and automatic bounding-box fitting (fitToBox) upon selecting objects in 3D space.
  * 
- * @author 3D Furniture Configurator Team
+ * @author Forma-3D Team
  */
 
 import { useEffect, useRef } from 'react';

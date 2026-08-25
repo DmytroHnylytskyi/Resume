@@ -8,7 +8,7 @@ Configures:
     - Core feature routers (auth, projects).
     - System health check (/health) and root discovery (/) endpoints.
 
-Author: 3D Furniture Configurator Team
+Author: Forma-3D Team
 """
 
 import os

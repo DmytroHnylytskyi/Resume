@@ -5,7 +5,7 @@ Defines:
     - UserBase, UserCreate, UserProfile, User schemas.
     - Token, TokenResponse, RefreshTokenRequest, TokenData JWT payload schemas.
 
-Author: 3D Furniture Configurator Team
+Author: Forma-3D Team
 """
 
 import json

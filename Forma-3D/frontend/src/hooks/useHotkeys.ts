@@ -8,7 +8,7 @@
  * quick rotation (R), transform mode toggles (1/2/3), and selection cancellation (Escape).
  * Automatically ignores hotkey events when text inputs or modals are focused.
  * 
- * @author 3D Furniture Configurator Team
+ * @author Forma-3D Team
  */
 
 import { useEffect } from 'react';

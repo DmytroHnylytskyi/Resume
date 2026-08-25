@@ -7,7 +7,7 @@
  * Isolates 3D scene rendering, environment presets, Unreal Engine style camera controls,
  * surface snap placement ghosts, and placed 3D objects from 2D DOM React UI re-renders (language changes, modals, search inputs).
  * 
- * @author 3D Furniture Configurator Team
+ * @author Forma-3D Team
  */
 
 import { memo, Suspense, useCallback } from 'react';

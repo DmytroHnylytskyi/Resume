@@ -6,7 +6,7 @@
  * @description Catalog item card component. Displays custom Lucide React vector icons based on model names,
  * handles hover triggers for the 3D Inspector Box, and provides a "+ Add to Scene" button.
  * 
- * @author 3D Furniture Configurator Team
+ * @author Forma-3D Team
  */
 
 import React from 'react';

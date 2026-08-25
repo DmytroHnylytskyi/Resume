@@ -7,7 +7,7 @@
  * Connects Zustand `locale` state directly to `next-intl`'s `NextIntlClientProvider`
  * allowing instantaneous 0ms language switching without tearing down the WebGL Canvas.
  * 
- * @author 3D Furniture Configurator Team
+ * @author Forma-3D Team
  */
 
 import React, { useEffect, useState } from 'react';

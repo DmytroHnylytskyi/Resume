@@ -1,12 +1,12 @@
 /**
  * @file useStore.ts
  * @module store/useStore
- * @description Centralized Zustand state management store for the 3D Furniture Configurator application.
+ * @description Centralized Zustand state management store for the Forma-3D Spatial Configurator application.
  * Manages 3D object scene hierarchy, active selection state, transform modes (Translate/Rotate/Scale),
  * interactive placement engine, custom material color mapping, daytime/nighttime atmosphere presets,
  * magnet grid snapping, localStorage auto-save, JSON project import/export, and FastAPI user authentication.
  * 
- * @author 3D Furniture Configurator Team
+ * @author Forma-3D Team
  */
 
 import { create } from 'zustand';

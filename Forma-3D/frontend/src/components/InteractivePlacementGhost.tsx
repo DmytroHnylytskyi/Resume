@@ -8,7 +8,7 @@
  * using R3F raycasting. Snaps ghost to top surface heights, applies magnet grid snapping, and commits placement on Left Click.
  * Uses centralized normalizeModelGeometry for 100% pixel-perfect pivot alignment and scale synchronization with placed objects.
  * 
- * @author 3D Furniture Configurator Team
+ * @author Forma-3D Team
  */
 
 import { useState, useEffect, useMemo, useRef } from 'react';

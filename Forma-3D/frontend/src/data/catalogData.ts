@@ -6,7 +6,7 @@ import { CatalogCategory, CatalogItem } from '../types';
  * @description Comprehensive catalog definition of all 3D furniture, structural architectural blocks,
  * portals, environment terrains, and decorative models with clean standardized naming and indexing.
  * 
- * @author 3D Furniture Configurator Team
+ * @author Forma-3D Team
  */
 
 export const catalogCategories: CatalogCategory[] = [

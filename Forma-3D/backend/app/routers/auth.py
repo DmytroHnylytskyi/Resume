@@ -6,7 +6,7 @@ Handles:
     - Token refresh rotation (/refresh)
     - Current authenticated user profile inspection (/users/me/)
 
-Author: 3D Furniture Configurator Team
+Author: Forma-3D Team
 """
 
 from fastapi import APIRouter, Depends, HTTPException, status

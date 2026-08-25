@@ -6,7 +6,7 @@ Configures:
     - Declarative ORM base class.
     - Async generator dependency get_db() for FastAPI request session context management.
 
-Author: 3D Furniture Configurator Team
+Author: Forma-3D Team
 """
 
 import os
