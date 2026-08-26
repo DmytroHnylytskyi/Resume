@@ -3,8 +3,6 @@
  * @module i18n
  * @description Internationalization configuration request helper for next-intl server.
  * Loads translation JSON message files based on current locale string ('en' or 'uk').
- * 
- * @author Forma-3D Team
  */
 
 import { getRequestConfig } from 'next-intl/server';

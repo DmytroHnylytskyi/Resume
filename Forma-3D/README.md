@@ -1,96 +1,222 @@
-# 🏛️ Forma-3D — 3D Builder & Architectural Room Configurator
+# Forma-3D: 3D Spatial Editor and Architectural Room Configurator
 
-[![CI Pipeline](https://img.shields.io/badge/CI-GitHub_Actions-blue?logo=github-actions)](.github/workflows/ci.yml)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+_(Strict)-3178C6?logo=typescript)](frontend/tsconfig.json)
-[![Next.js](https://img.shields.io/badge/Frontend-Next.js_16_|_React_19-black?logo=next.js)](https://nextjs.org/)
-[![Three.js](https://img.shields.io/badge/3D_Engine-Three.js_|_R3F-black?logo=three.js)](https://threejs.org/)
-[![FastAPI](https://img.shields.io/badge/Backend-FastAPI_0.115+_(Async)-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
-[![Docker](https://img.shields.io/badge/DevOps-Docker_|_Compose-2496ED?logo=docker)](docker-compose.yml)
-[![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL_16_(asyncpg)-336791?logo=postgresql)](https://www.postgresql.org/)
-
-> **Forma-3D** is a commercial-grade, asynchronous full-stack 3D interior design and architectural room configurator built with **Next.js 16 (App Router)**, **React 19**, **Three.js (React Three Fiber & Drei)**, **Zustand 5**, and **FastAPI (Async SQLAlchemy 2.0)**.
+Forma-3D is an asynchronous full-stack 3D interior design and architectural room configurator built with Next.js 16 (App Router), React 19, Three.js (React Three Fiber and React Three Drei), Zustand 5, and FastAPI with asynchronous SQLAlchemy 2.0.
 
 ---
 
-## 🌐 Language Options / Мовні Версії
+## Language Versions / Мовні версії
 
-- 🇬🇧 [English Version](#-english-version)
-- 🇺🇦 [Українська версія](#-українська-версія)
-
----
-
-## 🇬🇧 English Version
-
-### 📌 Overview
-
-**Forma-3D** demonstrates advanced WebGL spatial computation, real-time lighting presets, raycasting surface stacking, interactive transform gizmos, material recoloring, and asynchronous cloud synchronization for custom 3D scenes.
-
-Users can assemble architectural structures, place modular elements from a **125+ GLB asset catalog**, customize sub-mesh materials in real time, adjust atmospheric lighting (Day/Night), and export/import project configurations with seamless **Bilingual Localization (EN | UK)**.
+- [English Version](#english-version)
+- [Українська версія](#українська-версія)
 
 ---
 
-### 🚀 Key Architectural Features
+## English Version
 
-* **⚡ 100% Strict TypeScript Architecture:** Fully typed end-to-end frontend code (`strict: true`, `noUnusedLocals: true`, `noUnusedParameters: true`) with zero compilation errors.
-* **🌐 Instant 0ms Client-Side Localization:** High-performance i18n provider (`ClientI18nProvider`) updates UI dictionaries in real time without unmounting the WebGL Canvas or losing scene context.
-* **🛋️ Surface Snapping & Ghost Placement Engine:**
-  * Real-time raycasting detects top surface heights ($Y = \text{height}$) of tables, desks, walls, and roofs.
-  * Zero-rerender cursor tracking runs directly on Three.js refs in `useFrame` for solid 60 FPS performance.
-  * Interactive Ghost Duplication (`Ctrl + D`) transitions duplicates into hologram preview mode.
-* **📐 Automatic 3D Model Normalization:** Geometry bounding-box auto-centering, floor-level alignment ($Y = 0$), and scale safety validation across all 125+ models.
-* **🧹 Safe GPU Memory Management:** Automatic buffer deallocation (`geometry.dispose()`, `material.dispose()`) prevents WebGL memory leaks during dynamic scene modifications.
-* **🎮 Unreal Engine 5 Style Fly-Camera Navigation:**
-  * Freeflight camera inside and around structures holding Right Mouse Button (**RMB + WASD**).
-  * Elevation control (**Q / E**) and flight speed boost (**Shift**).
-  * Quick Camera Focus (**F**) with auto-centering on selected 3D bounding boxes.
-* **🎨 3D Graphics & Material Customization:**
-  * Day / Night atmosphere presets with dynamic point lights.
-  * Real-time sub-mesh recoloring powered by `react-colorful` with localized part names.
-* **⚡ Fully Asynchronous Backend:** Non-blocking I/O throughout the backend via **FastAPI**, **Async SQLAlchemy 2.0**, and **asyncpg / aiosqlite**.
-* **🔐 Security & Cloud Synchronization:**
-  * JWT Access + Refresh Token rotation (`/refresh`).
-  * Rate limiting via `slowapi` to prevent brute-force attacks.
-  * `X-Request-ID` correlation middleware for distributed request tracing.
+### Overview
+
+Forma-3D is a browser-based 3D scene editor running via WebGL. The application allows users to build architectural layouts, place furniture and modular structures from a catalog of 183 GLB models across 15 categories, customize sub-mesh material colors, switch lighting modes, and persist scene configurations locally and to a cloud database.
 
 ---
 
-### 🚀 Quick Start with Docker (Recommended)
+### Technology Stack
 
-Run the full stack (PostgreSQL + FastAPI + Next.js Standalone) with one command:
+#### Frontend
+- **Framework:** Next.js 16 (App Router, Standalone build output)
+- **UI Library:** React 19
+- **3D Graphics Engine:** Three.js, `@react-three/fiber`, `@react-three/drei`
+- **State Management:** Zustand 5
+- **Internationalization:** `next-intl` (English and Ukrainian)
+- **Color Picker:** `react-colorful`
+- **Icons & Animation:** Lucide React, Framer Motion
+- **Language & Type Checking:** TypeScript 5 (Strict mode)
+
+#### Backend
+- **Framework:** FastAPI 0.115
+- **ASGI Server:** Uvicorn
+- **ORM:** SQLAlchemy 2.0 (Async)
+- **Database Engines:** PostgreSQL 16 (`asyncpg`) in Docker, SQLite (`aiosqlite`) for local development
+- **Database Migrations:** Alembic
+- **Authentication:** PyJWT (OAuth2 Password Bearer with JWT Access/Refresh tokens), Passlib (bcrypt / pbkdf2_sha256)
+- **Rate Limiting:** SlowAPI
+- **Validation:** Pydantic v2
+- **Testing:** Pytest, pytest-asyncio, httpx
+
+#### Infrastructure
+- **Containerization:** Docker multi-stage builds and Docker Compose
+
+---
+
+### Implemented Features
+
+1. **WebGL 3D Rendering and Scene Viewport**
+   - React Three Fiber canvas rendering 3D geometries, materials, and lighting.
+   - Dual lighting presets: Day (directional sunlight and ambient fill) and Night (cool ambient light with point light sources).
+   - Adaptive pixel ratio (`AdaptiveDpr`) and GPU resource disposal upon object removal.
+
+2. **Camera Navigation**
+   - **Orbit Mode:** Left-click drag to rotate around scene center, mouse wheel to zoom, middle/right click drag to pan.
+   - **Fly Navigation:** Hold Right Mouse Button (RMB) + WASD for free-look flight through the scene.
+   - **Vertical Movement & Speed Boost:** Q to descend, E to ascend, hold Shift for 2x movement speed.
+   - **Camera Focus (F):** Frame and center camera view on the bounding box of the currently selected object.
+
+3. **3D Asset Library and Geometry Normalization**
+   - 183 GLB 3D assets categorized into 15 groups: All, Halloween, Islands, Portals, Statues, Vegetation, Bridges & Stairs, Walls & Floors, Modern Architecture, Gothic Elements, Sofas & Armchairs, Tables, Storage, Lighting, and Decor.
+   - Real-time catalog search and category filtering.
+   - 3D Inspector preview box for hovering over catalog assets with live auto-rotation.
+   - Centralized geometry normalizer (`normalizeModelGeometry`): centers models on horizontal axes (X/Z), aligns model base flush to ground level (Y=0), corrects axis export orientations, and applies category-based metric scaling.
+
+4. **Surface Snapping and Object Placement**
+   - Placement ghost preview with wireframe indicator.
+   - Surface raycasting engine detects top surface heights ($Y = \text{height}$) of tables, desks, walls, and roofs, allowing objects to be stacked on top of each other.
+   - Optional magnet grid snapping (0.5m grid increments).
+   - Ghost rotation via R key (+90 degrees) before confirming placement with left-click.
+
+5. **Transform Controls and Material Customization**
+   - TransformControls gizmo supporting Translate (1), Rotate (2), and Scale (3) modes.
+   - Quick rotation buttons (-90 deg, -45 deg, +45 deg, +90 deg, 180 deg) and preset scale multipliers (0.5x to 2.0x).
+   - Duplicate selected object (`Ctrl + D` / `Cmd + D`) directly into placement ghost mode.
+   - Sub-mesh color picker (`react-colorful`) enabling real-time material recoloring for individual parts of placed 3D models.
+
+6. **State Management and Persistence**
+   - Centralized Zustand store managing scene objects, transforms, selections, lighting, and auth state.
+   - Client-side localization switching between English and Ukrainian without WebGL canvas remounting.
+   - Local storage auto-save and restore.
+   - Scene JSON export (file download) and JSON import (file upload).
+   - Cloud project storage: save, retrieve, update, and delete 3D scene configurations via REST API.
+
+7. **Backend Security and API Architecture**
+   - Asynchronous non-blocking database queries with SQLAlchemy 2.0 and async drivers.
+   - User registration and login with bcrypt password hashing.
+   - JWT access token generation and refresh token rotation (`/refresh`).
+   - User-isolated cloud project access controls.
+   - Rate limiting middleware with SlowAPI.
+   - Correlation ID middleware (`X-Request-ID`) attached to every request and response.
+
+---
+
+### Project Structure
+
+```
+.
+├── backend/
+│   ├── alembic/                   # Database migrations environment
+│   │   ├── versions/              # Migration revision scripts
+│   │   └── env.py                 # Alembic configuration
+│   ├── app/
+│   │   ├── routers/
+│   │   │   ├── auth.py            # Registration, login, token refresh, profile
+│   │   │   └── projects.py        # 3D project CRUD routes
+│   │   ├── auth.py                # JWT utilities and password cryptography
+│   │   ├── database.py            # SQLAlchemy async engine and session factory
+│   │   ├── main.py                # FastAPI app initialization and middleware
+│   │   ├── models.py              # SQLAlchemy database models (User, Project)
+│   │   └── schemas.py             # Pydantic v2 request/response schemas
+│   ├── tests/
+│   │   ├── conftest.py            # In-memory SQLite async test fixtures
+│   │   ├── test_auth.py           # Auth and health check integration tests
+│   │   └── test_projects.py       # Projects CRUD and isolation tests
+│   ├── alembic.ini                # Alembic migration configuration
+│   ├── Dockerfile                 # Backend container definition
+│   ├── pytest.ini                # Pytest configuration
+│   └── requirements.txt           # Python dependencies
+├── frontend/
+│   ├── messages/                  # Localization dictionaries (en.json, uk.json)
+│   ├── public/
+│   │   └── model/                 # GLB 3D model assets
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── [locale]/
+│   │   │   │   ├── layout.tsx     # Root localized layout
+│   │   │   │   └── page.tsx       # Main 3D editor viewport and UI overlay
+│   │   │   └── globals.css        # UI styling
+│   │   ├── components/            # React and Three.js components
+│   │   │   ├── AuthModal.tsx
+│   │   │   ├── CameraNavigationController.tsx
+│   │   │   ├── ClientI18nProvider.tsx
+│   │   │   ├── ColorPicker.tsx
+│   │   │   ├── FurnitureCard.tsx
+│   │   │   ├── FurnitureCatalog.tsx
+│   │   │   ├── InstructionModal.tsx
+│   │   │   ├── InteractivePlacementGhost.tsx
+│   │   │   ├── PlaceableObject.tsx
+│   │   │   ├── SceneViewport.tsx
+│   │   │   ├── Toast.tsx
+│   │   │   ├── TransformToolbar.tsx
+│   │   │   └── UserProfileModal.tsx
+│   │   ├── data/
+│   │   │   └── catalogData.ts     # 183 asset catalog items and categories
+│   │   ├── hooks/
+│   │   │   └── useHotkeys.ts      # Global keyboard shortcuts listener
+│   │   ├── store/
+│   │   │   └── useStore.ts        # Zustand global state store
+│   │   ├── types/
+│   │   │   └── index.ts           # TypeScript interfaces and type definitions
+│   │   ├── utils/
+│   │   │   └── modelNormalization.ts # 3D geometry centering and scaling engine
+│   │   ├── config.ts              # API URL configuration
+│   │   ├── i18n.ts                # Server-side next-intl setup
+│   │   └── proxy.ts               # Localized routing proxy middleware
+│   ├── Dockerfile                 # Frontend multi-stage standalone container
+│   ├── next.config.mjs            # Next.js configuration
+│   ├── package.json               # Node.js dependencies and scripts
+│   └── tsconfig.json              # TypeScript strict configuration
+├── docker-compose.yml             # Multi-container Docker composition
+└── README.md
+```
+
+---
+
+### Running with Docker Compose
+
+Run PostgreSQL, FastAPI backend, and Next.js frontend together:
 
 ```bash
 docker compose up --build -d
 ```
 
-* **Frontend Application:** [http://localhost:3000](http://localhost:3000)
-* **Backend API (Swagger Docs):** [http://localhost:8000/docs](http://localhost:8000/docs)
-* **Health Check:** [http://localhost:8000/health](http://localhost:8000/health)
+- **Frontend:** http://localhost:3000
+- **Backend API Documentation (Swagger UI):** http://localhost:8000/docs
+- **Health Check Endpoint:** http://localhost:8000/health
+
+To stop containers:
+```bash
+docker compose down
+```
 
 ---
 
-### 💻 Local Development Setup
+### Local Development Setup
 
-#### 1. Backend Setup (FastAPI + Async SQLAlchemy)
+#### 1. Backend Setup
 
-```powershell
+Prerequisites: Python 3.13+
+
+```bash
 cd backend
 
-# Activate virtual environment
-.\venv\Scripts\activate       # On Linux/macOS: source venv/bin/activate
+# Create and activate virtual environment
+python -m venv venv
+# On Windows:
+.\venv\Scripts\activate
+# On Linux/macOS:
+source venv/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
 
-# Run migrations
+# Run migrations (creates SQLite database sql_app.db by default)
 alembic upgrade head
 
 # Start API server
 uvicorn app.main:app --reload --port 8000
 ```
 
-#### 2. Frontend Setup (Next.js 16 + React Three Fiber)
+#### 2. Frontend Setup
 
-```powershell
+Prerequisites: Node.js 20+
+
+```bash
 cd frontend
 
 # Install packages
@@ -102,38 +228,71 @@ npm run dev
 
 ---
 
-### 🧪 Automated Testing (100% Passing)
+### Automated Testing
+
+#### Backend Tests (Pytest + AsyncIO)
+
+```bash
+cd backend
+.\venv\Scripts\pytest -v
+```
+
+11 backend integration tests covering:
+- Health check and discovery endpoints (`GET /health`, `GET /`)
+- User registration and duplicate email protection
+- OAuth2 password login and invalid credential handling
+- JWT refresh token rotation
+- Authenticated user profile retrieval
+- 3D project creation, retrieval, update, and deletion
+- Unauthorized access prevention and user data isolation
 
 #### Frontend Type Checking & Production Build
-```powershell
+
+```bash
 cd frontend
 npx tsc --noEmit
 npm run build
 ```
 
-#### Backend Test Suite (Pytest + AsyncIO)
-```powershell
-cd backend
-pytest -v
-```
-* **11/11 passing**: Health check, registration, duplicate protection, password grant login, refresh token rotation, user profile, 3D project CRUD, and authorization isolation.
+---
+
+### REST API Endpoints Reference
+
+#### System
+- `GET /health` — Service health check.
+- `GET /` — Service discovery endpoint with API documentation links.
+
+#### Authentication (`/`)
+- `POST /register` — Register a new user (`email`, `name`, `password`). Returns `201 Created`.
+- `POST /token` — OAuth2 password grant login (`username` [email], `password`). Returns access and refresh JWT tokens.
+- `POST /refresh` — Issue a new access token using a valid `refresh_token`.
+- `GET /users/me/` — Retrieve the profile and saved project list of the authenticated user (`Authorization: Bearer <token>`).
+
+#### 3D Scene Projects (`/projects/`)
+- `GET /projects/` — Retrieve all projects owned by the authenticated user, sorted by update date descending.
+- `POST /projects/` — Save a new 3D project configuration (`name`, `data` JSON payload). Returns `201 Created`.
+- `GET /projects/{project_id}` — Retrieve single project details by ID.
+- `PUT /projects/{project_id}` — Update project title or scene JSON data.
+- `DELETE /projects/{project_id}` — Delete a saved project. Returns `204 No Content`.
 
 ---
 
-### 🎮 Keyboard Shortcuts & Navigation
+### Keyboard Shortcuts and Controls
 
-| Hotkey / Control | Action |
+| Input | Action |
 | :--- | :--- |
-| **LMB Drag** | Orbit camera around scene |
-| **RMB + WASD** | Unreal Engine 5 fly-cam navigation |
-| **Q / E** | Fly camera vertical ascent (E) / descent (Q) |
-| **Shift (Hold)** | 2× flight speed boost |
-| **F** | Focus and center camera on selected object |
-| **1 / 2 / 3** | Transform Gizmo mode: Translate (1), Rotate (2), Scale (3) |
-| **R** | Rotate placement ghost / selected object +90° |
-| **Ctrl + D** | Duplicate selected object into placement ghost mode |
-| **Delete / Backspace** | Remove selected object |
-| **Esc** | Clear selection / Cancel placement mode |
+| **Left Mouse Button Drag** | Orbit camera around scene center |
+| **Right Mouse Button + WASD** | Fly navigation (Forward, Left, Backward, Right) |
+| **Q / E** | Vertical descent (Q) / ascent (E) |
+| **Shift (Hold)** | 2x flight speed multiplier |
+| **F** | Focus camera view onto selected 3D object |
+| **1** | Set TransformControls to Translate mode |
+| **2** | Set TransformControls to Rotate mode |
+| **3** | Set TransformControls to Scale mode |
+| **R** | Rotate selected object or placement ghost +90 degrees around Y-axis |
+| **Ctrl + D / Cmd + D** | Duplicate selected object into placement ghost mode |
+| **Delete / Backspace** | Remove selected object from scene |
+| **Escape** | Clear selection / Cancel placement mode |
 
 ---
 
@@ -141,38 +300,200 @@ pytest -v
 
 ---
 
-## 🇺🇦 Українська версія
+## Українська версія
 
-### 📌 Огляд Проєкту
+### Огляд Проєкту
 
-**Forma-3D** — це високопродуктивний інтерактивний 3D-редактор простору та архітектурний конфігуратор, створений на базі **Next.js 16**, **React Three Fiber (Three.js)**, **Zustand 5** та **FastAPI (Async SQLAlchemy 2.0)**. 
+Forma-3D — це асинхронний фулстек 3D-редактор простору та архітектурний конфігуратор приміщень, розроблений на базі Next.js 16 (App Router), React 19, Three.js (React Three Fiber та React Three Drei), Zustand 5 та FastAPI з асинхронним SQLAlchemy 2.0.
 
-Додаток дозволяє конструювати архітектурні об'єкти, підбирати меблі з каталогу (**125+ GLB моделей у 13 категоріях**), налаштовувати матеріали деталей у реальному часі, керувати освітленням (День/Ніч), миттєво перемикати мову (0 мс) та зберігати сцени у хмарі.
-
----
-
-### 🚀 Ключові Можливості
-
-* **⚡ 100% Строгий TypeScript:** Повна типізація всіх компонентів, стану Zustand та 3D-об'єктів (0 помилок компіляції).
-* **🌐 Миттєва Клієнтська Локалізація (0 мс):** Перемикання UK/EN без перезавантаження сторінки та без розмонтування 3D Canvas.
-* **🛋️ Авто-Укладка на Поверхні (Surface Snapping):** Двигун рейкастингу миттєво обчислює висоту поверхні під курсором ($Y = \text{height}$) для автоматичного розміщення предметів на столах, полицях і стінах.
-* **📐 Авто-Нормалізація 3D-Моделей:** Автоматичне центрування габаритів та посадка на рівень підлоги ($Y = 0$) для всіх 125 моделей.
-* **🧹 Очищення Пам'яті GPU:** Автоматичний виклик `dispose()` для геометрій та матеріалів при видаленні об'єктів.
-* **🎮 Навігація в стилі UE5 (Fly-Cam):** Вільний політ всередині приміщень при затисканні **ПКМ + WASD + QE + Shift**, а також фокус на об'єкті (**F**).
-* **🎨 Кастомізація Матеріалів:** Зміна кольору окремих деталей моделей (`react-colorful`) з відображенням чистої локалізованої назви.
-* **⚡ Повністю Асинхронний Бекенд:** Неблокуючий I/O на базі FastAPI, Async SQLAlchemy 2.0 та asyncpg/aiosqlite.
-* **🔐 Безпека та Хмарна Синхронізація:** Ротація JWT токенів, Rate Limiting (`slowapi`), `X-Request-ID` трасування.
+Додаток працює безпосередньо у браузері через WebGL. Користувачі можуть конструювати архітектурні структури, розміщувати модульні елементи та меблі з каталогу на 183 GLB моделі у 15 категоріях, налаштовувати матеріали окремих деталей у реальному часі, керувати режимами освітлення та зберігати сцени у хмарній базі даних.
 
 ---
 
-### 🚀 Швидкий запуск через Docker
+### Стек Технологій
+
+#### Фронтенд
+- **Фреймворк:** Next.js 16 (App Router, режим збірки Standalone)
+- **UI Бібліотека:** React 19
+- **3D Графічний Рушій:** Three.js, `@react-three/fiber`, `@react-three/drei`
+- **Управління Станом:** Zustand 5
+- **Інтернаціоналізація:** `next-intl` (Англійська та Українська мови)
+- **Палітра Кольору:** `react-colorful`
+- **Іконки та Анімація:** Lucide React, Framer Motion
+- **Типізація:** TypeScript 5 (Строгий режим `strict: true`)
+
+#### Бекенд
+- **Фреймворк:** FastAPI 0.115
+- **ASGI Сервер:** Uvicorn
+- **ORM:** SQLAlchemy 2.0 (Асинхронний режим)
+- **Бази Даних:** PostgreSQL 16 (`asyncpg`) у Docker, SQLite (`aiosqlite`) для локальної розробки
+- **Міграції Схеми БД:** Alembic
+- **Автентифікація та Безпека:** PyJWT (OAuth2 Password Bearer з JWT Access/Refresh токенами), Passlib (хешування bcrypt / pbkdf2_sha256)
+- **Обмеження Запитів:** SlowAPI
+- **Валідація Даних:** Pydantic v2
+- **Тестування:** Pytest, pytest-asyncio, httpx
+
+#### Інфраструктура
+- **Контейнеризація:** Docker багатоетапні збірки (multi-stage) та Docker Compose
+
+---
+
+### Реалізований Функціонал
+
+1. **3D WebGL Рендеринг та Вікно Перегляду**
+   - Рендеринг на базі React Three Fiber ізольований від оновлень 2D DOM стану для підтримання стабільної частоти кадрів.
+   - Два режими освітлення: День (спрямоване сонячне та розсіяне світло) і Ніч (прохолодне середовище з динамічними точковими джерелами світла).
+   - Автоматичне звільнення пам'яті GPU (`dispose`) при видаленні об'єктів.
+
+2. **Навігація Камерою**
+   - **Режим Orbit:** Обертання сцени затисканням лівої кнопки миші (ЛКМ), масштабування коліщатком миші, панорамування середньою або правою кнопкою.
+   - **Режим Fly:** Вільний політ у просторі при затисканні Правої Кнопки Миші (ПКМ) + WASD.
+   - **Висота та Прискорення:** Q — спуск донизу, E — підйом угору, затискання Shift — подвоєння швидкості польоту.
+   - **Фокусування на Об'єкті (F):** Центрування камери на габаритах виділеного об'єкта.
+
+3. **Каталог 3D-Моделей та Нормалізація Геометрії**
+   - 183 GLB моделі у 15 категоріях: Усі, Геловін, Острови, Портали, Статуї, Рослинність, Мости та Сходи, Стіни та Підлога, Сучасна Архітектура, Готичні Елементи, Дивани та Крісла, Столи, Шафи, Освітлення, Декор.
+   - Пошук за назвою та фільтрація за категоріями у реальному часі.
+   - 3D Інспектор попереднього перегляду моделі при наведенні курсору на картку каталогу.
+   - Модуль нормалізації геометрії (`normalizeModelGeometry`): центрування відносно осей X/Z, точна посадка на рівень підлоги (Y=0), корекція осей експорту та пропорційне категоріальне масштабування.
+
+4. **Автоматична Посадка на Поверхні (Surface Snapping)**
+   - Прозорий примарний об'єкт із зеленим контуром для позиціювання перед встановленням.
+   - Рейкастинг обчислює висоту верхньої площини ($Y = \text{height}$) столів, полиць, стін і дахів для розміщення предметів один на одного.
+   - Опціональна магнітна сітка з кроком 0.5 м.
+   - Поворот примарного об'єкта клавішею R (+90 градусів) перед підтвердженням розміщення кліком ЛКМ.
+
+5. **Гізмо Трансформацій та Кастомізація Матеріалів**
+   - Візуальне гізмо TransformControls: Переміщення (1), Обертання (2), Масштабування (3).
+   - Швидкі кути повороту (-90, -45, +45, +90, 180 градусів) та пресети масштабу (від 0.5x до 2.0x).
+   - Дублювання виділеного об'єкта (`Ctrl + D` / `Cmd + D`) з автоматичним переходом у режим розміщення.
+   - Зміна кольору окремих деталей моделей за допомогою `react-colorful`.
+
+6. **Управління Станом та Збереження Даних**
+   - Централізований Zustand стор для керування об'єктами, виділенням, трансформуванням та сесією користувача.
+   - Клієнтське перемикання мови інтерфейсу (EN/UK) без перезавантаження WebGL Canvas.
+   - Збереження та відновлення сцени у LocalStorage браузера.
+   - Експорт та імпорт конфігурації сцени у форматі JSON.
+   - Хмарне збереження проєктів через REST API бекенду.
+
+7. **Безпека та Архітектура Бекенду**
+   - Асинхронний неблокуючий I/O з SQLAlchemy 2.0.
+   - Реєстрація та авторизація з хешуванням паролів (bcrypt).
+   - Генерація JWT токенів та їх ротація (`/refresh`).
+   - Ізоляція доступу до проєктів між користувачами.
+   - Захист від підбору паролів через SlowAPI rate limiter.
+   - Трасування запитів за допомогою заголовка `X-Request-ID`.
+
+---
+
+### Запуск через Docker Compose
+
+Запуск повного стека додатку (PostgreSQL, FastAPI бекенд та Next.js фронтенд):
 
 ```bash
 docker compose up --build -d
 ```
 
-* **Фронтенд:** [http://localhost:3000](http://localhost:3000)
-* **Документація API (Swagger):** [http://localhost:8000/docs](http://localhost:8000/docs)
-* **Перевірка стану (Health Check):** [http://localhost:8000/health](http://localhost:8000/health)
+- **Фронтенд:** http://localhost:3000
+- **Документація API (Swagger UI):** http://localhost:8000/docs
+- **Перевірка стану (Health Check):** http://localhost:8000/health
 
+Зупинка контейнерів:
+```bash
+docker compose down
+```
 
+---
+
+### Локальне Розгортання
+
+#### 1. Бекенд (FastAPI)
+
+```bash
+cd backend
+
+# Створення та активація віртуального середовища
+python -m venv venv
+# Windows:
+.\venv\Scripts\activate
+# Linux/macOS:
+source venv/bin/activate
+
+# Встановлення залежностей
+pip install -r requirements.txt
+
+# Застосування міграцій бази даних
+alembic upgrade head
+
+# Запуск сервера
+uvicorn app.main:app --reload --port 8000
+```
+
+#### 2. Фронтенд (Next.js)
+
+```bash
+cd frontend
+
+# Встановлення пакетів
+npm install
+
+# Запуск dev-сервера
+npm run dev
+```
+
+---
+
+### Автоматизоване Тестування
+
+#### Тестування Бекенду (Pytest)
+
+```bash
+cd backend
+.\venv\Scripts\pytest -v
+```
+
+#### Перевірка Типів та Збірка Фронтенду
+
+```bash
+cd frontend
+npx tsc --noEmit
+npm run build
+```
+
+---
+
+### Специфікація REST API Ендпоінтів
+
+#### Системні
+- `GET /health` — Перевірка стану працездатності сервісу.
+- `GET /` — Кореневий ендпоінт із посиланнями на документацію.
+
+#### Авторизація
+- `POST /register` — Реєстрація нового користувача (`email`, `name`, `password`). Код відповіді `201 Created`.
+- `POST /token` — Вхід за схемою OAuth2 Password Grant (`username` [email], `password`). Повертає `access_token` та `refresh_token`.
+- `POST /refresh` — Оновлення access токена за допомогою валідного `refresh_token`.
+- `GET /users/me/` — Отримання профілю та списку збережених проєктів автентифікованого користувача (`Authorization: Bearer <token>`).
+
+#### Хмарні 3D-Проєкти (`/projects/`)
+- `GET /projects/` — Отримання всіх збережених проєктів поточного користувача.
+- `POST /projects/` — Створення нового проєкту (`name`, `data` JSON рядок). Код відповіді `201 Created`.
+- `GET /projects/{project_id}` — Отримання проєкту за ID.
+- `PUT /projects/{project_id}` — Оновлення назви або JSON даних сцени проєкту.
+- `DELETE /projects/{project_id}` — Видалення проєкту. Код відповіді `204 No Content`.
+
+---
+
+### Гарячі Клавіші та Керування
+
+| Клавіша / Дія | Призначення |
+| :--- | :--- |
+| **Затискання ЛКМ** | Обертання камери навколо центру сцени |
+| **ПКМ + WASD** | Політ камерою у просторі (Вперед, Вліво, Назад, Вправо) |
+| **Q / E** | Спуск донизу (Q) / Підйом угору (E) |
+| **Shift (Затискання)** | Прискорення польоту камери у 2 рази |
+| **F** | Фокусування та центрування камери на виділеному об'єкті |
+| **1 / 2 / 3** | Вибір режиму гізмо: Переміщення (1), Обертання (2), Масштабування (3) |
+| **R** | Поворот виділеного об'єкта або примарної моделі на +90 градусів |
+| **Ctrl + D / Cmd + D** | Дублювання виділеного об'єкта з переходом у режим розміщення |
+| **Delete / Backspace** | Видалення виділеного об'єкта зі сцени |
+| **Escape** | Скидання виділення / Скасування режиму розміщення |

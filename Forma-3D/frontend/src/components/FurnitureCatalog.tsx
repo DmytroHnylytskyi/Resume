@@ -6,8 +6,6 @@
  * @description Collapsible sidebar catalog containing 127 modular furniture and architectural 3D building blocks.
  * Features real-time bilingual text search, horizontal category scroll controls, and an interactive 3D Inspector preview box
  * that dynamically auto-scales and rotates hovered GLB models using centralized normalizeModelGeometry.
- * 
- * @author Forma-3D Team
  */
 
 import { useState, useRef, Suspense, useMemo } from 'react';

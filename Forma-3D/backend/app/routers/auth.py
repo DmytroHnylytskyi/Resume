@@ -5,8 +5,6 @@ Handles:
     - OAuth2 password grant login (/token)
     - Token refresh rotation (/refresh)
     - Current authenticated user profile inspection (/users/me/)
-
-Author: Forma-3D Team
 """
 
 from fastapi import APIRouter, Depends, HTTPException, status

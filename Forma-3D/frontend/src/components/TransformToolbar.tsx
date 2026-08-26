@@ -7,8 +7,6 @@
  * Appears dynamically when a 3D object is selected. Provides mode toggles (Translate/Rotate/Scale),
  * quick angle buttons (-90°, -45°, +45°, +90°, 180°), scale preset multipliers (0.5x - 2.0x),
  * duplicate (`Ctrl+D`), and delete actions. Supports full i18n localization.
- * 
- * @author Forma-3D Team
  */
 
 import { useTranslations } from 'next-intl';

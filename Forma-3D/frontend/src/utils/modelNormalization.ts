@@ -9,8 +9,6 @@
  *    real-world dimensions, and oversized environment models (islands, statues, portals, magic trees)
  *    are normalized to balanced scene proportions.
  * 3. Base Orientation Alignment: Corrects axis discrepancies for models exported with non-standard coordinates.
- * 
- * @author Forma-3D Team
  */
 
 import * as THREE from 'three';

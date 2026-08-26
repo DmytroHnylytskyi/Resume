@@ -7,8 +7,6 @@ Configures:
     - SlowAPI rate limiting to prevent brute-force authentication attacks.
     - Core feature routers (auth, projects).
     - System health check (/health) and root discovery (/) endpoints.
-
-Author: Forma-3D Team
 """
 
 import os

@@ -7,8 +7,6 @@
  * Handles GLB model loading, automatic pivot centering and bottom Y-zero alignment via normalizeModelGeometry,
  * sub-mesh node color mutation, pointer raycast selection, and `@react-three/drei` TransformControls integration.
  * Wrapped in React.memo with strict shallow equality checking to ensure maximum WebGL rendering performance.
- * 
- * @author Forma-3D Team
  */
 
 import { useMemo, useEffect, useRef, useState, memo } from 'react';

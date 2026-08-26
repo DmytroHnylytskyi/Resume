@@ -6,8 +6,6 @@ Configures:
     - Async session factory (async_sessionmaker[AsyncSession]).
     - Declarative ORM base class.
     - Async generator dependency get_db() for FastAPI request session context management.
-
-Author: TerraScope 3D Geospatial Intelligence Team
 """
 
 import os

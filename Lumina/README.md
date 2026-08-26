@@ -1,153 +1,223 @@
-# 🎓 Lumina — Modern Asynchronous Full-Stack Learning Management Platform (LMS)
-
-[![CI Pipeline](https://img.shields.io/badge/CI-GitHub_Actions-blue?logo=github-actions)](.github/workflows/ci.yml)
-[![FastAPI](https://img.shields.io/badge/Backend-FastAPI_0.115+_(Async)-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
-[![React 19](https://img.shields.io/badge/Frontend-React_19_|_Vite-61DAFB?logo=react)](https://react.dev/)
-[![TanStack Query](https://img.shields.io/badge/State-TanStack_Query_v5-FF4154?logo=reactquery)](https://tanstack.com/query/latest)
-[![Docker](https://img.shields.io/badge/DevOps-Docker_|_Compose-2496ED?logo=docker)](docker-compose.yml)
-[![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL_16_(asyncpg)-336791?logo=postgresql)](https://www.postgresql.org/)
-[![Alembic](https://img.shields.io/badge/Migrations-Alembic-E34F26)](https://alembic.sqlalchemy.org/)
-
-> **Lumina** is an enterprise-grade, asynchronous role-based educational platform designed for modern online tutoring, course authoring, and student mentoring. Built with high concurrency in mind, it features non-blocking Async SQLAlchemy 2.0 operations, TanStack Query v5 state caching with optimistic UI, JWT access/refresh token rotation, automated rate-limiting, and deep-linked interactive course modules.
+[English](#english) | [Українська](#українська)
 
 ---
 
-## 🌟 Key Architectural Features
+<a id="english"></a>
+# Lumina Learning Management System
 
-* **⚡ Fully Asynchronous Engine:** Non-blocking I/O throughout the backend via **FastAPI**, **Async SQLAlchemy 2.0**, and **asyncpg / aiosqlite**.
-* **🔄 Server State Caching (TanStack Query v5):** Client-side automatic cache invalidation, background revalidation, and **Optimistic UI updates** for instant user feedback.
-* **🔐 Advanced Authentication & Security:** 
-  * Signed JWT Access Tokens + Long-lived **Refresh Token rotation** (`/auth/refresh`).
-  * **Rate Limiting** via `slowapi` to prevent brute-force attacks.
-  * **X-Request-ID Correlation Middleware** for end-to-end distributed tracing.
-* **📚 Interactive Course Player:** Deep-linking support for curriculum modules (`/courses/:courseId/lesson/:lessonId`), embedded video player, Google Drive preview, PDF viewer, and live meeting links.
-* **⏰ Smart Assignment & Deadline Engine:** Teachers can assign courses to specific students with customized per-lesson due dates.
-* **📝 Homework Submission System:** Students can upload files (PDFs, docs, images, archives) or attach web resources directly to lessons.
-* **📊 Analytics & Visual Dashboards:** Completion curves, study schedules, and student progress metrics powered by **Recharts**.
-* **🌐 Internationalization (i18n):** Full bilingual support (English 🇬🇧 / Ukrainian 🇺🇦).
-* **☁️ Cloud & Local Asset Storage:** Hybrid media storage pipeline supporting **Cloudinary** and sanitized local disk fallbacks.
+Lumina is an asynchronous role-based learning management system. It provides functionality for course authoring, student mentoring, and progress tracking.
 
----
+## Architecture
 
-## 🏛️ System Architecture
+The project consists of a backend API and a frontend single-page application (SPA).
 
+### Backend
+- **Framework:** FastAPI
+- **Database:** PostgreSQL (production via asyncpg) / SQLite (development/testing via aiosqlite)
+- **ORM:** SQLAlchemy 2.0 (Asynchronous)
+- **Migrations:** Alembic
+- **Authentication:** JWT (Access and Refresh token rotation)
+- **Security:** Rate limiting (`slowapi`)
+- **Testing:** Pytest with AsyncIO
+
+### Frontend
+- **Framework:** React 19, Vite
+- **State Management:** TanStack Query v5
+- **Routing:** React Router 7
+- **Internationalization:** i18next (English, Ukrainian)
+- **Charts:** Recharts
+- **Testing:** Vitest, JSDOM
+
+## Features
+
+- **Authentication & Authorization:** Role-based access control (Student, Teacher).
+- **Course Management:** Teachers can create, edit, and delete courses consisting of multiple lessons.
+- **Content Delivery:** Support for embedding videos, PDF documents, Google Drive links, and text lectures.
+- **Assignments:** Teachers can assign courses to specific students and set study schedules and deadlines.
+- **Homework Submissions:** Students can upload files or attach links as homework submissions for specific lessons.
+- **File Storage:** File uploads support both Cloudinary integration and local disk storage fallback.
+- **Analytics:** Dashboards for tracking student completion progress and course statistics.
+- **Internationalization:** Bilingual interface support.
+
+## Project Structure
+
+```text
+Lumina/
+├── backend/               # FastAPI backend application
+│   ├── alembic/           # Database migrations
+│   ├── app/               # Application source code
+│   │   ├── routers/       # API endpoints
+│   │   ├── database.py    # Database engine configuration
+│   │   ├── models.py      # SQLAlchemy ORM models
+│   │   ├── schemas.py     # Pydantic validation schemas
+│   │   ├── auth_utils.py  # JWT and security utilities
+│   │   └── main.py        # FastAPI entry point
+│   ├── tests/             # Pytest test suite
+│   ├── requirements.txt   # Python dependencies
+│   └── Dockerfile         # Backend container image
+├── frontend/              # React frontend application
+│   ├── src/               # Application source code
+│   │   ├── api/           # API integration services
+│   │   ├── components/    # Reusable React components
+│   │   ├── pages/         # View components
+│   │   ├── test/          # Vitest test suite
+│   │   ├── App.jsx        # Router configuration
+│   │   └── i18n.js        # Localization configuration
+│   ├── nginx.conf         # Production SPA reverse proxy
+│   └── Dockerfile         # Frontend container image
+├── docker-compose.yml     # Multi-container orchestration
+└── .github/workflows/     # GitHub Actions CI pipeline
 ```
-                       ┌─────────────────────────────────────────┐
-                       │          Client (React 19 SPA)          │
-                       │   React Router 7 • TanStack Query v5    │
-                       │          Recharts • i18next             │
-                       └────────────────────┬────────────────────┘
-                                            │ HTTP / REST API (JWT + Request-ID)
-                                            ▼
-                       ┌─────────────────────────────────────────┐
-                       │        FastAPI ASGI Async Engine        │
-                       │   Auth • Courses • Teacher • Analytics  │
-                       │   Rate Limiter • Correlation Middleware │
-                       └───────────┬─────────────────┬───────────┘
-                                   │                 │
-            AsyncSession (asyncpg) │                 │ Cloudinary SDK
-                                   ▼                 ▼
-         ┌─────────────────────────────────┐   ┌───────────────────────┐
-         │  PostgreSQL 16 / Async SQLite   │   │ Cloudinary CDN & Disk │
-         │    Alembic Schema Migrations    │   │  Encrypted Media/Docs │
-         └─────────────────────────────────┘   └───────────────────────┘
-```
 
----
+## Running the Application
 
-## 🚀 Quick Start with Docker (Recommended)
+### Docker (Recommended)
 
-Run the full stack (Database + API + Frontend) with one command:
+To run the full stack (Database, Backend API, Frontend) using Docker Compose:
 
 ```bash
 docker compose up --build -d
 ```
+- Frontend: `http://localhost:3000`
+- Backend API Docs: `http://localhost:8000/docs`
 
-* **Frontend Application:** [http://localhost:3000](http://localhost:3000)
-* **Backend API (Swagger Docs):** [http://localhost:8000/docs](http://localhost:8000/docs)
-* **Health Check:** [http://localhost:8000/health](http://localhost:8000/health)
+### Local Development
 
----
+#### Backend
 
-## 💻 Local Development Setup
+1. Navigate to the `backend` directory.
+2. Create and activate a virtual environment.
+3. Install dependencies: `pip install -r requirements.txt`
+4. Apply database migrations: `alembic upgrade head`
+5. Start the server: `uvicorn app.main:app --reload --port 8000`
 
-### 1. Backend Setup (FastAPI + Async SQLAlchemy)
+#### Frontend
 
-```powershell
-cd backend
+1. Navigate to the `frontend` directory.
+2. Install dependencies: `npm install`
+3. Start the development server: `npm run dev`
 
-# Create & activate virtual environment
-python -m venv venv
-.\venv\Scripts\activate       # On Linux/macOS: source venv/bin/activate
+## Testing
 
-# Install dependencies
-pip install -r requirements.txt
-
-# Run database migrations
-alembic upgrade head
-
-# Start API server
-uvicorn app.main:app --reload --port 8000
-```
-
-### 2. Frontend Setup (React 19 + TanStack Query + Vite)
-
-```powershell
-cd frontend
-
-# Install packages
-npm install
-
-# Start development server
-npm run dev
-```
-
----
-
-## 🧪 Automated Testing (100% Passing)
-
-### Backend Test Suite (Pytest + AsyncIO)
-```powershell
-cd backend
+### Backend
+To run the backend test suite, navigate to the `backend` directory and execute:
+```bash
 pytest -v
 ```
-* **10/10 passing**: Health check, registration, login, refresh token rotation flow, duplicate prevention, course CRUD, lesson completion, file sanitization, student assignment.
 
-### Frontend Test Suite (Vitest + JSDOM)
-```powershell
-cd frontend
+### Frontend
+To run the frontend test suite, navigate to the `frontend` directory and execute:
+```bash
 npm test
 ```
-* **4/4 passing**: JWT token persistence, login/logout lifecycle, and course card rendering.
 
 ---
 
-## 📂 Project Structure
+<a id="українська"></a>
+# Lumina Learning Management System
 
-```
+Lumina — це асинхронна система управління навчанням на основі ролей. Вона надає функціонал для створення курсів, менторства студентів та відстеження прогресу.
+
+## Архітектура
+
+Проєкт складається з backend API та frontend односторінкового додатку (SPA).
+
+### Backend
+- **Фреймворк:** FastAPI
+- **База даних:** PostgreSQL (продакшн через asyncpg) / SQLite (розробка/тестування через aiosqlite)
+- **ORM:** SQLAlchemy 2.0 (Асинхронна)
+- **Міграції:** Alembic
+- **Аутентифікація:** JWT (ротація Access та Refresh токенів)
+- **Безпека:** Обмеження частоти запитів (`slowapi`)
+- **Тестування:** Pytest з AsyncIO
+
+### Frontend
+- **Фреймворк:** React 19, Vite
+- **Управління станом:** TanStack Query v5
+- **Маршрутизація:** React Router 7
+- **Інтернаціоналізація:** i18next (Англійська, Українська)
+- **Графіки:** Recharts
+- **Тестування:** Vitest, JSDOM
+
+## Функціонал
+
+- **Аутентифікація та Авторизація:** Контроль доступу на основі ролей (Студент, Викладач).
+- **Управління курсами:** Викладачі можуть створювати, редагувати та видаляти курси, що складаються з кількох уроків.
+- **Доставка контенту:** Підтримка вбудовування відео, PDF-документів, посилань на Google Drive та текстових лекцій.
+- **Призначення:** Викладачі можуть призначати курси конкретним студентам та встановлювати розклади навчання і дедлайни.
+- **Здача домашніх завдань:** Студенти можуть завантажувати файли або прикріплювати посилання як домашні завдання для конкретних уроків.
+- **Зберігання файлів:** Завантаження файлів підтримує як інтеграцію з Cloudinary, так і резервне локальне дискове сховище.
+- **Аналітика:** Дашборди для відстеження прогресу завершення курсу студентами та статистики курсів.
+- **Інтернаціоналізація:** Підтримка двомовного інтерфейсу.
+
+## Структура проєкту
+
+```text
 Lumina/
-├── .github/workflows/ci.yml       # CI/CD automated pipeline
-├── docker-compose.yml              # Multi-container orchestration
-├── backend/
-│   ├── alembic/                    # Database versioning migrations
-│   ├── app/
-│   │   ├── main.py                 # FastAPI application & middleware factory
-│   │   ├── database.py             # Async SQLAlchemy engine & session factory
-│   │   ├── models.py               # SQLAlchemy 2.0 ORM schemas
-│   │   ├── schemas.py              # Pydantic v2 validation models
-│   │   ├── auth_utils.py           # JWT security, refresh tokens & hashing
-│   │   └── routers/                # Asynchronous endpoint controllers
-│   ├── tests/                      # Pytest async integration test suite
-│   ├── Dockerfile                  # Production backend container image
-│   └── requirements.txt            # Python dependencies
-└── frontend/
-    ├── src/
-    │   ├── api/                    # Centralized TanStack Query API services
-    │   ├── pages/                  # Routed view components (React Router 7)
-    │   ├── components/             # Reusable UI widgets & dashboards
-    │   ├── test/                   # Vitest unit test suite
-    │   ├── i18n.js                 # Localization dictionary
-    │   └── App.jsx                 # Client-side router configuration
-    ├── Dockerfile                  # Multi-stage Nginx container image
-    └── nginx.conf                  # Production SPA reverse proxy
+├── backend/               # FastAPI backend додаток
+│   ├── alembic/           # Міграції бази даних
+│   ├── app/               # Вихідний код додатку
+│   │   ├── routers/       # API ендпоінти
+│   │   ├── database.py    # Конфігурація бази даних
+│   │   ├── models.py      # SQLAlchemy ORM моделі
+│   │   ├── schemas.py     # Pydantic схеми валідації
+│   │   ├── auth_utils.py  # Утиліти JWT та безпеки
+│   │   └── main.py        # Точка входу FastAPI
+│   ├── tests/             # Набір тестів Pytest
+│   ├── requirements.txt   # Python залежності
+│   └── Dockerfile         # Образ backend контейнера
+├── frontend/              # React frontend додаток
+│   ├── src/               # Вихідний код додатку
+│   │   ├── api/           # Сервіси інтеграції API
+│   │   ├── components/    # Перевикористовувані React компоненти
+│   │   ├── pages/         # Компоненти сторінок
+│   │   ├── test/          # Набір тестів Vitest
+│   │   ├── App.jsx        # Конфігурація маршрутизатора
+│   │   └── i18n.js        # Конфігурація локалізації
+│   ├── nginx.conf         # Продакшн SPA зворотний проксі
+│   └── Dockerfile         # Образ frontend контейнера
+├── docker-compose.yml     # Оркестрація кількох контейнерів
+└── .github/workflows/     # CI конвеєр GitHub Actions
+```
+
+## Запуск додатку
+
+### Docker (Рекомендовано)
+
+Щоб запустити повний стек (База даних, Backend API, Frontend) за допомогою Docker Compose:
+
+```bash
+docker compose up --build -d
+```
+- Frontend: `http://localhost:3000`
+- Документація Backend API: `http://localhost:8000/docs`
+
+### Локальна розробка
+
+#### Backend
+
+1. Перейдіть до директорії `backend`.
+2. Створіть та активуйте віртуальне середовище.
+3. Встановіть залежності: `pip install -r requirements.txt`
+4. Застосуйте міграції бази даних: `alembic upgrade head`
+5. Запустіть сервер: `uvicorn app.main:app --reload --port 8000`
+
+#### Frontend
+
+1. Перейдіть до директорії `frontend`.
+2. Встановіть залежності: `npm install`
+3. Запустіть сервер для розробки: `npm run dev`
+
+## Тестування
+
+### Backend
+Щоб запустити набір тестів backend, перейдіть до директорії `backend` і виконайте:
+```bash
+pytest -v
+```
+
+### Frontend
+Щоб запустити набір тестів frontend, перейдіть до директорії `frontend` і виконайте:
+```bash
+npm test
 ```

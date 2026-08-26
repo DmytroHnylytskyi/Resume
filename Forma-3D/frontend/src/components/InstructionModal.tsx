@@ -6,8 +6,6 @@
  * @description User manual and hotkeys reference modal component.
  * Displays keyboard navigation rules (UE5 fly cam), building block placement steps,
  * transform toolbar usage, and project persistence instructions. Supports full i18n localization.
- * 
- * @author Forma-3D Team
  */
 
 import { useTranslations } from 'next-intl';

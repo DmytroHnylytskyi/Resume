@@ -3,8 +3,6 @@ Saved Globe Views Sub-Router Module for TerraScope.
 
 Provides async endpoints for creating, listing, retrieving, and deleting personalized 3D globe
 camera position presets and active layer filter state snapshots for authenticated users.
-
-Author: TerraScope 3D Geospatial Intelligence Team
 """
 
 from fastapi import APIRouter, Depends, HTTPException, status

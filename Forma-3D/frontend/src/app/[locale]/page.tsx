@@ -5,8 +5,6 @@
  * @module app/[locale]/page
  * @description Main application page component rendering the 3D Scene Viewport, Top Navbar,
  * UI overlay modals, bilingual EN/UK locale switcher button, and performance-optimized state management.
- * 
- * @author Forma-3D Team
  */
 
 import { useRef, useState } from 'react';

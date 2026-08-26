@@ -3,8 +3,6 @@ Authentication Endpoints Sub-Router Module for TerraScope.
 
 Provides async endpoints for user registration (/register), OAuth2 password token login (/token),
 token refresh (/refresh), and current profile lookup (/me).
-
-Author: TerraScope 3D Geospatial Intelligence Team
 """
 
 from fastapi import APIRouter, Depends, HTTPException, status

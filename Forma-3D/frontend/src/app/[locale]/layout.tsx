@@ -4,8 +4,6 @@
  * @description Root application layout component for Next.js App Router.
  * Configures internationalization (`next-intl`), loads global styling rules (`globals.css`),
  * and sets SEO metadata tags.
- * 
- * @author Forma-3D Team
  */
 
 import ClientI18nProvider from '../../components/ClientI18nProvider';

@@ -4,8 +4,6 @@ TerraScope FastAPI Backend Application Entrypoint.
 Initializes async SQLite database schemas, configures CORS middleware,
 rate limiting (SlowAPI), X-Request-ID correlation tracking,
 and mounts API sub-routers (/api/auth, /api/layers, /api/views).
-
-Author: TerraScope 3D Geospatial Intelligence Team
 """
 
 import uuid

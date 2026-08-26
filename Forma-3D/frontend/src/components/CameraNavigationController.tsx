@@ -3,11 +3,9 @@
 /**
  * @file CameraNavigationController.tsx
  * @module components/CameraNavigationController
- * @description Cinematic Unreal Engine 5 style camera controller component built on top of `@react-three/drei` CameraControls.
- * Features smooth dampening lerp vectors for WASD flight, elevation control (Q/E), Shift speed boost,
- * and automatic bounding-box fitting (fitToBox) upon selecting objects in 3D space.
- * 
- * @author Forma-3D Team
+ * @description Camera controller component built on top of `@react-three/drei` CameraControls.
+ * Handles WASD keyboard flight when holding right mouse button, elevation control (Q/E),
+ * Shift speed boost, and camera framing (fitToBox) upon object selection.
  */
 
 import { useEffect, useRef } from 'react';
@@ -17,15 +15,12 @@ import * as THREE from 'three';
 import { useStore } from '../store/useStore';
 
 /**
- * Cinematic Silky-Smooth Camera Navigation Controller Component.
+ * Camera Navigation Controller Component.
  * 
- * Key Features:
- * - `smoothTime = 0.45s` for zero-jank cinematic camera dampening.
- * - Velocity Lerping for WASD keyboard flight (soft acceleration & deceleration).
- * - Reduced rotate & zoom speed for precise, non-twitchy rotation.
- * - Auto-fit to box framing when clicking objects with safe matrix guards.
- * 
- * @returns {JSX.Element} CameraControls R3F element.
+ * Features:
+ * - Orbit navigation (default) and keyboard fly navigation (holding RMB + WASD).
+ * - Vertical ascent/descent (E/Q) and speed boost (Shift).
+ * - Automatic camera framing when selecting 3D objects.
  */
 export default function CameraNavigationController() {
   /** @type {React.RefObject<any>} Ref to underlying CameraControls instance */

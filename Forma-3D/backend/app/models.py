@@ -3,8 +3,6 @@
 Defines:
     - User model (users table: authentication credentials, profile metadata, projects relationship).
     - Project model (projects table: project name, JSON layout data, creation/update timestamps, user_id foreign key).
-
-Author: Forma-3D Team
 """
 
 from datetime import datetime, timezone

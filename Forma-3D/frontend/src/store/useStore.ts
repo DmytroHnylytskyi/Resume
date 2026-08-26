@@ -5,8 +5,6 @@
  * Manages 3D object scene hierarchy, active selection state, transform modes (Translate/Rotate/Scale),
  * interactive placement engine, custom material color mapping, daytime/nighttime atmosphere presets,
  * magnet grid snapping, localStorage auto-save, JSON project import/export, and FastAPI user authentication.
- * 
- * @author Forma-3D Team
  */
 
 import { create } from 'zustand';

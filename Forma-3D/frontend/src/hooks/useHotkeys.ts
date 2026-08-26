@@ -7,8 +7,6 @@
  * Handles key combinations for object duplication (Ctrl+D), deletion (Delete/Backspace),
  * quick rotation (R), transform mode toggles (1/2/3), and selection cancellation (Escape).
  * Automatically ignores hotkey events when text inputs or modals are focused.
- * 
- * @author Forma-3D Team
  */
 
 import { useEffect } from 'react';

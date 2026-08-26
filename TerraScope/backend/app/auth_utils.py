@@ -3,8 +3,6 @@ Security & Authentication Utilities Module for TerraScope.
 
 Provides direct Bcrypt password hashing, verification, PyJWT token generation,
 and FastAPI async get_current_user security dependency.
-
-Author: TerraScope 3D Geospatial Intelligence Team
 """
 
 import bcrypt

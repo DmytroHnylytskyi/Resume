@@ -75,7 +75,7 @@ function EarthquakeDetail({ data }) {
 /** Sub-component: Flight inspection details */
 function FlightDetail({ data }) {
   const routeText = data.originAirport && data.destAirport
-    ? `${data.originAirport.city} ➔ ${data.destAirport.city}`
+    ? `${data.originAirport.city} -> ${data.destAirport.city}`
     : 'Live Transponder Signal (ADS-B Track)';
 
   return (
@@ -102,7 +102,7 @@ function FlightDetail({ data }) {
           Flight Tracking Mode
         </div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontWeight: 600, color: 'var(--danger)' }}>
-          <span>📡 {routeText}</span>
+          <span>{routeText}</span>
         </div>
       </div>
 
@@ -241,7 +241,7 @@ function NeoDetail({ data }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
         <Rocket size={20} color={isHazardous ? 'var(--danger)' : '#c084fc'} />
         <span className={`badge ${isHazardous ? 'badge-danger' : 'badge-accent'}`} style={{ fontSize: '0.85rem' }}>
-          {isHazardous ? '⚠️ Hazardous Asteroid' : 'Near Earth Object'}
+          {isHazardous ? 'Hazardous Asteroid' : 'Near Earth Object'}
         </span>
       </div>
 

@@ -6,8 +6,6 @@ Handles:
     - Inspecting a single project details (GET /projects/{project_id})
     - Updating project name/layout data (PUT /projects/{project_id})
     - Deleting project (DELETE /projects/{project_id})
-
-Author: Forma-3D Team
 """
 
 from typing import List

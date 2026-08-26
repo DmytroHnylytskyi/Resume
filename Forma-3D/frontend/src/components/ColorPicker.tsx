@@ -5,8 +5,6 @@
  * @module components/ColorPicker
  * @description Floating panel component providing a visual color picker (`react-colorful`)
  * for updating the material hex colors of selected 3D object sub-meshes. Supports full i18n localization.
- * 
- * @author Forma-3D Team
  */
 
 import { useTranslations } from 'next-intl';

@@ -4,8 +4,6 @@ Defines:
     - ProjectBase, ProjectCreate, ProjectUpdate, ProjectResponse schemas.
     - UserBase, UserCreate, UserProfile, User schemas.
     - Token, TokenResponse, RefreshTokenRequest, TokenData JWT payload schemas.
-
-Author: Forma-3D Team
 """
 
 import json

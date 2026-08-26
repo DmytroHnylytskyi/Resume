@@ -4,8 +4,6 @@ Geospatial Data Layers Sub-Router Module for TerraScope.
 Provides cached API endpoints for live earthquakes (USGS), airborne flights (OpenSky),
 weather metrics (Open-Meteo), country borders/capitals (REST Countries), and asteroids (NASA NeoWs).
 Implements database-backed async SQLite caching with fallback datasets for 100% availability.
-
-Author: TerraScope 3D Geospatial Intelligence Team
 """
 
 import json

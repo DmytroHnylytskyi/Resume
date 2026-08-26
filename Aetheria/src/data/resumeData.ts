@@ -6,7 +6,7 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
     role: "Full-Stack & Creative 3D Developer",
     location: "Київ, Україна (100% Remote)",
     status: "Відкритий до нових пропозицій",
-    bio: "Full-Stack інженер із фокусом на сучасних високопродуктивних веб-додатках (React 19 / Next.js 16), асинхронних бекенд-системах (FastAPI / PostgreSQL) та інтерактивній 3D-графіці (Three.js, WebGL, GLSL). Маю практичний досвід розробки складних 3D-конфігураторів, геопросторових систем аналітики та LMS-платформ.",
+    bio: "Full-Stack інженер із фокусом на сучасних високопродуктивних веб-додатках (React 19 / Next.js 15), асинхронних бекенд-системах (FastAPI / PostgreSQL) та інтерактивній 3D-графіці (Three.js, WebGL, GLSL). Маю практичний досвід розробки складних 3D-конфігураторів, геопросторових систем аналітики та LMS-платформ.",
     summary: [
       "2+ роки продуктової розробки: створення комплексних веб-сервісів від проєктування БД до інтерактивного WebGL-клієнта.",
       "Експертиза у 3D WebGL & Creative Tech: просторові обчислення, Raycasting, процедурні GLSL-шейдери, GPU Instancing та фізика Rapier 3D.",
@@ -85,7 +85,7 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
     skills: [
       {
         category: "Frontend Core & State",
-        items: ["React 19", "Next.js 16 (App Router)", "TypeScript (Strict)", "JavaScript (ESNext)", "TailwindCSS", "Zustand 5", "TanStack Query v5", "Framer Motion", "HTML5 / CSS3"]
+        items: ["React 19", "Next.js 15 (App Router)", "TypeScript (Strict)", "JavaScript (ESNext)", "TailwindCSS", "Zustand 5", "TanStack Query v5", "Framer Motion", "HTML5 / CSS3"]
       },
       {
         category: "3D & Creative WebGL",
@@ -112,7 +112,7 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         title: "Forma-3D (Spatial Builder & Object Configurator)",
         tagline: "Модульний 3D-редактор простору та універсальний конфігуратор об'єктів",
         description: "Комерційно-орієнтований full-stack 3D-редактор сцени та просторовий конфігуратор для будь-яких 3D-об'єктів (меблі, архітектура, декор) з автоматичним стекуванням поверхонь, гнучким налаштуванням матеріалів та хмарною синхронізацією.",
-        tags: ["Three.js", "React Three Fiber", "Next.js 16", "TypeScript", "FastAPI", "PostgreSQL", "Docker"],
+        tags: ["Three.js", "React Three Fiber", "Next.js 15", "TypeScript", "FastAPI", "PostgreSQL", "Docker"],
         url: "http://localhost:3001",
         githubUrl: "https://github.com/DmytroHnylytskyi",
         color: "#34d399",
@@ -128,7 +128,7 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         title: "TerraScope (3D Geospatial Intelligence)",
         tagline: "Інтерактивна 3D-платформа геопросторової візуалізації та супутникових даних",
         description: "Апаратна 3D-візуалізація планети Земля з кастомними GLSL-шейдерами атмосфери та шарами супутникових даних у реальному часі зі стабільними 60 FPS.",
-        tags: ["Three.js", "GLSL Shaders", "Next.js 16", "FastAPI", "Zustand 5", "Docker"],
+        tags: ["Three.js", "GLSL Shaders", "Next.js 15", "FastAPI", "Zustand 5", "Docker"],
         url: "http://localhost:3002",
         githubUrl: "https://github.com/DmytroHnylytskyi",
         color: "#60a5fa",
@@ -161,7 +161,7 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
     role: "Full-Stack & Creative 3D Developer",
     location: "Kyiv, Ukraine (100% Remote)",
     status: "Open to Remote Opportunities",
-    bio: "Full-Stack engineer specializing in high-performance modern web applications (React 19 / Next.js 16), asynchronous backend architectures (FastAPI / PostgreSQL), and interactive 3D WebGL experiences (Three.js / React Three Fiber / GLSL). Hands-on experience building complex 3D configurators, geospatial analytics engines, and educational LMS platforms.",
+    bio: "Full-Stack engineer specializing in high-performance modern web applications (React 19 / Next.js 15), asynchronous backend architectures (FastAPI / PostgreSQL), and interactive 3D WebGL experiences (Three.js / React Three Fiber / GLSL). Hands-on experience building complex 3D configurators, geospatial analytics engines, and educational LMS platforms.",
     summary: [
       "2+ years of hands-on product engineering: crafting complete web applications from database schemas to interactive WebGL clients.",
       "Creative 3D & WebGL mastery: spatial computing, raycasting engines, custom GLSL procedural shaders, GPU instancing, and Rapier 3D physics.",
@@ -240,7 +240,7 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
     skills: [
       {
         category: "Frontend Core & State",
-        items: ["React 19", "Next.js 16 (App Router)", "TypeScript (Strict)", "JavaScript (ESNext)", "TailwindCSS", "Zustand 5", "TanStack Query v5", "Framer Motion", "HTML5 / CSS3"]
+        items: ["React 19", "Next.js 15 (App Router)", "TypeScript (Strict)", "JavaScript (ESNext)", "TailwindCSS", "Zustand 5", "TanStack Query v5", "Framer Motion", "HTML5 / CSS3"]
       },
       {
         category: "3D & Creative WebGL",
@@ -267,7 +267,7 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         title: "Forma-3D (Spatial Builder & Object Configurator)",
         tagline: "Modular 3D spatial scene builder & universal object configurator",
         description: "Commercial-grade full-stack 3D interior & spatial room configurator for placing, stacking, and customizing any 3D assets with real-time materials swapping, surface raycasting, and async cloud synchronization.",
-        tags: ["Three.js", "React Three Fiber", "Next.js 16", "TypeScript", "FastAPI", "PostgreSQL", "Docker"],
+        tags: ["Three.js", "React Three Fiber", "Next.js 15", "TypeScript", "FastAPI", "PostgreSQL", "Docker"],
         url: "http://localhost:3001",
         githubUrl: "https://github.com/DmytroHnylytskyi",
         color: "#34d399",
@@ -283,7 +283,7 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         title: "TerraScope (3D Geospatial Intelligence)",
         tagline: "Interactive 3D geospatial intelligence and live satellite analytics",
         description: "Hardware-accelerated 3D planetary Earth visualization with custom atmospheric GLSL shaders, orbital navigation, and real-time live data layers locked at 60 FPS.",
-        tags: ["Three.js", "GLSL Shaders", "Next.js 16", "FastAPI", "Zustand 5", "Docker"],
+        tags: ["Three.js", "GLSL Shaders", "Next.js 15", "FastAPI", "Zustand 5", "Docker"],
         url: "http://localhost:3002",
         githubUrl: "https://github.com/DmytroHnylytskyi",
         color: "#60a5fa",

@@ -6,8 +6,6 @@
  * @description Dedicated, memoized WebGL 3D Canvas Viewport component.
  * Isolates 3D scene rendering, environment presets, Unreal Engine style camera controls,
  * surface snap placement ghosts, and placed 3D objects from 2D DOM React UI re-renders (language changes, modals, search inputs).
- * 
- * @author Forma-3D Team
  */
 
 import { memo, Suspense, useCallback } from 'react';

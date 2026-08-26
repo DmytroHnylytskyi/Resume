@@ -4,8 +4,6 @@ Provides utilities for:
     - Passlib password hashing and verification.
     - PyJWT access and refresh token encoding with HS256 algorithm and expiration windows.
     - Async FastAPI dependency get_current_user for JWT token authorization.
-
-Author: Forma-3D Team
 """
 
 import os
