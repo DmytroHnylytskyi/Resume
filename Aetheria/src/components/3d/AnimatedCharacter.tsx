@@ -14,6 +14,17 @@ interface AnimatedCharacterProps {
 
 const TARGET_HEIGHT = 1.65;
 
+/**
+ * AnimatedCharacter
+ * 
+ * 3D Skinned Skeletal Mesh character with authentic PBR texturing and smooth animation crossfading.
+ * 
+ * Key Architectural Features:
+ * - SkeletonUtils Cloning: Safely clones FBX skeletal hierarchies to avoid bone sharing/binding bugs.
+ * - AnimationMixer State Machine: Implements smooth 0.18s crossfades (fadeIn / fadeOut) between Idle, Walk, Run, Jump.
+ * - Exact Bounding Normalization: Automatically calculates scale factor based on model bounds to maintain exact 1.65m human height.
+ * - Texture Pipeline: Configures sRGB colorSpace and Mipmap filtering for crisp rendering across all screen densities.
+ */
 export default function AnimatedCharacter({
   isMoving,
   isSprinting,

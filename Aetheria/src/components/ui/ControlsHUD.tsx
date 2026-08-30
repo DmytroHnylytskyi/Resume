@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useGameStore } from '../../store/useGameStore';
 import { developerProfiles, translations } from '../../data/resumeData';
-import { User, Share2, Award, FileText, Sun, Moon } from 'lucide-react';
+import { User, Share2, Award, FileText, Sun, Moon, Sparkles } from 'lucide-react';
 
 function FpsBadge(): React.ReactElement {
   const [fps, setFps] = useState(60);
@@ -60,6 +60,7 @@ export default function ControlsHUD(): React.ReactElement {
   const {
     setActiveModal,
     interactionPrompt,
+    easterEggToast,
     language,
     setLanguage,
     setViewMode,
@@ -114,7 +115,7 @@ export default function ControlsHUD(): React.ReactElement {
           <button
             className="nav-shortcut-btn theme-toggle-btn"
             onClick={toggleTheme}
-            title={theme === 'dark' ? 'Світла тема' : 'Темна тема'}
+            title={theme === 'dark' ? (language === 'uk' ? 'Світла тема' : 'Light Mode') : (language === 'uk' ? 'Темна тема' : 'Dark Mode')}
           >
             {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
           </button>
@@ -148,6 +149,21 @@ export default function ControlsHUD(): React.ReactElement {
           >
             <kbd className="interaction-key">E</kbd>
             <span className="interaction-title">{interactionPrompt.title}</span>
+          </div>
+        </div>
+      )}
+
+      {/* ── Easter Egg Floating Toast ── */}
+      {easterEggToast && (
+        <div className="easter-egg-toast-wrapper">
+          <div className="easter-egg-toast glass-panel">
+            <div className="easter-egg-icon-box">
+              <Sparkles size={20} className="easter-egg-sparkle-icon" />
+            </div>
+            <div className="easter-egg-content">
+              <h4 className="easter-egg-title">{easterEggToast.title}</h4>
+              <p className="easter-egg-desc">{easterEggToast.text}</p>
+            </div>
           </div>
         </div>
       )}

@@ -16,6 +16,18 @@ interface CharacterControllerProps {
   spawnPoint?: [number, number, number];
 }
 
+/**
+ * CharacterController
+ * 
+ * 3rd-Person Dynamic Character Controller with Rapier 3D physics integration and orbit camera.
+ * 
+ * Architectural Highlights:
+ * - Dynamic Rapier RigidBody: Capsule collider with Continuous Collision Detection (CCD) preventing tunneling.
+ * - Kinematic-like Velocity Control: Direct linear velocity modulation with momentum interpolation (`lerp`) and zero friction drift.
+ * - Orbital Steadicam: Smooth spherical coordinates camera tracking with independent yaw and pitch lerping.
+ * - Zero-GC Frame Loop: All per-frame vector calculations utilize reusable scratch Vector3 buffers without allocating memory.
+ * - Modal Integration: Automatically releases pointer lock and halts movement vectors whenever modal interfaces open.
+ */
 export default function CharacterController({
   playerPosRef,
   spawnPoint = [0.0, 1.0, 14.0]
@@ -334,16 +346,7 @@ export default function CharacterController({
       <CapsuleCollider args={[0.54, 0.30]} position={[0, 0.84, 0]} friction={0.8} />
 
       <group ref={avatarGroupRef} position={[0, 0, 0]} rotation={[0, Math.PI, 0]}>
-        <Suspense
-          fallback={
-            <group position={[0, 0.8, 0]}>
-              <mesh>
-                <capsuleGeometry args={[0.25, 0.95, 8, 16]} />
-                <meshBasicMaterial color="#38bdf8" transparent opacity={0.7} />
-              </mesh>
-            </group>
-          }
-        >
+        <Suspense fallback={null}>
           <AnimatedCharacter
             isMoving={isMoving}
             isSprinting={isSprinting}

@@ -16,12 +16,28 @@ const IslandCanvas = dynamic(() => import('../components/3d/IslandCanvas'), {
   ssr: false
 });
 
+/**
+ * HomePage
+ * 
+ * Application root coordinator rendering dual-view experience:
+ * - Interactive 3D WebGL Island (R3F, Rapier 3D, Skeletal FBX)
+ * - Classic Responsive Document Resume
+ * 
+ * Reactively synchronizes `data-theme` and `document.title` on theme/locale switch.
+ */
 export default function HomePage(): React.ReactElement {
-  const { viewMode, theme } = useGameStore();
+  const { viewMode, theme, language } = useGameStore();
 
   React.useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
+
+  React.useEffect(() => {
+    document.documentElement.setAttribute('lang', language);
+    document.title = language === 'uk'
+      ? 'Aetheria 3D — Портфоліо Дмитра Гнилицького'
+      : 'Aetheria 3D — Portfolio of Dmytro Hnylytskyi';
+  }, [language]);
 
   return (
     <main className="portfolio-app-container" data-theme={theme}>

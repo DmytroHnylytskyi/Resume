@@ -3,7 +3,7 @@
 import React from 'react';
 import { useGameStore } from '../../store/useGameStore';
 import { translations, developerProfiles } from '../../data/resumeData';
-import { Compass, FileText, Globe, ArrowRight, Sun, Moon, Sparkles } from 'lucide-react';
+import { Compass, FileText, Globe, ArrowRight, Sun, Moon } from 'lucide-react';
 
 export default function WelcomeModal(): React.ReactElement | null {
   const {
@@ -47,7 +47,7 @@ export default function WelcomeModal(): React.ReactElement | null {
             <button
               className="nav-shortcut-btn theme-toggle-btn mini"
               onClick={toggleTheme}
-              title={theme === 'dark' ? 'Світла тема' : 'Темна тема'}
+              title={theme === 'dark' ? (language === 'uk' ? 'Світла тема' : 'Light Mode') : (language === 'uk' ? 'Темна тема' : 'Dark Mode')}
             >
               {theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
             </button>

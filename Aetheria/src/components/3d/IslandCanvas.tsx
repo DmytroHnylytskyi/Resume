@@ -8,6 +8,17 @@ import * as THREE from 'three';
 import WorldScene from './WorldScene';
 import CharacterController from './CharacterController';
 
+/**
+ * IslandCanvas
+ * 
+ * Root 3D WebGL Canvas entry point for Aetheria.
+ * 
+ * Architecture & Performance Highlights:
+ * - High-Performance WebGL: Configured with dpr=1, powerPreference='high-performance', ACESFilmic tonemapping.
+ * - Rapier 3D Physics: Runs an asynchronous, deterministic physics world at locked 60Hz.
+ * - Zero Shadow Overheads: Global atmospheric lighting uses baked-feel directional & hemisphere lights without expensive shadow map passes.
+ * - Dynamic Sky & Stars: Drei Sky & lightweight procedural starfield creating a moody twilight graveyard atmosphere.
+ */
 export default function IslandCanvas(): React.ReactElement {
   const playerPosRef = useRef<THREE.Vector3 | null>(null);
 

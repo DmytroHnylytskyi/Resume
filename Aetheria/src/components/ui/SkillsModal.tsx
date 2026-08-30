@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useGameStore } from '../../store/useGameStore';
 import { developerProfiles, translations } from '../../data/resumeData';
-import { X, Award, CheckCircle2, ShieldCheck, Layers, Code2, Cpu, Wrench, Sparkles } from 'lucide-react';
+import { X, Award, CheckCircle2, ShieldCheck, Layers, Code2, Cpu, Wrench } from 'lucide-react';
 
 export default function SkillsModal(): React.ReactElement | null {
   const { activeModal, setActiveModal, language } = useGameStore();

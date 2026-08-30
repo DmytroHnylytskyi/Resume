@@ -48,7 +48,6 @@ export interface DeveloperProfile {
     email: string;
     telegram: string;
     github: string;
-    linkedin?: string;
   };
   projects: Record<string, ProjectItem>;
 }

@@ -1,4 +1,4 @@
-import { StatueKey, PortalKey } from './scene';
+import { StatueKey } from './scene';
 import { Locale } from './portfolio';
 
 export interface InteractionPrompt {
@@ -39,6 +39,10 @@ export interface GameState {
   setSelectedProject: (projectId: string | null) => void;
   interactionPrompt: InteractionPrompt | null;
   setInteractionPrompt: (prompt: InteractionPrompt | null) => void;
+
+  // Easter Egg Toasts
+  easterEggToast: { title: string; text: string } | null;
+  setEasterEggToast: (toast: { title: string; text: string } | null) => void;
 
   // Audio & Camera
   isAudioMuted: boolean;

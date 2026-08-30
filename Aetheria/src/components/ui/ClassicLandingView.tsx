@@ -81,7 +81,7 @@ export default function ClassicLandingView(): React.ReactElement {
           <button
             className="nav-shortcut-btn theme-toggle-btn"
             onClick={toggleTheme}
-            title={theme === 'dark' ? 'Світла тема' : 'Темна тема'}
+            title={theme === 'dark' ? (language === 'uk' ? 'Світла тема' : 'Light Mode') : (language === 'uk' ? 'Темна тема' : 'Dark Mode')}
           >
             {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
           </button>
@@ -302,39 +302,48 @@ export default function ClassicLandingView(): React.ReactElement {
                   ))}
                 </div>
 
-                {/* Action Links */}
-                <div className="project-actions">
-                  <button
-                    className="project-btn primary"
-                    onClick={() => setSelectedProject(proj.id)}
+                {/* Action Links Toolbar */}
+                <div className="project-actions-toolbar-wrapper">
+                  <div
+                    className="project-actions-toolbar custom-scrollbar-horizontal"
+                    onWheel={(e) => {
+                      if (e.deltaY !== 0) {
+                        e.currentTarget.scrollLeft += e.deltaY;
+                      }
+                    }}
                   >
-                    <Sparkles size={14} />
-                    <span>{translations[language].modals.projectDetails}</span>
-                  </button>
-
-                  {proj.url && (
-                    <a
-                      href={proj.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="project-btn secondary"
+                    <button
+                      className="project-btn primary"
+                      onClick={() => setSelectedProject(proj.id)}
                     >
-                      <span>{t.liveDemo}</span>
-                      <ExternalLink size={14} />
-                    </a>
-                  )}
+                      <Sparkles size={14} />
+                      <span>{translations[language].modals.projectDetails}</span>
+                    </button>
 
-                  {proj.githubUrl && (
-                    <a
-                      href={proj.githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="project-btn secondary"
-                    >
-                      <GithubIcon size={14} />
-                      <span>{t.sourceCode}</span>
-                    </a>
-                  )}
+                    {proj.url && (
+                      <a
+                        href={proj.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="project-btn secondary"
+                      >
+                        <span>{t.liveDemo}</span>
+                        <ExternalLink size={14} />
+                      </a>
+                    )}
+
+                    {proj.githubUrl && (
+                      <a
+                        href={proj.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="project-btn secondary"
+                      >
+                        <GithubIcon size={14} />
+                        <span>{t.sourceCode}</span>
+                      </a>
+                    )}
+                  </div>
                 </div>
               </article>
             ))}

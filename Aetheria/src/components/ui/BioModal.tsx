@@ -56,7 +56,7 @@ export default function BioModal(): React.ReactElement | null {
             </div>
             <div className="modal-meta-pill">
               <GraduationCap size={13} />
-              <span>КПІ (121 «Інженерія ПЗ»)</span>
+              <span>{language === 'uk' ? 'КПІ (121 «Інженерія ПЗ»)' : 'KPI (121 "Software Engineering")'}</span>
             </div>
           </div>
 
@@ -69,20 +69,31 @@ export default function BioModal(): React.ReactElement | null {
           {edu && (
             <div className="modal-subcard education-card">
               <div className="subcard-header">
-                <div className="subcard-icon-box gold">
-                  <GraduationCap size={18} />
+                <div className="subcard-header-left">
+                  <div className="subcard-icon-box gold">
+                    <GraduationCap size={18} />
+                  </div>
+                  <div>
+                    <h3 className="subcard-title">{t.education}</h3>
+                    <p className="subcard-subtitle">{edu.faculty}</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="subcard-title">{t.education}</h3>
-                  <span className="subcard-period">{edu.period}</span>
-                </div>
+                <span className="subcard-period-pill">{edu.period}</span>
               </div>
-              <div className="education-details">
-                <div className="edu-institution">{edu.institution}</div>
-                <div className="edu-faculty">{edu.faculty}</div>
-                <div className="edu-specialty-badge">
-                  <Briefcase size={13} />
-                  <span>{edu.specialty} • {edu.degree} ({edu.status})</span>
+              <div className="education-body">
+                <h4 className="edu-institution-name">{edu.institution}</h4>
+                <div className="edu-pills-wrap">
+                  <span className="edu-pill specialty">
+                    <Briefcase size={12} />
+                    <span>{edu.specialty}</span>
+                  </span>
+                  <span className="edu-pill degree">
+                    <span>{edu.degree}</span>
+                  </span>
+                  <span className="edu-pill status">
+                    <span className="status-dot-mini" />
+                    <span>{edu.status}</span>
+                  </span>
                 </div>
               </div>
             </div>

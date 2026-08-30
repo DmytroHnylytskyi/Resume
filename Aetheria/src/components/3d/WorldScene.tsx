@@ -6,9 +6,9 @@ import { useGLTF } from '@react-three/drei';
 import { RigidBody, CuboidCollider, CylinderCollider } from '@react-three/rapier';
 import * as THREE from 'three';
 import rawIslandSceneData from '../../data/islandScene.json';
-import { IslandSceneData, PlacedObject, StatueKey, PortalKey } from '../../types/scene';
+import { IslandSceneData, PlacedObject } from '../../types/scene';
 import { useGameStore } from '../../store/useGameStore';
-import { developerProfiles, translations } from '../../data/resumeData';
+import { translations } from '../../data/resumeData';
 
 const islandSceneData = rawIslandSceneData as unknown as IslandSceneData;
 
@@ -223,6 +223,106 @@ function GlowManager(): React.ReactElement {
 }
 
 // ══════════════════════════════════════════════════════
+// 2.5 GRAVE PIT ETHEREAL FLOATING PARTICLES
+// ══════════════════════════════════════════════════════
+const GRAVE_PARTICLE_COUNT = 75;
+
+function GraveFloatingParticles(): React.ReactElement {
+  const pointsRef = useRef<THREE.Points | null>(null);
+
+  // Soft glowing radial texture
+  const particleTexture = useMemo(() => {
+    if (typeof document === 'undefined') return null;
+    const canvas = document.createElement('canvas');
+    canvas.width = 64;
+    canvas.height = 64;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      const grad = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+      grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
+      grad.addColorStop(0.3, 'rgba(216, 180, 254, 0.85)');
+      grad.addColorStop(0.65, 'rgba(168, 85, 247, 0.3)');
+      grad.addColorStop(1, 'rgba(168, 85, 247, 0)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 64, 64);
+    }
+    return new THREE.CanvasTexture(canvas);
+  }, []);
+
+  const { positions, speeds, offsets } = useMemo(() => {
+    const pos = new Float32Array(GRAVE_PARTICLE_COUNT * 3);
+    const spd = new Float32Array(GRAVE_PARTICLE_COUNT);
+    const off = new Float32Array(GRAVE_PARTICLE_COUNT * 2);
+
+    for (let i = 0; i < GRAVE_PARTICLE_COUNT; i++) {
+      pos[i * 3] = (Math.random() - 0.5) * 1.5;     // X within pit
+      pos[i * 3 + 1] = Math.random() * 2.8;         // Initial Y spread
+      pos[i * 3 + 2] = (Math.random() - 0.5) * 1.7; // Z within pit
+
+      spd[i] = 0.35 + Math.random() * 0.45;         // Float speed
+      off[i * 2] = Math.random() * Math.PI * 2;     // Sway X phase
+      off[i * 2 + 1] = Math.random() * Math.PI * 2; // Sway Z phase
+    }
+
+    return { positions: pos, speeds: spd, offsets: off };
+  }, []);
+
+  useFrame((_, delta) => {
+    if (!pointsRef.current) return;
+    const geom = pointsRef.current.geometry;
+    const posAttr = geom.getAttribute('position') as THREE.BufferAttribute;
+    if (!posAttr) return;
+    const arr = posAttr.array as Float32Array;
+
+    const t = performance.now() * 0.0015;
+
+    for (let i = 0; i < GRAVE_PARTICLE_COUNT; i++) {
+      const idx = i * 3;
+      arr[idx + 1] += speeds[i] * delta; // rise upwards
+
+      // Gentle magical sway
+      arr[idx] += Math.sin(t * 1.5 + offsets[i * 2]) * 0.0025;
+      arr[idx + 2] += Math.cos(t * 1.5 + offsets[i * 2 + 1]) * 0.0025;
+
+      // Loop back to bottom of pit
+      if (arr[idx + 1] > 3.0) {
+        arr[idx + 1] = 0.05 + Math.random() * 0.15;
+        arr[idx] = (Math.random() - 0.5) * 1.4;
+        arr[idx + 2] = (Math.random() - 0.5) * 1.6;
+      }
+    }
+
+    posAttr.needsUpdate = true;
+  });
+
+  return (
+    <group position={[14, 0.1, 18]}>
+      <points ref={pointsRef}>
+        <bufferGeometry>
+          <bufferAttribute
+            attach="attributes-position"
+            args={[positions, 3]}
+          />
+        </bufferGeometry>
+        <pointsMaterial
+          size={0.28}
+          map={particleTexture || undefined}
+          color="#d8b4fe"
+          transparent
+          opacity={0.88}
+          blending={THREE.AdditiveBlending}
+          depthWrite={false}
+          sizeAttenuation
+        />
+      </points>
+
+      {/* Gentle upward atmospheric point light */}
+      <pointLight position={[0, 0.7, 0]} color="#c084fc" intensity={2.6} distance={4.5} decay={2} />
+    </group>
+  );
+}
+
+// ══════════════════════════════════════════════════════
 // 3. LANDMARK PROPS (Unique interactive objects with solid colliders)
 // ══════════════════════════════════════════════════════
 function LandmarkProp({ obj }: { obj: PlacedObject }): React.ReactElement {
@@ -346,13 +446,18 @@ interface InteractiveTarget {
   action: () => void;
 }
 
+const GRAVE_PITS: [number, number, number][] = [
+  [14, 0.5, 18]
+];
+
 function ProximityManager({
   playerPosRef
 }: {
   playerPosRef?: React.MutableRefObject<THREE.Vector3 | null>;
 }): null {
-  const { setActiveModal, setSelectedProject, setInteractionPrompt, language } = useGameStore();
+  const { setActiveModal, setSelectedProject, setInteractionPrompt, setEasterEggToast, language } = useGameStore();
   const currentPromptTitleRef = useRef<string | null>(null);
+  const lastEasterEggTriggerRef = useRef<number>(0);
 
   const targets = useMemo<InteractiveTarget[]>(() => {
     const t = translations[language].interaction;
@@ -408,6 +513,7 @@ function ProximityManager({
     const p = playerPosRef.current;
     if (!Number.isFinite(p.x) || !Number.isFinite(p.z)) return;
 
+    // ── 1. Interactive Landmark Targets ──
     let closestTarget: InteractiveTarget | null = null;
     let closestDistSq = Infinity;
 
@@ -435,6 +541,34 @@ function ProximityManager({
       if (currentPromptTitleRef.current !== null) {
         currentPromptTitleRef.current = null;
         setInteractionPrompt(null);
+      }
+    }
+
+    // ── 2. Easter Egg Grave Pit Levitation Trigger ──
+    const now = performance.now();
+    let overGrave = false;
+    for (let g = 0; g < GRAVE_PITS.length; g++) {
+      const gx = p.x - GRAVE_PITS[g][0];
+      const gz = p.z - GRAVE_PITS[g][2];
+      if (gx * gx + gz * gz < 4.5) {
+        overGrave = true;
+        break;
+      }
+    }
+
+    if (overGrave) {
+      if (now - lastEasterEggTriggerRef.current > 6000) {
+        lastEasterEggTriggerRef.current = now;
+        setEasterEggToast({
+          title: language === 'uk' ? 'Вам ще зарано!' : 'Not your time yet!',
+          text: language === 'uk'
+            ? 'Ви не впадете — попереду ще багато крутого коду та проєктів.'
+            : "You won't fall — there's still plenty of great code to write."
+        });
+
+        setTimeout(() => {
+          setEasterEggToast(null);
+        }, 4000);
       }
     }
   });
@@ -472,7 +606,6 @@ const MODEL_COLLIDER_DEFS: Record<string, ModelBound> = {
   // Graves & Gravestones
   'Grave.glb': { halfExtents: [1.05, 1.1, 0.55], heightOffset: 1.1 },
   'Damaged Grave.glb': { halfExtents: [1.05, 1.1, 0.55], heightOffset: 1.1 },
-  'Grave-Yg8Yz6T8A6.glb': { halfExtents: [1.05, 1.1, 0.55], heightOffset: 1.1 },
   'Gravestone.glb': { halfExtents: [0.75, 0.85, 0.3], heightOffset: 0.85 },
   'Gravestone-lrEHKjTy29.glb': { halfExtents: [0.75, 0.85, 0.3], heightOffset: 0.85 },
   'Grave Marker.glb': { halfExtents: [0.45, 0.65, 0.3], heightOffset: 0.65 },
@@ -527,6 +660,18 @@ interface WorldSceneProps {
   playerPosRef?: React.MutableRefObject<THREE.Vector3 | null>;
 }
 
+/**
+ * WorldScene
+ * 
+ * Master 3D environment graph rendering 379 placed objects on the Aetheria island.
+ * 
+ * Architectural Highlights:
+ * - GPU Instancing Batching: Repeated props (fences, gravestones, ground tiles, scatter props) are grouped by GLTF model and rendered via `THREE.InstancedMesh` (~300 objects in ~15 draw calls).
+ * - Compound Physics Body: All static obstacle colliders are assembled into a single rigid body (`type="fixed"`), eliminating individual component overhead.
+ * - Single-Loop Glow Manager: Drives all 6 landmark pulsars and glowing rings in a single synchronized frame update.
+ * - Particle Levitation: Simulates upward ethereal light particles over the secret grave pit.
+ * - Proximity Interaction Tracker: Monitors player distance squared to landmark triggers without complex physics raycasts.
+ */
 export default function WorldScene({ playerPosRef }: WorldSceneProps): React.ReactElement {
   const { instancedGroups, landmarks, trees, obstacleColliders } = useMemo(() => {
     const groups: Record<string, PlacedObject[]> = {};
@@ -587,6 +732,9 @@ export default function WorldScene({ playerPosRef }: WorldSceneProps): React.Rea
 
       {/* ── Unified Glow Manager for all 6 landmarks (1 useFrame) ── */}
       <GlowManager />
+
+      {/* ── Grave Pit Levitation Ethereal Floating Particles ── */}
+      <GraveFloatingParticles />
 
       {/* ── Instanced Batched Meshes (~300 objects in ~15 draw calls) ── */}
       {Object.entries(instancedGroups).map(([modelPath, instances]) => (

@@ -103,8 +103,7 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
     contacts: {
       email: "dmitrijgnilickij7@gmail.com",
       telegram: "https://t.me/mokydjin",
-      github: "https://github.com/DmytroHnylytskyi",
-      linkedin: "https://github.com/DmytroHnylytskyi"
+      github: "https://github.com/DmytroHnylytskyi"
     },
     projects: {
       forma: {
@@ -114,7 +113,7 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         description: "Комерційно-орієнтований full-stack 3D-редактор сцени та просторовий конфігуратор для будь-яких 3D-об'єктів (меблі, архітектура, декор) з автоматичним стекуванням поверхонь, гнучким налаштуванням матеріалів та хмарною синхронізацією.",
         tags: ["Three.js", "React Three Fiber", "Next.js 15", "TypeScript", "FastAPI", "PostgreSQL", "Docker"],
         url: "http://localhost:3001",
-        githubUrl: "https://github.com/DmytroHnylytskyi",
+        githubUrl: "https://github.com/DmytroHnylytskyi/Resume/tree/main/Forma-3D",
         color: "#34d399",
         features: [
           "Алгоритм Surface Snapping (Raycasting) для автоматичного розміщення та стекування об'єктів на поверхнях",
@@ -130,7 +129,7 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         description: "Апаратна 3D-візуалізація планети Земля з кастомними GLSL-шейдерами атмосфери та шарами супутникових даних у реальному часі зі стабільними 60 FPS.",
         tags: ["Three.js", "GLSL Shaders", "Next.js 15", "FastAPI", "Zustand 5", "Docker"],
         url: "http://localhost:3002",
-        githubUrl: "https://github.com/DmytroHnylytskyi",
+        githubUrl: "https://github.com/DmytroHnylytskyi/Resume/tree/main/TerraScope",
         color: "#60a5fa",
         features: [
           "Кастомний GLSL Day/Night Terminator шейдер із реальним розрахунком сонячного світла та Fresnel світіння",
@@ -145,13 +144,29 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         description: "Освітня система для викладачів і студентів із модульними інтерактивними курсами, системою дедлайнів, завантаженням домашніх робіт та візуальною аналітикою прогресу.",
         tags: ["React 19", "Vite", "TanStack Query v5", "FastAPI", "PostgreSQL", "TailwindCSS"],
         url: "http://localhost:3003",
-        githubUrl: "https://github.com/DmytroHnylytskyi",
+        githubUrl: "https://github.com/DmytroHnylytskyi/Resume/tree/main/Lumina",
         color: "#fb7185",
         features: [
           "Оптимістичний UI та миттєве кешування стану на клієнті через TanStack Query v5",
           "Рольова модель (Студент / Викладач) із захистом маршрутів та ротацією JWT токенів",
           "Інтерактивний медіаплеєр уроків із підтримкою відео, PDF, Google Drive та Cloudinary",
           "Аналітичні графіки успішності та динаміка навчання на базі Recharts"
+        ]
+      },
+      aetheria: {
+        id: "aetheria",
+        title: "Aetheria (Interactive 3D WebGL Portfolio & Hub)",
+        tagline: "Інтерактивний 3D-простір острова та презентаційний хаб проєктів",
+        description: "Комплексне 3D WebGL портфоліо на Next.js 15, Three.js, React Three Fiber та Rapier 3D з оптимізованим GPU Instancing рендерингом, фізикою в реальному часі та двомовним інтерфейсом.",
+        tags: ["Next.js 15", "React 19", "Three.js", "React Three Fiber", "Rapier 3D", "TypeScript", "Zustand 5"],
+        url: "",
+        githubUrl: "https://github.com/DmytroHnylytskyi/Resume/tree/main/Aetheria",
+        color: "#fbbf24",
+        features: [
+          "Оптимізований рендеринг оточення через THREE.InstancedMesh (~300 об'єктів у ~15 draw calls)",
+          "Фізична симуляція Rapier 3D з фіксованим 60 Hz кроком та контролером від 3-ї особи",
+          "Скелетна анімація персонажа (FBX) з плавним кросфейдом стейтів (Idle, Walk, Run, Jump)",
+          "Миттєве перемикання мов (UK/EN) та тем (Dark/Light) через централізований Zustand стор"
         ]
       }
     }
@@ -258,8 +273,7 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
     contacts: {
       email: "dmitrijgnilickij7@gmail.com",
       telegram: "https://t.me/mokydjin",
-      github: "https://github.com/DmytroHnylytskyi",
-      linkedin: "https://github.com/DmytroHnylytskyi"
+      github: "https://github.com/DmytroHnylytskyi"
     },
     projects: {
       forma: {
@@ -269,7 +283,7 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         description: "Commercial-grade full-stack 3D interior & spatial room configurator for placing, stacking, and customizing any 3D assets with real-time materials swapping, surface raycasting, and async cloud synchronization.",
         tags: ["Three.js", "React Three Fiber", "Next.js 15", "TypeScript", "FastAPI", "PostgreSQL", "Docker"],
         url: "http://localhost:3001",
-        githubUrl: "https://github.com/DmytroHnylytskyi",
+        githubUrl: "https://github.com/DmytroHnylytskyi/Resume/tree/main/Forma-3D",
         color: "#34d399",
         features: [
           "Raycasting Surface Snapping for automatic object positioning and height stacking",
@@ -285,7 +299,7 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         description: "Hardware-accelerated 3D planetary Earth visualization with custom atmospheric GLSL shaders, orbital navigation, and real-time live data layers locked at 60 FPS.",
         tags: ["Three.js", "GLSL Shaders", "Next.js 15", "FastAPI", "Zustand 5", "Docker"],
         url: "http://localhost:3002",
-        githubUrl: "https://github.com/DmytroHnylytskyi",
+        githubUrl: "https://github.com/DmytroHnylytskyi/Resume/tree/main/TerraScope",
         color: "#60a5fa",
         features: [
           "Custom GLSL Day/Night Terminator shader with dynamic solar computation and Fresnel atmosphere glow",
@@ -300,13 +314,29 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         description: "Comprehensive educational platform featuring interactive course authoring, automated testing, homework submission pipelines, and visual progress analytics.",
         tags: ["React 19", "Vite", "TanStack Query v5", "FastAPI", "PostgreSQL", "TailwindCSS"],
         url: "http://localhost:3003",
-        githubUrl: "https://github.com/DmytroHnylytskyi",
+        githubUrl: "https://github.com/DmytroHnylytskyi/Resume/tree/main/Lumina",
         color: "#fb7185",
         features: [
           "Optimistic UI and instant client state caching via TanStack Query v5",
           "Role-based access (Student / Teacher) with JWT rotation and rate limiting",
           "Interactive lesson media player supporting video, PDF, Google Drive, and Cloudinary CDN",
           "Visual student progress curves and study schedules powered by Recharts"
+        ]
+      },
+      aetheria: {
+        id: "aetheria",
+        title: "Aetheria (Interactive 3D WebGL Portfolio & Hub)",
+        tagline: "Interactive 3D spatial island & developer portfolio hub",
+        description: "Comprehensive interactive 3D WebGL portfolio built with Next.js 15, Three.js, React Three Fiber, and Rapier 3D featuring GPU Instanced rendering, locked 60 FPS real-time physics, and responsive UI.",
+        tags: ["Next.js 15", "React 19", "Three.js", "React Three Fiber", "Rapier 3D", "TypeScript", "Zustand 5"],
+        url: "",
+        githubUrl: "https://github.com/DmytroHnylytskyi/Resume/tree/main/Aetheria",
+        color: "#fbbf24",
+        features: [
+          "Optimized environment rendering via THREE.InstancedMesh (~300 props in ~15 draw calls)",
+          "Rapier 3D physics simulation with fixed 60 Hz timestep and third-person controller",
+          "Skeletal character animation blending (FBX) with smooth transitions (Idle, Walk, Run, Jump)",
+          "Zero-latency bilingual switching (UK/EN) and theme toggle (Dark/Light) via Zustand 5"
         ]
       }
     }
@@ -354,7 +384,7 @@ export const translations: Record<Locale, Translations> = {
       certificationsSubtitle: "Міжнародні та технічні оцінки кваліфікації (HackerRank & EF SET)",
       skillsTitle: "Стек & Навички",
       skillsSubtitle: "Технології та інструменти, з якими я будую щодня",
-      projectsTitle: "Вибрані Проєкти",
+      projectsTitle: "Обрані Проєкти",
       projectsSubtitle: "Реальні full-stack та 3D-інженерні рішення",
       keyFeatures: "Ключові архітектурні фічі:",
       liveDemo: "Переглянути проєкт",

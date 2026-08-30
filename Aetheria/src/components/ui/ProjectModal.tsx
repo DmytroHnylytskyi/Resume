@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect } from 'react';
 import { useGameStore } from '../../store/useGameStore';
@@ -40,6 +40,7 @@ export default function ProjectModal(): React.ReactElement | null {
       case 'forma': return 'emerald';
       case 'terrascope': return 'sapphire';
       case 'lumina': return 'coral';
+      case 'aetheria': return 'gold';
       default: return 'emerald';
     }
   };

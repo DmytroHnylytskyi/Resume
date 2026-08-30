@@ -6449,7 +6449,7 @@
     },
     {
       "id": "5231295f-121a-4f89-817a-b06d40ce6caf",
-      "modelPath": "/model/kaykit_halloween/Statue by Zsky - gieXYyUTYr.glb",
+      "modelPath": "/model/kaykit_halloween/Fox Statue by Quaternius - abxyXID5EA.glb",
       "position": [
         -6,
         0.5,
@@ -6457,14 +6457,12 @@
       ],
       "rotation": [
         0,
-        0,
+        0.7853981633974483,
         0
       ],
-      "scale": 3.220917990286813,
+      "scale": 1,
       "hiddenParts": [],
-      "colors": {
-        "Statue4": "#390303"
-      }
+      "colors": {}
     }
   ],
   "spawnPoint": [

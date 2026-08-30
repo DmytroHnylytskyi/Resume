@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useGameStore } from '../../store/useGameStore';
 import { developerProfiles, translations } from '../../data/resumeData';
-import { X, Share2, Mail, Send, ExternalLink, Copy, Check, Clock, Globe } from 'lucide-react';
+import { X, Share2, Mail, Send, ExternalLink, Copy, Check, Clock } from 'lucide-react';
 
 function GithubIcon({ size = 18 }: { size?: number }) {
   return (
@@ -102,7 +102,9 @@ export default function ContactsModal(): React.ReactElement | null {
                   <Send size={20} />
                 </div>
                 <div className="contact-info-block">
-                  <span className="contact-role-label">Telegram (Швидка відповідь / Primary)</span>
+                  <span className="contact-role-label">
+                    {language === 'uk' ? 'Telegram (Швидка відповідь / Primary)' : 'Telegram (Fast Response / Primary)'}
+                  </span>
                   <span className="contact-primary-text">@mokydjin</span>
                 </div>
                 <ExternalLink size={16} className="contact-link-arrow" />
@@ -110,7 +112,7 @@ export default function ContactsModal(): React.ReactElement | null {
               <button
                 className="contact-quick-copy-btn"
                 onClick={handleCopyTg}
-                title="Скопіювати @mokydjin"
+                title={language === 'uk' ? 'Скопіювати @mokydjin' : 'Copy @mokydjin'}
               >
                 {copiedTg ? <Check size={14} className="copied-icon" /> : <Copy size={14} />}
               </button>
@@ -126,7 +128,9 @@ export default function ContactsModal(): React.ReactElement | null {
                   <Mail size={20} />
                 </div>
                 <div className="contact-info-block">
-                  <span className="contact-role-label">Email (Офіційні пропозиції)</span>
+                  <span className="contact-role-label">
+                    {language === 'uk' ? 'Email (Офіційні пропозиції)' : 'Email (Official Inquiries)'}
+                  </span>
                   <span className="contact-primary-text">{profile.contacts.email}</span>
                 </div>
                 <ExternalLink size={16} className="contact-link-arrow" />
@@ -134,7 +138,7 @@ export default function ContactsModal(): React.ReactElement | null {
               <button
                 className="contact-quick-copy-btn"
                 onClick={handleCopyEmail}
-                title="Скопіювати Email"
+                title={language === 'uk' ? 'Скопіювати Email' : 'Copy Email'}
               >
                 {copiedEmail ? <Check size={14} className="copied-icon" /> : <Copy size={14} />}
               </button>
@@ -152,7 +156,9 @@ export default function ContactsModal(): React.ReactElement | null {
                   <GithubIcon size={20} />
                 </div>
                 <div className="contact-info-block">
-                  <span className="contact-role-label">GitHub (Вихідний код та репозиторії)</span>
+                  <span className="contact-role-label">
+                    {language === 'uk' ? 'GitHub (Вихідний код та репозиторії)' : 'GitHub (Source Code & Repositories)'}
+                  </span>
                   <span className="contact-primary-text">github.com/DmytroHnylytskyi</span>
                 </div>
                 <ExternalLink size={16} className="contact-link-arrow" />

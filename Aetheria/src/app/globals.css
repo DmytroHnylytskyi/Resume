@@ -302,6 +302,86 @@ html, body {
   letter-spacing: 0.2px;
 }
 
+/* ── Easter Egg Floating Toast ── */
+.easter-egg-toast-wrapper {
+  position: absolute;
+  top: 76px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 150;
+  animation: easter-egg-bounce-in 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes easter-egg-bounce-in {
+  from {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.easter-egg-toast {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 22px;
+  border-radius: 20px;
+  background: var(--bg-pill);
+  border: 1px solid rgba(192, 132, 252, 0.4);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4), 0 0 20px rgba(192, 132, 252, 0.2);
+  max-width: 460px;
+}
+
+.easter-egg-icon-box {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(192, 132, 252, 0.15);
+  color: #c084fc;
+  border: 1px solid rgba(192, 132, 252, 0.3);
+  flex-shrink: 0;
+}
+
+.easter-egg-sparkle-icon {
+  animation: rotateSparkle 3s linear infinite;
+}
+
+@keyframes rotateSparkle {
+  0% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.15) rotate(180deg); }
+  100% { transform: scale(1) rotate(360deg); }
+}
+
+.easter-egg-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.easter-egg-title {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #c084fc;
+  letter-spacing: 0.1px;
+}
+
+.easter-egg-desc {
+  font-size: 12px;
+  color: var(--text-primary);
+  opacity: 0.9;
+  line-height: 1.4;
+}
+
 /* ── Loading Screen ── */
 .loading-screen-backdrop {
   position: absolute;
@@ -430,6 +510,8 @@ html, body {
 .welcome-modal-card {
   width: 100%;
   max-width: 680px;
+  position: relative;
+  overflow: hidden;
   border-radius: 28px;
   padding: 32px 36px;
   display: flex;
@@ -1024,35 +1106,78 @@ html, body {
   color: var(--text-secondary);
 }
 
+/* Scrollable Action Links Toolbar */
+.project-actions-toolbar-wrapper {
+  margin-top: auto;
+  padding-top: 12px;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.project-actions-toolbar,
 .project-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-top: auto;
-  padding-top: 8px;
+  gap: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
+  padding: 4px 2px 6px 2px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-subtle) transparent;
+}
+
+.project-actions-toolbar::-webkit-scrollbar,
+.custom-scrollbar-horizontal::-webkit-scrollbar {
+  height: 4px;
+}
+
+.project-actions-toolbar::-webkit-scrollbar-track,
+.custom-scrollbar-horizontal::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.project-actions-toolbar::-webkit-scrollbar-thumb,
+.custom-scrollbar-horizontal::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: 4px;
+}
+
+.project-actions-toolbar::-webkit-scrollbar-thumb:hover,
+.custom-scrollbar-horizontal::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
 }
 
 .project-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 14px;
+  padding: 8px 13px;
   border-radius: 12px;
   text-decoration: none;
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   font-family: inherit;
+  white-space: nowrap;
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  user-select: none;
 }
 
 .project-btn.primary {
   background: var(--btn-primary-bg);
   color: var(--btn-primary-text);
+  border: 1px solid transparent;
 }
 
 .project-btn.primary:hover {
   background: var(--btn-primary-hover);
+  transform: translateY(-1px);
 }
 
 .project-btn.secondary {
@@ -1063,6 +1188,8 @@ html, body {
 
 .project-btn.secondary:hover {
   background: var(--bg-card-hover);
+  border-color: var(--border-strong);
+  transform: translateY(-1px);
 }
 
 /* Contacts Section */
@@ -1184,6 +1311,11 @@ html, body {
   50% { opacity: 0.55; transform: scale(0.85); }
 }
 
+.obsidian-modal {
+  position: relative;
+  overflow: hidden;
+}
+
 .resume-modal-card.obsidian-modal {
   width: 100%;
   max-width: 640px;
@@ -1214,6 +1346,7 @@ html, body {
   right: 0;
   height: 3px;
   z-index: 10;
+  pointer-events: none;
 }
 
 .modal-accent-line.gold {
@@ -1419,66 +1552,124 @@ html, body {
   border: 1px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
+  transition: all 0.2s ease;
+}
+
+.modal-subcard.education-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-strong);
 }
 
 .subcard-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
+}
+
+.subcard-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .subcard-icon-box {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .subcard-icon-box.gold {
   background: rgba(251, 191, 36, 0.14);
   color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.25);
 }
 
 .subcard-title {
-  font-size: 14px;
+  font-size: 14.5px;
   font-weight: 700;
   color: var(--text-primary);
+  line-height: 1.2;
 }
 
-.subcard-period {
+.subcard-subtitle {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.subcard-period-pill {
   font-size: 11.5px;
   color: #fbbf24;
   font-weight: 700;
   font-family: ui-monospace, SFMono-Regular, monospace;
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid rgba(251, 191, 36, 0.25);
+  padding: 3px 9px;
+  border-radius: 20px;
+  white-space: nowrap;
 }
 
-.education-details {
+.education-body {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 10px;
 }
 
-.edu-institution {
-  font-size: 13px;
+.edu-institution-name {
+  font-size: 13.5px;
   font-weight: 700;
   color: var(--text-primary);
+  line-height: 1.45;
 }
 
-.edu-faculty {
-  font-size: 12px;
+.edu-pills-wrap {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.edu-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border-radius: 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  background: var(--badge-bg);
+  border: 1px solid var(--border-subtle);
   color: var(--text-secondary);
 }
 
-.edu-specialty-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11.5px;
-  color: var(--text-muted);
-  margin-top: 4px;
+.edu-pill.specialty {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.edu-pill.degree {
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.08);
+  border-color: rgba(251, 191, 36, 0.2);
+}
+
+.edu-pill.status {
+  color: var(--text-secondary);
+}
+
+.status-dot-mini {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #34d399;
+  display: inline-block;
+  flex-shrink: 0;
 }
 
 /* Highlights Block */
@@ -2246,3 +2437,14 @@ html, body {
     font-size: 11.5px;
   }
 }
+
+/* ── Hide Next.js Dev Tools & Indicator Overlays ── */
+nextjs-portal,
+#nextjs-dev-tools,
+[data-nextjs-dev-overlay] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
