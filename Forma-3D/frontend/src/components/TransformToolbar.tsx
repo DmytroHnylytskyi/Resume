@@ -50,12 +50,13 @@ export default function TransformToolbar() {
 
   let objName = selectedObj?.name || 'Object';
   if (catalogItem) {
-    try {
+    if (tCat.has(catalogItem.id)) {
       objName = tCat(catalogItem.id);
-    } catch {
-      objName = catalogItem.defaultName;
+    } else {
+      objName = catalogItem.defaultName || 'Object';
     }
   }
+
 
   const currentScale = selectedObj?.scale || 1.0;
   const currentDegY = selectedObj?.rotation ? Math.round((selectedObj.rotation[1] * 180) / Math.PI) : 0;

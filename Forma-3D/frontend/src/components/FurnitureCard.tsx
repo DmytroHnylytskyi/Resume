@@ -8,6 +8,7 @@
  */
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { 
   Sofa, 
   Armchair, 
@@ -92,6 +93,7 @@ export function getFurnitureIcon(name: string = ''): { icon: LucideIcon, color: 
  * @returns {JSX.Element} Card UI component.
  */
 export default function FurnitureCard({ item, onAdd, onHover }: FurnitureCardProps) {
+  const tCat = useTranslations('Catalog');
   const { icon: ItemIcon, color } = getFurnitureIcon(item.name);
 
   return (
@@ -116,7 +118,7 @@ export default function FurnitureCard({ item, onAdd, onHover }: FurnitureCardPro
             e.stopPropagation();
             onAdd(item);
           }} 
-          title="Розмістити у 3D просторі"
+          title={tCat('placeIn3D')}
         >
           <Plus size={16} />
         </button>
@@ -124,3 +126,4 @@ export default function FurnitureCard({ item, onAdd, onHover }: FurnitureCardPro
     </div>
   );
 }
+

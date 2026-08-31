@@ -59,7 +59,21 @@ function SinglePreviewModel({ file }: SinglePreviewModelProps) {
   const { clonedWrapper, fitScale } = useMemo(() => {
     if (!scene) return { clonedWrapper: null, fitScale: 1 };
     const clone = scene.clone(true);
+    
+    // Deep clone materials to prevent preview contamination
+    clone.traverse((child: THREE.Object3D) => {
+      const mesh = child as THREE.Mesh;
+      if (mesh.isMesh && mesh.material) {
+        if (Array.isArray(mesh.material)) {
+          mesh.material = mesh.material.map(m => m.clone());
+        } else {
+          mesh.material = (mesh.material as THREE.Material).clone();
+        }
+      }
+    });
+
     const { wrapper, normalizedScale } = normalizeModelGeometry(clone, file);
+
     
     // Scale wrapper by normalizedScale to compute exact metric dimensions
     wrapper.scale.setScalar(normalizedScale);
@@ -186,9 +200,10 @@ export default function FurnitureCatalog() {
 
   // Filter items by category and localized search string
   const categoryItems = useMemo(() => {
-    if (activeCategory === 'all') return catalogItems;
+    if (activeCategory === 'all' || activeCategory === 'necropolis' || catalogCategories.length <= 1) return catalogItems;
     return catalogItems.filter(item => item.category === activeCategory);
   }, [activeCategory]);
+
 
   const localizedItems = useMemo<FurnitureCardItem[]>(() => {
     return categoryItems.map(item => ({
@@ -288,42 +303,45 @@ export default function FurnitureCatalog() {
           )}
         </div>
 
-        {/* Category Pills */}
-        <div className="category-tabs-wrapper">
-          <button 
-            className="category-scroll-btn left" 
-            onClick={() => tabsRef.current?.scrollBy({ left: -140, behavior: 'smooth' })}
-          >
-            <ChevronLeft size={16} />
-          </button>
-          
-          <div 
-            ref={tabsRef}
-            className="category-tabs-scroll"
-            onWheel={(e) => {
-              if (tabsRef.current) {
-                tabsRef.current.scrollLeft += e.deltaY;
-              }
-            }}
-          >
-            {catalogCategories.map(cat => (
-              <button
-                key={cat.id}
-                className={`category-pill ${activeCategory === cat.id ? 'active' : ''}`}
-                onClick={() => setActiveCategory(cat.id)}
-              >
-                {getCategoryLabel(cat.id)}
-              </button>
-            ))}
-          </div>
+        {/* Category Pills (rendered only when multiple categories exist) */}
+        {catalogCategories.length > 1 && (
+          <div className="category-tabs-wrapper">
+            <button 
+              className="category-scroll-btn left" 
+              onClick={() => tabsRef.current?.scrollBy({ left: -140, behavior: 'smooth' })}
+            >
+              <ChevronLeft size={16} />
+            </button>
+            
+            <div 
+              ref={tabsRef}
+              className="category-tabs-scroll"
+              onWheel={(e) => {
+                if (tabsRef.current) {
+                  tabsRef.current.scrollLeft += e.deltaY;
+                }
+              }}
+            >
+              {catalogCategories.map(cat => (
+                <button
+                  key={cat.id}
+                  className={`category-pill ${activeCategory === cat.id ? 'active' : ''}`}
+                  onClick={() => setActiveCategory(cat.id)}
+                >
+                  {getCategoryLabel(cat.id)}
+                </button>
+              ))}
+            </div>
 
-          <button 
-            className="category-scroll-btn right" 
-            onClick={() => tabsRef.current?.scrollBy({ left: 140, behavior: 'smooth' })}
-          >
-            <ChevronRight size={16} />
-          </button>
-        </div>
+            <button 
+              className="category-scroll-btn right" 
+              onClick={() => tabsRef.current?.scrollBy({ left: 140, behavior: 'smooth' })}
+            >
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        )}
+
 
         {/* Furniture Cards Grid */}
         <div className="furniture-cards-grid">

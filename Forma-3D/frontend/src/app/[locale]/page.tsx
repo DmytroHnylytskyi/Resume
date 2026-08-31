@@ -152,7 +152,7 @@ export default function Home() {
             title={tNav('magnetTooltip')}
           >
             <Magnet size={16} />
-            <span className="navbar-tool-label">Magnet {snapToGrid ? 'ON' : 'OFF'}</span>
+            <span className="navbar-tool-label">{snapToGrid ? tNav('magnetOn') : tNav('magnetOff')}</span>
           </button>
 
           <button 
@@ -170,12 +170,13 @@ export default function Home() {
           <button 
             className="navbar-tool-btn active"
             onClick={toggleLocale}
-            title={locale === 'en' ? 'Switch language to Ukrainian' : 'Змінити мову на англійську'}
+            title={tNav('langTooltip')}
             suppressHydrationWarning
           >
             <Globe size={16} />
             <span className="navbar-tool-label" suppressHydrationWarning>{locale.toUpperCase()}</span>
           </button>
+
 
           <div className="navbar-toolbar-divider" />
 

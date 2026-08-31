@@ -102,27 +102,10 @@ export const useStore = create<FormaStore>()((set, get) => ({
   /** Sets selected object sub-mesh node name */
   setSelectedObjectPart: (part) => set({ selectedObjectPart: part }),
 
-  /** Legacy single-part color selection backwards compatibility */
-  selectedPart: null,
-  setSelectedPart: (part) => set({ selectedPart: part }),
-
-  /** Global scene material color map */
-  colors: {
-    wall: '#ffffff',
-    floor: '#e5e7eb',
-    door: '#8b5cf6',
-    window: '#3b82f6',
-    baseboard: '#6b7280',
-  },
-
-  /** Updates material color in global scene color map */
-  updateColor: (part, color) => set((state) => ({
-    colors: { ...state.colors, [part]: color }
-  })),
-
   // ---------------------------------------------------------------------------
   // Interactive 3D Object Placement Engine
   // ---------------------------------------------------------------------------
+
 
   /** @type {string | null} Relative URL path to GLB model currently being placed under mouse raycaster */
   placingModelPath: null,
@@ -167,7 +150,9 @@ export const useStore = create<FormaStore>()((set, get) => ({
       modelPath: state.placingModelPath,
       position,
       rotation,
-      scale: state.placingObjectScale || 1,
+      scale: Array.isArray(state.placingObjectScale) 
+        ? [...state.placingObjectScale] 
+        : (state.placingObjectScale || 1),
       hiddenParts: [],
       colors: state.placingObjectColors ? { ...state.placingObjectColors } : {}
     };
@@ -219,7 +204,7 @@ export const useStore = create<FormaStore>()((set, get) => ({
     return {
       placingModelPath: obj.modelPath,
       placingObjectColors: obj.colors ? { ...obj.colors } : {},
-      placingObjectScale: obj.scale || 1,
+      placingObjectScale: Array.isArray(obj.scale) ? [...obj.scale] : (obj.scale || 1),
       selectedObjectId: null,
       selectedObjectPart: null
     };
@@ -255,6 +240,14 @@ export const useStore = create<FormaStore>()((set, get) => ({
     return {
       placedObjects: state.placedObjects.map(obj => {
         if (obj.id === state.selectedObjectId) {
+          if (Array.isArray(obj.scale)) {
+            const s: [number, number, number] = [
+              Math.max(0.1, Math.min(10, Number((obj.scale[0] * multiplier).toFixed(3)))),
+              Math.max(0.1, Math.min(10, Number((obj.scale[1] * multiplier).toFixed(3)))),
+              Math.max(0.1, Math.min(10, Number((obj.scale[2] * multiplier).toFixed(3))))
+            ];
+            return { ...obj, scale: s };
+          }
           const newScale = Math.max(0.1, Math.min(10, (obj.scale || 1) * multiplier));
           return { ...obj, scale: Number(newScale.toFixed(2)) };
         }
@@ -265,7 +258,7 @@ export const useStore = create<FormaStore>()((set, get) => ({
 
   /**
    * Sets exact scale multiplier for selected object.
-   * @param {number} scaleValue - Absolute scale value.
+   * @param {number | [number, number, number]} scaleValue - Absolute scale value or scale vector.
    */
   setSelectedObjectScale: (scaleValue) => set((state) => {
     if (!state.selectedObjectId) return state;
@@ -278,6 +271,7 @@ export const useStore = create<FormaStore>()((set, get) => ({
       })
     };
   }),
+
 
   /**
    * Updates color map of a placed object sub-mesh node.
@@ -380,7 +374,7 @@ export const useStore = create<FormaStore>()((set, get) => ({
       if (parsed && Array.isArray(parsed.placedObjects)) {
         set({
           placedObjects: parsed.placedObjects,
-          currentProjectName: parsed.currentProjectName || 'Моє Збереження',
+          currentProjectName: parsed.currentProjectName || 'Saved Scene',
           activeMode: parsed.activeMode || 'custom',
           selectedObjectId: null,
           selectedObjectPart: null
@@ -424,11 +418,12 @@ export const useStore = create<FormaStore>()((set, get) => ({
       if (parsed && Array.isArray(parsed.placedObjects)) {
         set({
           placedObjects: parsed.placedObjects,
-          currentProjectName: parsed.projectName || 'Імпортований Проєкт',
+          currentProjectName: parsed.projectName || 'Imported Project',
           activeMode: 'custom',
           selectedObjectId: null,
           selectedObjectPart: null
         });
+
         return true;
       }
       return false;

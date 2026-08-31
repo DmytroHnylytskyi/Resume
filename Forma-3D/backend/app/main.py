@@ -9,6 +9,7 @@ Configures:
     - System health check (/health) and root discovery (/) endpoints.
 """
 
+import logging
 import os
 import uuid
 from contextlib import asynccontextmanager
@@ -24,14 +25,12 @@ from .routers import auth, projects
 
 load_dotenv()
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("forma-3d-api")
+
 # Initialize Rate Limiter
 limiter = Limiter(key_func=get_remote_address, default_limits=["300/minute"])
 
-
-import logging
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("forma-3d-api")
 
 
 @asynccontextmanager
@@ -93,9 +92,13 @@ app.include_router(projects.router)
 
 
 @app.get("/health", tags=["system"], summary="Health check endpoint")
+@app.get("/status", tags=["system"], summary="Status check endpoint")
+@app.get("/api/health", tags=["system"], summary="API health check alias")
+@app.get("/api/status", tags=["system"], summary="API status check alias")
 async def health_check():
     """System health check endpoint for container orchestrators and uptime monitoring."""
     return {"status": "ok", "service": "forma-3d-api", "version": "2.0.0"}
+
 
 
 @app.get("/", tags=["system"], summary="Root service discovery")

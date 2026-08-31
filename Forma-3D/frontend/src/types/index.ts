@@ -19,10 +19,11 @@ export interface PlacedObject {
   nodeName?: string;
   position: [number, number, number];
   rotation: [number, number, number];
-  scale: number;
+  scale: number | [number, number, number];
   colors?: Record<string, string>;
   hiddenParts?: string[];
 }
+
 
 export type TransformMode = 'translate' | 'rotate' | 'scale';
 export type LightMode = 'day' | 'night';
@@ -78,15 +79,12 @@ export interface FormaStore {
   selectedObjectPart: string | null;
   setSelectedObjectId: (id: string | null) => void;
   setSelectedObjectPart: (part: string | null) => void;
-  selectedPart: string | null;
-  setSelectedPart: (part: string | null) => void;
-  colors: Record<string, string>;
-  updateColor: (part: string, color: string) => void;
 
   placingModelPath: string | null;
+
   placingObjectColors: Record<string, string>;
-  placingObjectScale: number;
-  startPlacement: (modelPath: string, colors?: Record<string, string>, scale?: number) => void;
+  placingObjectScale: number | [number, number, number];
+  startPlacement: (modelPath: string, colors?: Record<string, string>, scale?: number | [number, number, number]) => void;
   cancelPlacement: () => void;
   commitPlacement: (position: [number, number, number], rotation?: [number, number, number]) => void;
   addPlacedObject: (obj: PlacedObject) => void;
@@ -95,7 +93,8 @@ export interface FormaStore {
   duplicatePlacedObject: (id?: string) => void;
   rotateSelectedObject: (degrees: number) => void;
   scaleSelectedObject: (multiplier: number) => void;
-  setSelectedObjectScale: (scaleValue: number) => void;
+  setSelectedObjectScale: (scaleValue: number | [number, number, number]) => void;
+
   updateObjectColor: (id: string, partName: string, color: string) => void;
   removePlacedObject: (id?: string) => void;
   clearAllPlacedObjects: () => void;

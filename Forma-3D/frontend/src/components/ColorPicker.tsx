@@ -23,46 +23,33 @@ export default function ColorPicker() {
   const tPicker = useTranslations('ColorPicker');
   const tCat = useTranslations('Catalog.items');
   const { 
-    selectedPart, colors, updateColor, setSelectedPart,
     selectedObjectId, selectedObjectPart, placedObjects, updateObjectColor, setSelectedObjectPart
   } = useStore();
 
-  const activePart = selectedObjectPart || selectedPart;
-  
-  if (!activePart) return null;
+  if (!selectedObjectId || !selectedObjectPart) return null;
 
   // Resolve clean, user-friendly catalog name for the selected object
-  const selectedObj = selectedObjectId ? placedObjects.find((o: PlacedObject) => o.id === selectedObjectId) : null;
-  const catalogItem = selectedObj ? catalogItems.find(c => (selectedObj.modelPath || '').includes(c.file)) : null;
+  const selectedObj = placedObjects.find((o: PlacedObject) => o.id === selectedObjectId);
+  if (!selectedObj) return null;
 
-  let headerTitle = activePart.replace(/_/g, ' ');
+  const catalogItem = catalogItems.find(c => (selectedObj.modelPath || '').includes(c.file));
+
+  let headerTitle = selectedObjectPart.replace(/_/g, ' ');
   if (catalogItem) {
-    try {
+    if (tCat.has(catalogItem.id)) {
       headerTitle = tCat(catalogItem.id);
-    } catch {
-      headerTitle = catalogItem.defaultName;
+    } else {
+      headerTitle = catalogItem.defaultName || 'Object';
     }
-  } else if (selectedObj?.name) {
+  } else if (selectedObj.name) {
     headerTitle = selectedObj.name;
   }
 
-  let currentColor = '#ffffff';
-  if (selectedObjectId) {
-    const obj = placedObjects.find((o: PlacedObject) => o.id === selectedObjectId);
-    if (obj && obj.colors && selectedObjectPart && obj.colors[selectedObjectPart]) {
-      currentColor = obj.colors[selectedObjectPart];
-    }
-  } else if (selectedPart) {
-    currentColor = colors[selectedPart] || '#ffffff';
-  }
+  const currentColor = selectedObj.colors?.[selectedObjectPart] || '#ffffff';
 
   /** Updates color in Zustand state */
   const handleColorChange = (newColor: string) => {
-    if (selectedObjectId && selectedObjectPart) {
-      updateObjectColor(selectedObjectId, selectedObjectPart, newColor);
-    } else if (selectedPart) {
-      updateColor(selectedPart, newColor);
-    }
+    updateObjectColor(selectedObjectId, selectedObjectPart, newColor);
   };
 
   /** Copies active HEX code string to system clipboard */
@@ -76,10 +63,11 @@ export default function ColorPicker() {
         <h3 style={{ margin: 0, fontSize: '1.2rem', textTransform: 'capitalize' }}>
           {headerTitle}
         </h3>
-        <button onClick={() => { setSelectedPart(null); setSelectedObjectPart(null); }} style={{ background: 'transparent', border: 'none', color: 'var(--color-text)', cursor: 'pointer', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = '#ff6b6b'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-text)'}>
+        <button onClick={() => setSelectedObjectPart(null)} style={{ background: 'transparent', border: 'none', color: 'var(--color-text)', cursor: 'pointer', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = '#ff6b6b'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-text)'} title={tPicker('close')}>
           <X size={20} />
         </button>
       </div>
+
       
       <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
         <div className="custom-color-picker">

@@ -29,7 +29,7 @@ import { useStore } from '../store/useStore';
 export default function useHotkeys(): void {
   const {
     selectedObjectId, removePlacedObject, duplicatePlacedObject,
-    setSelectedObjectId, setSelectedObjectPart, setSelectedPart,
+    setSelectedObjectId, setSelectedObjectPart,
     setTransformMode, rotateSelectedObject
   } = useStore();
 
@@ -65,7 +65,6 @@ export default function useHotkeys(): void {
         case 'Escape':
           setSelectedObjectId(null);
           setSelectedObjectPart(null);
-          setSelectedPart(null);
           break;
 
         case 'Digit1':
@@ -94,7 +93,8 @@ export default function useHotkeys(): void {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [
     selectedObjectId, removePlacedObject, duplicatePlacedObject,
-    setSelectedObjectId, setSelectedObjectPart, setSelectedPart,
+    setSelectedObjectId, setSelectedObjectPart,
     setTransformMode, rotateSelectedObject
   ]);
 }
+

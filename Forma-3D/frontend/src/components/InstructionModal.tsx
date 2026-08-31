@@ -48,9 +48,10 @@ export default function InstructionModal({ onClose }: InstructionModalProps) {
             <HelpCircle className="instruction-modal-title-icon" size={22} />
             <h2>{tIns('title')}</h2>
           </div>
-          <button className="instruction-modal-close" onClick={onClose} title="Close">
+          <button className="instruction-modal-close" onClick={onClose} title={tIns('close')}>
             <X size={18} />
           </button>
+
         </div>
 
         {/* Modal Body */}

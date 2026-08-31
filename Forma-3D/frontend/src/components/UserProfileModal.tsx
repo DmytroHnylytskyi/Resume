@@ -166,9 +166,10 @@ export default function UserProfileModal({ onClose }: UserProfileModalProps) {
             <User className="instruction-modal-title-icon" size={22} />
             <h2>{tProf('title')}</h2>
           </div>
-          <button className="instruction-modal-close" onClick={onClose} title="Close">
+          <button className="instruction-modal-close" onClick={onClose} title={tProf('close')}>
             <X size={18} />
           </button>
+
         </div>
 
         {/* Modal Body */}

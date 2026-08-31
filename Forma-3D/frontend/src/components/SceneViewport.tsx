@@ -108,15 +108,14 @@ function SceneContent() {
 function SceneViewportComponent() {
   const setSelectedObjectId = useStore((state) => state.setSelectedObjectId);
   const setSelectedObjectPart = useStore((state) => state.setSelectedObjectPart);
-  const setSelectedPart = useStore((state) => state.setSelectedPart);
 
   const handlePointerMissed = useCallback((e: MouseEvent | PointerEvent) => {
     if (e.type === 'click') {
       setSelectedObjectId(null);
       setSelectedObjectPart(null);
-      setSelectedPart(null);
     }
-  }, [setSelectedObjectId, setSelectedObjectPart, setSelectedPart]);
+  }, [setSelectedObjectId, setSelectedObjectPart]);
+
 
   return (
     <Canvas 

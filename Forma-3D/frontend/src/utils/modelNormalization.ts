@@ -50,89 +50,14 @@ function getRawUnitScale(box: THREE.Box3): number {
  * @param {THREE.Box3} box - Raw model bounding box.
  * @returns {number} Normalized scale multiplier.
  */
-export function getModelBaseScale(modelPath: string, box: THREE.Box3): number {
-  const file = (modelPath || '').toLowerCase();
+export function getModelBaseScale(_modelPath: string, box: THREE.Box3): number {
   const unitScale = getRawUnitScale(box);
-  
-  const size = new THREE.Vector3();
-  box.getSize(size);
-  const rawH = size.y * unitScale;
-  const rawMaxDim = Math.max(size.x, size.y, size.z) * unitScale;
-
-  // 1. Structural Architectural Elements (Walls, Windows, Doors, Floors, Roofs, Stairs, Gothic Elements)
-  // Preserved at 1:1 real-world metric scale
-  if (
-    file.includes('wall') || 
-    file.includes('door') || 
-    file.includes('window') || 
-    file.includes('floor') || 
-    file.includes('roof') || 
-    file.includes('gothic') ||
-    file.includes('house_') ||
-    file.includes('stone_steps') ||
-    file.includes('rope_bridge') ||
-    file.includes('kaykit') ||
-    file.includes('halloween')
-  ) {
-    // Specific adjustment for small accessories vs modular wall packs
-    if (file.includes('house_bike_stand')) return unitScale;
-    if (file.includes('modular_modern_house_pack')) return unitScale * 0.5;
-    return unitScale;
-  }
-
-  // 2. Large Environment / Terrains / Portals / Statues / Magic Trees
-  if (file.includes('island_base')) {
-    const targetIslandWidth = 16.0;
-    return size.x > 0 ? targetIslandWidth / size.x : unitScale;
-  }
-  if (file.includes('portal_')) {
-    const targetPortalHeight = 3.2;
-    return size.y > 0 ? targetPortalHeight / size.y : unitScale;
-  }
-  if (file.includes('statue_')) {
-    const targetStatueHeight = 2.8;
-    return size.y > 0 ? targetStatueHeight / size.y : unitScale;
-  }
-  if (file.includes('magic_tree')) {
-    const targetTreeHeight = 4.2;
-    return size.y > 0 ? targetTreeHeight / size.y : unitScale;
-  }
-  if (file.includes('bush')) {
-    const targetBushHeight = 1.2;
-    return size.y > 0 ? targetBushHeight / size.y : unitScale;
-  }
-  if (file.includes('room_diorama')) {
-    return unitScale * 0.3;
-  }
-
-  // 3. Ergonomic Furniture & Decor
-  if (rawH <= 0) return unitScale;
-
-  let targetHeight = 1.0;
-  if (file.includes('sofa')) targetHeight = 0.85;
-  else if (file.includes('lounge chair')) targetHeight = 0.85;
-  else if (file.includes('dining chair') || file.includes('chair')) targetHeight = 0.88;
-  else if (file.includes('pouf') || file.includes('stool')) targetHeight = 0.5;
-  else if (file.includes('dining table')) targetHeight = 0.78;
-  else if (file.includes('coffee table')) targetHeight = 0.46;
-  else if (file.includes('tv stand')) targetHeight = 0.48;
-  else if (file.includes('tv')) targetHeight = 0.75;
-  else if (file.includes('bookshelf') || file.includes('sideboard')) targetHeight = 1.65;
-  else if (file.includes('floor lamp')) targetHeight = 1.55;
-  else if (file.includes('table lamp')) targetHeight = 0.48;
-  else if (file.includes('chandelier')) targetHeight = 0.85;
-  else if (file.includes('plant')) targetHeight = 0.9;
-  else if (file.includes('carpet')) targetHeight = 0.02;
-  else if (file.includes('monitor')) targetHeight = 0.52;
-  else if (file.includes('painting')) targetHeight = 1.2;
-  else targetHeight = Math.min(rawMaxDim, 1.2);
-
-  return (targetHeight / size.y);
+  return unitScale;
 }
+
 
 /**
  * Normalizes a Three.js cloned model scene:
- * - Automatically aligns coordinate orientation (Z-up / inverted models to Y-up standard).
  * - Wraps cloned model in a centered container group.
  * - Perfectly centers the horizontal bounding box (X and Z centered at 0,0).
  * - Snaps the bottom bounding box (Y) flush to 0 (ground level).
@@ -143,23 +68,6 @@ export function getModelBaseScale(modelPath: string, box: THREE.Box3): number {
  * @returns {NormalizeResult} Container group and base scale.
  */
 export function normalizeModelGeometry(clonedScene: THREE.Object3D, modelPath: string): NormalizeResult {
-  const file = (modelPath || '').toLowerCase();
-
-  // 1. Precise orientation alignment for specific architectural models:
-  if (file.includes('house_bike_stand')) {
-    clonedScene.rotation.z += Math.PI;
-  } else if (
-    file.includes('house_flatroof') ||
-    file.includes('slopedroof') ||
-    file.includes('sloping_roof') ||
-    file.includes('house_stone_path') ||
-    file.includes('house_railing') ||
-    file.includes('house_balconny') ||
-    file.includes('gothic_wall2_18')
-  ) {
-    clonedScene.rotation.x -= Math.PI / 2;
-  }
-
   const rawBox = new THREE.Box3().setFromObject(clonedScene);
   let baseScale = getModelBaseScale(modelPath, rawBox);
   baseScale = validateScale(baseScale, modelPath);
@@ -175,24 +83,10 @@ export function normalizeModelGeometry(clonedScene: THREE.Object3D, modelPath: s
   const center = new THREE.Vector3();
   rawBox.getCenter(center);
 
-  // For standalone furniture and decor items, center on X/Z and sit on floor Y=0
-  // Preserve authored relative origin (0,0,0) for terrain, bridges, steps, and modular scenes
-  const isEnvironmentOrModular = 
-    file.includes('island_') || 
-    file.includes('rope_bridge') || 
-    file.includes('stone_steps') || 
-    file.includes('portal_') ||
-    file.includes('magic_tree') ||
-    file.includes('bush1') ||
-    file.includes('statue_') ||
-    file.includes('house_') ||
-    file.includes('gothic_');
-
-  if (!isEnvironmentOrModular) {
-    clonedScene.position.x -= center.x;
-    clonedScene.position.z -= center.z;
-    clonedScene.position.y -= rawBox.min.y;
-  }
+  // Center horizontally on X/Z and snap base flush to ground level Y=0
+  clonedScene.position.x -= center.x;
+  clonedScene.position.z -= center.z;
+  clonedScene.position.y -= rawBox.min.y;
 
   const wrapper = new THREE.Group();
   wrapper.add(clonedScene);
@@ -202,3 +96,4 @@ export function normalizeModelGeometry(clonedScene: THREE.Object3D, modelPath: s
     normalizedScale: baseScale
   };
 }
+

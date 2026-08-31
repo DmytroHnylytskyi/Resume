@@ -30,7 +30,7 @@ export default function InteractivePlacementGhost() {
   const commitPlacement = useStore((state) => state.commitPlacement);
   const cancelPlacement = useStore((state) => state.cancelPlacement);
   
-  const { scene } = useGLTF(placingModelPath || '/model/wall_001_1.glb');
+  const { scene } = useGLTF(placingModelPath || '/model/kaykit_halloween/Crypt.glb');
   
   /** Ref to main ghost group element for zero-rerender direct frame mutation */
   const ghostRef = useRef<THREE.Group>(null!);
@@ -45,12 +45,16 @@ export default function InteractivePlacementGhost() {
 
   /** Clones model scene, normalizes geometry/pivot, and applies semi-transparent green hologram materials */
   const { clonedWrapper, finalScale } = useMemo(() => {
-    if (!scene || !placingModelPath) return { clonedWrapper: null, finalScale: 1 };
+    const defaultScale: [number, number, number] = [1, 1, 1];
+    if (!scene || !placingModelPath) return { clonedWrapper: null, finalScale: defaultScale };
     const clone = scene.clone(true);
     
     // Unified pivot centering and scale normalization
     const { wrapper, normalizedScale } = normalizeModelGeometry(clone, placingModelPath);
-    const effectiveScale = normalizedScale * (placingObjectScale || 1);
+    const s = placingObjectScale || 1;
+    const scaleVector: [number, number, number] = Array.isArray(s)
+      ? [normalizedScale * s[0], normalizedScale * s[1], normalizedScale * s[2]]
+      : [normalizedScale * s, normalizedScale * s, normalizedScale * s];
 
     // Apply semi-transparent green ghost material and disable raycasting on ghost meshes
     clone.traverse((child: THREE.Object3D) => {
@@ -69,8 +73,9 @@ export default function InteractivePlacementGhost() {
       }
     });
 
-    return { clonedWrapper: wrapper, finalScale: effectiveScale };
+    return { clonedWrapper: wrapper, finalScale: scaleVector };
   }, [scene, placingModelPath, placingObjectScale]);
+
 
   /** BUG FIX: Cleanup ghost materials on unmount */
   useEffect(() => {
@@ -190,9 +195,10 @@ export default function InteractivePlacementGhost() {
       <group 
         ref={ghostRef}
         rotation={[0, ghostRotY, 0]}
-        scale={[finalScale, finalScale, finalScale]}
+        scale={finalScale}
         onClick={handleCommitClick}
       >
+
         <primitive object={clonedWrapper} />
       </group>
     </>

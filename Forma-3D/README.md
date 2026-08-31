@@ -15,7 +15,7 @@ Forma-3D is an asynchronous full-stack 3D interior design and architectural room
 
 ### Overview
 
-Forma-3D is a browser-based 3D scene editor running via WebGL. The application allows users to build architectural layouts, place furniture and modular structures from a catalog of 183 GLB models across 15 categories, customize sub-mesh material colors, switch lighting modes, and persist scene configurations locally and to a cloud database.
+Forma-3D is a browser-based 3D scene editor running via WebGL. The application allows users to build architectural layouts, place structures, crypts, and decorative elements from a modular Necropolis catalog of 66 GLB models, customize sub-mesh material colors, switch lighting modes, and persist scene configurations locally and to a cloud database.
 
 ---
 
@@ -61,10 +61,12 @@ Forma-3D is a browser-based 3D scene editor running via WebGL. The application a
    - **Camera Focus (F):** Frame and center camera view on the bounding box of the currently selected object.
 
 3. **3D Asset Library and Geometry Normalization**
-   - 183 GLB 3D assets categorized into 15 groups: All, Halloween, Islands, Portals, Statues, Vegetation, Bridges & Stairs, Walls & Floors, Modern Architecture, Gothic Elements, Sofas & Armchairs, Tables, Storage, Lighting, and Decor.
-   - Real-time catalog search and category filtering.
+   - 66 modular Necropolis GLB 3D assets: Crypts, stone arches, pillars, floor tiles, open and closed coffins, tombstones, fences, gates, dead trees, autumn pines, lanterns, candles, pumpkins, skulls, skeletons, and statues.
+   - Real-time catalog text search and fast filtering.
    - 3D Inspector preview box for hovering over catalog assets with live auto-rotation.
-   - Centralized geometry normalizer (`normalizeModelGeometry`): centers models on horizontal axes (X/Z), aligns model base flush to ground level (Y=0), corrects axis export orientations, and applies category-based metric scaling.
+   - Centralized geometry normalizer (`normalizeModelGeometry`): centers models on horizontal axes (X/Z), aligns model base flush to ground level (Y=0), and preserves clean metric scaling.
+
+
 
 4. **Surface Snapping and Object Placement**
    - Placement ghost preview with wireframe indicator.
@@ -304,9 +306,9 @@ npm run build
 
 ### Огляд Проєкту
 
-Forma-3D — це асинхронний фулстек 3D-редактор простору та архітектурний конфігуратор приміщень, розроблений на базі Next.js 16 (App Router), React 19, Three.js (React Three Fiber та React Three Drei), Zustand 5 та FastAPI з асинхронним SQLAlchemy 2.0.
+Forma-3D — це асинхронний фулстек 3D-редактор простору та архітектурний конфігуратор, розроблений на базі Next.js 16 (App Router), React 19, Three.js (React Three Fiber та React Three Drei), Zustand 5 та FastAPI з асинхронним SQLAlchemy 2.0.
 
-Додаток працює безпосередньо у браузері через WebGL. Користувачі можуть конструювати архітектурні структури, розміщувати модульні елементи та меблі з каталогу на 183 GLB моделі у 15 категоріях, налаштовувати матеріали окремих деталей у реальному часі, керувати режимами освітлення та зберігати сцени у хмарній базі даних.
+Додаток працює безпосередньо у браузері через WebGL. Користувачі можуть конструювати архітектурні структури, розміщувати модульні елементи, склепи, могили, паркани та декор з каталогу «Некрополь» на 66 GLB моделей, налаштовувати матеріали деталей у реальному часі, керувати режимами освітлення та зберігати сцени у хмарній базі даних.
 
 ---
 
@@ -316,7 +318,7 @@ Forma-3D — це асинхронний фулстек 3D-редактор пр
 - **Фреймворк:** Next.js 16 (App Router, режим збірки Standalone)
 - **UI Бібліотека:** React 19
 - **3D Графічний Рушій:** Three.js, `@react-three/fiber`, `@react-three/drei`
-- **Управління Станом:** Zustand 5
+- **Керування Станом:** Zustand 5
 - **Інтернаціоналізація:** `next-intl` (Англійська та Українська мови)
 - **Палітра Кольору:** `react-colorful`
 - **Іконки та Анімація:** Lucide React, Framer Motion
@@ -352,10 +354,10 @@ Forma-3D — це асинхронний фулстек 3D-редактор пр
    - **Фокусування на Об'єкті (F):** Центрування камери на габаритах виділеного об'єкта.
 
 3. **Каталог 3D-Моделей та Нормалізація Геометрії**
-   - 183 GLB моделі у 15 категоріях: Усі, Геловін, Острови, Портали, Статуї, Рослинність, Мости та Сходи, Стіни та Підлога, Сучасна Архітектура, Готичні Елементи, Дивани та Крісла, Столи, Шафи, Освітлення, Декор.
-   - Пошук за назвою та фільтрація за категоріями у реальному часі.
+   - 66 модульних GLB моделей пака «Некрополь»: склепи, кам'яні арки, колони, плитка підлоги, відкриті та закриті саркофаги, надгробки, паркани, брами, сухі дерева, осінні сосни, ліхтарі, свічки, гарбузи, черепи, скелети та статуї.
+   - Пошук за назвою у реальному часі.
    - 3D Інспектор попереднього перегляду моделі при наведенні курсору на картку каталогу.
-   - Модуль нормалізації геометрії (`normalizeModelGeometry`): центрування відносно осей X/Z, точна посадка на рівень підлоги (Y=0), корекція осей експорту та пропорційне категоріальне масштабування.
+   - Модуль нормалізації геометрії (`normalizeModelGeometry`): центрування відносно осей X/Z, точна посадка на рівень підлоги (Y=0) та чисте метричне масштабування.
 
 4. **Автоматична Посадка на Поверхні (Surface Snapping)**
    - Прозорий примарний об'єкт із зеленим контуром для позиціювання перед встановленням.
@@ -369,7 +371,7 @@ Forma-3D — це асинхронний фулстек 3D-редактор пр
    - Дублювання виділеного об'єкта (`Ctrl + D` / `Cmd + D`) з автоматичним переходом у режим розміщення.
    - Зміна кольору окремих деталей моделей за допомогою `react-colorful`.
 
-6. **Управління Станом та Збереження Даних**
+6. **Керування Станом та Збереження Даних**
    - Централізований Zustand стор для керування об'єктами, виділенням, трансформуванням та сесією користувача.
    - Клієнтське перемикання мови інтерфейсу (EN/UK) без перезавантаження WebGL Canvas.
    - Збереження та відновлення сцени у LocalStorage браузера.
@@ -462,17 +464,18 @@ npm run build
 
 ---
 
-### Специфікація REST API Ендпоінтів
+### Специфікація REST API Ендпоїнтів
 
 #### Системні
 - `GET /health` — Перевірка стану працездатності сервісу.
-- `GET /` — Кореневий ендпоінт із посиланнями на документацію.
+- `GET /` — Кореневий ендпоїнт із посиланнями на документацію.
 
-#### Авторизація
+#### Автентифікація
 - `POST /register` — Реєстрація нового користувача (`email`, `name`, `password`). Код відповіді `201 Created`.
 - `POST /token` — Вхід за схемою OAuth2 Password Grant (`username` [email], `password`). Повертає `access_token` та `refresh_token`.
 - `POST /refresh` — Оновлення access токена за допомогою валідного `refresh_token`.
 - `GET /users/me/` — Отримання профілю та списку збережених проєктів автентифікованого користувача (`Authorization: Bearer <token>`).
+
 
 #### Хмарні 3D-Проєкти (`/projects/`)
 - `GET /projects/` — Отримання всіх збережених проєктів поточного користувача.

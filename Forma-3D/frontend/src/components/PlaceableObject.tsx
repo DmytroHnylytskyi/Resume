@@ -37,12 +37,13 @@ interface PlaceableObjectComponentProps {
   id: string;
   modelPath: string;
   nodeName?: string;
-  scale?: number;
+  scale?: number | [number, number, number];
   position?: [number, number, number];
   rotation?: [number, number, number];
   hiddenParts?: string[];
   objectColors?: Record<string, string>;
 }
+
 
 /**
  * PlaceableObject Component.
@@ -100,7 +101,7 @@ function PlaceableObjectComponent({
     const clone = scene.clone(true);
     const { wrapper, normalizedScale } = normalizeModelGeometry(clone, modelPath);
 
-    // Attach custom part names and original colors for material picker inspection
+    // Attach custom part names, deep-clone materials to isolate instances, and store original colors
     clone.traverse((child: THREE.Object3D) => {
       const mesh = child as THREE.Mesh;
       if (mesh.isMesh) {
@@ -109,6 +110,15 @@ function PlaceableObjectComponent({
         const part = getCleanPartName(mesh);
         mesh.userData.partName = part;
         mesh.userData.id = id;
+
+        // Deep-clone material so color mutations never affect useGLTF cache or other instances
+        if (mesh.material) {
+          if (Array.isArray(mesh.material)) {
+            mesh.material = mesh.material.map(m => m.clone());
+          } else {
+            mesh.material = (mesh.material as THREE.Material).clone();
+          }
+        }
 
         const material = mesh.material as THREE.MeshStandardMaterial;
         if (material && material.color) {
@@ -120,12 +130,16 @@ function PlaceableObjectComponent({
     return { clonedWrapper: wrapper, unitScale: normalizedScale };
   }, [scene, modelPath, id]);
 
-  const effectiveScale = scale || 1;
+  const scaleVector: [number, number, number] = Array.isArray(scale)
+    ? scale
+    : [scale || 1, scale || 1, scale || 1];
+
   const finalScale: [number, number, number] = [
-    unitScale * effectiveScale, 
-    unitScale * effectiveScale, 
-    unitScale * effectiveScale
+    unitScale * scaleVector[0], 
+    unitScale * scaleVector[1], 
+    unitScale * scaleVector[2]
   ];
+
 
   /** Synchronizes hiddenParts visibility on sub-meshes */
   useEffect(() => {
@@ -268,11 +282,21 @@ function PlaceableObjectComponent({
       group.current.position.set(posX, posY, posZ);
     }
 
+    const scaleX = group.current.scale.x / (unitScale || 1);
+    const scaleY = group.current.scale.y / (unitScale || 1);
+    const scaleZ = group.current.scale.z / (unitScale || 1);
+
+    const isUniform = Math.abs(scaleX - scaleY) < 0.001 && Math.abs(scaleX - scaleZ) < 0.001;
+    const storedScale: number | [number, number, number] = isUniform
+      ? Number(scaleX.toFixed(3))
+      : [Number(scaleX.toFixed(3)), Number(scaleY.toFixed(3)), Number(scaleZ.toFixed(3))];
+
     updatePlacedObject(id, {
       position: [posX, posY, posZ],
       rotation: [group.current.rotation.x, group.current.rotation.y, group.current.rotation.z],
-      scale: group.current.scale.x / (unitScale || 1)
+      scale: storedScale
     });
+
   };
 
   if (!clonedWrapper) return null;
