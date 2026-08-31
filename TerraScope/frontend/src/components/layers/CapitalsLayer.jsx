@@ -8,7 +8,6 @@
 'use client';
 
 import React, { useRef, useMemo, useEffect } from 'react';
-import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { latLngToVector3 } from '../../hooks/useGeoConvert';
 import useStore from '../../store/useStore';
@@ -19,6 +18,7 @@ const dummy = new THREE.Object3D();
 const colorDefault = new THREE.Color('#ffffff'); // Clean crisp solid white
 const colorSelected = new THREE.Color('#22c55e'); // Vibrant Neon Green upon selection
 const upVector = new THREE.Vector3(0, 1, 0);
+const normVec = new THREE.Vector3();
 
 // Pre-create sleek 16-segment tapered capital pin geometry (base wider at bottom, tapered at top)
 const capitalPinGeometry = new THREE.CylinderGeometry(0.0018, 0.0035, 0.022, 16);
@@ -52,8 +52,6 @@ export default function CapitalsLayer() {
       };
     });
   }, []);
-
-const normVec = new THREE.Vector3();
 
   const selectedCapName = useMemo(() => {
     if (selectedItem?.type !== 'country' || !selectedItem.data) return null;

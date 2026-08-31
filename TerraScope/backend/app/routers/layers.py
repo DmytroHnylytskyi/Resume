@@ -11,7 +11,7 @@ import logging
 import asyncio
 import os
 from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, Optional, List
+from typing import Any, Dict, Optional
 import httpx
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -213,7 +213,7 @@ async def get_cached_or_fetch(
             elif cache_entry:
                 return Response(content=cache_entry.data, media_type="application/json")
             else:
-                raise HTTPException(status_code=503, detail=f"Layer service unavailable for {cache_key}")
+                raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=f"Layer service unavailable for {cache_key}")
 
         # Update or insert SQLite cache record
         expires_at = now + timedelta(seconds=ttl_seconds)
@@ -235,19 +235,45 @@ async def get_cached_or_fetch(
         await db.commit()
         return Response(content=json_data, media_type="application/json")
 
-@router.get("/earthquakes")
-async def get_earthquakes(db: AsyncSession = Depends(database.get_db)):
-    """
-    Fetches real-time seismic data from USGS GeoJSON API.
+# USGS Live Seismic Feed Endpoints & Differentiated Cache TTLs
+USGS_FEEDS = {
+    "today": {
+        "url": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson",
+        "ttl": 120,  # 2 Minutes
+    },
+    "7days": {
+        "url": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson",
+        "ttl": 600,  # 10 Minutes
+    },
+    "30days": {
+        "url": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson",
+        "ttl": 1800,  # 30 Minutes
+    },
+}
 
-    Cache TTL: 5 Minutes (300 seconds).
+@router.get("/earthquakes")
+async def get_earthquakes(
+    period: str = Query("7days", pattern="^(today|7days|30days)$"),
+    db: AsyncSession = Depends(database.get_db)
+):
     """
-    url = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=time&limit=500"
+    Fetches real-time seismic data from USGS GeoJSON API filtered by time period.
+
+    Args:
+        period (str): Time window ('today', '7days', '30days'). Defaults to '7days'.
+        db (AsyncSession): Async database session dependency.
+
+    Cache TTL:
+        - today: 120 seconds
+        - 7days: 600 seconds
+        - 30days: 1800 seconds
+    """
+    config = USGS_FEEDS.get(period, USGS_FEEDS["7days"])
     return await get_cached_or_fetch(
         db=db,
-        cache_key="earthquakes",
-        ttl_seconds=300,
-        fetch_url=url
+        cache_key=f"earthquakes_{period}",
+        ttl_seconds=config["ttl"],
+        fetch_url=config["url"]
     )
 
 @router.get("/flights")

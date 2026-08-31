@@ -64,7 +64,7 @@ uvicorn app.main:app --reload --port 8000
 #### Data Layers (`/api/layers`)
 | Method | Endpoint | Cache TTL | Data Source |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/api/layers/earthquakes` | 300 seconds | USGS Real-time Earthquake GeoJSON API |
+| `GET` | `/api/layers/earthquakes` | 120s / 600s / 1800s | USGS Real-time Earthquake GeoJSON API (`?period=today\|7days\|30days`) |
 | `GET` | `/api/layers/flights` | 30 seconds | OpenSky Network Live Flight Vectors |
 | `GET` | `/api/layers/weather` | 900 seconds | Open-Meteo Global Capital Forecast API |
 | `GET` | `/api/layers/countries` | 86400 seconds | REST Countries API v3.1 |
@@ -146,7 +146,7 @@ uvicorn app.main:app --reload --port 8000
 #### Шари даних (`/api/layers`)
 | Метод | Ендпоінт | TTL кешу | Джерело даних |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/api/layers/earthquakes` | 300 секунд | USGS GeoJSON API сейсмічних подій у реальному часі |
+| `GET` | `/api/layers/earthquakes` | 120с / 600с / 1800с | USGS GeoJSON API сейсмічних подій у реальному часі (`?period=today\|7days\|30days`) |
 | `GET` | `/api/layers/flights` | 30 секунд | OpenSky Network Live Flight Vectors |
 | `GET` | `/api/layers/weather` | 900 секунд | Open-Meteo Global Capital Forecast API |
 | `GET` | `/api/layers/countries` | 86400 секунд | REST Countries API v3.1 |

@@ -100,7 +100,7 @@ TerraScope is an interactive 3D geospatial intelligence and planetary visualizat
 #### Data Layers (`/api/layers`)
 | Method | Endpoint | Description | Cache TTL | Data Source |
 | :--- | :--- | :--- | :--- | :--- |
-| `GET` | `/api/layers/earthquakes` | Real-time seismic event GeoJSON | 300 seconds | USGS GeoJSON API |
+| `GET` | `/api/layers/earthquakes` | Real-time seismic events GeoJSON (`?period=today\|7days\|30days`) | 120s / 600s / 1800s | USGS GeoJSON Live Feed API |
 | `GET` | `/api/layers/flights` | Live aircraft state vectors | 30 seconds | OpenSky Network API |
 | `GET` | `/api/layers/weather` | Global capital weather observations | 900 seconds | Open-Meteo API |
 | `GET` | `/api/layers/countries` | Geopolitical country profiles and borders | 86400 seconds | REST Countries v3.1 |
@@ -241,7 +241,7 @@ cd backend
 ```
 
 #### Frontend Production Build
-To verify type safety and Next.js bundle compilation:
+To verify Next.js bundle compilation and production build:
 
 ```bash
 cd frontend
@@ -346,7 +346,7 @@ TerraScope — інтерактивна платформа для 3D-візуа�
 #### Шари даних (`/api/layers`)
 | Метод | Ендпоінт | Опис | TTL кешу | Джерело даних |
 | :--- | :--- | :--- | :--- | :--- |
-| `GET` | `/api/layers/earthquakes` | GeoJSON сейсмічних подій у реальному часі | 300 секунд | USGS GeoJSON API |
+| `GET` | `/api/layers/earthquakes` | GeoJSON сейсмічних подій у реальному часі (`?period=today\|7days\|30days`) | 120с / 600с / 1800с | USGS GeoJSON Live Feed API |
 | `GET` | `/api/layers/flights` | Вектори стану повітряних суден у реальному часі | 30 секунд | OpenSky Network API |
 | `GET` | `/api/layers/weather` | Спостереження за погодою у світових столицях | 900 секунд | Open-Meteo API |
 | `GET` | `/api/layers/countries` | Геополітичні профілі країн та кордони | 86400 секунд | REST Countries v3.1 |
@@ -487,7 +487,7 @@ cd backend
 ```
 
 #### Продакшн-збірка фронтенду
-Для перевірки типізації та компіляції бандла Next.js:
+Для перевірки компіляції бандла та продакшн-збірки Next.js:
 
 ```bash
 cd frontend

@@ -20,6 +20,21 @@ const REFRESH_INTERVALS = {
 };
 
 /**
+ * Maps layer filters to server query parameters required for network fetching.
+ * Client-only filters (e.g. minMagnitude) are omitted to avoid redundant network requests.
+ *
+ * @param {string} layerName
+ * @param {Object} filters
+ * @returns {Object}
+ */
+function getServerFilters(layerName, filters = {}) {
+  if (layerName === 'earthquakes') {
+    return { period: filters.period || '7days' };
+  }
+  return {};
+}
+
+/**
  * Custom hook managing network fetching and polling for a specific data layer.
  *
  * @param {string} layerName - Name of the layer ('earthquakes', 'flights', 'weather', 'neo', 'countries').
@@ -31,7 +46,8 @@ export function useLayerData(layerName) {
   const setLayerLoading = useStore((state) => state.setLayerLoading);
   const setLayerError = useStore((state) => state.setLayerError);
 
-  const filtersString = JSON.stringify(layer.filters);
+  const serverFilters = getServerFilters(layerName, layer.filters);
+  const serverFiltersKey = JSON.stringify(serverFilters);
 
   const refetch = useCallback(async () => {
     if (!layer.enabled) return;
@@ -40,13 +56,11 @@ export function useLayerData(layerName) {
     
     try {
       const params = new URLSearchParams();
-      if (layer.filters) {
-        Object.entries(layer.filters).forEach(([key, val]) => {
-          if (val !== undefined && val !== null) {
-            params.append(key, typeof val === 'object' ? JSON.stringify(val) : String(val));
-          }
-        });
-      }
+      Object.entries(serverFilters).forEach(([key, val]) => {
+        if (val !== undefined && val !== null) {
+          params.append(key, String(val));
+        }
+      });
       const queryParams = params.toString();
       const url = `${API_URL}/layers/${layerName}${queryParams ? `?${queryParams}` : ''}`;
       
@@ -58,7 +72,7 @@ export function useLayerData(layerName) {
     } catch (err) {
       setLayerError(layerName, err.message);
     }
-  }, [layerName, layer.enabled, filtersString, setLayerData, setLayerLoading, setLayerError]);
+  }, [layerName, layer.enabled, serverFiltersKey, setLayerData, setLayerLoading, setLayerError]);
 
   useEffect(() => {
     if (!layer.enabled) return;

@@ -9,7 +9,7 @@
 
 ### Overview
 
-This repository contains a monorepo ecosystem of 4 full-stack applications showcasing modern web development, hardware-accelerated 3D WebGL graphics, asynchronous Python backends, and strict TypeScript architecture.
+This repository contains a monorepo ecosystem of 4 full-stack applications showcasing modern web development, hardware-accelerated 3D WebGL graphics, asynchronous Python backends, and robust full-stack architecture.
 
 - **Developer:** Dmytro Hnylytskyi
 - **Role:** Full-Stack & Creative 3D Developer
@@ -46,7 +46,7 @@ Commercial-grade full-stack 3D interior design and spatial room configurator for
 
 #### 3. [TerraScope - 3D Geospatial Intelligence](TerraScope/) (Port 3002)
 Real-time 3D planetary Earth visualization and geospatial analytics platform with live satellite data integration.
-- **Frontend Stack:** Next.js 16.3.0, React 19.2.8, Three.js 0.185.1, React Three Fiber, Custom GLSL Shaders, Zustand 5, TypeScript.
+- **Frontend Stack:** Next.js 16.3.0, React 19.2.8, Three.js 0.185.1, React Three Fiber, Custom GLSL Shaders, Zustand 5, JavaScript (ESNext, JSDoc).
 - **Backend Stack:** FastAPI 0.110+, SQLAlchemy 2.0 (Async), SQLite (aiosqlite), Alembic, Docker.
 - **Key Features:**
   - Custom GLSL Day/Night Terminator shader with solar direction calculations and Fresnel atmospheric glow.
@@ -134,7 +134,7 @@ uvicorn app.main:app --reload --port 8003
 
 ### Опис Екосистеми
 
-Даний репозиторій містить монорепозиторій із 4 повнофункціональних Full-Stack додатків, що демонструють практичну експертизу в розробці сучасних веб-інтерфейсів, апаратно-прискореної 3D WebGL графіки, асинхронних бекенд-сервісів на Python/FastAPI та строгого TypeScript.
+Даний репозиторій містить монорепозиторій із 4 повнофункціональних Full-Stack додатків, що демонструють практичну експертизу в розробці сучасних веб-інтерфейсів, апаратно-прискореної 3D WebGL графіки, асинхронних бекенд-сервісів на Python/FastAPI та надійної архітектури додатків.
 
 - **Розробник:** Дмитро Гнилицький
 - **Спеціалізація:** Full-Stack & Creative 3D Developer
@@ -161,7 +161,7 @@ uvicorn app.main:app --reload --port 8003
 
 #### 3. [TerraScope - Геопросторова 3D Візуалізація](TerraScope/) (Порт 3002)
 Платформа 3D-візуалізації планети Земля з кастомними GLSL-шейдерами та супутниковими даними в реальному часі.
-- **Фронтенд:** Next.js 16.3.0, React 19.2.8, Three.js 0.185.1, Custom GLSL Shaders, Zustand 5, TypeScript.
+- **Фронтенд:** Next.js 16.3.0, React 19.2.8, Three.js 0.185.1, Custom GLSL Shaders, Zustand 5, JavaScript (ESNext, JSDoc).
 - **Бекенд:** FastAPI 0.110+, SQLAlchemy 2.0 (Async), SQLite (aiosqlite), Alembic, Docker.
 - **Можливості:** Кастомний Day/Night Terminator GLSL-шейдер, GPU Instanced шари (землетруси USGS, авіарейси OpenSky, погода Open-Meteo, астероїди NASA), захист від Cache Stampede через `asyncio.Lock`.
 

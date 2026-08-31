@@ -14,11 +14,22 @@ from httpx import AsyncClient
 
 @pytest.mark.asyncio
 async def test_get_earthquakes_layer(client: AsyncClient):
-    """Verify earthquakes GeoJSON endpoint returns 200 OK with valid feature data."""
+    """Verify earthquakes GeoJSON endpoint returns 200 OK with valid feature data for periods."""
+    # Default 7days
     resp = await client.get("/api/layers/earthquakes")
     assert resp.status_code == 200
     data = resp.json()
     assert "type" in data or "features" in data
+
+    # Today (24 hours)
+    resp_today = await client.get("/api/layers/earthquakes?period=today")
+    assert resp_today.status_code == 200
+    assert "type" in resp_today.json() or "features" in resp_today.json()
+
+    # 30 days
+    resp_30d = await client.get("/api/layers/earthquakes?period=30days")
+    assert resp_30d.status_code == 200
+    assert "type" in resp_30d.json() or "features" in resp_30d.json()
 
 
 @pytest.mark.asyncio

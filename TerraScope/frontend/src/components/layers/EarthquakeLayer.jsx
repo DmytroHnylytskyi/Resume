@@ -9,7 +9,6 @@
 'use client';
 
 import React, { useRef, useMemo, useEffect } from 'react';
-import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useLayerData } from '../../hooks/useLayerData';
 import { latLngToVector3 } from '../../hooks/useGeoConvert';
@@ -20,6 +19,7 @@ const dummy = new THREE.Object3D();
 const color = new THREE.Color();
 const selectedColor = new THREE.Color('#38bdf8'); // Bright Cyan highlight on selection
 const upVector = new THREE.Vector3(0, 1, 0);
+const normVector = new THREE.Vector3();
 
 // Pre-create smooth 16-segment 3D pillar geometry translated so bottom base sits at (0,0,0) and extends along +Y
 const pillarGeometry = new THREE.CylinderGeometry(1, 1, 1, 16);
@@ -79,8 +79,6 @@ export default function EarthquakeLayer() {
   }, [features]);
 
   const count = parsedData.length;
-
-const normVector = new THREE.Vector3();
 
   // Selected Earthquake ID
   const selectedEqId = useMemo(() => {
