@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useGameStore } from '../../store/useGameStore';
 import { developerProfiles, translations } from '../../data/resumeData';
 import { User, Share2, Award, FileText, Sun, Moon, Sparkles, Video } from 'lucide-react';
+import ControlsGuideDropdown from './ControlsGuideDropdown';
 
 function FpsBadge(): React.ReactElement {
   const [fps, setFps] = useState(60);
@@ -112,6 +113,9 @@ export default function ControlsHUD(): React.ReactElement {
             <Share2 size={15} />
             <span>{t.contacts}</span>
           </button>
+
+          {/* Expandable Controls Guide Dropdown */}
+          <ControlsGuideDropdown />
 
           {/* Replay Cinematic Swoop */}
           <button

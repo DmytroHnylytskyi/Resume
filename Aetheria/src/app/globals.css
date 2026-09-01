@@ -3082,6 +3082,209 @@ nextjs-portal,
   border-radius: 50%;
 }
 
+/* ══════════════════════════════════════════════════════
+   CONTROLS GUIDE EXPANDABLE DROPDOWN MENU
+   ══════════════════════════════════════════════════════ */
+.controls-dropdown-wrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+.controls-guide-btn.active {
+  background: rgba(251, 191, 36, 0.15) !important;
+  border-color: rgba(251, 191, 36, 0.45) !important;
+  color: #fbbf24 !important;
+}
+
+.controls-guide-icon {
+  color: #fbbf24;
+}
+
+.dropdown-chevron {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-left: 2px;
+  opacity: 0.7;
+}
+
+.dropdown-chevron.open {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+
+@keyframes dropdownSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.controls-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 330px;
+  background: rgba(14, 10, 28, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(251, 191, 36, 0.25);
+  border-radius: 20px;
+  padding: 16px 18px;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.75), 0 0 30px rgba(139, 92, 246, 0.15);
+  z-index: 150;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: dropdownSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.controls-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.controls-menu-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.controls-header-icon {
+  color: #fbbf24;
+}
+
+.controls-menu-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.2px;
+}
+
+.controls-menu-close {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.controls-menu-close:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.controls-categories-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.controls-category-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.controls-category-name {
+  font-size: 9.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #fbbf24;
+  opacity: 0.85;
+}
+
+.controls-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.controls-keys-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.controls-action-desc {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-primary);
+  text-align: right;
+}
+
+.ctrl-key {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2.5px 6px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+  min-width: 20px;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.ctrl-key.accent {
+  background: rgba(251, 191, 36, 0.2);
+  border-color: rgba(251, 191, 36, 0.5);
+  color: #fbbf24;
+}
+
+.ctrl-key.wide {
+  padding: 2.5px 8px;
+}
+
+.controls-inline-icon {
+  color: var(--text-secondary);
+}
+
+.controls-mouse-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-secondary);
+}
+
+.controls-menu-footer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.controls-footer-sparkle {
+  color: #fbbf24;
+  flex-shrink: 0;
+}
+
+.controls-footer-text {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
 
 
 
