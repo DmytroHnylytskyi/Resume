@@ -485,21 +485,19 @@ html, body {
 
 /* ── Welcome Mode Selector Modal ── */
 .welcome-modal-backdrop {
-  position: absolute;
+  position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.9);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  background: radial-gradient(circle at 50% 35%, #181032 0%, #0d091e 50%, #06040d 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 600;
+  z-index: 1000;
   padding: 20px;
-  animation: fade-in 0.3s ease;
+  animation: fade-in 0.25s ease;
 }
 
 [data-theme='light'] .welcome-modal-backdrop {
-  background: rgba(255, 255, 255, 0.9);
+  background: radial-gradient(circle at 50% 35%, #ffffff 0%, #f8fafc 50%, #e2e8f0 100%);
 }
 
 @keyframes fade-in {
