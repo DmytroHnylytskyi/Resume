@@ -73,6 +73,21 @@ export default function ControlsHUD(): React.ReactElement {
   } = useGameStore();
 
   const profile = developerProfiles[language];
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  useEffect(() => {
+    const checkTouch = () => {
+      const hasTouch =
+        'ontouchstart' in window ||
+        navigator.maxTouchPoints > 0 ||
+        window.matchMedia('(pointer: coarse)').matches;
+      setIsTouchDevice(hasTouch);
+    };
+    checkTouch();
+    window.addEventListener('resize', checkTouch);
+    return () => window.removeEventListener('resize', checkTouch);
+  }, []);
+
   const t = translations[language].nav;
 
   return (
@@ -158,13 +173,23 @@ export default function ControlsHUD(): React.ReactElement {
       {/* ── Minimalist Clean Floating Interaction Pill ── */}
       {interactionPrompt && !isIntroPlaying && (
         <div className="minimal-interaction-pill-wrapper">
-          <div
-            className="minimal-interaction-pill glass-panel"
+          <button
+            className="minimal-interaction-pill glass-panel touch-friendly"
             onClick={interactionPrompt.action}
           >
-            <kbd className="interaction-key">E</kbd>
-            <span className="interaction-title">{interactionPrompt.title}</span>
-          </div>
+            {isTouchDevice ? (
+              <span className="interaction-touch-badge">
+                <Sparkles size={14} />
+              </span>
+            ) : (
+              <kbd className="interaction-key">E</kbd>
+            )}
+            <span className="interaction-title">
+              {isTouchDevice
+                ? `${language === 'uk' ? 'Відкрити' : 'Open'}: ${interactionPrompt.title}`
+                : interactionPrompt.title}
+            </span>
+          </button>
         </div>
       )}
 
@@ -200,8 +225,8 @@ export default function ControlsHUD(): React.ReactElement {
             <div className="cinematic-skip-container">
               <span className="cinematic-skip-text">
                 {language === 'uk'
-                  ? 'Клікніть мишкою або натисніть будь-яку клавішу для керування'
-                  : 'Click anywhere or press any key to take control'}
+                  ? (isTouchDevice ? 'Торкніться екрана для керування' : 'Клікніть мишкою або натисніть будь-яку клавішу для керування')
+                  : (isTouchDevice ? 'Tap screen to take control' : 'Click anywhere or press any key to take control')}
               </span>
             </div>
           </div>

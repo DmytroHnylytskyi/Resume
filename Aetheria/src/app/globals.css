@@ -3584,6 +3584,352 @@ nextjs-portal,
   border-color: rgba(0, 0, 0, 0.2);
 }
 
+/* ══════════════════════════════════════════════════════
+   MOBILE & UNIVERSAL SCREEN RESPONSIVENESS ARCHITECTURE
+   (Foldables, Tablets, Ultra-Wides, 320px–480px SmartPhones)
+   ══════════════════════════════════════════════════════ */
+
+/* Dynamic Viewport & Safe-Area Foundation */
+.portfolio-app-container {
+  min-height: 100dvh;
+  width: 100%;
+  position: relative;
+}
+
+/* ── 1. Mobile Virtual Touch Controls ── */
+.mobile-touch-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 85;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Invisible Camera Orbit Swipe Zone (Right half of screen) */
+.mobile-camera-touch-zone {
+  position: absolute;
+  top: 70px;
+  right: 0;
+  bottom: 120px;
+  width: 55vw;
+  pointer-events: auto;
+  touch-action: none;
+}
+
+/* Bottom-Left Virtual Joystick */
+.mobile-joystick-wrapper {
+  position: absolute;
+  bottom: max(22px, env(safe-area-inset-bottom, 22px));
+  left: max(18px, env(safe-area-inset-left, 18px));
+  pointer-events: auto;
+  touch-action: none;
+  z-index: 90;
+}
+
+.mobile-joystick-base {
+  width: 114px;
+  height: 114px;
+  border-radius: 50%;
+  position: relative;
+  background: radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.08) 0%, rgba(15, 10, 30, 0.6) 70%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 16px rgba(139, 92, 246, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mobile-joystick-base.active {
+  border-color: rgba(251, 191, 36, 0.6);
+  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.6), 0 0 20px rgba(251, 191, 36, 0.25);
+}
+
+.joystick-ring-guide {
+  position: absolute;
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  pointer-events: none;
+}
+
+.joystick-axis-h {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  right: 14px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.joystick-axis-v {
+  position: absolute;
+  left: 50%;
+  top: 14px;
+  bottom: 14px;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.mobile-joystick-knob {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #382856 0%, #150f26 100%);
+  border: 1.5px solid rgba(251, 191, 36, 0.7);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6), 0 0 14px rgba(251, 191, 36, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+  pointer-events: none;
+}
+
+.joystick-knob-core {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fbbf24;
+  box-shadow: 0 0 8px #fbbf24;
+}
+
+/* Jump Floating Button */
+.mobile-jump-btn {
+  position: absolute;
+  bottom: max(168px, calc(env(safe-area-inset-bottom, 20px) + 144px));
+  right: max(20px, env(safe-area-inset-right, 20px));
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(14, 10, 28, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(251, 191, 36, 0.4);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 12px rgba(251, 191, 36, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: none;
+  transition: transform 0.15s ease, background 0.15s ease;
+  z-index: 90;
+}
+
+.mobile-jump-btn:active {
+  transform: scale(0.92);
+  background: rgba(251, 191, 36, 0.25);
+  border-color: #fbbf24;
+}
+
+.mobile-jump-icon {
+  color: #fbbf24;
+}
+
+/* Light theme mobile touch controls */
+[data-theme='light'] .mobile-joystick-base {
+  background: radial-gradient(circle at 50% 50%, rgba(217, 119, 6, 0.08) 0%, rgba(255, 255, 255, 0.75) 70%);
+  border-color: rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme='light'] .mobile-joystick-base.active {
+  border-color: #d97706;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 0 16px rgba(217, 119, 6, 0.25);
+}
+
+[data-theme='light'] .joystick-ring-guide {
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+[data-theme='light'] .joystick-axis-h,
+[data-theme='light'] .joystick-axis-v {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme='light'] .mobile-joystick-knob {
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #f4f4f5 100%);
+  border-color: #d97706;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15), 0 0 12px rgba(217, 119, 6, 0.3);
+}
+
+[data-theme='light'] .joystick-knob-core {
+  background: #d97706;
+  box-shadow: 0 0 6px #d97706;
+}
+
+[data-theme='light'] .mobile-jump-btn {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(217, 119, 6, 0.4);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme='light'] .mobile-jump-btn:active {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: #d97706;
+}
+
+[data-theme='light'] .mobile-jump-icon {
+  color: #d97706;
+}
+
+/* Touch-friendly Minimal Interaction Button */
+.minimal-interaction-pill.touch-friendly {
+  border: none;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 24px;
+  font-family: inherit;
+}
+
+.interaction-touch-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(251, 191, 36, 0.2);
+  color: #fbbf24;
+  animation: pulseGlow 1.8s infinite;
+}
+
+[data-theme='light'] .interaction-touch-badge {
+  background: rgba(217, 119, 6, 0.15);
+  color: #d97706;
+}
+
+/* ── 2. Universal Mobile Breakpoints (<= 768px) ── */
+@media (max-width: 768px) {
+  /* Safe area adjustments for top bar */
+  .island-top-bar {
+    top: max(10px, env(safe-area-inset-top, 10px));
+    left: max(10px, env(safe-area-inset-left, 10px));
+    right: max(10px, env(safe-area-inset-right, 10px));
+    height: 48px;
+    padding: 0 10px;
+    gap: 8px;
+  }
+
+  .nav-left-group {
+    gap: 6px;
+  }
+
+  .nav-controls-group {
+    gap: 6px;
+  }
+
+  /* Compact Mini-Radar on mobile */
+  .mini-radar-wrapper {
+    bottom: max(14px, env(safe-area-inset-bottom, 14px));
+    right: max(14px, env(safe-area-inset-right, 14px));
+    gap: 5px;
+  }
+
+  .mini-radar-housing {
+    width: 104px;
+    height: 104px;
+  }
+
+  .radar-action-container {
+    width: 104px;
+  }
+
+  .radar-map-btn {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+
+  /* Reposition Interaction Pill above joystick/radar */
+  .minimal-interaction-pill-wrapper {
+    bottom: max(148px, calc(env(safe-area-inset-bottom, 20px) + 128px));
+  }
+
+  /* Modals full vertical adaptation */
+  .tactical-map-modal {
+    max-width: min(94vw, 420px);
+    max-height: 88dvh;
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .tactical-map-canvas-container {
+    width: min(72vw, 300px);
+    height: min(72vw, 300px);
+  }
+
+  .welcome-modal-card {
+    max-width: min(94vw, 560px);
+    max-height: 90dvh;
+    padding: 22px 18px;
+  }
+
+  .resume-modal-card.obsidian-modal {
+    width: min(94vw, 560px);
+    max-height: 90dvh;
+    padding: 20px 16px;
+  }
+
+  .modal-header {
+    padding-bottom: 12px;
+  }
+
+  .modal-badge-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .modal-title {
+    font-size: 16.5px;
+  }
+}
+
+/* ── 3. Ultra-Compact / Folded Phone Screens (<= 380px) ── */
+@media (max-width: 380px) {
+  .island-top-bar {
+    height: 44px;
+    padding: 0 8px;
+  }
+
+  .brand-tag-pill {
+    display: none;
+  }
+
+  .mini-radar-housing {
+    width: 92px;
+    height: 92px;
+  }
+
+  .radar-action-container {
+    width: 92px;
+  }
+
+  .mobile-joystick-base {
+    width: 100px;
+    height: 100px;
+  }
+
+  .mobile-joystick-knob {
+    width: 42px;
+    height: 42px;
+  }
+
+  .mobile-jump-btn {
+    width: 44px;
+    height: 44px;
+    bottom: max(150px, calc(env(safe-area-inset-bottom, 16px) + 124px));
+  }
+}
+
+
 
 
 

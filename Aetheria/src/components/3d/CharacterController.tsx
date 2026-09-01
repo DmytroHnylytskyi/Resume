@@ -6,6 +6,7 @@ import { RigidBody, CapsuleCollider, RapierRigidBody } from '@react-three/rapier
 import * as THREE from 'three';
 import { useGameStore } from '../../store/useGameStore';
 import { radarState } from '../../store/radarState';
+import { mobileControls } from '../../store/mobileControlsState';
 import AnimatedCharacter from './AnimatedCharacter';
 
 const WALK_SPEED = 2.6;
@@ -263,6 +264,28 @@ export default function CharacterController({
       playerPosRef.current.set(translation.x, translation.y, translation.z);
     }
 
+    // Consume mobile touch camera orbit & pinch zoom
+    if (!isAnyModalOpen && !isIntroActive.current) {
+      if (mobileControls.lookDeltaX !== 0) {
+        targetYaw.current -= mobileControls.lookDeltaX * 0.0035;
+        mobileControls.lookDeltaX = 0;
+      }
+      if (mobileControls.lookDeltaY !== 0) {
+        targetPitch.current = Math.max(
+          -0.2,
+          Math.min(0.95, targetPitch.current + mobileControls.lookDeltaY * 0.0035)
+        );
+        mobileControls.lookDeltaY = 0;
+      }
+      if (mobileControls.pinchZoomDelta !== 0) {
+        cameraDistance.current = Math.max(
+          2.2,
+          Math.min(7.0, cameraDistance.current + mobileControls.pinchZoomDelta)
+        );
+        mobileControls.pinchZoomDelta = 0;
+      }
+    }
+
     // Smooth camera angles with finiteness guards
     if (!Number.isFinite(targetYaw.current)) targetYaw.current = 0.0;
     if (!Number.isFinite(targetPitch.current)) targetPitch.current = 0.32;
@@ -299,9 +322,12 @@ export default function CharacterController({
       setIsJumping(jumpingNow);
     }
 
-    // Direction calculation relative to camera yaw
-    const fwdInput = (keys.current.forward ? 1 : 0) - (keys.current.backward ? 1 : 0);
-    const sideInput = (keys.current.right ? 1 : 0) - (keys.current.left ? 1 : 0);
+    // Direction calculation relative to camera yaw (Keyboard + Mobile Virtual Joystick)
+    const fwdKeyboard = (keys.current.forward ? 1 : 0) - (keys.current.backward ? 1 : 0);
+    const sideKeyboard = (keys.current.right ? 1 : 0) - (keys.current.left ? 1 : 0);
+
+    const fwdInput = fwdKeyboard + (-mobileControls.moveZ);
+    const sideInput = sideKeyboard + mobileControls.moveX;
 
     const fwdX = -Math.sin(cameraYaw.current);
     const fwdZ = -Math.cos(cameraYaw.current);
@@ -317,7 +343,7 @@ export default function CharacterController({
     );
 
     const moving = moveDir.lengthSq() > 0.01;
-    const sprinting = keys.current.shift && moving;
+    const sprinting = (keys.current.shift || mobileControls.isSprinting) && moving;
 
     // Only trigger React re-render when state ACTUALLY changes
     if (moving !== prevMoving.current) {
@@ -331,7 +357,7 @@ export default function CharacterController({
 
     if (moving) {
       moveDir.normalize();
-      const speed = keys.current.shift ? RUN_SPEED : WALK_SPEED;
+      const speed = (keys.current.shift || mobileControls.isSprinting) ? RUN_SPEED : WALK_SPEED;
       moveDir.multiplyScalar(speed);
 
       currentVelocity.current.lerp(moveDir, 0.2);
@@ -354,14 +380,17 @@ export default function CharacterController({
       rigidBodyRef.current.setLinvel({ x: 0, y: linvel.y, z: 0 }, true);
     }
 
-    // Jump
-    if (keys.current.jump && isGrounded.current && timeSinceJump > 400) {
+    // Jump (Keyboard Space or Mobile Jump Button)
+    if ((keys.current.jump || mobileControls.isJumping) && isGrounded.current && timeSinceJump > 400) {
       rigidBodyRef.current.setLinvel({ x: linvel.x, y: JUMP_FORCE, z: linvel.z }, true);
       lastJumpTime.current = now;
       isGrounded.current = false;
       prevJumping.current = true;
       setIsJumping(true);
       keys.current.jump = false;
+      mobileControls.isJumping = false;
+    } else if (!isGrounded.current && mobileControls.isJumping) {
+      mobileControls.isJumping = false;
     }
 
     // ── 3rd-Person Camera & Cinematic Intro Swoop ──
