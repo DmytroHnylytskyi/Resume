@@ -120,7 +120,6 @@ export default function MiniRadar(): React.ReactElement | null {
     selectedProject,
     setActiveModal,
     setSelectedProject,
-    isIntroPlaying,
     isTacticalMapOpen,
     setTacticalMapOpen
   } = useGameStore();
@@ -198,7 +197,7 @@ export default function MiniRadar(): React.ReactElement | null {
   return (
     <>
       {/* ── Circular Glass Mini-Radar (Bottom-Right HUD) ── */}
-      <div className={`mini-radar-wrapper ${isIntroPlaying ? 'hud-hidden-during-intro' : ''}`}>
+      <div className="mini-radar-wrapper">
         <div
           className="mini-radar-housing glass-panel"
           onClick={() => setTacticalMapOpen(true)}

@@ -14,8 +14,7 @@ export default function MobileTouchControls(): React.ReactElement | null {
     isInitialWelcomeOpen,
     activeModal,
     selectedProject,
-    isTacticalMapOpen,
-    isIntroPlaying
+    isTacticalMapOpen
   } = useGameStore();
 
   const [isTouchDevice, setIsTouchDevice] = useState(false);
@@ -222,12 +221,12 @@ export default function MobileTouchControls(): React.ReactElement | null {
     mobileControls.isJumping = true;
   }, []);
 
-  // Hide mobile controls when modals, tactical map, or intro are active
+  // Hide mobile controls when modals or tactical map are active
   const isAnyModalOpen = Boolean(
     activeModal || selectedProject || isInitialWelcomeOpen || isTacticalMapOpen
   );
 
-  if (!isTouchDevice || viewMode !== '3d' || isAnyModalOpen || isIntroPlaying) {
+  if (!isTouchDevice || viewMode !== '3d' || isAnyModalOpen) {
     return null;
   }
 

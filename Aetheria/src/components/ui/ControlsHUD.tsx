@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useGameStore } from '../../store/useGameStore';
 import { developerProfiles, translations } from '../../data/resumeData';
-import { User, Share2, Award, FileText, Sun, Moon, Sparkles, Video } from 'lucide-react';
+import { User, Share2, Award, FileText, Sun, Moon, Sparkles } from 'lucide-react';
 import ControlsGuideDropdown from './ControlsGuideDropdown';
 
 function FpsBadge(): React.ReactElement {
@@ -132,15 +132,6 @@ export default function ControlsHUD(): React.ReactElement {
           {/* Expandable Controls Guide Dropdown */}
           <ControlsGuideDropdown />
 
-          {/* Replay Cinematic Swoop */}
-          <button
-            className="nav-shortcut-btn cinematic-replay-btn"
-            onClick={triggerIntroSwoop}
-            title={language === 'uk' ? 'Кінематографічна панорама' : 'Cinematic Panorama'}
-          >
-            <Video size={15} />
-          </button>
-
           {/* Theme Toggle */}
           <button
             className="nav-shortcut-btn theme-toggle-btn"
@@ -171,7 +162,7 @@ export default function ControlsHUD(): React.ReactElement {
       </header>
 
       {/* ── Minimalist Clean Floating Interaction Pill ── */}
-      {interactionPrompt && !isIntroPlaying && (
+      {interactionPrompt && (
         <div className="minimal-interaction-pill-wrapper">
           <button
             className="minimal-interaction-pill glass-panel touch-friendly"
@@ -194,7 +185,7 @@ export default function ControlsHUD(): React.ReactElement {
       )}
 
       {/* ── Easter Egg Floating Toast ── */}
-      {easterEggToast && !isIntroPlaying && (
+      {easterEggToast && (
         <div className="easter-egg-toast-wrapper">
           <div className="easter-egg-toast glass-panel">
             <div className="easter-egg-icon-box">
@@ -203,31 +194,6 @@ export default function ControlsHUD(): React.ReactElement {
             <div className="easter-egg-content">
               <h4 className="easter-egg-title">{easterEggToast.title}</h4>
               <p className="easter-egg-desc">{easterEggToast.text}</p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── Cinematic Letterbox Overlay & Atmospheric Title (Zero DOM overhead when inactive) ── */}
-      {isIntroPlaying && (
-        <div className="cinematic-overlay active">
-          <div className="cinematic-letterbox top">
-            <div className="cinematic-banner-content">
-              <span className="cinematic-title-brand">AETHERIA 3D</span>
-              <span className="cinematic-dot-gold" />
-              <span className="cinematic-title-tag">
-                {language === 'uk' ? 'КІНЕМАТОГРАФІЧНИЙ ПРОЛІТ' : 'CINEMATIC OVERVIEW'}
-              </span>
-            </div>
-          </div>
-
-          <div className="cinematic-letterbox bottom">
-            <div className="cinematic-skip-container">
-              <span className="cinematic-skip-text">
-                {language === 'uk'
-                  ? (isTouchDevice ? 'Торкніться екрана для керування' : 'Клікніть мишкою або натисніть будь-яку клавішу для керування')
-                  : (isTouchDevice ? 'Tap screen to take control' : 'Click anywhere or press any key to take control')}
-              </span>
             </div>
           </div>
         </div>
