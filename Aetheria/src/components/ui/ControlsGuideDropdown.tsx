@@ -176,16 +176,6 @@ export default function ControlsGuideDropdown(): React.ReactElement {
               </div>
             </div>
           </div>
-
-          {/* Footer Tip */}
-          <div className="controls-menu-footer">
-            <Sparkles size={13} className="controls-footer-sparkle" />
-            <span className="controls-footer-text">
-              {isUk
-                ? 'Підказка: Ви також можете клікати на портали мишею.'
-                : 'Tip: You can also click portals directly with mouse.'}
-            </span>
-          </div>
         </div>
       )}
     </div>

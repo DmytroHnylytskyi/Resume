@@ -43,9 +43,10 @@ export default function CharacterController({
     interactionPrompt,
     isSceneLoaded,
     introTriggerCount,
-    setIntroPlaying
+    setIntroPlaying,
+    isTacticalMapOpen
   } = useGameStore();
-  const isAnyModalOpen = Boolean(activeModal || selectedProject || isInitialWelcomeOpen);
+  const isAnyModalOpen = Boolean(activeModal || selectedProject || isInitialWelcomeOpen || isTacticalMapOpen);
 
   const [isMoving, setIsMoving] = useState(false);
   const [isSprinting, setIsSprinting] = useState(false);

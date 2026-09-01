@@ -120,10 +120,11 @@ export default function MiniRadar(): React.ReactElement | null {
     selectedProject,
     setActiveModal,
     setSelectedProject,
-    isIntroPlaying
+    isIntroPlaying,
+    isTacticalMapOpen,
+    setTacticalMapOpen
   } = useGameStore();
 
-  const [isMapExpanded, setIsMapExpanded] = useState(false);
   const [hoveredLandmark, setHoveredLandmark] = useState<LandmarkDef | null>(null);
 
   const playerRadarRef = useRef<HTMLDivElement>(null);
@@ -172,18 +173,25 @@ export default function MiniRadar(): React.ReactElement | null {
     return () => cancelAnimationFrame(animId);
   }, []);
 
-  // Keyboard shortcut: Press 'M' to toggle tactical island map
+  // Keyboard shortcut: Press 'M' to toggle tactical island map, 'Esc' to close
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement)?.tagName)) return;
-      if (activeModal || selectedProject || isInitialWelcomeOpen) return;
+      if (isInitialWelcomeOpen) return;
+
       if (e.code === 'KeyM') {
-        setIsMapExpanded((prev) => !prev);
+        // Toggle tactical map if no project/statue modal is open
+        if (activeModal || selectedProject) return;
+        setTacticalMapOpen(!isTacticalMapOpen);
+      } else if (e.code === 'Escape' && isTacticalMapOpen) {
+        // If a project or statue modal is open, let its own Esc handler close it first
+        if (activeModal || selectedProject) return;
+        setTacticalMapOpen(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeModal, selectedProject, isInitialWelcomeOpen]);
+  }, [activeModal, selectedProject, isInitialWelcomeOpen, isTacticalMapOpen, setTacticalMapOpen]);
 
   if (viewMode !== '3d' || isInitialWelcomeOpen) return null;
 
@@ -193,7 +201,7 @@ export default function MiniRadar(): React.ReactElement | null {
       <div className={`mini-radar-wrapper ${isIntroPlaying ? 'hud-hidden-during-intro' : ''}`}>
         <div
           className="mini-radar-housing glass-panel"
-          onClick={() => setIsMapExpanded(true)}
+          onClick={() => setTacticalMapOpen(true)}
           title={language === 'uk' ? 'Натисніть або [M] для тактичної карти' : 'Click or press [M] for tactical map'}
         >
           {/* Island Schematic Background on Radar */}
@@ -260,7 +268,7 @@ export default function MiniRadar(): React.ReactElement | null {
           ) : (
             <button
               className="radar-map-btn glass-panel"
-              onClick={() => setIsMapExpanded(true)}
+              onClick={() => setTacticalMapOpen(true)}
               title={language === 'uk' ? 'Відкрити тактичну карту острова [M]' : 'Open tactical map [M]'}
             >
               <Map size={13} className="radar-map-btn-icon" />
@@ -271,8 +279,8 @@ export default function MiniRadar(): React.ReactElement | null {
       </div>
 
       {/* ── Tactical Island Map Modal (Expanded Map on [M] or Radar Click) ── */}
-      {isMapExpanded && (
-        <div className="tactical-map-backdrop" onClick={() => setIsMapExpanded(false)}>
+      {isTacticalMapOpen && (
+        <div className="tactical-map-backdrop" onClick={() => setTacticalMapOpen(false)}>
           <div className="tactical-map-modal glass-panel" onClick={(e) => e.stopPropagation()}>
             <div className="tactical-map-header">
               <div className="tactical-map-title-group">
@@ -286,7 +294,7 @@ export default function MiniRadar(): React.ReactElement | null {
                   </span>
                 </div>
               </div>
-              <button className="modal-close-btn" onClick={() => setIsMapExpanded(false)}>
+              <button className="modal-close-btn" onClick={() => setTacticalMapOpen(false)}>
                 <X size={18} />
               </button>
             </div>
@@ -323,7 +331,6 @@ export default function MiniRadar(): React.ReactElement | null {
                     className="tactical-pin-wrapper"
                     style={{ left: `${mapLeft}%`, top: `${mapTop}%` }}
                     onClick={() => {
-                      setIsMapExpanded(false);
                       if (lm.projectId) {
                         setSelectedProject(lm.projectId);
                       } else if (lm.modalKey) {
@@ -362,7 +369,6 @@ export default function MiniRadar(): React.ReactElement | null {
                     key={lm.id}
                     className="legend-chip glass-panel"
                     onClick={() => {
-                      setIsMapExpanded(false);
                       if (lm.projectId) {
                         setSelectedProject(lm.projectId);
                       } else if (lm.modalKey) {

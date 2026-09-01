@@ -56,4 +56,8 @@ export interface GameState {
   setIntroPlaying: (playing: boolean) => void;
   introTriggerCount: number;
   triggerIntroSwoop: () => void;
+
+  // Tactical Island Map
+  isTacticalMapOpen: boolean;
+  setTacticalMapOpen: (open: boolean) => void;
 }

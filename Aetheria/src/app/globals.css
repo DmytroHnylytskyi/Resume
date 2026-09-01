@@ -1284,7 +1284,7 @@ html, body {
 
 /* ── 3D & Web Modals (Obsidian Cyber-Glass Architecture) ── */
 .modal-backdrop-blur {
-  position: absolute;
+  position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.88);
   backdrop-filter: blur(20px);

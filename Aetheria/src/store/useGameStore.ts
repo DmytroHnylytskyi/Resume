@@ -59,5 +59,9 @@ export const useGameStore = create<GameState>((set) => ({
   isIntroPlaying: false,
   setIntroPlaying: (playing) => set({ isIntroPlaying: playing }),
   introTriggerCount: 0,
-  triggerIntroSwoop: () => set((s) => ({ introTriggerCount: s.introTriggerCount + 1, isIntroPlaying: true }))
+  triggerIntroSwoop: () => set((s) => ({ introTriggerCount: s.introTriggerCount + 1, isIntroPlaying: true })),
+
+  // ── Tactical Island Map ──
+  isTacticalMapOpen: false,
+  setTacticalMapOpen: (open) => set({ isTacticalMapOpen: open })
 }));
