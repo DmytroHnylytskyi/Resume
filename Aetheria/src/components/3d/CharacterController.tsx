@@ -5,6 +5,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { RigidBody, CapsuleCollider, RapierRigidBody } from '@react-three/rapier';
 import * as THREE from 'three';
 import { useGameStore } from '../../store/useGameStore';
+import { radarState } from '../../store/radarState';
 import AnimatedCharacter from './AnimatedCharacter';
 
 const WALK_SPEED = 2.6;
@@ -271,6 +272,11 @@ export default function CharacterController({
     if (!Number.isFinite(cameraYaw.current)) cameraYaw.current = 0.0;
     if (!Number.isFinite(cameraPitch.current)) cameraPitch.current = 0.32;
     if (!Number.isFinite(cameraDistance.current)) cameraDistance.current = 4.0;
+
+    // Synchronize zero-overhead radar telemetry
+    radarState.x = translation.x;
+    radarState.z = translation.z;
+    radarState.yaw = cameraYaw.current;
 
     // Void Fall Recovery
     if (translation.y < -3.0) {

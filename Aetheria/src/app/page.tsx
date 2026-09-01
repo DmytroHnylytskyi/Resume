@@ -11,6 +11,7 @@ import ProjectModal from '../components/ui/ProjectModal';
 import WelcomeModal from '../components/ui/WelcomeModal';
 import LoadingScreen from '../components/ui/LoadingScreen';
 import ClassicLandingView from '../components/ui/ClassicLandingView';
+import MiniRadar from '../components/ui/MiniRadar';
 
 const IslandCanvas = dynamic(() => import('../components/3d/IslandCanvas'), {
   ssr: false
@@ -61,6 +62,9 @@ export default function HomePage(): React.ReactElement {
 
           {/* HUD Top Navigation & Floating [E] Interaction Pill */}
           <ControlsHUD />
+
+          {/* Circular Glass Mini-Radar & Island Tactical Map */}
+          <MiniRadar />
 
           {/* 3D Modal Windows */}
           <BioModal />

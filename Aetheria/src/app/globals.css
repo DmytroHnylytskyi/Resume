@@ -2550,4 +2550,457 @@ nextjs-portal,
   transition: all 0.5s ease;
 }
 
+/* ══════════════════════════════════════════════════════
+   CIRCULAR GLASS MINI-RADAR & TACTICAL ISLAND MAP
+   ══════════════════════════════════════════════════════ */
+.mini-radar-wrapper {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  pointer-events: auto;
+  user-select: none;
+  animation: fadeIn 0.6s ease;
+}
+
+.mini-radar-housing {
+  width: 124px;
+  height: 124px;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  background: rgba(12, 9, 24, 0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.55), inset 0 0 24px rgba(139, 92, 246, 0.12);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.mini-radar-housing:hover {
+  transform: scale(1.05);
+  border-color: rgba(251, 191, 36, 0.4);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65), 0 0 16px rgba(251, 191, 36, 0.2);
+}
+
+/* Radar concentric grid lines */
+.radar-grid-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.radar-grid-ring.r-inner {
+  width: 44px;
+  height: 44px;
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+.radar-grid-ring.r-outer {
+  width: 86px;
+  height: 86px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.radar-crosshair {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+}
+
+.radar-crosshair.h {
+  top: 50%;
+  left: 10px;
+  right: 10px;
+  height: 1px;
+  transform: translateY(-50%);
+}
+
+.radar-crosshair.v {
+  left: 50%;
+  top: 10px;
+  bottom: 10px;
+  width: 1px;
+  transform: translateX(-50%);
+}
+
+/* Rotating Compass Dial (Cardinal points N, E, S, W) */
+.radar-compass-dial {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.cardinal-point {
+  position: absolute;
+  font-size: 8.5px;
+  font-weight: 800;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.cardinal-point.north {
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fbbf24;
+  text-shadow: 0 0 6px rgba(251, 191, 36, 0.7);
+}
+
+.cardinal-point.east {
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+  opacity: 0.65;
+}
+
+.cardinal-point.south {
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--text-secondary);
+  opacity: 0.65;
+}
+
+.cardinal-point.west {
+  left: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+  opacity: 0.65;
+}
+
+/* Center Player Indicator & View Cone */
+.radar-player-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.radar-view-cone {
+  position: absolute;
+  bottom: 50%;
+  width: 32px;
+  height: 38px;
+  background: radial-gradient(circle at bottom center, rgba(251, 191, 36, 0.35) 0%, rgba(251, 191, 36, 0) 70%);
+  clip-path: polygon(50% 100%, 0% 0%, 100% 0%);
+}
+
+.radar-player-blip {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.9), 0 0 14px #fbbf24;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  position: relative;
+  z-index: 2;
+}
+
+/* Blips Layer */
+.radar-blips-layer {
+  position: absolute;
+  inset: 6px;
+  pointer-events: none;
+}
+
+.radar-landmark-blip {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
+  pointer-events: auto;
+  cursor: pointer;
+  will-change: transform;
+  transition: transform 0.08s linear;
+}
+
+.radar-landmark-blip:hover {
+  transform: scale(1.6) !important;
+}
+
+/* Radar Expand Badge [M] */
+.radar-expand-badge {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  padding: 1px 4px;
+  font-size: 8px;
+  font-weight: 800;
+  color: var(--text-secondary);
+  font-family: ui-monospace, monospace;
+}
+
+/* Bottom Controls & Hover Pill */
+.radar-bottom-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.radar-hover-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: rgba(12, 9, 24, 0.85);
+  border: 1px solid var(--border-subtle);
+  animation: fadeIn 0.15s ease;
+}
+
+.radar-hover-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.radar-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 9px;
+  border-radius: 14px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  background: rgba(12, 9, 24, 0.7);
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.radar-toggle-btn:hover {
+  color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ── Tactical Island Map Modal ── */
+.tactical-map-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  background: rgba(6, 4, 12, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+.tactical-map-modal {
+  width: 100%;
+  max-width: 680px;
+  background: rgba(13, 9, 26, 0.94);
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  border-radius: 24px;
+  padding: 22px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7), 0 0 32px rgba(139, 92, 246, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tactical-map-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tactical-map-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tactical-map-icon {
+  color: #fbbf24;
+}
+
+.tactical-map-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.2px;
+}
+
+.tactical-map-canvas-container {
+  width: 100%;
+  height: 320px;
+  background: radial-gradient(circle at 50% 50%, rgba(30, 20, 58, 0.6) 0%, rgba(10, 7, 20, 0.9) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.tactical-map-grid {
+  position: absolute;
+  inset: 0;
+  background-size: 28px 28px;
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+
+.tactical-map-island-outline {
+  position: absolute;
+  inset: 24px;
+  border-radius: 36% 42% 46% 38% / 40% 36% 44% 42%;
+  border: 1.5px dashed rgba(139, 92, 246, 0.35);
+  background: radial-gradient(ellipse at center, rgba(139, 92, 246, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.tactical-compass-rose {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 800;
+  color: #fbbf24;
+  font-family: ui-monospace, monospace;
+}
+
+.tactical-pin-wrapper {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  z-index: 10;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tactical-pin-wrapper:hover {
+  transform: translate(-50%, -50%) scale(1.18);
+  z-index: 20;
+}
+
+.tactical-pin-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+}
+
+.tactical-pin-label {
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--text-primary);
+  background: rgba(10, 7, 20, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  pointer-events: none;
+}
+
+.tactical-player-pin {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 15;
+}
+
+.tactical-player-core {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 10px #ffffff;
+  border: 1.5px solid #000;
+}
+
+.tactical-player-pulse {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  animation: pulseGlow 1.8s infinite ease-out;
+}
+
+.tactical-map-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.legend-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  letter-spacing: 0.5px;
+}
+
+.legend-items-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.legend-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.legend-chip:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.legend-chip-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+
 
