@@ -10,7 +10,7 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
     summary: [
       "2+ роки продуктової розробки: створення комплексних веб-сервісів від проєктування БД до інтерактивного WebGL-клієнта.",
       "Експертиза у 3D WebGL & Creative Tech: просторові обчислення, Raycasting, процедурні GLSL-шейдери, GPU Instancing та фізика Rapier 3D.",
-      "Високопродуктивний асинхронний бекенд: проектування non-blocking API на FastAPI, Async SQLAlchemy 2.0, JWT з ротацією токенів та rate limiting.",
+      "Високопродуктивний асинхронний бекенд: проєктування non-blocking API на FastAPI, Async SQLAlchemy 2.0, JWT з ротацією токенів та rate limiting.",
       "Сучасна фронтенд-архітектура: суворий TypeScript, TanStack Query v5 (Optimistic UI), Zustand 5, TailwindCSS та 60 FPS рендеринг."
     ],
     education: [

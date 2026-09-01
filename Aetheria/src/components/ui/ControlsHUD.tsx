@@ -200,7 +200,7 @@ export default function ControlsHUD(): React.ReactElement {
             <div className="cinematic-skip-container">
               <span className="cinematic-skip-text">
                 {language === 'uk'
-                  ? 'Клікніть мишкою або натисніть будь-яку клавішу для управління'
+                  ? 'Клікніть мишкою або натисніть будь-яку клавішу для керування'
                   : 'Click anywhere or press any key to take control'}
               </span>
             </div>

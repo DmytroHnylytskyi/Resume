@@ -88,7 +88,9 @@ export default function WelcomeModal(): React.ReactElement | null {
               <Compass size={24} />
             </div>
             <div className="mode-card-body">
-              <div className="mode-card-tag">Interactive 3D Engine</div>
+              <div className="mode-card-tag">
+                {language === 'uk' ? 'Інтерактивний 3D-рушій' : 'Interactive 3D Engine'}
+              </div>
               <h3 className="mode-card-title">{t.mode3DTitle}</h3>
               <p className="mode-card-desc">{t.mode3DDesc}</p>
             </div>
@@ -104,7 +106,9 @@ export default function WelcomeModal(): React.ReactElement | null {
               <FileText size={24} />
             </div>
             <div className="mode-card-body">
-              <div className="mode-card-tag">Fast & Structured</div>
+              <div className="mode-card-tag">
+                {language === 'uk' ? 'Швидко & Структуровано' : 'Fast & Structured'}
+              </div>
               <h3 className="mode-card-title">{t.modeClassicTitle}</h3>
               <p className="mode-card-desc">{t.modeClassicDesc}</p>
             </div>

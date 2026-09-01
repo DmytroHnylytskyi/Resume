@@ -383,7 +383,9 @@ export default function ClassicLandingView(): React.ReactElement {
                   <Send size={20} />
                 </div>
                 <div className="channel-info">
-                  <span className="channel-name">Telegram (Primary)</span>
+                  <span className="channel-name">
+                    {language === 'uk' ? 'Telegram (Основний канал)' : 'Telegram (Primary)'}
+                  </span>
                   <span className="channel-value">@mokydjin</span>
                 </div>
                 <ExternalLink size={16} className="channel-arrow" />

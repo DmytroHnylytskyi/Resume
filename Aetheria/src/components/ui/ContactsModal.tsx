@@ -103,7 +103,7 @@ export default function ContactsModal(): React.ReactElement | null {
                 </div>
                 <div className="contact-info-block">
                   <span className="contact-role-label">
-                    {language === 'uk' ? 'Telegram (Швидка відповідь / Primary)' : 'Telegram (Fast Response / Primary)'}
+                    {language === 'uk' ? 'Telegram (Швидка відповідь / Основний канал)' : 'Telegram (Fast Response / Primary)'}
                   </span>
                   <span className="contact-primary-text">@mokydjin</span>
                 </div>

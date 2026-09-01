@@ -97,7 +97,7 @@ export default function ControlsGuideDropdown(): React.ReactElement {
 
               <div className="controls-item-row">
                 <div className="controls-keys-group">
-                  <kbd className="ctrl-key wide">Пробіл</kbd>
+                  <kbd className="ctrl-key wide">{isUk ? 'Пробіл' : 'Space'}</kbd>
                 </div>
                 <span className="controls-action-desc">
                   {isUk ? 'Стрибок' : 'Jump'}
