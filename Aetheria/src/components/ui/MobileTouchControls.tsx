@@ -44,43 +44,39 @@ export default function MobileTouchControls(): React.ReactElement | null {
     return () => window.removeEventListener('resize', checkTouch);
   }, []);
 
-  // ── 1. Virtual Thumbstick Touch Handlers ──
-  const handleJoystickTouchStart = useCallback(
-    (e: React.TouchEvent) => {
-      if (joystickTouchIdRef.current !== null) return;
-      const touch = e.changedTouches[0];
-      joystickTouchIdRef.current = touch.identifier;
+  // ── 1. Virtual Thumbstick Handlers (Left Thumb) ──
+  const handleJoystickTouchStart = useCallback((e: React.TouchEvent) => {
+    if (joystickTouchIdRef.current !== null) return;
+    const touch = e.changedTouches[0];
+    joystickTouchIdRef.current = touch.identifier;
 
-      if (joystickBaseRef.current) {
-        const rect = joystickBaseRef.current.getBoundingClientRect();
-        joystickCenterRef.current = {
-          x: rect.left + rect.width / 2,
-          y: rect.top + rect.height / 2
-        };
-      }
+    if (joystickBaseRef.current) {
+      const rect = joystickBaseRef.current.getBoundingClientRect();
+      joystickCenterRef.current = {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2
+      };
+    }
 
-      setIsJoystickActive(true);
-      mobileControls.isActive = true;
+    setIsJoystickActive(true);
+    mobileControls.isActive = true;
 
-      // Compute immediate position
-      const dx = touch.clientX - joystickCenterRef.current.x;
-      const dy = touch.clientY - joystickCenterRef.current.y;
-      const dist = Math.hypot(dx, dy);
+    const dx = touch.clientX - joystickCenterRef.current.x;
+    const dy = touch.clientY - joystickCenterRef.current.y;
+    const dist = Math.hypot(dx, dy);
 
-      if (dist > JOYSTICK_DEADZONE) {
-        const angle = Math.atan2(dy, dx);
-        const clampedDist = Math.min(dist, JOYSTICK_MAX_RADIUS);
-        const clampedX = Math.cos(angle) * clampedDist;
-        const clampedY = Math.sin(angle) * clampedDist;
+    if (dist > JOYSTICK_DEADZONE) {
+      const angle = Math.atan2(dy, dx);
+      const clampedDist = Math.min(dist, JOYSTICK_MAX_RADIUS);
+      const clampedX = Math.cos(angle) * clampedDist;
+      const clampedY = Math.sin(angle) * clampedDist;
 
-        setKnobPos({ x: clampedX, y: clampedY });
-        mobileControls.moveX = clampedX / JOYSTICK_MAX_RADIUS;
-        mobileControls.moveZ = clampedY / JOYSTICK_MAX_RADIUS;
-        mobileControls.isSprinting = clampedDist / JOYSTICK_MAX_RADIUS > 0.78;
-      }
-    },
-    []
-  );
+      setKnobPos({ x: clampedX, y: clampedY });
+      mobileControls.moveX = clampedX / JOYSTICK_MAX_RADIUS;
+      mobileControls.moveZ = clampedY / JOYSTICK_MAX_RADIUS;
+      mobileControls.isSprinting = clampedDist / JOYSTICK_MAX_RADIUS > 0.78;
+    }
+  }, []);
 
   const handleJoystickTouchMove = useCallback((e: TouchEvent) => {
     if (joystickTouchIdRef.current === null) return;
@@ -131,32 +127,57 @@ export default function MobileTouchControls(): React.ReactElement | null {
     }
   }, []);
 
-  // ── 2. Touch Camera Orbit Zone Handlers (Right Screen Area) ──
-  const handleCameraTouchStart = useCallback((e: React.TouchEvent) => {
-    if (e.touches.length === 1 && cameraTouchIdRef.current === null) {
-      const touch = e.touches[0];
-      cameraTouchIdRef.current = touch.identifier;
-      lastCameraTouchPosRef.current = { x: touch.clientX, y: touch.clientY };
-    } else if (e.touches.length === 2) {
-      // Initialize pinch-to-zoom
+  // ── 2. Universal Touch Camera Orbit (Any touch outside joystick & interactive buttons) ──
+  const handleGlobalTouchStart = useCallback((e: TouchEvent) => {
+    // If multiple fingers, handle pinch-to-zoom
+    if (e.touches.length === 2) {
       const t1 = e.touches[0];
       const t2 = e.touches[1];
       pinchStartDistRef.current = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+      return;
+    }
+
+    if (cameraTouchIdRef.current !== null) return;
+
+    for (let i = 0; i < e.changedTouches.length; i++) {
+      const touch = e.changedTouches[i];
+      // Skip if touch is assigned to joystick
+      if (touch.identifier === joystickTouchIdRef.current) continue;
+
+      const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
+      // Skip touches directly on buttons, top bar, mini-radar, or joystick
+      if (
+        targetEl?.closest('.mobile-joystick-base') ||
+        targetEl?.closest('.mobile-jump-btn') ||
+        targetEl?.closest('.island-top-bar') ||
+        targetEl?.closest('.mini-radar-wrapper') ||
+        targetEl?.closest('.minimal-interaction-pill-wrapper') ||
+        targetEl?.closest('button')
+      ) {
+        continue;
+      }
+
+      // Claim touch for camera orbit
+      cameraTouchIdRef.current = touch.identifier;
+      lastCameraTouchPosRef.current = { x: touch.clientX, y: touch.clientY };
+      break;
     }
   }, []);
 
-  const handleCameraTouchMove = useCallback((e: TouchEvent) => {
+  const handleGlobalTouchMove = useCallback((e: TouchEvent) => {
+    // 2-finger pinch-to-zoom
     if (e.touches.length === 2 && pinchStartDistRef.current !== null) {
       const t1 = e.touches[0];
       const t2 = e.touches[1];
       const currentDist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
       const deltaDist = pinchStartDistRef.current - currentDist;
 
-      mobileControls.pinchZoomDelta = deltaDist * 0.05;
+      mobileControls.pinchZoomDelta = deltaDist * 0.04;
       pinchStartDistRef.current = currentDist;
       return;
     }
 
+    // 1-finger camera orbit
     if (cameraTouchIdRef.current !== null) {
       for (let i = 0; i < e.changedTouches.length; i++) {
         const touch = e.changedTouches[i];
@@ -174,7 +195,7 @@ export default function MobileTouchControls(): React.ReactElement | null {
     }
   }, []);
 
-  const handleCameraTouchEnd = useCallback((e: TouchEvent) => {
+  const handleGlobalTouchEnd = useCallback((e: TouchEvent) => {
     if (e.touches.length < 2) {
       pinchStartDistRef.current = null;
     }
@@ -189,30 +210,33 @@ export default function MobileTouchControls(): React.ReactElement | null {
     }
   }, []);
 
-  // Global touchmove/touchend listeners to guarantee smooth thumb tracking even if finger leaves base
+  // Global listeners guarantee smooth, unbreakable touch tracking everywhere
   useEffect(() => {
+    window.addEventListener('touchstart', handleGlobalTouchStart, { passive: true });
+    window.addEventListener('touchmove', handleGlobalTouchMove, { passive: true });
+    window.addEventListener('touchend', handleGlobalTouchEnd, { passive: true });
+    window.addEventListener('touchcancel', handleGlobalTouchEnd, { passive: true });
+
     window.addEventListener('touchmove', handleJoystickTouchMove, { passive: false });
     window.addEventListener('touchend', handleJoystickTouchEnd);
     window.addEventListener('touchcancel', handleJoystickTouchEnd);
 
-    window.addEventListener('touchmove', handleCameraTouchMove, { passive: true });
-    window.addEventListener('touchend', handleCameraTouchEnd);
-    window.addEventListener('touchcancel', handleCameraTouchEnd);
-
     return () => {
+      window.removeEventListener('touchstart', handleGlobalTouchStart);
+      window.removeEventListener('touchmove', handleGlobalTouchMove);
+      window.removeEventListener('touchend', handleGlobalTouchEnd);
+      window.removeEventListener('touchcancel', handleGlobalTouchEnd);
+
       window.removeEventListener('touchmove', handleJoystickTouchMove);
       window.removeEventListener('touchend', handleJoystickTouchEnd);
       window.removeEventListener('touchcancel', handleJoystickTouchEnd);
-
-      window.removeEventListener('touchmove', handleCameraTouchMove);
-      window.removeEventListener('touchend', handleCameraTouchEnd);
-      window.removeEventListener('touchcancel', handleCameraTouchEnd);
     };
   }, [
+    handleGlobalTouchStart,
+    handleGlobalTouchMove,
+    handleGlobalTouchEnd,
     handleJoystickTouchMove,
-    handleJoystickTouchEnd,
-    handleCameraTouchMove,
-    handleCameraTouchEnd
+    handleJoystickTouchEnd
   ]);
 
   // Jump Button Trigger
@@ -232,13 +256,7 @@ export default function MobileTouchControls(): React.ReactElement | null {
 
   return (
     <div className="mobile-touch-overlay">
-      {/* ── 1. Right Half Touch Camera Orbit Zone ── */}
-      <div
-        className="mobile-camera-touch-zone"
-        onTouchStart={handleCameraTouchStart}
-      />
-
-      {/* ── 2. Virtual Analog Thumbstick (Bottom-Left) ── */}
+      {/* ── 1. Virtual Analog Thumbstick (Bottom-Left) ── */}
       <div className="mobile-joystick-wrapper">
         <div
           ref={joystickBaseRef}
@@ -262,7 +280,7 @@ export default function MobileTouchControls(): React.ReactElement | null {
         </div>
       </div>
 
-      {/* ── 3. Mobile Jump Floating Action Button (Bottom-Right) ── */}
+      {/* ── 2. Mobile Jump Floating Action Button (Bottom-Right) ── */}
       <button
         className="mobile-jump-btn glass-panel"
         onTouchStart={handleJumpPress}

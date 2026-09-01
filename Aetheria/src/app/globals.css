@@ -489,10 +489,12 @@ html, body {
   inset: 0;
   background: #000000;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   z-index: 1000;
-  padding: 20px;
+  padding: max(16px, env(safe-area-inset-top, 16px)) 14px max(24px, env(safe-area-inset-bottom, 24px));
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   animation: fade-in 0.25s ease;
 }
 
@@ -509,7 +511,7 @@ html, body {
   width: 100%;
   max-width: 680px;
   position: relative;
-  overflow: hidden;
+  margin: auto 0;
   border-radius: 28px;
   padding: 32px 36px;
   display: flex;
@@ -2402,11 +2404,47 @@ html, body {
   }
 
   .welcome-modal-card {
-    padding: 24px 20px;
+    padding: 20px 16px;
+    gap: 14px;
+    border-radius: 22px;
+  }
+
+  .welcome-title {
+    font-size: 20px;
+    line-height: 1.25;
+  }
+
+  .welcome-subtitle {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .welcome-choose-prompt {
+    font-size: 12px;
   }
 
   .welcome-cards-grid {
     grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .mode-selection-card {
+    padding: 14px 16px;
+    gap: 10px;
+  }
+
+  .mode-card-title {
+    font-size: 15px;
+  }
+
+  .mode-card-desc {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .mode-card-btn {
+    padding: 10px 14px;
+    font-size: 13px;
   }
 
   .classic-header {
@@ -3824,6 +3862,231 @@ nextjs-portal,
     width: 44px;
     height: 44px;
     bottom: max(150px, calc(env(safe-area-inset-bottom, 16px) + 124px));
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   LANDSCAPE ORIENTATION GUARD (Mobile 3D Gatekeeper)
+   ══════════════════════════════════════════════════════ */
+.orientation-guard-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 5, 8, 0.96);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: max(20px, env(safe-area-inset-top, 20px)) 20px max(24px, env(safe-area-inset-bottom, 24px));
+  animation: modal-fade-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.orientation-guard-card {
+  max-width: 380px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 34px 26px;
+  border-radius: 28px;
+  border: 1.5px solid rgba(251, 191, 36, 0.35);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.85), 0 0 28px rgba(251, 191, 36, 0.16);
+}
+
+.orientation-animation-box {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.phone-rotate-animator {
+  animation: rotateSmartphone 2.8s infinite cubic-bezier(0.45, 0, 0.55, 1);
+  color: #fbbf24;
+  filter: drop-shadow(0 0 12px rgba(251, 191, 36, 0.5));
+}
+
+@keyframes rotateSmartphone {
+  0%, 15% {
+    transform: rotate(0deg);
+  }
+  45%, 75% {
+    transform: rotate(-90deg);
+  }
+  95%, 100% {
+    transform: rotate(0deg);
+  }
+}
+
+.rotate-arc-indicator {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(251, 191, 36, 0.15);
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fbbf24;
+  animation: pulseGlow 1.8s infinite;
+}
+
+.orientation-text-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.orientation-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.2px;
+  line-height: 1.3;
+}
+
+.orientation-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.orientation-actions-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.orientation-btn {
+  padding: 12px 18px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.orientation-btn.primary {
+  background: #ffffff;
+  color: #000000;
+  box-shadow: 0 4px 14px rgba(255, 255, 255, 0.2);
+}
+
+.orientation-btn.primary:active {
+  transform: scale(0.97);
+  background: #e4e4e7;
+}
+
+.orientation-btn.secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+}
+
+.orientation-btn.secondary:active {
+  transform: scale(0.97);
+  background: rgba(255, 255, 255, 0.14);
+}
+
+[data-theme='light'] .orientation-guard-backdrop {
+  background: rgba(244, 244, 245, 0.96);
+}
+
+[data-theme='light'] .orientation-guard-card {
+  border-color: rgba(217, 119, 6, 0.35);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.14), 0 0 28px rgba(217, 119, 6, 0.15);
+}
+
+[data-theme='light'] .phone-rotate-animator {
+  color: #d97706;
+  filter: drop-shadow(0 0 10px rgba(217, 119, 6, 0.4));
+}
+
+[data-theme='light'] .rotate-arc-indicator {
+  background: rgba(217, 119, 6, 0.12);
+  border-color: rgba(217, 119, 6, 0.35);
+  color: #d97706;
+}
+
+[data-theme='light'] .orientation-btn.primary {
+  background: #09090b;
+  color: #ffffff;
+}
+
+/* Landscape Mode HUD ergonomics on short screens (h <= 500px) */
+@media (orientation: landscape) and (max-height: 500px) {
+  .island-top-bar {
+    top: max(6px, env(safe-area-inset-top, 6px));
+    height: 42px;
+    padding: 0 12px;
+  }
+
+  .mini-radar-wrapper {
+    bottom: max(10px, env(safe-area-inset-bottom, 10px));
+    right: max(14px, env(safe-area-inset-right, 14px));
+  }
+
+  .mini-radar-housing {
+    width: 90px;
+    height: 90px;
+  }
+
+  .radar-action-container {
+    width: 90px;
+  }
+
+  .mobile-joystick-wrapper {
+    bottom: max(12px, env(safe-area-inset-bottom, 12px));
+    left: max(14px, env(safe-area-inset-left, 14px));
+  }
+
+  .mobile-joystick-base {
+    width: 96px;
+    height: 96px;
+  }
+
+  .mobile-joystick-knob {
+    width: 40px;
+    height: 40px;
+  }
+
+  .mobile-jump-btn {
+    bottom: max(120px, calc(env(safe-area-inset-bottom, 10px) + 106px));
+    right: max(18px, env(safe-area-inset-right, 18px));
+    width: 46px;
+    height: 46px;
+  }
+
+  .minimal-interaction-pill-wrapper {
+    bottom: max(16px, env(safe-area-inset-bottom, 16px));
+  }
+
+  .tactical-map-modal {
+    max-height: 94dvh;
+    padding: 12px;
+  }
+
+  .tactical-map-canvas-container {
+    width: min(45vw, 240px);
+    height: min(45vw, 240px);
   }
 }
 

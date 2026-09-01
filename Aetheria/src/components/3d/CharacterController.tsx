@@ -213,13 +213,13 @@ export default function CharacterController({
     // Consume mobile touch camera orbit & pinch zoom
     if (!isAnyModalOpen) {
       if (mobileControls.lookDeltaX !== 0) {
-        targetYaw.current -= mobileControls.lookDeltaX * 0.0035;
+        targetYaw.current -= mobileControls.lookDeltaX * 0.0055;
         mobileControls.lookDeltaX = 0;
       }
       if (mobileControls.lookDeltaY !== 0) {
         targetPitch.current = Math.max(
           -0.2,
-          Math.min(0.95, targetPitch.current + mobileControls.lookDeltaY * 0.0035)
+          Math.min(0.95, targetPitch.current + mobileControls.lookDeltaY * 0.0055)
         );
         mobileControls.lookDeltaY = 0;
       }

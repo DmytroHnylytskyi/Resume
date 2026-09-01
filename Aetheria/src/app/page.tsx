@@ -13,6 +13,7 @@ import LoadingScreen from '../components/ui/LoadingScreen';
 import ClassicLandingView from '../components/ui/ClassicLandingView';
 import MiniRadar from '../components/ui/MiniRadar';
 import MobileTouchControls from '../components/ui/MobileTouchControls';
+import LandscapeOrientationGuard from '../components/ui/LandscapeOrientationGuard';
 
 const IslandCanvas = dynamic(() => import('../components/3d/IslandCanvas'), {
   ssr: false
@@ -63,6 +64,9 @@ export default function HomePage(): React.ReactElement {
 
           {/* HUD Top Navigation & Floating [E] Interaction Pill */}
           <ControlsHUD />
+
+          {/* Enforce Landscape Orientation on Mobile */}
+          <LandscapeOrientationGuard />
 
           {/* Mobile Virtual Joystick & Touch Camera Controls */}
           <MobileTouchControls />
