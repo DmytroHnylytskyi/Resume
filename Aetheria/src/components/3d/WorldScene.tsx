@@ -587,9 +587,9 @@ interface ModelBound {
 }
 
 const MODEL_COLLIDER_DEFS: Record<string, ModelBound> = {
-  // Benches (Solid tactile bounds)
-  'Bench.glb': { halfExtents: [1.05, 0.55, 0.45], heightOffset: 0.55 },
-  'Bench-cp2QnHh7bf.glb': { halfExtents: [1.05, 0.85, 0.55], heightOffset: 0.85 },
+  // Benches (Accurate seat surface alignment: 0.5m total height, halfExtents.y = 0.25)
+  'Bench.glb': { halfExtents: [1.0, 0.25, 0.38], heightOffset: 0.25 },
+  'Bench-cp2QnHh7bf.glb': { halfExtents: [1.0, 0.25, 0.45], heightOffset: 0.25 },
 
   // Fences (Perimeter and internal dividers)
   'Fence.glb': { halfExtents: [2.05, 1.1, 0.3], heightOffset: 1.1 },
