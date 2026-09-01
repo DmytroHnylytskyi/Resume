@@ -12,6 +12,16 @@ import { translations } from '../../data/resumeData';
 
 const islandSceneData = rawIslandSceneData as unknown as IslandSceneData;
 
+// Preload all 39 unique scene assets in parallel on initial evaluation
+if (typeof window !== 'undefined') {
+  const uniquePaths = Array.from(new Set(islandSceneData.placedObjects.map((o) => o.modelPath)));
+  uniquePaths.forEach((path) => {
+    try {
+      useGLTF.preload(path);
+    } catch (_) {}
+  });
+}
+
 function getUnitScale(scene: THREE.Object3D): number {
   const box = new THREE.Box3().setFromObject(scene);
   const size = box.getSize(new THREE.Vector3());

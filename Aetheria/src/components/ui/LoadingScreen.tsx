@@ -1,26 +1,39 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useProgress } from '@react-three/drei';
 import { useGameStore } from '../../store/useGameStore';
 import { translations } from '../../data/resumeData';
 import { Loader2 } from 'lucide-react';
 
 export default function LoadingScreen(): React.ReactElement | null {
-  const { progress, active } = useProgress();
+  const { progress, active, loaded, total } = useProgress();
   const { language, isSceneLoaded, setSceneLoaded, viewMode } = useGameStore();
   const [displayProgress, setDisplayProgress] = useState(0);
   const [fadeOut, setFadeOut] = useState(false);
+  const hasStartedRef = useRef(false);
 
   const t = translations[language].loading;
 
+  // Track progress and ensure we notice when asset loading starts
   useEffect(() => {
-    setDisplayProgress((prev) => Math.max(prev, Math.round(progress)));
-  }, [progress]);
+    if (active || total > 0 || progress > 0) {
+      hasStartedRef.current = true;
+    }
+    if (progress > 0) {
+      setDisplayProgress((prev) => Math.max(prev, Math.round(progress)));
+    }
+  }, [progress, active, total]);
 
+  // Actual completion detector: only finishes when assets are truly loaded
   useEffect(() => {
-    // If progress hits 100% or loading completes
-    if (displayProgress >= 100 || !active) {
+    const isFinished =
+      displayProgress >= 100 ||
+      progress >= 100 ||
+      (hasStartedRef.current && !active && total > 0 && loaded >= total);
+
+    if (isFinished) {
+      setDisplayProgress(100);
       const timer = setTimeout(() => {
         setFadeOut(true);
         const doneTimer = setTimeout(() => {
@@ -30,7 +43,22 @@ export default function LoadingScreen(): React.ReactElement | null {
       }, 400);
       return () => clearTimeout(timer);
     }
-  }, [displayProgress, active, setSceneLoaded]);
+  }, [displayProgress, progress, active, loaded, total, setSceneLoaded]);
+
+  // Safety fallback: if all assets were cached and queue was empty, mark loaded after 3.5s
+  useEffect(() => {
+    const safetyTimer = setTimeout(() => {
+      if (!isSceneLoaded) {
+        setDisplayProgress(100);
+        setFadeOut(true);
+        const doneTimer = setTimeout(() => {
+          setSceneLoaded(true);
+        }, 400);
+        return () => clearTimeout(doneTimer);
+      }
+    }, 4000);
+    return () => clearTimeout(safetyTimer);
+  }, [isSceneLoaded, setSceneLoaded]);
 
   // Don't show loading screen if already loaded or in classic view mode
   if (isSceneLoaded || viewMode === 'classic') return null;
