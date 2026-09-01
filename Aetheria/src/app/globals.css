@@ -2448,3 +2448,108 @@ nextjs-portal,
   pointer-events: none !important;
 }
 
+/* ── Cinematic Intro Swoop Overlay & Letterbox ── */
+.cinematic-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.cinematic-overlay.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.cinematic-letterbox {
+  width: 100%;
+  background: rgba(10, 8, 18, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cinematic-letterbox.top {
+  height: 60px;
+  border-bottom: 1px solid rgba(251, 191, 36, 0.25);
+  transform: translateY(-100%);
+}
+
+.cinematic-overlay.active .cinematic-letterbox.top {
+  transform: translateY(0);
+}
+
+.cinematic-letterbox.bottom {
+  height: 52px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  transform: translateY(100%);
+}
+
+.cinematic-overlay.active .cinematic-letterbox.bottom {
+  transform: translateY(0);
+}
+
+.cinematic-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cinematic-title-brand {
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 3.5px;
+  color: #fbbf24;
+  text-shadow: 0 0 16px rgba(251, 191, 36, 0.5);
+  font-family: ui-monospace, SFMono-Regular, monospace;
+}
+
+.cinematic-dot-gold {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #fbbf24;
+  box-shadow: 0 0 8px #fbbf24;
+}
+
+.cinematic-title-tag {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--text-secondary);
+}
+
+.cinematic-skip-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cinematic-skip-text {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.8px;
+  animation: pulseGlow 2s infinite ease-in-out;
+}
+
+/* Subtle fade out of top HUD bar while intro is flying */
+.hud-hidden-during-intro {
+  opacity: 0.15;
+  pointer-events: none;
+  transform: translateY(-8px);
+  transition: all 0.5s ease;
+}
+
+

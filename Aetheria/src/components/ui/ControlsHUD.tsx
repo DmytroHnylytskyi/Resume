@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useGameStore } from '../../store/useGameStore';
 import { developerProfiles, translations } from '../../data/resumeData';
-import { User, Share2, Award, FileText, Sun, Moon, Sparkles } from 'lucide-react';
+import { User, Share2, Award, FileText, Sun, Moon, Sparkles, Video } from 'lucide-react';
 
 function FpsBadge(): React.ReactElement {
   const [fps, setFps] = useState(60);
@@ -66,7 +66,9 @@ export default function ControlsHUD(): React.ReactElement {
     setViewMode,
     viewMode,
     theme,
-    toggleTheme
+    toggleTheme,
+    isIntroPlaying,
+    triggerIntroSwoop
   } = useGameStore();
 
   const profile = developerProfiles[language];
@@ -75,7 +77,7 @@ export default function ControlsHUD(): React.ReactElement {
   return (
     <>
       {/* ── Top Glass Navigation Bar ── */}
-      <header className="island-top-bar glass-panel">
+      <header className={`island-top-bar glass-panel ${isIntroPlaying ? 'hud-hidden-during-intro' : ''}`}>
         <div className="brand-badge">
           <div className="brand-dot" />
           <span className="brand-name">{profile.name}</span>
@@ -111,6 +113,15 @@ export default function ControlsHUD(): React.ReactElement {
             <span>{t.contacts}</span>
           </button>
 
+          {/* Replay Cinematic Swoop */}
+          <button
+            className="nav-shortcut-btn cinematic-replay-btn"
+            onClick={triggerIntroSwoop}
+            title={language === 'uk' ? 'Кінематографічна панорама' : 'Cinematic Panorama'}
+          >
+            <Video size={15} />
+          </button>
+
           {/* Theme Toggle */}
           <button
             className="nav-shortcut-btn theme-toggle-btn"
@@ -141,7 +152,7 @@ export default function ControlsHUD(): React.ReactElement {
       </header>
 
       {/* ── Minimalist Clean Floating Interaction Pill ── */}
-      {interactionPrompt && (
+      {interactionPrompt && !isIntroPlaying && (
         <div className="minimal-interaction-pill-wrapper">
           <div
             className="minimal-interaction-pill glass-panel"
@@ -154,7 +165,7 @@ export default function ControlsHUD(): React.ReactElement {
       )}
 
       {/* ── Easter Egg Floating Toast ── */}
-      {easterEggToast && (
+      {easterEggToast && !isIntroPlaying && (
         <div className="easter-egg-toast-wrapper">
           <div className="easter-egg-toast glass-panel">
             <div className="easter-egg-icon-box">
@@ -167,6 +178,29 @@ export default function ControlsHUD(): React.ReactElement {
           </div>
         </div>
       )}
+
+      {/* ── Cinematic Letterbox Overlay & Atmospheric Title ── */}
+      <div className={`cinematic-overlay ${isIntroPlaying ? 'active' : ''}`}>
+        <div className="cinematic-letterbox top">
+          <div className="cinematic-banner-content">
+            <span className="cinematic-title-brand">AETHERIA 3D</span>
+            <span className="cinematic-dot-gold" />
+            <span className="cinematic-title-tag">
+              {language === 'uk' ? 'КІНЕМАТОГРАФІЧНИЙ ПРОЛІТ' : 'CINEMATIC OVERVIEW'}
+            </span>
+          </div>
+        </div>
+
+        <div className="cinematic-letterbox bottom">
+          <div className="cinematic-skip-container">
+            <span className="cinematic-skip-text">
+              {language === 'uk'
+                ? 'Клікніть мишкою або натисніть будь-яку клавішу для управління'
+                : 'Click anywhere or press any key to take control'}
+            </span>
+          </div>
+        </div>
+      </div>
     </>
   );
 }

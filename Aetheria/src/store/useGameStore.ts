@@ -53,5 +53,11 @@ export const useGameStore = create<GameState>((set) => ({
   cameraMode: 'third_person',
   setCameraMode: (mode) => set({ cameraMode: mode }),
   toggleCameraMode: () =>
-    set((s) => ({ cameraMode: s.cameraMode === 'third_person' ? 'bird_eye' : 'third_person' }))
+    set((s) => ({ cameraMode: s.cameraMode === 'third_person' ? 'bird_eye' : 'third_person' })),
+
+  // ── Cinematic Intro Swoop ──
+  isIntroPlaying: false,
+  setIntroPlaying: (playing) => set({ isIntroPlaying: playing }),
+  introTriggerCount: 0,
+  triggerIntroSwoop: () => set((s) => ({ introTriggerCount: s.introTriggerCount + 1, isIntroPlaying: true }))
 }));

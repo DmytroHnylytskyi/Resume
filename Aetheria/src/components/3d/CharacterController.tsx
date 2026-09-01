@@ -35,12 +35,56 @@ export default function CharacterController({
   const rigidBodyRef = useRef<RapierRigidBody>(null);
   const avatarGroupRef = useRef<THREE.Group>(null);
   const { camera, gl } = useThree();
-  const { activeModal, selectedProject, isInitialWelcomeOpen, interactionPrompt } = useGameStore();
+  const {
+    activeModal,
+    selectedProject,
+    isInitialWelcomeOpen,
+    interactionPrompt,
+    isSceneLoaded,
+    introTriggerCount,
+    setIntroPlaying
+  } = useGameStore();
   const isAnyModalOpen = Boolean(activeModal || selectedProject || isInitialWelcomeOpen);
 
   const [isMoving, setIsMoving] = useState(false);
   const [isSprinting, setIsSprinting] = useState(false);
   const [isJumping, setIsJumping] = useState(false);
+
+  // ── Cinematic Intro Swoop State & Scratch Vectors ──
+  const isIntroActive = useRef(false);
+  const introStartTime = useRef(0);
+  const introDuration = 2600; // 2.6 seconds
+  const lastTriggerCount = useRef(0);
+  const hasTriggeredInitialIntro = useRef(false);
+
+  const _introCamVec = useRef(new THREE.Vector3());
+  const _introLookVec = useRef(new THREE.Vector3());
+  const _targetCamVec = useRef(new THREE.Vector3());
+  const INTRO_START_POS = useRef(new THREE.Vector3(-6.0, 18.0, 32.0));
+  const INTRO_START_LOOK = useRef(new THREE.Vector3(0.0, 1.8, 1.0));
+
+  // Trigger initial swoop when scene loads and welcome modal closes
+  useEffect(() => {
+    if (isSceneLoaded && !isInitialWelcomeOpen && !hasTriggeredInitialIntro.current) {
+      hasTriggeredInitialIntro.current = true;
+      isIntroActive.current = true;
+      introStartTime.current = performance.now();
+      setIntroPlaying(true);
+    }
+  }, [isSceneLoaded, isInitialWelcomeOpen, setIntroPlaying]);
+
+  // Trigger replay swoop on demand
+  useEffect(() => {
+    if (introTriggerCount > 0 && introTriggerCount !== lastTriggerCount.current) {
+      lastTriggerCount.current = introTriggerCount;
+      isIntroActive.current = true;
+      introStartTime.current = performance.now();
+      setIntroPlaying(true);
+      if (document.pointerLockElement) {
+        try { document.exitPointerLock(); } catch (_) {}
+      }
+    }
+  }, [introTriggerCount, setIntroPlaying]);
 
   const keys = useRef({
     forward: false,
@@ -79,6 +123,13 @@ export default function CharacterController({
     const dom = gl.domElement;
 
     const handleCanvasClick = () => {
+      // Skip intro on click
+      if (isIntroActive.current) {
+        isIntroActive.current = false;
+        setIntroPlaying(false);
+        return;
+      }
+
       if (!isAnyModalOpen && document.pointerLockElement !== dom) {
         try {
           const p = dom.requestPointerLock();
@@ -88,6 +139,7 @@ export default function CharacterController({
     };
 
     const handleMouseMove = (e: MouseEvent) => {
+      if (isIntroActive.current) return;
       if (!isAnyModalOpen && document.pointerLockElement === dom) {
         const sensitivity = 0.0016;
         const movX = Number.isFinite(e.movementX) ? e.movementX : 0;
@@ -98,7 +150,7 @@ export default function CharacterController({
     };
 
     const handleWheel = (e: WheelEvent) => {
-      if (isAnyModalOpen) return;
+      if (isAnyModalOpen || isIntroActive.current) return;
       const delta = Number.isFinite(e.deltaY) ? e.deltaY : 0;
       cameraDistance.current = Math.max(2.2, Math.min(7.0, cameraDistance.current + delta * 0.002));
     };
@@ -112,7 +164,7 @@ export default function CharacterController({
       document.removeEventListener('mousemove', handleMouseMove);
       dom.removeEventListener('wheel', handleWheel);
     };
-  }, [gl, isAnyModalOpen]);
+  }, [gl, isAnyModalOpen, setIntroPlaying]);
 
   // Release pointer lock and reset keys whenever ANY modal opens
   useEffect(() => {
@@ -139,6 +191,12 @@ export default function CharacterController({
     const handleKeyDown = (e: KeyboardEvent) => {
       if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement)?.tagName)) return;
       if (isAnyModalOpen) return;
+
+      // Skip intro on key press
+      if (isIntroActive.current) {
+        isIntroActive.current = false;
+        setIntroPlaying(false);
+      }
 
       const code = e.code;
       if (code === 'KeyW' || code === 'ArrowUp') keys.current.forward = true;
@@ -298,7 +356,7 @@ export default function CharacterController({
       keys.current.jump = false;
     }
 
-    // ── 3rd-Person Camera: Perfect perspective over character looking down into island ──
+    // ── 3rd-Person Camera & Cinematic Intro Swoop ──
     smoothLookTarget.current.x = THREE.MathUtils.lerp(smoothLookTarget.current.x, translation.x, 0.12);
     smoothLookTarget.current.y = THREE.MathUtils.lerp(smoothLookTarget.current.y, translation.y + 0.85, 0.10);
     smoothLookTarget.current.z = THREE.MathUtils.lerp(smoothLookTarget.current.z, translation.z, 0.12);
@@ -309,6 +367,35 @@ export default function CharacterController({
     const targetCamX = smoothLookTarget.current.x + cameraDistance.current * Math.sin(cameraYaw.current) * cosPitch;
     const targetCamY = smoothLookTarget.current.y + cameraDistance.current * sinPitch;
     const targetCamZ = smoothLookTarget.current.z + cameraDistance.current * Math.cos(cameraYaw.current) * cosPitch;
+
+    if (isIntroActive.current) {
+      const elapsed = now - introStartTime.current;
+      const progress = Math.min(1.0, elapsed / introDuration);
+
+      // Graceful quintic ease-out deceleration curve
+      const ease = 1 - Math.pow(1 - progress, 4);
+
+      _targetCamVec.current.set(targetCamX, targetCamY, targetCamZ);
+
+      // Arc interpolation from high twilight sky down to character shoulder
+      const curPos = _introCamVec.current.lerpVectors(INTRO_START_POS.current, _targetCamVec.current, ease);
+      const curLook = _introLookVec.current.lerpVectors(INTRO_START_LOOK.current, smoothLookTarget.current, ease);
+
+      smoothCamPos.current.copy(curPos);
+
+      if (Number.isFinite(curPos.x) && Number.isFinite(curPos.y) && Number.isFinite(curPos.z)) {
+        camera.position.copy(curPos);
+      }
+      if (Number.isFinite(curLook.x) && Number.isFinite(curLook.y) && Number.isFinite(curLook.z)) {
+        camera.lookAt(curLook);
+      }
+
+      if (progress >= 1.0) {
+        isIntroActive.current = false;
+        setIntroPlaying(false);
+      }
+      return;
+    }
 
     smoothCamPos.current.x = THREE.MathUtils.lerp(smoothCamPos.current.x, targetCamX, 0.12);
     smoothCamPos.current.y = THREE.MathUtils.lerp(smoothCamPos.current.y, targetCamY, 0.10);

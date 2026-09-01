@@ -50,4 +50,10 @@ export interface GameState {
   cameraMode: 'third_person' | 'bird_eye';
   setCameraMode: (mode: 'third_person' | 'bird_eye') => void;
   toggleCameraMode: () => void;
+
+  // Cinematic Intro Swoop
+  isIntroPlaying: boolean;
+  setIntroPlaying: (playing: boolean) => void;
+  introTriggerCount: number;
+  triggerIntroSwoop: () => void;
 }
