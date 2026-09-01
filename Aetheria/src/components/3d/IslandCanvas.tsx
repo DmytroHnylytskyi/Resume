@@ -5,6 +5,7 @@ import { Canvas } from '@react-three/fiber';
 import { Physics, RigidBody, CuboidCollider } from '@react-three/rapier';
 import { Sky, Stars } from '@react-three/drei';
 import * as THREE from 'three';
+import { useGameStore } from '../../store/useGameStore';
 import WorldScene from './WorldScene';
 import CharacterController from './CharacterController';
 
@@ -16,11 +17,12 @@ import CharacterController from './CharacterController';
  * Architecture & Performance Highlights:
  * - High-Performance WebGL: Configured with dpr=1, powerPreference='high-performance', ACESFilmic tonemapping.
  * - Rapier 3D Physics: Runs an asynchronous, deterministic physics world at locked 60Hz.
- * - Zero Shadow Overheads: Global atmospheric lighting uses baked-feel directional & hemisphere lights without expensive shadow map passes.
- * - Dynamic Sky & Stars: Drei Sky & lightweight procedural starfield creating a moody twilight graveyard atmosphere.
+ * - Dual-Theme Atmosphere: Switches between moody twilight graveyard and sunlit daytime island.
  */
 export default function IslandCanvas(): React.ReactElement {
   const playerPosRef = useRef<THREE.Vector3 | null>(null);
+  const { theme } = useGameStore();
+  const isLight = theme === 'light';
 
   return (
     <Canvas
@@ -31,33 +33,46 @@ export default function IslandCanvas(): React.ReactElement {
         alpha: false,
         powerPreference: 'high-performance',
         toneMapping: THREE.ACESFilmicToneMapping,
-        toneMappingExposure: 1.15
+        toneMappingExposure: isLight ? 1.05 : 1.15
       }}
       performance={{ min: 0.5 }}
     >
-      {/* ── Dark Night Sky Background ── */}
-      <color attach="background" args={['#0c0817']} />
+      {/* ── Sky Background ── */}
+      <color attach="background" args={[isLight ? '#dbeafe' : '#0c0817']} />
 
-      {/* ── Dramatic Sunset Sky Dome ── */}
+      {/* ── Dynamic Sky Dome ── */}
       <Sky
         distance={450000}
-        sunPosition={[-80, 4, -90]}
-        inclination={0.52}
+        sunPosition={isLight ? [50, 70, 40] : [-80, 4, -90]}
+        inclination={isLight ? 0.6 : 0.52}
         azimuth={0.25}
-        mieCoefficient={0.005}
+        mieCoefficient={isLight ? 0.002 : 0.005}
         mieDirectionalG={0.8}
-        rayleigh={3.8}
-        turbidity={10}
+        rayleigh={isLight ? 0.8 : 3.8}
+        turbidity={isLight ? 2 : 10}
       />
 
-      {/* ── Lightweight Twilight Stars ── */}
-      <Stars radius={90} depth={40} count={500} factor={3.0} saturation={1} fade speed={0.4} />
+      {/* ── Lightweight Twilight Stars (Dark theme only) ── */}
+      {!isLight && (
+        <Stars radius={90} depth={40} count={500} factor={3.0} saturation={1} fade speed={0.4} />
+      )}
 
-      {/* ── High-Performance Global Lighting (No heavy shadow buffers) ── */}
-      <directionalLight position={[-40, 14, -50]} intensity={2.2} color="#ff7336" />
-      <directionalLight position={[35, 20, 40]} intensity={0.9} color="#8b5cf6" />
-      <ambientLight intensity={0.7} color="#4c1d95" />
-      <hemisphereLight args={['#f59e0b', '#0c0817', 1.0]} />
+      {/* ── High-Performance Global Lighting ── */}
+      {isLight ? (
+        <>
+          <directionalLight position={[40, 50, 30]} intensity={2.6} color="#fffbeb" />
+          <directionalLight position={[-30, 30, -30]} intensity={1.2} color="#93c5fd" />
+          <ambientLight intensity={1.0} color="#f8fafc" />
+          <hemisphereLight args={['#bae6fd', '#cbd5e1', 1.2]} />
+        </>
+      ) : (
+        <>
+          <directionalLight position={[-40, 14, -50]} intensity={2.2} color="#ff7336" />
+          <directionalLight position={[35, 20, 40]} intensity={0.9} color="#8b5cf6" />
+          <ambientLight intensity={0.7} color="#4c1d95" />
+          <hemisphereLight args={['#f59e0b', '#0c0817', 1.0]} />
+        </>
+      )}
 
       {/* ── High-Speed Rapier 3D Physics Simulation with Fixed 60Hz Timestep ── */}
       <Suspense fallback={null}>

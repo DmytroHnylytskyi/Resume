@@ -3285,6 +3285,276 @@ nextjs-portal,
   line-height: 1.4;
 }
 
+/* ══════════════════════════════════════════════════════
+   LIGHT THEME ADAPTATIONS (RADAR, MAP, CONTROLS GUIDE)
+   ══════════════════════════════════════════════════════ */
+
+/* ── 1. Mini-Radar in Light Theme ── */
+[data-theme='light'] .mini-radar-housing {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(0, 0, 0, 0.12);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.1), inset 0 0 20px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme='light'] .mini-radar-housing:hover {
+  border-color: rgba(217, 119, 6, 0.5);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.16), 0 0 16px rgba(217, 119, 6, 0.2);
+}
+
+[data-theme='light'] .radar-grid-ring.r-inner {
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+[data-theme='light'] .radar-grid-ring.r-outer {
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme='light'] .radar-crosshair {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme='light'] .cardinal-point.north {
+  color: #d97706;
+  text-shadow: 0 0 6px rgba(217, 119, 6, 0.4);
+}
+
+[data-theme='light'] .cardinal-point.east,
+[data-theme='light'] .cardinal-point.south,
+[data-theme='light'] .cardinal-point.west {
+  color: #52525b;
+  opacity: 0.85;
+}
+
+[data-theme='light'] .radar-view-cone {
+  background: radial-gradient(circle at bottom center, rgba(217, 119, 6, 0.3) 0%, rgba(217, 119, 6, 0) 70%);
+}
+
+[data-theme='light'] .radar-player-blip {
+  background: #18181b;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.35), 0 0 12px #d97706;
+  border: 1.5px solid #ffffff;
+}
+
+[data-theme='light'] .radar-landmark-blip {
+  border: 1.5px solid #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* ── 2. Radar Action Button in Light Theme ── */
+[data-theme='light'] .radar-map-btn {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(0, 0, 0, 0.14);
+  color: #18181b;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='light'] .radar-map-btn:hover {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(217, 119, 6, 0.5);
+  color: #b45309;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15), 0 0 12px rgba(217, 119, 6, 0.2);
+}
+
+[data-theme='light'] .radar-map-btn-icon {
+  color: #d97706;
+}
+
+[data-theme='light'] .radar-hover-pill {
+  background: rgba(255, 255, 255, 0.96);
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #18181b;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* ── 3. Controls Guide Dropdown in Light Theme ── */
+[data-theme='light'] .controls-guide-btn.active {
+  background: rgba(245, 158, 11, 0.15) !important;
+  border-color: rgba(217, 119, 6, 0.5) !important;
+  color: #b45309 !important;
+}
+
+[data-theme='light'] .controls-guide-icon {
+  color: #d97706;
+}
+
+[data-theme='light'] .controls-dropdown-menu {
+  background: rgba(255, 255, 255, 0.97);
+  border-color: rgba(217, 119, 6, 0.3);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.14), 0 4px 20px rgba(217, 119, 6, 0.1);
+}
+
+[data-theme='light'] .controls-menu-header {
+  border-bottom-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme='light'] .controls-header-icon {
+  color: #d97706;
+}
+
+[data-theme='light'] .controls-menu-title {
+  color: #18181b;
+}
+
+[data-theme='light'] .controls-menu-close {
+  color: #71717a;
+}
+
+[data-theme='light'] .controls-menu-close:hover {
+  color: #18181b;
+  background: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme='light'] .controls-category-name {
+  color: #b45309;
+}
+
+[data-theme='light'] .controls-action-desc {
+  color: #27272a;
+}
+
+[data-theme='light'] .ctrl-key {
+  background: #f4f4f5;
+  border-color: rgba(0, 0, 0, 0.18);
+  color: #18181b;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.16);
+}
+
+[data-theme='light'] .ctrl-key.accent {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: #d97706;
+  color: #b45309;
+}
+
+[data-theme='light'] .controls-inline-icon {
+  color: #71717a;
+}
+
+[data-theme='light'] .controls-mouse-badge {
+  background: #f4f4f5;
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #52525b;
+}
+
+[data-theme='light'] .controls-menu-footer {
+  border-top-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme='light'] .controls-footer-sparkle {
+  color: #d97706;
+}
+
+[data-theme='light'] .controls-footer-text {
+  color: #52525b;
+}
+
+/* ── 4. Tactical Island Map Modal in Light Theme ── */
+[data-theme='light'] .tactical-map-backdrop {
+  background: rgba(244, 244, 245, 0.85);
+}
+
+[data-theme='light'] .tactical-map-modal {
+  background: rgba(255, 255, 255, 0.98);
+  border-color: rgba(217, 119, 6, 0.35);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.14), 0 0 32px rgba(217, 119, 6, 0.12);
+}
+
+[data-theme='light'] .tactical-map-icon {
+  color: #d97706;
+}
+
+[data-theme='light'] .tactical-map-title {
+  color: #18181b;
+}
+
+[data-theme='light'] .tactical-map-subtitle {
+  color: #71717a;
+}
+
+[data-theme='light'] .tactical-map-canvas-container {
+  background: radial-gradient(circle at 50% 50%, #f1f5f9 0%, #e2e8f0 100%);
+  border-color: rgba(0, 0, 0, 0.12);
+  box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme='light'] .tactical-map-ocean-ring {
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+}
+
+[data-theme='light'] .tactical-map-island-body {
+  background: rgba(255, 255, 255, 0.88);
+  border-color: rgba(139, 92, 246, 0.45);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), inset 0 0 16px rgba(139, 92, 246, 0.08);
+}
+
+[data-theme='light'] .tactical-path-main-ns {
+  background: rgba(0, 0, 0, 0.05);
+  border-left-color: rgba(0, 0, 0, 0.14);
+  border-right-color: rgba(0, 0, 0, 0.14);
+}
+
+[data-theme='light'] .tactical-path-fork-w,
+[data-theme='light'] .tactical-path-fork-e {
+  background: rgba(0, 0, 0, 0.04);
+  border-top-color: rgba(0, 0, 0, 0.12);
+  border-bottom-color: rgba(0, 0, 0, 0.12);
+}
+
+[data-theme='light'] .tactical-central-hub {
+  background: rgba(217, 119, 6, 0.1);
+  border-color: rgba(217, 119, 6, 0.4);
+}
+
+[data-theme='light'] .tactical-compass-rose {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(217, 119, 6, 0.45);
+  color: #b45309;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='light'] .tactical-compass-arrow {
+  color: #d97706;
+}
+
+[data-theme='light'] .tactical-pin-gem {
+  border-color: #ffffff;
+  box-shadow: 0 0 12px currentColor;
+}
+
+[data-theme='light'] .tactical-pin-pill {
+  background: rgba(255, 255, 255, 0.96);
+  border-color: rgba(0, 0, 0, 0.14);
+  color: #18181b;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme='light'] .tactical-player-arrow {
+  border-bottom-color: #d97706;
+  filter: drop-shadow(0 0 3px #d97706);
+}
+
+[data-theme='light'] .tactical-player-dot {
+  background: #18181b;
+  border-color: #ffffff;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme='light'] .legend-title {
+  color: #52525b;
+}
+
+[data-theme='light'] .legend-chip {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #18181b;
+}
+
+[data-theme='light'] .legend-chip:hover {
+  background: rgba(0, 0, 0, 0.09);
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+
 
 
 
