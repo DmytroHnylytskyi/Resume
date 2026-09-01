@@ -53,15 +53,16 @@ export default function CharacterController({
   // ── Cinematic Intro Swoop State & Scratch Vectors ──
   const isIntroActive = useRef(false);
   const introStartTime = useRef(0);
-  const introDuration = 2600; // 2.6 seconds
+  const introDuration = 5200; // 5.2 seconds of majestic panoramic fly-through
   const lastTriggerCount = useRef(0);
   const hasTriggeredInitialIntro = useRef(false);
 
   const _introCamVec = useRef(new THREE.Vector3());
   const _introLookVec = useRef(new THREE.Vector3());
   const _targetCamVec = useRef(new THREE.Vector3());
-  const INTRO_START_POS = useRef(new THREE.Vector3(-6.0, 18.0, 32.0));
-  const INTRO_START_LOOK = useRef(new THREE.Vector3(0.0, 1.8, 1.0));
+  const INTRO_START_POS = useRef(new THREE.Vector3(-18.0, 22.0, 36.0));
+  const INTRO_MID_POS = useRef(new THREE.Vector3(5.0, 8.5, 25.0));
+  const INTRO_START_LOOK = useRef(new THREE.Vector3(0.0, 2.0, -2.0));
 
   // Trigger initial swoop when scene loads and welcome modal closes
   useEffect(() => {
@@ -372,19 +373,34 @@ export default function CharacterController({
       const elapsed = now - introStartTime.current;
       const progress = Math.min(1.0, elapsed / introDuration);
 
-      // Graceful quintic ease-out deceleration curve
-      const ease = 1 - Math.pow(1 - progress, 4);
+      // Smooth multi-stage S-curve easing (smoothstep)
+      const ease = progress * progress * (3 - 2 * progress);
 
       _targetCamVec.current.set(targetCamX, targetCamY, targetCamZ);
 
-      // Arc interpolation from high twilight sky down to character shoulder
-      const curPos = _introCamVec.current.lerpVectors(INTRO_START_POS.current, _targetCamVec.current, ease);
+      // Quadratic Bézier curve for grand curved panoramic fly-by:
+      // B(t) = (1-t)^2 * P0 + 2*(1-t)*t * Pmid + t^2 * Ptarget
+      const oneMinusE = 1 - ease;
+      const curX =
+        oneMinusE * oneMinusE * INTRO_START_POS.current.x +
+        2 * oneMinusE * ease * INTRO_MID_POS.current.x +
+        ease * ease * _targetCamVec.current.x;
+      const curY =
+        oneMinusE * oneMinusE * INTRO_START_POS.current.y +
+        2 * oneMinusE * ease * INTRO_MID_POS.current.y +
+        ease * ease * _targetCamVec.current.y;
+      const curZ =
+        oneMinusE * oneMinusE * INTRO_START_POS.current.z +
+        2 * oneMinusE * ease * INTRO_MID_POS.current.z +
+        ease * ease * _targetCamVec.current.z;
+
+      _introCamVec.current.set(curX, curY, curZ);
       const curLook = _introLookVec.current.lerpVectors(INTRO_START_LOOK.current, smoothLookTarget.current, ease);
 
-      smoothCamPos.current.copy(curPos);
+      smoothCamPos.current.copy(_introCamVec.current);
 
-      if (Number.isFinite(curPos.x) && Number.isFinite(curPos.y) && Number.isFinite(curPos.z)) {
-        camera.position.copy(curPos);
+      if (Number.isFinite(curX) && Number.isFinite(curY) && Number.isFinite(curZ)) {
+        camera.position.copy(_introCamVec.current);
       }
       if (Number.isFinite(curLook.x) && Number.isFinite(curLook.y) && Number.isFinite(curLook.z)) {
         camera.lookAt(curLook);

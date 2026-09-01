@@ -25,7 +25,7 @@ export default function IslandCanvas(): React.ReactElement {
   return (
     <Canvas
       dpr={1}
-      camera={{ position: [-6, 18, 32], fov: 45, far: 400 }}
+      camera={{ position: [-18, 22, 36], fov: 45, far: 400 }}
       gl={{
         antialias: false,
         alpha: false,

@@ -2471,9 +2471,7 @@ nextjs-portal,
 
 .cinematic-letterbox {
   width: 100%;
-  background: rgba(10, 8, 18, 0.88);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: #08060f;
   display: flex;
   align-items: center;
   justify-content: center;

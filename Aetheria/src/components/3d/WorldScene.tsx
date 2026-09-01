@@ -149,7 +149,6 @@ const GLOW_TARGETS: GlowTarget[] = [
 ];
 
 function GlowManager(): React.ReactElement {
-  const lightsRef = useRef<(THREE.PointLight | null)[]>([]);
   const ringsRef = useRef<(THREE.Mesh | null)[]>([]);
 
   useFrame(({ clock }) => {
@@ -157,10 +156,6 @@ function GlowManager(): React.ReactElement {
     const pulse = Math.sin(t * 2.5);
 
     for (let i = 0; i < GLOW_TARGETS.length; i++) {
-      const light = lightsRef.current[i];
-      if (light) {
-        light.intensity = GLOW_TARGETS[i].intensity + 0.8 * pulse;
-      }
       const ring = ringsRef.current[i];
       if (ring) {
         ring.rotation.z = t * 0.3;
@@ -207,14 +202,13 @@ function GlowManager(): React.ReactElement {
             />
           </mesh>
 
-          {/* Point Light */}
+          {/* Static Point Light with constrained sphere radius (zero uniform cache dirtiness) */}
           <pointLight
-            ref={(el) => { lightsRef.current[i] = el; }}
             position={[0, gt.height, 0]}
             color={gt.color}
             intensity={gt.intensity}
-            distance={gt.radius * 2.8}
-            decay={1.8}
+            distance={gt.radius * 1.5}
+            decay={2.0}
           />
         </group>
       ))}
@@ -225,7 +219,7 @@ function GlowManager(): React.ReactElement {
 // ══════════════════════════════════════════════════════
 // 2.5 GRAVE PIT ETHEREAL FLOATING PARTICLES
 // ══════════════════════════════════════════════════════
-const GRAVE_PARTICLE_COUNT = 75;
+const GRAVE_PARTICLE_COUNT = 30;
 
 function GraveFloatingParticles(): React.ReactElement {
   const pointsRef = useRef<THREE.Points | null>(null);
@@ -305,19 +299,16 @@ function GraveFloatingParticles(): React.ReactElement {
           />
         </bufferGeometry>
         <pointsMaterial
-          size={0.28}
+          size={0.32}
           map={particleTexture || undefined}
           color="#d8b4fe"
           transparent
-          opacity={0.88}
+          opacity={0.92}
           blending={THREE.AdditiveBlending}
           depthWrite={false}
           sizeAttenuation
         />
       </points>
-
-      {/* Gentle upward atmospheric point light */}
-      <pointLight position={[0, 0.7, 0]} color="#c084fc" intensity={2.6} distance={4.5} decay={2} />
     </group>
   );
 }

@@ -179,28 +179,30 @@ export default function ControlsHUD(): React.ReactElement {
         </div>
       )}
 
-      {/* ── Cinematic Letterbox Overlay & Atmospheric Title ── */}
-      <div className={`cinematic-overlay ${isIntroPlaying ? 'active' : ''}`}>
-        <div className="cinematic-letterbox top">
-          <div className="cinematic-banner-content">
-            <span className="cinematic-title-brand">AETHERIA 3D</span>
-            <span className="cinematic-dot-gold" />
-            <span className="cinematic-title-tag">
-              {language === 'uk' ? 'КІНЕМАТОГРАФІЧНИЙ ПРОЛІТ' : 'CINEMATIC OVERVIEW'}
-            </span>
+      {/* ── Cinematic Letterbox Overlay & Atmospheric Title (Zero DOM overhead when inactive) ── */}
+      {isIntroPlaying && (
+        <div className="cinematic-overlay active">
+          <div className="cinematic-letterbox top">
+            <div className="cinematic-banner-content">
+              <span className="cinematic-title-brand">AETHERIA 3D</span>
+              <span className="cinematic-dot-gold" />
+              <span className="cinematic-title-tag">
+                {language === 'uk' ? 'КІНЕМАТОГРАФІЧНИЙ ПРОЛІТ' : 'CINEMATIC OVERVIEW'}
+              </span>
+            </div>
           </div>
-        </div>
 
-        <div className="cinematic-letterbox bottom">
-          <div className="cinematic-skip-container">
-            <span className="cinematic-skip-text">
-              {language === 'uk'
-                ? 'Клікніть мишкою або натисніть будь-яку клавішу для управління'
-                : 'Click anywhere or press any key to take control'}
-            </span>
+          <div className="cinematic-letterbox bottom">
+            <div className="cinematic-skip-container">
+              <span className="cinematic-skip-text">
+                {language === 'uk'
+                  ? 'Клікніть мишкою або натисніть будь-яку клавішу для управління'
+                  : 'Click anywhere or press any key to take control'}
+              </span>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </>
   );
 }
