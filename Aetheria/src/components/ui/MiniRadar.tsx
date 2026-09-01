@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { radarState } from '../../store/radarState';
 import { useGameStore } from '../../store/useGameStore';
 import { translations } from '../../data/resumeData';
-import { Map, X, Compass, ExternalLink, Sparkles, Navigation } from 'lucide-react';
+import { Map, X, Navigation } from 'lucide-react';
 import { StatueKey } from '../../types/scene';
 
 interface LandmarkDef {
@@ -108,7 +108,8 @@ const LANDMARKS: LandmarkDef[] = [
 ];
 
 const RADAR_RADIUS_PX = 62;
-const MAX_RADAR_DIST_METERS = 34;
+const RADAR_USABLE_RADIUS = 44;
+const ISLAND_SPAN = 22; // World coordinate extent [-22, 22]
 
 export default function MiniRadar(): React.ReactElement | null {
   const {
@@ -125,13 +126,10 @@ export default function MiniRadar(): React.ReactElement | null {
   const [isMapExpanded, setIsMapExpanded] = useState(false);
   const [hoveredLandmark, setHoveredLandmark] = useState<LandmarkDef | null>(null);
 
-  const compassRef = useRef<HTMLDivElement>(null);
-  const blipsContainerRef = useRef<HTMLDivElement>(null);
-  const blipElementsRef = useRef<(HTMLDivElement | null)[]>([]);
-
+  const playerRadarRef = useRef<HTMLDivElement>(null);
   const tacticalPlayerRef = useRef<HTMLDivElement>(null);
 
-  // 60 FPS zero-allocation animation loop directly syncing CSS transforms
+  // 60 FPS zero-allocation animation loop synchronizing live player position and view direction
   useEffect(() => {
     let animId: number;
 
@@ -140,46 +138,31 @@ export default function MiniRadar(): React.ReactElement | null {
       const pz = radarState.z;
       const yaw = radarState.yaw;
 
-      // 1. Rotate compass ring (opposite to player yaw so North stays true)
-      if (compassRef.current) {
-        compassRef.current.style.transform = `rotate(${(-yaw * 180) / Math.PI}deg)`;
+      // Heading angle in degrees (North = 0°, East = 90°, South = 180°, West = -90°)
+      const headingDeg = (-yaw * 180) / Math.PI;
+
+      // 1. Synchronize Mini-Radar Player Position and Vision Cone
+      if (playerRadarRef.current) {
+        const clampedX = Math.max(-ISLAND_SPAN, Math.min(ISLAND_SPAN, px));
+        const clampedZ = Math.max(-ISLAND_SPAN, Math.min(ISLAND_SPAN, pz));
+
+        const screenX = RADAR_RADIUS_PX + (clampedX / ISLAND_SPAN) * RADAR_USABLE_RADIUS;
+        const screenZ = RADAR_RADIUS_PX + (clampedZ / ISLAND_SPAN) * RADAR_USABLE_RADIUS;
+
+        playerRadarRef.current.style.transform = `translate(${screenX}px, ${screenZ}px) translate(-50%, -50%) rotate(${headingDeg}deg)`;
       }
 
-      // 2. Position each blip on the circular radar
-      const cosYaw = Math.cos(-yaw);
-      const sinYaw = Math.sin(-yaw);
-
-      for (let i = 0; i < LANDMARKS.length; i++) {
-        const el = blipElementsRef.current[i];
-        if (!el) continue;
-
-        const lm = LANDMARKS[i];
-        const dx = lm.x - px;
-        const dz = lm.z - pz;
-
-        // Rotate relative vector by camera yaw
-        // In 2D screen space: +X is right, -Z is forward/up (screen -Y)
-        const rotX = dx * cosYaw - dz * sinYaw;
-        const rotZ = dx * sinYaw + dz * cosYaw;
-
-        const dist = Math.hypot(dx, dz);
-        const ratio = Math.min(1.0, dist / MAX_RADAR_DIST_METERS);
-        const rPx = ratio * (RADAR_RADIUS_PX - 10);
-
-        const angle = Math.atan2(rotZ, rotX);
-        const screenX = RADAR_RADIUS_PX + Math.cos(angle) * rPx;
-        const screenY = RADAR_RADIUS_PX + Math.sin(angle) * rPx;
-
-        el.style.transform = `translate(${screenX}px, ${screenY}px) translate(-50%, -50%)`;
-      }
-
-      // 3. Update player orientation pin on tactical map if open
+      // 2. Synchronize Expanded Tactical Map Player Position
       if (tacticalPlayerRef.current) {
-        const mapX = 50 + (px / 22) * 44;
-        const mapY = 50 + (pz / 22) * 44;
+        const clampedX = Math.max(-ISLAND_SPAN, Math.min(ISLAND_SPAN, px));
+        const clampedZ = Math.max(-ISLAND_SPAN, Math.min(ISLAND_SPAN, pz));
+
+        const mapX = 50 + (clampedX / ISLAND_SPAN) * 44;
+        const mapY = 50 + (clampedZ / ISLAND_SPAN) * 44;
+
         tacticalPlayerRef.current.style.left = `${mapX}%`;
         tacticalPlayerRef.current.style.top = `${mapY}%`;
-        tacticalPlayerRef.current.style.transform = `translate(-50%, -50%) rotate(${(-yaw * 180) / Math.PI}deg)`;
+        tacticalPlayerRef.current.style.transform = `translate(-50%, -50%) rotate(${headingDeg}deg)`;
       }
 
       animId = requestAnimationFrame(loop);
@@ -213,45 +196,59 @@ export default function MiniRadar(): React.ReactElement | null {
           onClick={() => setIsMapExpanded(true)}
           title={language === 'uk' ? 'Натисніть або [M] для тактичної карти' : 'Click or press [M] for tactical map'}
         >
-          {/* Concentric Distance Rings */}
+          {/* Island Schematic Background on Radar */}
+          <div className="radar-island-contour" />
+          <div className="radar-path-ns" />
+          <div className="radar-path-ew" />
+
+          {/* Concentric Distance Rings & Crosshair */}
           <div className="radar-grid-ring r-inner" />
           <div className="radar-grid-ring r-outer" />
           <div className="radar-crosshair h" />
           <div className="radar-crosshair v" />
 
-          {/* Rotating Cardinal Compass Dial */}
-          <div ref={compassRef} className="radar-compass-dial">
+          {/* Fixed Cardinal Compass Dial (True Geographic Orientation) */}
+          <div className="radar-compass-dial">
             <span className="cardinal-point north">N</span>
             <span className="cardinal-point east">E</span>
             <span className="cardinal-point south">S</span>
             <span className="cardinal-point west">W</span>
           </div>
 
-          {/* Center Player Indicator with Vision Cone */}
-          <div className="radar-player-center">
-            <div className="radar-view-cone" />
-            <div className="radar-player-blip" />
+          {/* True Landmark Blips (Fixed at Authentic Island Coordinates) */}
+          <div className="radar-blips-layer">
+            {LANDMARKS.map((lm) => {
+              const blipX = RADAR_RADIUS_PX + (lm.x / ISLAND_SPAN) * RADAR_USABLE_RADIUS;
+              const blipY = RADAR_RADIUS_PX + (lm.z / ISLAND_SPAN) * RADAR_USABLE_RADIUS;
+
+              return (
+                <div
+                  key={lm.id}
+                  className="radar-landmark-blip"
+                  style={{
+                    left: `${blipX}px`,
+                    top: `${blipY}px`,
+                    backgroundColor: lm.color,
+                    boxShadow: `0 0 8px ${lm.color}`
+                  }}
+                  onMouseEnter={(e) => {
+                    e.stopPropagation();
+                    setHoveredLandmark(lm);
+                  }}
+                  onMouseLeave={() => setHoveredLandmark(null)}
+                />
+              );
+            })}
           </div>
 
-          {/* Dynamic Landmark Blips */}
-          <div ref={blipsContainerRef} className="radar-blips-layer">
-            {LANDMARKS.map((lm, i) => (
-              <div
-                key={lm.id}
-                ref={(el) => { blipElementsRef.current[i] = el; }}
-                className="radar-landmark-blip"
-                style={{ backgroundColor: lm.color, boxShadow: `0 0 10px ${lm.color}` }}
-                onMouseEnter={(e) => {
-                  e.stopPropagation();
-                  setHoveredLandmark(lm);
-                }}
-                onMouseLeave={() => setHoveredLandmark(null)}
-              />
-            ))}
+          {/* Live Dynamic Player Marker with Heading Direction Cone */}
+          <div ref={playerRadarRef} className="radar-player-pin">
+            <div className="radar-player-cone" />
+            <div className="radar-player-dot" />
           </div>
         </div>
 
-        {/* Clean Centered Map Action Button below Radar */}
+        {/* Centered Map Action Button below Radar */}
         <div className="radar-action-container">
           {hoveredLandmark ? (
             <div className="radar-hover-pill glass-panel" style={{ borderColor: hoveredLandmark.color }}>
@@ -317,8 +314,8 @@ export default function MiniRadar(): React.ReactElement | null {
               {/* Interactive Landmark Pins */}
               {LANDMARKS.map((lm) => {
                 // Map island coordinates [-22, 22] to 1:1 container % [6% to 94%]
-                const mapLeft = 50 + (lm.x / 22) * 44;
-                const mapTop = 50 + (lm.z / 22) * 44;
+                const mapLeft = 50 + (lm.x / ISLAND_SPAN) * 44;
+                const mapTop = 50 + (lm.z / ISLAND_SPAN) * 44;
 
                 return (
                   <div
@@ -347,7 +344,7 @@ export default function MiniRadar(): React.ReactElement | null {
                 );
               })}
 
-              {/* Live Player Position Pin with Heading Direction */}
+              {/* Live Player Position Pin with Accurate Heading Direction */}
               <div ref={tacticalPlayerRef} className="tactical-player-pin">
                 <div className="tactical-player-arrow" />
                 <div className="tactical-player-dot" />

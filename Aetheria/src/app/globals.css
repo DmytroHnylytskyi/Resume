@@ -2588,6 +2588,38 @@ nextjs-portal,
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65), 0 0 16px rgba(251, 191, 36, 0.25);
 }
 
+/* Island Schematic Footprint on Mini-Radar */
+.radar-island-contour {
+  position: absolute;
+  inset: 18px;
+  border-radius: 18px;
+  background: rgba(139, 92, 246, 0.05);
+  border: 1px dashed rgba(139, 92, 246, 0.25);
+  pointer-events: none;
+}
+
+.radar-path-ns {
+  position: absolute;
+  top: 18px;
+  bottom: 18px;
+  left: 50%;
+  width: 6px;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.04);
+  pointer-events: none;
+}
+
+.radar-path-ew {
+  position: absolute;
+  top: 48%;
+  left: 20px;
+  right: 20px;
+  height: 5px;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.04);
+  pointer-events: none;
+}
+
 /* Radar concentric grid lines */
 .radar-grid-ring {
   position: absolute;
@@ -2632,12 +2664,11 @@ nextjs-portal,
   transform: translateX(-50%);
 }
 
-/* Rotating Compass Dial (Cardinal points N, E, S, W) */
+/* Fixed Cardinal Compass Dial (True Geographic Orientation) */
 .radar-compass-dial {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  will-change: transform;
 }
 
 .cardinal-point {
@@ -2679,42 +2710,10 @@ nextjs-portal,
   opacity: 0.65;
 }
 
-/* Center Player Indicator & View Cone */
-.radar-player-center {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.radar-view-cone {
-  position: absolute;
-  bottom: 50%;
-  width: 32px;
-  height: 38px;
-  background: radial-gradient(circle at bottom center, rgba(251, 191, 36, 0.35) 0%, rgba(251, 191, 36, 0) 70%);
-  clip-path: polygon(50% 100%, 0% 0%, 100% 0%);
-}
-
-.radar-player-blip {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #ffffff;
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.9), 0 0 14px #fbbf24;
-  border: 1px solid rgba(0, 0, 0, 0.5);
-  position: relative;
-  z-index: 2;
-}
-
 /* Blips Layer */
 .radar-blips-layer {
   position: absolute;
-  inset: 6px;
+  inset: 0;
   pointer-events: none;
 }
 
@@ -2726,12 +2725,45 @@ nextjs-portal,
   border: 1.5px solid rgba(255, 255, 255, 0.9);
   pointer-events: auto;
   cursor: pointer;
-  will-change: transform;
-  transition: transform 0.08s linear;
+  transform: translate(-50%, -50%);
+  transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .radar-landmark-blip:hover {
-  transform: scale(1.6) !important;
+  transform: translate(-50%, -50%) scale(1.6) !important;
+  z-index: 15;
+}
+
+/* Dynamic Live Player Pin & Heading Cone on Mini-Radar */
+.radar-player-pin {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+}
+
+.radar-player-cone {
+  position: absolute;
+  bottom: 50%;
+  width: 24px;
+  height: 30px;
+  background: radial-gradient(circle at bottom center, rgba(251, 191, 36, 0.45) 0%, rgba(251, 191, 36, 0) 75%);
+  clip-path: polygon(50% 100%, 0% 0%, 100% 0%);
+  pointer-events: none;
+}
+
+.radar-player-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 8px #ffffff, 0 0 12px #fbbf24;
+  border: 1.5px solid #09090b;
 }
 
 /* Clean Centered Action Button below Mini-Radar */
