@@ -6,8 +6,11 @@
     "dev": "next dev --webpack",
     "dev:turbo": "next dev --turbopack",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p ${PORT:-3000}",
     "lint": "eslint"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
