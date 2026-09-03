@@ -6,6 +6,7 @@ rate limiting (SlowAPI), X-Request-ID correlation tracking,
 and mounts API sub-routers (/api/auth, /api/layers, /api/views).
 """
 
+import os
 import uuid
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, Response
@@ -62,23 +63,17 @@ async def correlation_id_middleware(request: Request, call_next):
     response.headers["X-Request-ID"] = request_id
     return response
 
-# Configure Cross-Origin Resource Sharing (CORS) with explicit origins
-origins = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://localhost:3001",
-    "http://127.0.0.1:3001",
-    "http://localhost:3002",
-    "http://127.0.0.1:3002",
-    "http://localhost:3003",
-    "http://127.0.0.1:3003",
-    "http://localhost:8000",
-    "http://127.0.0.1:8000",
-]
+# Configure Cross-Origin Resource Sharing (CORS) with dynamic origins support
+frontend_url = os.getenv(
+    "FRONTEND_URL",
+    "http://localhost:3000,http://127.0.0.1:3000,http://localhost:3001,http://127.0.0.1:3001,http://localhost:3002,http://127.0.0.1:3002,http://localhost:3003,http://127.0.0.1:3003",
+)
+allowed_origins = [origin.strip() for origin in frontend_url.split(",") if origin.strip()]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=allowed_origins,
+    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+|172\.(1[6-9]|2[0-9]|3[0-1])\.\d+\.\d+)(:\d+)?$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

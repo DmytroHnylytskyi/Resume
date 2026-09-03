@@ -1,0 +1,53 @@
+{
+    email {$LETSENCRYPT_EMAIL}
+}
+
+# ------------------------------------------------------------------------------
+# 1. Main Hub: Aetheria (Interactive 3D Portfolio Island & CV)
+# ------------------------------------------------------------------------------
+{$DOMAIN}, www.{$DOMAIN} {
+    encode gzip zstd
+    reverse_proxy aetheria:3000
+}
+
+# ------------------------------------------------------------------------------
+# 2. Forma-3D: Spatial Builder & Room Configurator
+# ------------------------------------------------------------------------------
+forma.{$DOMAIN} {
+    encode gzip zstd
+    reverse_proxy forma3d-frontend:3000
+}
+
+api.forma.{$DOMAIN} {
+    encode gzip zstd
+    reverse_proxy forma3d-backend:8000
+}
+
+# ------------------------------------------------------------------------------
+# 3. TerraScope: 3D Geospatial Intelligence Platform
+# ------------------------------------------------------------------------------
+terrascope.{$DOMAIN} {
+    encode gzip zstd
+    reverse_proxy terrascope-frontend:3000
+}
+
+api.terrascope.{$DOMAIN} {
+    encode gzip zstd
+    reverse_proxy terrascope-backend:8000
+}
+
+# ------------------------------------------------------------------------------
+# 4. Lumina: Asynchronous LMS E-Learning Platform
+# ------------------------------------------------------------------------------
+lumina.{$DOMAIN} {
+    encode gzip zstd
+    reverse_proxy lumina-frontend:80
+}
+
+api.lumina.{$DOMAIN} {
+    encode gzip zstd
+    request_body {
+        max_size 50MB
+    }
+    reverse_proxy lumina-backend:8000
+}

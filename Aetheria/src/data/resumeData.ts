@@ -1,5 +1,9 @@
 import { DeveloperProfile, Locale, Translations } from '../types/portfolio';
 
+const FORMA_URL = process.env.NEXT_PUBLIC_FORMA_URL || "http://localhost:3001";
+const TERRASCOPE_URL = process.env.NEXT_PUBLIC_TERRASCOPE_URL || "http://localhost:3002";
+const LUMINA_URL = process.env.NEXT_PUBLIC_LUMINA_URL || "http://localhost:3003";
+
 export const developerProfiles: Record<Locale, DeveloperProfile> = {
   uk: {
     name: "Дмитро Гнилицький",
@@ -112,7 +116,7 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         tagline: "Модульний 3D-редактор простору та універсальний конфігуратор об'єктів",
         description: "Комерційно-орієнтований full-stack 3D-редактор сцени та просторовий конфігуратор для будь-яких 3D-об'єктів (меблі, архітектура, декор) з автоматичним стекуванням поверхонь, гнучким налаштуванням матеріалів та хмарною синхронізацією.",
         tags: ["Three.js", "React Three Fiber", "Next.js 15", "TypeScript", "FastAPI", "PostgreSQL", "Docker"],
-        url: "http://localhost:3001",
+        url: FORMA_URL,
         githubUrl: "https://github.com/DmytroHnylytskyi/Resume/tree/main/Forma-3D",
         color: "#34d399",
         features: [
@@ -128,7 +132,7 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         tagline: "Інтерактивна 3D-платформа геопросторової візуалізації та супутникових даних",
         description: "Апаратна 3D-візуалізація планети Земля з кастомними GLSL-шейдерами атмосфери та шарами супутникових даних у реальному часі зі стабільними 60 FPS.",
         tags: ["Three.js", "GLSL Shaders", "Next.js 15", "FastAPI", "Zustand 5", "Docker"],
-        url: "http://localhost:3002",
+        url: TERRASCOPE_URL,
         githubUrl: "https://github.com/DmytroHnylytskyi/Resume/tree/main/TerraScope",
         color: "#60a5fa",
         features: [
@@ -143,7 +147,7 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         tagline: "Сучасна асинхронна освітня платформа дистанційного навчання",
         description: "Освітня система для викладачів і студентів із модульними інтерактивними курсами, системою дедлайнів, завантаженням домашніх робіт та візуальною аналітикою прогресу.",
         tags: ["React 19", "Vite", "TanStack Query v5", "FastAPI", "PostgreSQL", "TailwindCSS"],
-        url: "http://localhost:3003",
+        url: LUMINA_URL,
         githubUrl: "https://github.com/DmytroHnylytskyi/Resume/tree/main/Lumina",
         color: "#fb7185",
         features: [
@@ -282,7 +286,7 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         tagline: "Modular 3D spatial scene builder & universal object configurator",
         description: "Commercial-grade full-stack 3D interior & spatial room configurator for placing, stacking, and customizing any 3D assets with real-time materials swapping, surface raycasting, and async cloud synchronization.",
         tags: ["Three.js", "React Three Fiber", "Next.js 15", "TypeScript", "FastAPI", "PostgreSQL", "Docker"],
-        url: "http://localhost:3001",
+        url: FORMA_URL,
         githubUrl: "https://github.com/DmytroHnylytskyi/Resume/tree/main/Forma-3D",
         color: "#34d399",
         features: [
@@ -298,7 +302,7 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         tagline: "Interactive 3D geospatial intelligence and live satellite analytics",
         description: "Hardware-accelerated 3D planetary Earth visualization with custom atmospheric GLSL shaders, orbital navigation, and real-time live data layers locked at 60 FPS.",
         tags: ["Three.js", "GLSL Shaders", "Next.js 15", "FastAPI", "Zustand 5", "Docker"],
-        url: "http://localhost:3002",
+        url: TERRASCOPE_URL,
         githubUrl: "https://github.com/DmytroHnylytskyi/Resume/tree/main/TerraScope",
         color: "#60a5fa",
         features: [
@@ -313,7 +317,7 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         tagline: "Modern asynchronous e-learning and student management platform",
         description: "Comprehensive educational platform featuring interactive course authoring, automated testing, homework submission pipelines, and visual progress analytics.",
         tags: ["React 19", "Vite", "TanStack Query v5", "FastAPI", "PostgreSQL", "TailwindCSS"],
-        url: "http://localhost:3003",
+        url: LUMINA_URL,
         githubUrl: "https://github.com/DmytroHnylytskyi/Resume/tree/main/Lumina",
         color: "#fb7185",
         features: [

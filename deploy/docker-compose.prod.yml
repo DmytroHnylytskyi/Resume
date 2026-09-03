@@ -1,0 +1,212 @@
+services:
+  # ============================================================================
+  # Reverse Proxy: Caddy with Automated Let's Encrypt SSL
+  # ============================================================================
+  caddy:
+    image: caddy:2.8-alpine
+    container_name: resume-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp" # HTTP/3 QUIC
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    environment:
+      - DOMAIN=${DOMAIN}
+      - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
+    networks:
+      - web_network
+    depends_on:
+      - aetheria
+      - forma3d-frontend
+      - forma3d-backend
+      - terrascope-frontend
+      - terrascope-backend
+      - lumina-frontend
+      - lumina-backend
+
+  # ============================================================================
+  # 1. Aetheria (3D WebGL Portfolio Hub & CV)
+  # ============================================================================
+  aetheria:
+    build:
+      context: ../Aetheria
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_FORMA_URL=https://forma.${DOMAIN}
+        - NEXT_PUBLIC_TERRASCOPE_URL=https://terrascope.${DOMAIN}
+        - NEXT_PUBLIC_LUMINA_URL=https://lumina.${DOMAIN}
+    container_name: aetheria
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    networks:
+      - web_network
+
+  # ============================================================================
+  # 2. Forma-3D (Spatial Builder & Room Configurator)
+  # ============================================================================
+  forma3d-db:
+    image: postgres:16-alpine
+    container_name: forma3d-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${FORMA_DB_USER:-forma_user}
+      POSTGRES_PASSWORD: ${FORMA_DB_PASSWORD:-forma_secure_password_change_me}
+      POSTGRES_DB: ${FORMA_DB_NAME:-forma_db}
+    volumes:
+      - forma_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${FORMA_DB_USER:-forma_user} -d ${FORMA_DB_NAME:-forma_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - web_network
+
+  forma3d-backend:
+    build:
+      context: ../Forma-3D/backend
+      dockerfile: Dockerfile
+    container_name: forma3d-backend
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://${FORMA_DB_USER:-forma_user}:${FORMA_DB_PASSWORD:-forma_secure_password_change_me}@forma3d-db:5432/${FORMA_DB_NAME:-forma_db}
+      - SECRET_KEY=${FORMA_SECRET_KEY}
+      - FRONTEND_URL=https://forma.${DOMAIN},https://${DOMAIN},http://localhost:3000,http://localhost:3001
+    depends_on:
+      forma3d-db:
+        condition: service_healthy
+    networks:
+      - web_network
+
+  forma3d-frontend:
+    build:
+      context: ../Forma-3D/frontend
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=https://api.forma.${DOMAIN}
+    container_name: forma3d-frontend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - NEXT_PUBLIC_API_URL=https://api.forma.${DOMAIN}
+    depends_on:
+      - forma3d-backend
+    networks:
+      - web_network
+
+  # ============================================================================
+  # 3. TerraScope (3D Geospatial Intelligence Platform)
+  # ============================================================================
+  terrascope-backend:
+    build:
+      context: ../TerraScope/backend
+      dockerfile: Dockerfile
+    container_name: terrascope-backend
+    restart: unless-stopped
+    environment:
+      - SECRET_KEY=${TERRASCOPE_SECRET_KEY}
+      - ENV_MODE=production
+      - DATABASE_URL=sqlite+aiosqlite:///./sql_app.db
+      - NASA_API_KEY=${NASA_API_KEY:-DEMO_KEY}
+      - FRONTEND_URL=https://terrascope.${DOMAIN},https://${DOMAIN},http://localhost:3000,http://localhost:3002
+    volumes:
+      - terrascope_data:/app/sql_app.db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - web_network
+
+  terrascope-frontend:
+    build:
+      context: ../TerraScope/frontend
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=https://api.terrascope.${DOMAIN}/api
+    container_name: terrascope-frontend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - NEXT_PUBLIC_API_URL=https://api.terrascope.${DOMAIN}/api
+    depends_on:
+      terrascope-backend:
+        condition: service_healthy
+    networks:
+      - web_network
+
+  # ============================================================================
+  # 4. Lumina (Asynchronous LMS E-Learning Platform)
+  # ============================================================================
+  lumina-db:
+    image: postgres:16-alpine
+    container_name: lumina-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${LUMINA_DB_USER:-lumina_user}
+      POSTGRES_PASSWORD: ${LUMINA_DB_PASSWORD:-lumina_secure_password_change_me}
+      POSTGRES_DB: ${LUMINA_DB_NAME:-lumina_db}
+    volumes:
+      - lumina_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${LUMINA_DB_USER:-lumina_user} -d ${LUMINA_DB_NAME:-lumina_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - web_network
+
+  lumina-backend:
+    build:
+      context: ../Lumina/backend
+      dockerfile: Dockerfile
+    container_name: lumina-backend
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=postgresql://${LUMINA_DB_USER:-lumina_user}:${LUMINA_DB_PASSWORD:-lumina_secure_password_change_me}@lumina-db:5432/${LUMINA_DB_NAME:-lumina_db}
+      - SECRET_KEY=${LUMINA_SECRET_KEY}
+      - FRONTEND_URL=https://lumina.${DOMAIN},https://${DOMAIN},http://localhost:3000,http://localhost:3003
+      - CLOUDINARY_URL=${CLOUDINARY_URL:-}
+    command: >
+      sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    volumes:
+      - lumina_uploads:/app/uploads
+    depends_on:
+      lumina-db:
+        condition: service_healthy
+    networks:
+      - web_network
+
+  lumina-frontend:
+    build:
+      context: ../Lumina/frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=https://api.lumina.${DOMAIN}
+    container_name: lumina-frontend
+    restart: unless-stopped
+    depends_on:
+      - lumina-backend
+    networks:
+      - web_network
+
+volumes:
+  caddy_data:
+  caddy_config:
+  forma_pg_data:
+  terrascope_data:
+  lumina_pg_data:
+  lumina_uploads:
+
+networks:
+  web_network:
+    driver: bridge
