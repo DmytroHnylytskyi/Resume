@@ -16,6 +16,14 @@ export const metadata = {
   description: "Premium 3D Room & Architectural Configurator Portfolio Application",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: "cover",
+  themeColor: "#05140f",
+};
+
 interface RootLayoutProps {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;

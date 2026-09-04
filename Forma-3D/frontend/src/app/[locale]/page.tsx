@@ -13,6 +13,7 @@ import ColorPicker from '../../components/ColorPicker';
 import AuthModal from '../../components/AuthModal';
 import InstructionModal from '../../components/InstructionModal';
 import UserProfileModal from '../../components/UserProfileModal';
+import MobileNoticeModal from '../../components/MobileNoticeModal';
 import FurnitureCatalog from '../../components/FurnitureCatalog';
 import TransformToolbar from '../../components/TransformToolbar';
 import SceneViewport from '../../components/SceneViewport';
@@ -234,6 +235,7 @@ export default function Home() {
       </header>
       
       {/* Overlay Modals & Color Picker Toolbars */}
+      <MobileNoticeModal />
       {authMode && <AuthModal onClose={() => setAuthMode(null)} />}
       {showInstruction && <InstructionModal onClose={() => setShowInstruction(false)} />}
       {showProfile && <UserProfileModal onClose={() => setShowProfile(false)} />}

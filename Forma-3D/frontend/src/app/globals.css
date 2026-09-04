@@ -1,4 +1,4 @@
-﻿:root {
+:root {
   --color-bg: #05140f;
   --color-bg-gradient: radial-gradient(circle at 50% 0%, #0a2e20, #05140f 70%);
   --color-primary: #1ed760;
@@ -1392,4 +1392,183 @@ nextjs-portal, [data-nextjs-toast], [data-next-badge] {
   color: #05140f;
   border-color: var(--color-primary);
   transform: scale(1.05);
+}
+
+/* ── Mobile Advisory Notice Modal ── */
+.mobile-notice-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background: rgba(3, 15, 10, 0.88);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  animation: modal-fade-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mobile-notice-card {
+  max-width: 480px;
+  width: 100%;
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 22px 20px;
+  border: 1px solid rgba(30, 215, 96, 0.35);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(30, 215, 96, 0.15);
+  border-radius: 24px;
+}
+
+.mobile-notice-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mobile-notice-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: rgba(30, 215, 96, 0.15);
+  border: 1px solid rgba(30, 215, 96, 0.3);
+  color: var(--color-primary);
+}
+
+.mobile-notice-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+}
+
+.mobile-notice-icon-wrapper {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(30, 215, 96, 0.2) 0%, rgba(5, 20, 15, 0.8) 70%);
+  border: 1px solid rgba(30, 215, 96, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 25px rgba(30, 215, 96, 0.2);
+}
+
+.mobile-notice-phone-badge {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  background: #1a080c;
+  border: 1px solid #ff4d6a;
+  border-radius: 10px;
+  padding: 2px 4px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.mobile-notice-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+  color: #fff;
+  letter-spacing: -0.3px;
+}
+
+.mobile-notice-reasons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mobile-notice-reason-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+}
+
+.mobile-notice-reason-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(30, 215, 96, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mobile-notice-reason-icon.warning {
+  background: rgba(255, 184, 77, 0.12);
+}
+
+.mobile-notice-reason-icon.danger {
+  background: rgba(255, 77, 106, 0.12);
+}
+
+.mobile-notice-reason-item p {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--color-text);
+  opacity: 0.9;
+}
+
+.mobile-notice-callout {
+  padding: 10px 14px;
+  background: rgba(30, 215, 96, 0.1);
+  border: 1px dashed rgba(30, 215, 96, 0.35);
+  border-radius: 12px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--color-primary);
+  text-align: center;
+}
+
+.mobile-notice-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.mobile-notice-hub-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  padding: 12px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  border-radius: 12px;
+}
+
+.mobile-notice-continue-btn {
+  padding: 10px;
+  font-size: 0.82rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.65);
+  border-radius: 10px;
+}
+
+.mobile-notice-continue-btn:hover {
+  color: #fff;
 }
