@@ -745,6 +745,12 @@ html, body {
   gap: 24px;
 }
 
+@media (max-width: 1080px), (orientation: landscape) and (max-height: 520px) {
+  .classic-nav-links {
+    display: none !important;
+  }
+}
+
 .classic-nav-link {
   color: var(--text-secondary);
   text-decoration: none;
@@ -2482,8 +2488,8 @@ html, body {
   letter-spacing: 0.5px;
 }
 
-/* ── Responsive adjustments ── */
-@media (max-width: 768px) {
+/* ── Responsive adjustments (Mobile Portrait, Tablets & Landscape Phones) ── */
+@media (max-width: 900px), (orientation: landscape) and (max-height: 520px) {
   .island-top-bar {
     top: 10px;
     left: 10px;
@@ -3411,6 +3417,59 @@ nextjs-portal,
   background: rgba(255, 255, 255, 0.08);
 }
 
+.controls-mode-tabs {
+  display: flex;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 3px;
+  gap: 4px;
+}
+
+.controls-tab-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 5px 8px;
+  border-radius: 9px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.controls-tab-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.controls-tab-btn.active {
+  background: rgba(251, 191, 36, 0.18);
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.4);
+  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.12);
+}
+
+.controls-touch-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2.5px 7px;
+  border-radius: 6px;
+  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  color: #fbbf24;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
 .controls-categories-list {
   display: flex;
   flex-direction: column;
@@ -4294,6 +4353,36 @@ nextjs-portal,
 
 /* Landscape Mode HUD ergonomics & Mobile 3D controls (h <= 520px or w <= 900px) */
 @media (orientation: landscape) and (max-height: 520px), (max-width: 900px) {
+  /* ── 0. Classic Landing View Top Header (Landscape Mobile) ── */
+  .classic-header {
+    height: calc(44px + env(safe-area-inset-top, 0px)) !important;
+    min-height: calc(44px + env(safe-area-inset-top, 0px)) !important;
+    padding-top: max(6px, env(safe-area-inset-top, 6px)) !important;
+    padding-bottom: 6px !important;
+    padding-left: max(16px, env(safe-area-inset-left, 16px)) !important;
+    padding-right: max(16px, env(safe-area-inset-right, 16px)) !important;
+    gap: 8px;
+  }
+
+  .classic-nav-links {
+    display: none !important;
+  }
+
+  .switch-3d-text-full {
+    display: none !important;
+  }
+
+  .switch-3d-text-compact {
+    display: inline !important;
+  }
+
+  .switch-3d-btn {
+    height: 32px !important;
+    padding: 0 10px !important;
+    border-radius: 9px !important;
+    font-size: 12px !important;
+  }
+
   /* ── 1. Top Bar: Icon-Only, Non-Wrapping, Clean Glass Pill ── */
   .island-top-bar {
     top: max(6px, env(safe-area-inset-top, 6px));
@@ -4455,6 +4544,16 @@ nextjs-portal,
   .tactical-map-canvas-container {
     width: min(45vw, 240px);
     height: min(45vw, 240px);
+  }
+
+  /* ── 5. Controls Guide Dropdown (Landscape Mobile) ── */
+  .controls-dropdown-menu {
+    width: min(340px, calc(100vw - 32px));
+    max-height: calc(100vh - 65px);
+    overflow-y: auto;
+    top: calc(100% + 6px);
+    padding: 12px 14px;
+    gap: 10px;
   }
 }
 

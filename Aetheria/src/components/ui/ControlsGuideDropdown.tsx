@@ -2,12 +2,42 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useGameStore } from '../../store/useGameStore';
-import { HelpCircle, ChevronDown, Keyboard, MousePointer, Sparkles, X } from 'lucide-react';
+import { 
+  HelpCircle, 
+  ChevronDown, 
+  Keyboard, 
+  MousePointer, 
+  Smartphone, 
+  Gamepad2, 
+  ArrowUp, 
+  Move, 
+  Maximize2, 
+  Map, 
+  Radio, 
+  X 
+} from 'lucide-react';
 
 export default function ControlsGuideDropdown(): React.ReactElement {
   const { language } = useGameStore();
   const [isOpen, setIsOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'touch' | 'keyboard'>('keyboard');
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Auto-detect touch device / mobile screen on mount to default to touch tab
+  useEffect(() => {
+    const checkTouch = () => {
+      const isTouch = 
+        'ontouchstart' in window || 
+        navigator.maxTouchPoints > 0 || 
+        (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) ||
+        window.innerWidth <= 900;
+      
+      if (isTouch) {
+        setActiveTab('touch');
+      }
+    };
+    checkTouch();
+  }, []);
 
   // Close on outside click
   useEffect(() => {
@@ -57,9 +87,15 @@ export default function ControlsGuideDropdown(): React.ReactElement {
           {/* Header */}
           <div className="controls-menu-header">
             <div className="controls-menu-title-group">
-              <Keyboard size={16} className="controls-header-icon" />
+              {activeTab === 'touch' ? (
+                <Smartphone size={16} className="controls-header-icon" />
+              ) : (
+                <Keyboard size={16} className="controls-header-icon" />
+              )}
               <h4 className="controls-menu-title">
-                {isUk ? 'Керування та гарячі клавіші' : 'Controls & Shortcuts'}
+                {activeTab === 'touch'
+                  ? (isUk ? 'Сенсорне керування' : 'Touch Controls')
+                  : (isUk ? 'Керування та гарячі клавіші' : 'Controls & Shortcuts')}
               </h4>
             </div>
             <button className="controls-menu-close" onClick={() => setIsOpen(false)}>
@@ -67,117 +103,233 @@ export default function ControlsGuideDropdown(): React.ReactElement {
             </button>
           </div>
 
-          {/* Controls Categories */}
-          <div className="controls-categories-list">
-            {/* 1. Movement */}
-            <div className="controls-category-section">
-              <span className="controls-category-name">
-                {isUk ? 'Переміщення' : 'Movement'}
-              </span>
-              <div className="controls-item-row">
-                <div className="controls-keys-group">
-                  <kbd className="ctrl-key">W</kbd>
-                  <kbd className="ctrl-key">A</kbd>
-                  <kbd className="ctrl-key">S</kbd>
-                  <kbd className="ctrl-key">D</kbd>
-                </div>
-                <span className="controls-action-desc">
-                  {isUk ? 'Рух персонажа' : 'Move character'}
-                </span>
-              </div>
-
-              <div className="controls-item-row">
-                <div className="controls-keys-group">
-                  <kbd className="ctrl-key">Shift</kbd>
-                </div>
-                <span className="controls-action-desc">
-                  {isUk ? 'Спринт (швидкий біг)' : 'Sprint (run faster)'}
-                </span>
-              </div>
-
-              <div className="controls-item-row">
-                <div className="controls-keys-group">
-                  <kbd className="ctrl-key wide">{isUk ? 'Пробіл' : 'Space'}</kbd>
-                </div>
-                <span className="controls-action-desc">
-                  {isUk ? 'Стрибок' : 'Jump'}
-                </span>
-              </div>
-            </div>
-
-            {/* 2. Camera */}
-            <div className="controls-category-section">
-              <span className="controls-category-name">
-                {isUk ? 'Огляд та камера' : 'Camera & Orbit'}
-              </span>
-              <div className="controls-item-row">
-                <div className="controls-keys-group">
-                  <MousePointer size={13} className="controls-inline-icon" />
-                  <span className="controls-mouse-badge">
-                    {isUk ? 'ПКМ / ЛКМ + Рух' : 'RMB / LMB + Drag'}
-                  </span>
-                </div>
-                <span className="controls-action-desc">
-                  {isUk ? 'Обертання камери на 360°' : '360° Camera orbit'}
-                </span>
-              </div>
-
-              <div className="controls-item-row">
-                <div className="controls-keys-group">
-                  <span className="controls-mouse-badge">
-                    {isUk ? 'Коліщатко' : 'Mouse Wheel'}
-                  </span>
-                </div>
-                <span className="controls-action-desc">
-                  {isUk ? 'Зум камери (наближення)' : 'Zoom in / out'}
-                </span>
-              </div>
-            </div>
-
-            {/* 3. Actions & Hotkeys */}
-            <div className="controls-category-section">
-              <span className="controls-category-name">
-                {isUk ? 'Інтерактивність та меню' : 'Actions & Menus'}
-              </span>
-              <div className="controls-item-row">
-                <div className="controls-keys-group">
-                  <kbd className="ctrl-key accent">E</kbd>
-                </div>
-                <span className="controls-action-desc">
-                  {isUk ? 'Взаємодія з порталами та статуями' : 'Interact with portals & shrines'}
-                </span>
-              </div>
-
-              <div className="controls-item-row">
-                <div className="controls-keys-group">
-                  <kbd className="ctrl-key">M</kbd>
-                </div>
-                <span className="controls-action-desc">
-                  {isUk ? 'Тактична карта острова' : 'Tactical island map'}
-                </span>
-              </div>
-
-              <div className="controls-item-row">
-                <div className="controls-keys-group">
-                  <kbd className="ctrl-key">H</kbd>
-                </div>
-                <span className="controls-action-desc">
-                  {isUk ? 'Згорнути / розгорнути підказку' : 'Toggle this guide'}
-                </span>
-              </div>
-
-              <div className="controls-item-row">
-                <div className="controls-keys-group">
-                  <kbd className="ctrl-key">Esc</kbd>
-                </div>
-                <span className="controls-action-desc">
-                  {isUk ? 'Закрити активне вікно' : 'Close active modal'}
-                </span>
-              </div>
-            </div>
+          {/* Tab Switcher: Touch / Keyboard */}
+          <div className="controls-mode-tabs">
+            <button
+              className={`controls-tab-btn ${activeTab === 'touch' ? 'active' : ''}`}
+              onClick={() => setActiveTab('touch')}
+            >
+              <Smartphone size={12} />
+              <span>{isUk ? 'Сенсор' : 'Touch'}</span>
+            </button>
+            <button
+              className={`controls-tab-btn ${activeTab === 'keyboard' ? 'active' : ''}`}
+              onClick={() => setActiveTab('keyboard')}
+            >
+              <Keyboard size={12} />
+              <span>{isUk ? 'Клавіатура' : 'Keyboard'}</span>
+            </button>
           </div>
+
+          {/* Tab 1: Mobile Touch Controls */}
+          {activeTab === 'touch' && (
+            <div className="controls-categories-list">
+              {/* 1. Movement */}
+              <div className="controls-category-section">
+                <span className="controls-category-name">
+                  {isUk ? 'Рух та стрибок' : 'Movement & Jump'}
+                </span>
+
+                <div className="controls-item-row">
+                  <div className="controls-keys-group">
+                    <span className="controls-touch-badge">
+                      <Gamepad2 size={12} />
+                      {isUk ? 'Стік зліва' : 'Left Stick'}
+                    </span>
+                  </div>
+                  <span className="controls-action-desc">
+                    {isUk ? 'Рух та біг (відхилення = швидкість)' : 'Move & sprint (tilt further)'}
+                  </span>
+                </div>
+
+                <div className="controls-item-row">
+                  <div className="controls-keys-group">
+                    <span className="controls-touch-badge">
+                      <ArrowUp size={12} />
+                      {isUk ? 'Кнопка [↑]' : 'Jump [↑]'}
+                    </span>
+                  </div>
+                  <span className="controls-action-desc">
+                    {isUk ? 'Стрибок персонажа' : 'Jump onto obstacles'}
+                  </span>
+                </div>
+              </div>
+
+              {/* 2. Camera & Zoom */}
+              <div className="controls-category-section">
+                <span className="controls-category-name">
+                  {isUk ? 'Огляд та камера' : 'Camera & Orbit'}
+                </span>
+
+                <div className="controls-item-row">
+                  <div className="controls-keys-group">
+                    <span className="controls-touch-badge">
+                      <Move size={12} />
+                      {isUk ? 'Свайп справа' : 'Right Swipe'}
+                    </span>
+                  </div>
+                  <span className="controls-action-desc">
+                    {isUk ? 'Обертання камери на 360°' : '360° Camera orbit'}
+                  </span>
+                </div>
+
+                <div className="controls-item-row">
+                  <div className="controls-keys-group">
+                    <span className="controls-touch-badge">
+                      <Maximize2 size={12} />
+                      {isUk ? 'Пінч 2 пальці' : '2-Finger Pinch'}
+                    </span>
+                  </div>
+                  <span className="controls-action-desc">
+                    {isUk ? 'Зум камери (наближення)' : 'Zoom in / out'}
+                  </span>
+                </div>
+              </div>
+
+              {/* 3. Interaction & Map */}
+              <div className="controls-category-section">
+                <span className="controls-category-name">
+                  {isUk ? 'Взаємодія та карта' : 'Actions & Map'}
+                </span>
+
+                <div className="controls-item-row">
+                  <div className="controls-keys-group">
+                    <kbd className="ctrl-key accent">E</kbd>
+                  </div>
+                  <span className="controls-action-desc">
+                    {isUk ? 'Вхід у портали та відкриття резюме' : 'Enter portals & inspect exhibits'}
+                  </span>
+                </div>
+
+                <div className="controls-item-row">
+                  <div className="controls-keys-group">
+                    <span className="controls-touch-badge">
+                      <Map size={12} />
+                      {isUk ? 'Кнопка під радаром' : 'Radar Button'}
+                    </span>
+                  </div>
+                  <span className="controls-action-desc">
+                    {isUk ? 'Тактична карта острова' : 'Tactical island map'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tab 2: Desktop Keyboard & Mouse Controls */}
+          {activeTab === 'keyboard' && (
+            <div className="controls-categories-list">
+              {/* 1. Movement */}
+              <div className="controls-category-section">
+                <span className="controls-category-name">
+                  {isUk ? 'Переміщення' : 'Movement'}
+                </span>
+                <div className="controls-item-row">
+                  <div className="controls-keys-group">
+                    <kbd className="ctrl-key">W</kbd>
+                    <kbd className="ctrl-key">A</kbd>
+                    <kbd className="ctrl-key">S</kbd>
+                    <kbd className="ctrl-key">D</kbd>
+                  </div>
+                  <span className="controls-action-desc">
+                    {isUk ? 'Рух персонажа' : 'Move character'}
+                  </span>
+                </div>
+
+                <div className="controls-item-row">
+                  <div className="controls-keys-group">
+                    <kbd className="ctrl-key">Shift</kbd>
+                  </div>
+                  <span className="controls-action-desc">
+                    {isUk ? 'Спринт (швидкий біг)' : 'Sprint (run faster)'}
+                  </span>
+                </div>
+
+                <div className="controls-item-row">
+                  <div className="controls-keys-group">
+                    <kbd className="ctrl-key wide">{isUk ? 'Пробіл' : 'Space'}</kbd>
+                  </div>
+                  <span className="controls-action-desc">
+                    {isUk ? 'Стрибок' : 'Jump'}
+                  </span>
+                </div>
+              </div>
+
+              {/* 2. Camera */}
+              <div className="controls-category-section">
+                <span className="controls-category-name">
+                  {isUk ? 'Огляд та камера' : 'Camera & Orbit'}
+                </span>
+                <div className="controls-item-row">
+                  <div className="controls-keys-group">
+                    <MousePointer size={13} className="controls-inline-icon" />
+                    <span className="controls-mouse-badge">
+                      {isUk ? 'ПКМ / ЛКМ + Рух' : 'RMB / LMB + Drag'}
+                    </span>
+                  </div>
+                  <span className="controls-action-desc">
+                    {isUk ? 'Обертання камери на 360°' : '360° Camera orbit'}
+                  </span>
+                </div>
+
+                <div className="controls-item-row">
+                  <div className="controls-keys-group">
+                    <span className="controls-mouse-badge">
+                      {isUk ? 'Коліщатко' : 'Mouse Wheel'}
+                    </span>
+                  </div>
+                  <span className="controls-action-desc">
+                    {isUk ? 'Зум камери (наближення)' : 'Zoom in / out'}
+                  </span>
+                </div>
+              </div>
+
+              {/* 3. Actions & Hotkeys */}
+              <div className="controls-category-section">
+                <span className="controls-category-name">
+                  {isUk ? 'Інтерактивність та меню' : 'Actions & Menus'}
+                </span>
+                <div className="controls-item-row">
+                  <div className="controls-keys-group">
+                    <kbd className="ctrl-key accent">E</kbd>
+                  </div>
+                  <span className="controls-action-desc">
+                    {isUk ? 'Взаємодія з порталами та статуями' : 'Interact with portals & shrines'}
+                  </span>
+                </div>
+
+                <div className="controls-item-row">
+                  <div className="controls-keys-group">
+                    <kbd className="ctrl-key">M</kbd>
+                  </div>
+                  <span className="controls-action-desc">
+                    {isUk ? 'Тактична карта острова' : 'Tactical island map'}
+                  </span>
+                </div>
+
+                <div className="controls-item-row">
+                  <div className="controls-keys-group">
+                    <kbd className="ctrl-key">H</kbd>
+                  </div>
+                  <span className="controls-action-desc">
+                    {isUk ? 'Згорнути / розгорнути підказку' : 'Toggle this guide'}
+                  </span>
+                </div>
+
+                <div className="controls-item-row">
+                  <div className="controls-keys-group">
+                    <kbd className="ctrl-key">Esc</kbd>
+                  </div>
+                  <span className="controls-action-desc">
+                    {isUk ? 'Закрити активне вікно' : 'Close active modal'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
   );
 }
+
