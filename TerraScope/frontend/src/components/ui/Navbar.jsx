@@ -30,29 +30,14 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="glass-panel" style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        height: '56px',
-        zIndex: 100,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 24px',
-        borderRadius: 0,
-        borderTop: 'none',
-        borderLeft: 'none',
-        borderRight: 'none'
-      }}>
+      <nav className="glass-panel navbar-container">
         {/* Brand Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <GlobeIcon size={24} color="var(--accent)" />
-          <span className="gradient-text" style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.5px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+          <GlobeIcon size={22} color="var(--accent)" style={{ flexShrink: 0 }} />
+          <span className="gradient-text" style={{ fontSize: '1.15rem', fontWeight: 800, letterSpacing: '-0.5px', whiteSpace: 'nowrap' }}>
             TerraScope
           </span>
-          <span className="badge badge-accent" style={{ marginLeft: '4px', fontSize: '0.7rem' }}>
+          <span className="badge badge-accent hide-on-mobile" style={{ marginLeft: '4px', fontSize: '0.7rem' }}>
             LIVE 3D
           </span>
         </div>
@@ -64,10 +49,10 @@ export default function Navbar() {
           transform: 'translateX(-50%)',
           display: 'flex',
           alignItems: 'center',
-          background: 'rgba(255, 255, 255, 0.05)',
+          background: 'rgba(255, 255, 255, 0.06)',
           border: '1px solid var(--border-glass)',
           borderRadius: '20px',
-          padding: '3px'
+          padding: '2px'
         }}>
           {[
             { id: 'day', label: 'Day', icon: Sun, title: 'Daytime Surface Map' },
@@ -86,41 +71,48 @@ export default function Navbar() {
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '6px',
-                  padding: '4px 12px',
+                  gap: '5px',
+                  padding: '4px 8px',
                   borderRadius: '16px',
                   border: 'none',
-                  fontSize: '0.78rem',
+                  fontSize: '0.76rem',
                   fontWeight: 500,
                   cursor: 'pointer',
                   background: isActive ? 'var(--accent)' : 'transparent',
                   color: isActive ? '#fff' : 'var(--text-secondary)'
                 }}
               >
-                <Icon size={14} /> {mode.label}
+                <Icon size={14} style={{ flexShrink: 0 }} />
+                <span className="hide-on-mobile">{mode.label}</span>
               </button>
             );
           })}
         </div>
 
         {/* Right Actions & Auth */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
           {mounted && user && (
             <button
               className="btn-ghost"
               onClick={() => setViewsModalOpen(true)}
-              style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem' }}
+              title="Saved Views"
+              style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', padding: '6px 8px' }}
             >
               <Bookmark size={16} color="var(--warning)" />
-              Saved Views
+              <span className="hide-on-mobile">Saved Views</span>
             </button>
           )}
 
           {mounted && user ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <div 
+                title={user.email}
+                style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.82rem', color: 'var(--text-secondary)' }}
+              >
                 <User size={16} color="var(--accent)" />
-                <span>{user.email}</span>
+                <span className="hide-on-mobile" style={{ maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {user.email}
+                </span>
               </div>
               <button
                 className="btn-ghost"
@@ -135,10 +127,11 @@ export default function Navbar() {
             <button
               className="btn-primary"
               onClick={() => setAuthModalOpen(true)}
-              style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+              title="Sign In"
+              style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '6px 10px', fontSize: '0.82rem' }}
             >
-              <LogIn size={16} />
-              Sign In
+              <LogIn size={15} />
+              <span className="hide-on-mobile">Sign In</span>
             </button>
           )}
         </div>

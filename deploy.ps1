@@ -1,32 +1,31 @@
 param (
-    [Parameter(Mandatory=True, Position=0)]
+    [Parameter(Mandatory=$true, Position=0)]
     [ValidateSet("aetheria", "terrascope", "forma", "lumina", "all")]
-    [string]
+    [string]$Target
 )
 
-function Deploy-Subtree (, , ) {
-    Write-Host "
-?? Deploying  () to ..." -ForegroundColor Cyan
-     = "deploy-tmp-" + [System.Guid]::NewGuid().ToString().Substring(0, 8)
+function Deploy-Subtree ($name, $prefix, $remote) {
+    Write-Host "`n🚀 Deploying $name ($prefix) to $remote..." -ForegroundColor Cyan
+    $tempBranch = "deploy-tmp-" + [System.Guid]::NewGuid().ToString().Substring(0, 8)
     
     try {
-        Write-Host "?? Splitting subtree for ..." -ForegroundColor DarkGray
-        git subtree split --prefix  -b 
+        Write-Host "📦 Splitting subtree for $prefix..." -ForegroundColor DarkGray
+        git subtree split --prefix $prefix -b $tempBranch
         
-        Write-Host "?? Pushing to Heroku ()..." -ForegroundColor Yellow
-        git -c credential.helper= push  ":main" --force
+        Write-Host "⚡ Pushing to Heroku ($remote)..." -ForegroundColor Yellow
+        git -c credential.helper= push $remote "${tempBranch}:main" --force
         
-        Write-Host "? Successfully deployed  to Heroku!" -ForegroundColor Green
+        Write-Host "✅ Successfully deployed $name to Heroku!" -ForegroundColor Green
     }
     catch {
-        Write-Host "? Error deploying  : " -ForegroundColor Red
+        Write-Host "❌ Error deploying $name : $_" -ForegroundColor Red
     }
     finally {
-        git branch -D  2>
+        git branch -D $tempBranch 2>$null
     }
 }
 
-switch () {
+switch ($Target) {
     "aetheria" {
         Deploy-Subtree "Aetheria (Hub)" "Aetheria" "heroku"
     }
@@ -44,7 +43,6 @@ switch () {
         Deploy-Subtree "TerraScope" "TerraScope/frontend" "heroku-terrascope"
         Deploy-Subtree "Forma-3D" "Forma-3D/frontend" "heroku-forma"
         Deploy-Subtree "Lumina" "Lumina/frontend" "heroku-lumina"
-        Write-Host "
-?? All 4 projects deployed successfully!" -ForegroundColor Green
+        Write-Host "`n🎉 All 4 projects deployed successfully!" -ForegroundColor Green
     }
 }

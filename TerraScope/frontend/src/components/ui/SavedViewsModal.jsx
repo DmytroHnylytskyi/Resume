@@ -133,12 +133,12 @@ export default function SavedViewsModal({ onClose }) {
         exit={{ scale: 0.9, opacity: 0 }}
         className="glass-panel"
         style={{
-          width: '440px',
-          padding: '24px',
+          width: 'min(440px, calc(100vw - 32px))',
+          padding: '20px 16px',
           display: 'flex',
           flexDirection: 'column',
-          gap: '20px',
-          maxHeight: '80vh'
+          gap: '16px',
+          maxHeight: '85dvh'
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

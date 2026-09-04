@@ -17,6 +17,15 @@ export const metadata = {
   description: "Explore real-time global data on an interactive 3D globe — earthquakes, flights, weather, country statistics, and near-Earth objects.",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
+  themeColor: "#0a0a1a",
+};
+
 /**
  * Root Layout Shell component.
  * @param {{children: React.ReactNode}} props

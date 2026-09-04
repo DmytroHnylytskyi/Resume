@@ -6,7 +6,7 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Activity, Plane, Thermometer, Rocket, 
@@ -28,6 +28,15 @@ export default function LayerPanel() {
   } = useStore();
 
   const [expandedLayer, setExpandedLayer] = useState(null);
+
+  // Auto-collapse layer panel on mobile viewport upon initial load so globe is visible
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      if (useStore.getState().layerPanelOpen) {
+        useStore.getState().toggleLayerPanel();
+      }
+    }
+  }, []);
 
   const activeCount = Object.values(layers).filter(l => l.enabled).length;
 
@@ -98,7 +107,7 @@ export default function LayerPanel() {
   };
 
   return (
-    <div style={{ position: 'fixed', left: '20px', top: '80px', zIndex: 90 }}>
+    <div style={{ position: 'fixed', left: '14px', top: 'calc(60px + var(--sat))', zIndex: 90 }}>
       <AnimatePresence mode="wait">
         {layerPanelOpen ? (
           <motion.div
@@ -109,12 +118,14 @@ export default function LayerPanel() {
             transition={{ type: 'spring', damping: 25, stiffness: 220 }}
             className="glass-panel"
             style={{ 
-              width: '300px', 
-              padding: '18px', 
+              width: 'min(300px, calc(100vw - 28px))', 
+              padding: '16px', 
               display: 'flex', 
               flexDirection: 'column', 
-              gap: '14px',
-              border: '1px solid var(--border-glass)'
+              gap: '12px',
+              border: '1px solid var(--border-glass)',
+              maxHeight: 'calc(100dvh - 80px - var(--sat))',
+              overflowY: 'auto'
             }}
           >
             {/* Panel Header with Integrated Collapse Button */}

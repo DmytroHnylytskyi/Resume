@@ -1,7 +1,7 @@
 :root {
   --bg-primary: #0a0a1a;
-  --bg-glass: rgba(15, 15, 35, 0.7);
-  --bg-glass-hover: rgba(25, 25, 55, 0.8);
+  --bg-glass: rgba(15, 15, 35, 0.75);
+  --bg-glass-hover: rgba(25, 25, 55, 0.85);
   --border-glass: rgba(100, 140, 255, 0.15);
   --text-primary: #e8eaff;
   --text-secondary: rgba(200, 210, 255, 0.6);
@@ -11,6 +11,10 @@
   --warning: #ffb84d;
   --success: #4dff91;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --sat: env(safe-area-inset-top, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+  --sar: env(safe-area-inset-right, 0px);
 }
 
 * {
@@ -22,11 +26,17 @@
 html,
 body {
   max-width: 100vw;
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
   overflow: hidden;
   background-color: var(--bg-primary);
   color: var(--text-primary);
   font-family: var(--font-sans);
-  height: 100%;
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 /* Glassmorphism Panel Utilities */
@@ -248,17 +258,103 @@ a, button, input, select {
   color: white;
 }
 
+/* Responsive visibility utilities */
+@media (max-width: 768px) {
+  .hide-on-mobile {
+    display: none !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .show-on-mobile-only {
+    display: none !important;
+  }
+}
+
+.navbar-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  border-radius: 0;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+}
+
+@media (max-width: 768px) {
+  .navbar-container {
+    height: calc(50px + var(--sat));
+    padding: var(--sat) 10px 0 10px;
+  }
+}
+
+/* Mobile Bottom Sheet & Pull Handle */
+.bottom-sheet {
+  border-radius: 20px 20px 0 0 !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.6) !important;
+}
+
+.sheet-handle-bar {
+  width: 38px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.25);
+  margin: 0 auto 10px auto;
+  cursor: grab;
+}
+
 /* Mobile Responsive Adjustments */
 @media (max-width: 768px) {
   .glass-panel {
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
   }
 
-  /* Make detail and layer panels responsive */
-  div[role="dialog"] {
-    width: calc(100vw - 32px) !important;
-    right: 16px !important;
-    max-height: 50vh !important;
+  /* Prevent iOS automatic zoom by ensuring input font size is >= 16px */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+
+  /* Touch buttons friendly sizing */
+  button, .btn-primary, .btn-ghost {
+    min-height: 38px;
+  }
+
+  .toggle-switch {
+    width: 44px;
+    height: 24px;
+  }
+
+  .toggle-switch::after {
+    width: 20px;
+    height: 20px;
+  }
+
+  .toggle-switch:checked::after {
+    transform: translateX(20px);
+  }
+
+  .detail-row {
+    padding: 10px 0;
+    font-size: 0.85rem;
+  }
+
+  .detail-label {
+    font-size: 0.82rem;
+  }
+
+  .detail-value {
+    font-size: 0.85rem;
+    max-width: 65%;
   }
 }

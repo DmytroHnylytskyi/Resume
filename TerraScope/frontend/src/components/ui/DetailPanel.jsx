@@ -6,7 +6,7 @@
 
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, Activity, Plane, Thermometer, Globe2, Rocket, 
@@ -281,6 +281,14 @@ function NeoDetail({ data }) {
  */
 export default function DetailPanel() {
   const { selectedItem, detailPanelOpen, clearSelection } = useStore();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Keyboard navigation listener (Escape key closes panel)
   useEffect(() => {
@@ -301,32 +309,53 @@ export default function DetailPanel() {
     <AnimatePresence>
       {detailPanelOpen && (
         <motion.div
-          initial={{ x: 350, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: 350, opacity: 0 }}
-          transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-          className="glass-panel"
+          initial={isMobile ? { y: '100%', opacity: 0 } : { x: 350, opacity: 0 }}
+          animate={isMobile ? { y: 0, opacity: 1 } : { x: 0, opacity: 1 }}
+          exit={isMobile ? { y: '100%', opacity: 0 } : { x: 350, opacity: 0 }}
+          transition={{ type: 'spring', damping: 28, stiffness: 220 }}
+          className={`glass-panel ${isMobile ? 'bottom-sheet' : ''}`}
           role="dialog"
           aria-label={`${type} inspection details`}
-          style={{
+          style={isMobile ? {
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            width: '100vw',
+            maxHeight: '75dvh',
+            padding: '12px 18px max(18px, var(--sab)) 18px',
+            zIndex: 110,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '12px',
+            overflowY: 'auto'
+          } : {
             position: 'fixed',
             right: '20px',
-            top: '80px',
+            top: 'calc(64px + var(--sat))',
             width: '320px',
             padding: '20px',
             zIndex: 90,
             display: 'flex',
             flexDirection: 'column',
             gap: '12px',
-            maxHeight: 'calc(100vh - 120px)',
+            maxHeight: 'calc(100dvh - 100px - var(--sat))',
             overflowY: 'auto'
           }}
         >
+          {isMobile && (
+            <div 
+              className="sheet-handle-bar" 
+              onClick={clearSelection} 
+              title="Close sheet" 
+            />
+          )}
+
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-glass)', paddingBottom: '10px' }}>
             <h2 style={{ fontSize: '1.05rem', fontWeight: 600, textTransform: 'capitalize', color: 'var(--text-primary)' }}>
               {type} Inspection
             </h2>
-            <button className="btn-ghost" onClick={clearSelection} aria-label="Close detail panel" style={{ padding: '4px', borderRadius: '50%' }}>
+            <button className="btn-ghost" onClick={clearSelection} aria-label="Close detail panel" style={{ padding: '6px', borderRadius: '50%' }}>
               <X size={18} />
             </button>
           </div>

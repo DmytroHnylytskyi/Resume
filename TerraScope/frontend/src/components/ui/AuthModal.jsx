@@ -109,11 +109,13 @@ export default function AuthModal({ onClose }) {
         exit={{ scale: 0.9, opacity: 0 }}
         className="glass-panel"
         style={{
-          width: '380px',
-          padding: '28px',
+          width: 'min(380px, calc(100vw - 32px))',
+          padding: '24px 20px',
           display: 'flex',
           flexDirection: 'column',
-          gap: '20px'
+          gap: '16px',
+          maxHeight: '90dvh',
+          overflowY: 'auto'
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
