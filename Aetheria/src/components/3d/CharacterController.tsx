@@ -387,10 +387,6 @@ export default function CharacterController({
       <CapsuleCollider args={[0.54, 0.30]} position={[0, 0.84, 0]} friction={0.8} />
 
       <group ref={avatarGroupRef} position={[0, 0, 0]} rotation={[0, Math.PI, 0]}>
-        {/* Soft Camera-facing Fill & Rim Light for crisp character visibility in twilight */}
-        <pointLight position={[0, 1.8, 2.2]} intensity={2.4} distance={8} decay={1.8} color="#ede9fe" />
-        <pointLight position={[0, 1.2, -1.8]} intensity={1.2} distance={6} decay={1.8} color="#fef3c7" />
-
         <CharacterErrorBoundary fallback={<CharacterFallback />}>
           <Suspense fallback={<CharacterFallback />}>
             <AnimatedCharacter
