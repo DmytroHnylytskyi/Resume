@@ -1,0 +1,17 @@
+﻿{
+  "name": "Aetheria 3D Portfolio — Dmytro Hnylytskyi",
+  "short_name": "Aetheria 3D",
+  "description": "Interactive 3D WebGL Portfolio & Resume of Full-Stack & 3D Web Developer",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#07050d",
+  "theme_color": "#07050d",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}

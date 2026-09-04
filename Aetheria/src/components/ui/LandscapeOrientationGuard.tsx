@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useGameStore } from '../../store/useGameStore';
-import { Smartphone, FileText, Maximize, RotateCcw } from 'lucide-react';
+import { Smartphone, FileText, Maximize, RotateCcw, Info } from 'lucide-react';
 
 /**
  * LandscapeOrientationGuard
@@ -17,6 +17,8 @@ export default function LandscapeOrientationGuard(): React.ReactElement | null {
   const [isTouchDevice, setIsTouchDevice] = useState(false);
   const [isPortrait, setIsPortrait] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
+  const [showIOSHint, setShowIOSHint] = useState(false);
 
   useEffect(() => {
     const checkOrientation = () => {
@@ -34,6 +36,12 @@ export default function LandscapeOrientationGuard(): React.ReactElement | null {
         (document as unknown as { webkitFullscreenElement?: Element }).webkitFullscreenElement
       );
       setIsFullscreen(fullscreenActive);
+
+      const ios =
+        typeof navigator !== 'undefined' &&
+        (/iPhone|iPad|iPod/.test(navigator.userAgent) ||
+          (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1));
+      setIsIOS(ios);
     };
 
     checkOrientation();
@@ -47,22 +55,33 @@ export default function LandscapeOrientationGuard(): React.ReactElement | null {
   }, []);
 
   const handleToggleFullscreen = () => {
+    if (isIOS) {
+      setShowIOSHint((prev) => !prev);
+      return;
+    }
+
     try {
       const docEl = document.documentElement as HTMLElement & {
         webkitRequestFullscreen?: () => Promise<void>;
       };
       if (!document.fullscreenElement) {
         if (docEl.requestFullscreen) {
-          docEl.requestFullscreen().catch(() => {});
+          docEl.requestFullscreen().catch(() => {
+            setShowIOSHint(true);
+          });
         } else if (docEl.webkitRequestFullscreen) {
           docEl.webkitRequestFullscreen();
+        } else {
+          setShowIOSHint(true);
         }
       } else {
         if (document.exitFullscreen) {
           document.exitFullscreen().catch(() => {});
         }
       }
-    } catch (_) {}
+    } catch (_) {
+      setShowIOSHint(true);
+    }
   };
 
   const handleSwitchToClassic = () => {
@@ -103,14 +122,22 @@ export default function LandscapeOrientationGuard(): React.ReactElement | null {
 
         {/* Action Buttons */}
         <div className="orientation-actions-group">
-          {/* Optional Fullscreen Toggle */}
+          {/* Fullscreen Toggle / iOS Guidance Button */}
           <button
             className="orientation-btn secondary"
             onClick={handleToggleFullscreen}
             title={isUk ? 'Розгорнути на весь екран' : 'Toggle Fullscreen'}
           >
-            <Maximize size={16} />
-            <span>{isUk ? 'На весь екран' : 'Fullscreen Mode'}</span>
+            {isIOS ? <Info size={16} /> : <Maximize size={16} />}
+            <span>
+              {isIOS
+                ? isUk
+                  ? 'Повний екран на iPhone'
+                  : 'Fullscreen on iPhone'
+                : isUk
+                ? 'На весь екран'
+                : 'Fullscreen Mode'}
+            </span>
           </button>
 
           {/* Quick Fallback to Vertical Classic Resume */}
@@ -122,6 +149,33 @@ export default function LandscapeOrientationGuard(): React.ReactElement | null {
             <span>{isUk ? 'Читати вертикально як Резюме' : 'Read Vertically as Resume'}</span>
           </button>
         </div>
+
+        {/* iOS Specific Fullscreen Guidance Card */}
+        {showIOSHint && (
+          <div className="ios-fullscreen-hint-box">
+            <p className="ios-hint-title">
+              {isUk ? '💡 Як прибрати рамки на iPhone:' : '💡 How to remove bars on iPhone:'}
+            </p>
+            <div className="ios-hint-item">
+              <span className="ios-hint-num">1</span>
+              <span>
+                <strong>{isUk ? 'У Safari:' : 'In Safari:'}</strong>{' '}
+                {isUk
+                  ? 'натисніть «aA» зліва в адресному рядку ➔ «Сховати панель інструментів».'
+                  : 'tap «aA» in the address bar ➔ «Hide Toolbar».'}
+              </span>
+            </div>
+            <div className="ios-hint-item">
+              <span className="ios-hint-num">2</span>
+              <span>
+                <strong>{isUk ? 'Без рамок (PWA):' : 'Border-free (PWA):'}</strong>{' '}
+                {isUk
+                  ? 'натисніть «Поділитися» ➔ «На початковий екран» (запуск як додаток).'
+                  : 'tap «Share» ➔ «Add to Home Screen» (launches as native app).'}
+              </span>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -7,12 +7,18 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: 'cover',
-  themeColor: '#000000'
+  themeColor: '#07050d'
 };
 
 export const metadata: Metadata = {
   title: 'Aetheria 3D — Портфоліо Дмитра Гнилицького',
-  description: 'Інтерактивне 3D-портфоліо та резюме Full-Stack & 3D Web розробника'
+  description: 'Інтерактивне 3D-портфоліо та резюме Full-Stack & 3D Web розробника',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'Aetheria 3D'
+  }
 };
 
 export default function RootLayout({
