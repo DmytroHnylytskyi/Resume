@@ -5,20 +5,20 @@ param (
 )
 
 function Deploy-Subtree ($name, $prefix, $remote) {
-    Write-Host "`n🚀 Deploying $name ($prefix) to $remote..." -ForegroundColor Cyan
+    Write-Host "`n>> Deploying $name ($prefix) to $remote..." -ForegroundColor Cyan
     $tempBranch = "deploy-tmp-" + [System.Guid]::NewGuid().ToString().Substring(0, 8)
     
     try {
-        Write-Host "📦 Splitting subtree for $prefix..." -ForegroundColor DarkGray
+        Write-Host ">> Splitting subtree for $prefix..." -ForegroundColor DarkGray
         git subtree split --prefix $prefix -b $tempBranch
         
-        Write-Host "⚡ Pushing to Heroku ($remote)..." -ForegroundColor Yellow
+        Write-Host ">> Pushing to Heroku ($remote)..." -ForegroundColor Yellow
         git -c credential.helper= push $remote "${tempBranch}:main" --force
         
-        Write-Host "✅ Successfully deployed $name to Heroku!" -ForegroundColor Green
+        Write-Host "OK: Successfully deployed $name to Heroku!" -ForegroundColor Green
     }
     catch {
-        Write-Host "❌ Error deploying $name : $_" -ForegroundColor Red
+        Write-Host "ERROR: Error deploying $name : $_" -ForegroundColor Red
     }
     finally {
         git branch -D $tempBranch 2>$null
@@ -43,6 +43,6 @@ switch ($Target) {
         Deploy-Subtree "TerraScope" "TerraScope/frontend" "heroku-terrascope"
         Deploy-Subtree "Forma-3D" "Forma-3D/frontend" "heroku-forma"
         Deploy-Subtree "Lumina" "Lumina/frontend" "heroku-lumina"
-        Write-Host "`n🎉 All 4 projects deployed successfully!" -ForegroundColor Green
+        Write-Host "`nAll 4 projects deployed successfully!" -ForegroundColor Green
     }
 }
