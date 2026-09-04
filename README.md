@@ -17,7 +17,7 @@ This repository contains a monorepo ecosystem of 4 full-stack applications showc
 - **Status:** Open for Opportunities
 - **GitHub:** [https://github.com/DmytroHnylytskyi](https://github.com/DmytroHnylytskyi)
 - **Telegram:** [@mokydjin](https://t.me/mokydjin)
-- **Email:** dmitrijgnilickij7@gmail.com
+- **Email:** hnylytskyidmitri@gmail.com
 
 ---
 
@@ -142,7 +142,7 @@ uvicorn app.main:app --reload --port 8003
 - **Статус:** Відкритий до пропозицій
 - **GitHub:** [https://github.com/DmytroHnylytskyi](https://github.com/DmytroHnylytskyi)
 - **Telegram:** [@mokydjin](https://t.me/mokydjin)
-- **Email:** dmitrijgnilickij7@gmail.com
+- **Email:** hnylytskyidmitri@gmail.com
 
 ---
 

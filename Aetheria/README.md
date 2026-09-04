@@ -140,7 +140,7 @@ npm start
 - **Author:** Dmytro Hnylytskyi
 - **GitHub:** [https://github.com/DmytroHnylytskyi](https://github.com/DmytroHnylytskyi)
 - **Telegram:** [@mokydjin](https://t.me/mokydjin)
-- **Email:** dmitrijgnilickij7@gmail.com
+- **Email:** hnylytskyidmitri@gmail.com
 
 ---
 
@@ -239,7 +239,7 @@ npm start
 - **Автор:** Дмитро Гнилицький
 - **GitHub:** [https://github.com/DmytroHnylytskyi](https://github.com/DmytroHnylytskyi)
 - **Telegram:** [@mokydjin](https://t.me/mokydjin)
-- **Email:** dmitrijgnilickij7@gmail.com
+- **Email:** hnylytskyidmitri@gmail.com
 
 
 

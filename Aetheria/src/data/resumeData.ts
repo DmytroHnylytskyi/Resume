@@ -129,7 +129,7 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
       }
     ],
     contacts: {
-      email: "dmitrijgnilickij7@gmail.com",
+      email: "hnylytskyidmitri@gmail.com",
       telegram: "https://t.me/mokydjin",
       github: "https://github.com/DmytroHnylytskyi"
     },
@@ -299,7 +299,7 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
       }
     ],
     contacts: {
-      email: "dmitrijgnilickij7@gmail.com",
+      email: "hnylytskyidmitri@gmail.com",
       telegram: "https://t.me/mokydjin",
       github: "https://github.com/DmytroHnylytskyi"
     },
