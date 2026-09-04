@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react';
 import { useGameStore } from '../../store/useGameStore';
-import { developerProfiles, translations } from '../../data/resumeData';
+import { developerProfiles, translations, getProjectUrl } from '../../data/resumeData';
 import { X, ExternalLink, Sparkles, Layers, Box } from 'lucide-react';
 
 function GithubIcon({ size = 16 }: { size?: number }) {
@@ -112,7 +112,7 @@ export default function ProjectModal(): React.ReactElement | null {
         <div className="modal-footer project-modal-footer">
           {project.url && (
             <a
-              href={project.url}
+              href={getProjectUrl(project.id, project.url)}
               target="_blank"
               rel="noopener noreferrer"
               className="modal-action-btn primary"

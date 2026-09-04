@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useGameStore } from '../../store/useGameStore';
-import { developerProfiles, translations } from '../../data/resumeData';
+import { developerProfiles, translations, getProjectUrl } from '../../data/resumeData';
 import {
   Compass,
   Mail,
@@ -322,7 +322,7 @@ export default function ClassicLandingView(): React.ReactElement {
 
                     {proj.url && (
                       <a
-                        href={proj.url}
+                        href={getProjectUrl(proj.id, proj.url)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="project-btn secondary"

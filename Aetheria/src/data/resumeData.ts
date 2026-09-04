@@ -1,8 +1,32 @@
 import { DeveloperProfile, Locale, Translations } from '../types/portfolio';
 
-const FORMA_URL = process.env.NEXT_PUBLIC_FORMA_URL || "http://localhost:3001";
-const TERRASCOPE_URL = process.env.NEXT_PUBLIC_TERRASCOPE_URL || "http://localhost:3002";
-const LUMINA_URL = process.env.NEXT_PUBLIC_LUMINA_URL || "http://localhost:3003";
+const FORMA_URL = process.env.NEXT_PUBLIC_FORMA_URL || "https://forma.hnylytskyi.dev";
+const TERRASCOPE_URL = process.env.NEXT_PUBLIC_TERRASCOPE_URL || "https://terrascope.hnylytskyi.dev";
+const LUMINA_URL = process.env.NEXT_PUBLIC_LUMINA_URL || "https://lumina.hnylytskyi.dev";
+
+export function getProjectUrl(projectId: string, fallbackUrl?: string): string {
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    // Local development
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      if (projectId === 'forma') return 'http://localhost:3001';
+      if (projectId === 'terrascope') return 'http://localhost:3002';
+      if (projectId === 'lumina') return 'http://localhost:3003';
+    }
+    // Heroku fallback domains
+    if (hostname.includes('herokuapp.com')) {
+      if (projectId === 'forma') return 'https://hnylytskyi-forma.herokuapp.com';
+      if (projectId === 'terrascope') return 'https://hnylytskyi-terrascope.herokuapp.com';
+      if (projectId === 'lumina') return 'https://hnylytskyi-lumina.herokuapp.com';
+    }
+  }
+  // Production custom domains
+  if (projectId === 'forma') return process.env.NEXT_PUBLIC_FORMA_URL || 'https://forma.hnylytskyi.dev';
+  if (projectId === 'terrascope') return process.env.NEXT_PUBLIC_TERRASCOPE_URL || 'https://terrascope.hnylytskyi.dev';
+  if (projectId === 'lumina') return process.env.NEXT_PUBLIC_LUMINA_URL || 'https://lumina.hnylytskyi.dev';
+  return fallbackUrl || '#';
+}
+
 
 export const developerProfiles: Record<Locale, DeveloperProfile> = {
   uk: {
