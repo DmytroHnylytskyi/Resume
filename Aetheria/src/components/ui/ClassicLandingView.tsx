@@ -77,29 +77,35 @@ export default function ClassicLandingView(): React.ReactElement {
         </nav>
 
         <div className="classic-header-actions">
-          {/* Theme Toggle */}
-          <button
-            className="nav-shortcut-btn theme-toggle-btn"
-            onClick={toggleTheme}
-            title={theme === 'dark' ? (language === 'uk' ? 'Світла тема' : 'Light Mode') : (language === 'uk' ? 'Темна тема' : 'Dark Mode')}
-          >
-            {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
-          </button>
+          {/* Unified Controls Cluster: Theme Toggle + Language Switcher */}
+          <div className="header-controls-cluster">
+            {/* Theme Toggle */}
+            <button
+              className="nav-shortcut-btn theme-toggle-btn"
+              onClick={toggleTheme}
+              title={theme === 'dark' ? (language === 'uk' ? 'Світла тема' : 'Light Mode') : (language === 'uk' ? 'Темна тема' : 'Dark Mode')}
+              aria-label={theme === 'dark' ? 'Toggle light mode' : 'Toggle dark mode'}
+            >
+              {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
+            </button>
 
-          {/* Language Switcher */}
-          <div className="lang-toggle-group mini">
-            <button
-              className={`lang-btn ${language === 'uk' ? 'active' : ''}`}
-              onClick={() => setLanguage('uk')}
-            >
-              UA
-            </button>
-            <button
-              className={`lang-btn ${language === 'en' ? 'active' : ''}`}
-              onClick={() => setLanguage('en')}
-            >
-              EN
-            </button>
+            {/* Language Switcher */}
+            <div className="lang-toggle-group mini">
+              <button
+                className={`lang-btn ${language === 'uk' ? 'active' : ''}`}
+                onClick={() => setLanguage('uk')}
+                aria-label="Українська версія"
+              >
+                UA
+              </button>
+              <button
+                className={`lang-btn ${language === 'en' ? 'active' : ''}`}
+                onClick={() => setLanguage('en')}
+                aria-label="English version"
+              >
+                EN
+              </button>
+            </div>
           </div>
 
           {/* Switch back to 3D World */}
@@ -108,8 +114,9 @@ export default function ClassicLandingView(): React.ReactElement {
             onClick={() => setViewMode('3d')}
             title={navT.view3D}
           >
-            <Compass size={16} />
-            <span>{t.viewIn3D}</span>
+            <Compass size={15} />
+            <span className="switch-3d-text-full">{t.viewIn3D}</span>
+            <span className="switch-3d-text-compact">3D</span>
           </button>
         </div>
       </header>

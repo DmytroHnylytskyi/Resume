@@ -132,31 +132,33 @@ export default function ControlsHUD(): React.ReactElement {
           {/* Expandable Controls Guide Dropdown */}
           <ControlsGuideDropdown />
 
-          {/* Theme Toggle */}
-          <button
-            className="nav-shortcut-btn theme-toggle-btn"
-            onClick={toggleTheme}
-            title={theme === 'dark' ? (language === 'uk' ? 'Світла тема' : 'Light Mode') : (language === 'uk' ? 'Темна тема' : 'Dark Mode')}
-          >
-            {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
-          </button>
+          {/* Controls Cluster: Theme Toggle + Language Switcher */}
+          <div className="header-controls-cluster">
+            <button
+              className="nav-shortcut-btn theme-toggle-btn"
+              onClick={toggleTheme}
+              title={theme === 'dark' ? (language === 'uk' ? 'Світла тема' : 'Light Mode') : (language === 'uk' ? 'Темна тема' : 'Dark Mode')}
+              aria-label={theme === 'dark' ? 'Toggle light mode' : 'Toggle dark mode'}
+            >
+              {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
+            </button>
 
-          {/* Language Switcher */}
-          <div className="lang-toggle-group mini">
-            <button
-              className={`lang-btn ${language === 'uk' ? 'active' : ''}`}
-              onClick={() => setLanguage('uk')}
-              title="Українська"
-            >
-              UA
-            </button>
-            <button
-              className={`lang-btn ${language === 'en' ? 'active' : ''}`}
-              onClick={() => setLanguage('en')}
-              title="English"
-            >
-              EN
-            </button>
+            <div className="lang-toggle-group mini">
+              <button
+                className={`lang-btn ${language === 'uk' ? 'active' : ''}`}
+                onClick={() => setLanguage('uk')}
+                title="Українська"
+              >
+                UA
+              </button>
+              <button
+                className={`lang-btn ${language === 'en' ? 'active' : ''}`}
+                onClick={() => setLanguage('en')}
+                title="English"
+              >
+                EN
+              </button>
+            </div>
           </div>
         </div>
       </header>
