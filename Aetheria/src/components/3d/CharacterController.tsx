@@ -387,14 +387,113 @@ export default function CharacterController({
       <CapsuleCollider args={[0.54, 0.30]} position={[0, 0.84, 0]} friction={0.8} />
 
       <group ref={avatarGroupRef} position={[0, 0, 0]} rotation={[0, Math.PI, 0]}>
-        <Suspense fallback={null}>
-          <AnimatedCharacter
-            isMoving={isMoving}
-            isSprinting={isSprinting}
-            isJumping={isJumping}
-          />
-        </Suspense>
+        <CharacterErrorBoundary fallback={<CharacterFallback />}>
+          <Suspense fallback={<CharacterFallback />}>
+            <AnimatedCharacter
+              isMoving={isMoving}
+              isSprinting={isSprinting}
+              isJumping={isJumping}
+            />
+          </Suspense>
+        </CharacterErrorBoundary>
       </group>
     </RigidBody>
   );
+}
+
+/**
+ * CharacterFallback
+ * 
+ * Stylized ethereal astral avatar rendered during asset loading or in the event
+ * of a network stall. Guarantees the player is never an invisible ghost.
+ */
+function CharacterFallback(): React.ReactElement {
+  const fallbackRef = useRef<THREE.Group>(null);
+  const ringRef = useRef<THREE.Mesh>(null);
+
+  useFrame((state, delta) => {
+    if (fallbackRef.current) {
+      fallbackRef.current.position.y = Math.sin(state.clock.elapsedTime * 4) * 0.04;
+    }
+    if (ringRef.current) {
+      ringRef.current.rotation.z += delta * 1.2;
+    }
+  });
+
+  return (
+    <group ref={fallbackRef} position={[0, 0, 0]}>
+      {/* Astral Cloaked Robe */}
+      <mesh position={[0, 0.72, 0]}>
+        <cylinderGeometry args={[0.22, 0.38, 1.1, 16]} />
+        <meshStandardMaterial
+          color="#6366f1"
+          emissive="#4338ca"
+          emissiveIntensity={0.6}
+          roughness={0.4}
+          metalness={0.2}
+          transparent
+          opacity={0.88}
+        />
+      </mesh>
+
+      {/* Hooded Astral Head */}
+      <mesh position={[0, 1.40, 0]}>
+        <sphereGeometry args={[0.22, 16, 16]} />
+        <meshStandardMaterial
+          color="#a78bfa"
+          emissive="#8b5cf6"
+          emissiveIntensity={0.8}
+          roughness={0.3}
+          metalness={0.3}
+          transparent
+          opacity={0.92}
+        />
+      </mesh>
+
+      {/* Subtle Soul Core Light */}
+      <pointLight position={[0, 1.1, 0]} intensity={1.2} color="#a78bfa" distance={3} />
+
+      {/* Celestial Rune Ring at feet */}
+      <mesh ref={ringRef} position={[0, 0.05, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[0.35, 0.52, 24]} />
+        <meshBasicMaterial
+          color="#c084fc"
+          side={THREE.DoubleSide}
+          transparent
+          opacity={0.7}
+        />
+      </mesh>
+    </group>
+  );
+}
+
+/**
+ * CharacterErrorBoundary
+ * 
+ * Traps any 3D asset initialization or parsing errors to prevent canvas crashing
+ * and displays the resilient fallback avatar.
+ */
+class CharacterErrorBoundary extends React.Component<
+  { children: React.ReactNode; fallback: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode; fallback: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: unknown) {
+    console.warn('AnimatedCharacter load error, using fallback avatar:', error);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
 }

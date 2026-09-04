@@ -45,7 +45,7 @@ export default function LoadingScreen(): React.ReactElement | null {
     }
   }, [displayProgress, progress, active, loaded, total, setSceneLoaded]);
 
-  // Safety fallback: if all assets were cached and queue was empty, mark loaded after 3.5s
+  // Safety fallback: if all assets were cached and queue was empty, mark loaded after 8s
   useEffect(() => {
     const safetyTimer = setTimeout(() => {
       if (!isSceneLoaded) {
@@ -56,7 +56,7 @@ export default function LoadingScreen(): React.ReactElement | null {
         }, 400);
         return () => clearTimeout(doneTimer);
       }
-    }, 4000);
+    }, 8000);
     return () => clearTimeout(safetyTimer);
   }, [isSceneLoaded, setSceneLoaded]);
 
