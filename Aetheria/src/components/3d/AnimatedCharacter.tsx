@@ -37,9 +37,14 @@ export default function AnimatedCharacter({
     '/model/kaykit_halloween/Arissa_specular.png'
   ]);
 
-  // Configure texture color space and filtering
+  // Configure texture color space, wrapping, and filtering
+  [diffuseMap, normalMap, specularMap].forEach((tex) => {
+    tex.wrapS = THREE.RepeatWrapping;
+    tex.wrapT = THREE.RepeatWrapping;
+    tex.generateMipmaps = true;
+    tex.needsUpdate = true;
+  });
   diffuseMap.colorSpace = THREE.SRGBColorSpace;
-  diffuseMap.generateMipmaps = true;
   diffuseMap.minFilter = THREE.LinearMipmapLinearFilter;
   diffuseMap.magFilter = THREE.LinearFilter;
 
@@ -63,9 +68,10 @@ export default function AnimatedCharacter({
     const characterMaterial = new THREE.MeshStandardMaterial({
       map: diffuseMap,
       normalMap: normalMap,
+      normalScale: new THREE.Vector2(0.7, 0.7),
       roughnessMap: specularMap,
-      roughness: 0.5,
-      metalness: 0.25,
+      roughness: 0.65,
+      metalness: 0.15,
       side: THREE.FrontSide
     });
 
