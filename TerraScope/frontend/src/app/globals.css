@@ -271,6 +271,7 @@ a, button, input, select {
   }
 }
 
+/* Navbar Layout */
 .navbar-container {
   position: fixed;
   top: 0;
@@ -286,12 +287,118 @@ a, button, input, select {
   border-top: none;
   border-left: none;
   border-right: none;
+  gap: 12px;
 }
 
+.navbar-brand-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex-shrink: 0;
+}
+
+.navbar-brand-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  white-space: nowrap;
+}
+
+/* Center: Surface Switcher */
+.navbar-mode-switcher {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-glass);
+  border-radius: 20px;
+  padding: 2px;
+  z-index: 2;
+}
+
+.navbar-mode-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  border-radius: 16px;
+  border: none;
+  font-size: 0.76rem;
+  font-weight: 500;
+  cursor: pointer;
+  background: transparent;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+  min-height: auto;
+}
+
+.navbar-mode-btn.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.navbar-actions-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex-shrink: 0;
+}
+
+/* Mobile Adjustments for Navbar */
 @media (max-width: 768px) {
   .navbar-container {
-    height: calc(50px + var(--sat));
-    padding: var(--sat) 10px 0 10px;
+    height: calc(52px + var(--sat));
+    padding: var(--sat) max(10px, var(--sar)) 0 max(10px, var(--sal));
+    gap: 8px;
+  }
+
+  .navbar-brand-section {
+    gap: 6px;
+  }
+
+  .navbar-brand-title {
+    font-size: 1rem;
+  }
+
+  .navbar-mode-switcher {
+    position: static;
+    transform: none;
+    border-radius: 14px;
+    padding: 2px;
+    flex-shrink: 0;
+  }
+
+  .navbar-mode-btn {
+    padding: 5px 6px;
+    border-radius: 10px;
+    min-height: 28px !important;
+    height: 28px;
+  }
+
+  .navbar-actions-section .btn-primary,
+  .navbar-actions-section .btn-ghost {
+    min-height: 32px !important;
+    height: 32px;
+    padding: 0 10px;
+    border-radius: 9px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .navbar-container {
+    padding: var(--sat) 6px 0 6px;
+    gap: 4px;
+  }
+  .navbar-brand-title {
+    font-size: 0.92rem;
+  }
+  .navbar-mode-btn {
+    padding: 4px 5px;
   }
 }
 

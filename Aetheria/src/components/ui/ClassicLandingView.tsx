@@ -190,23 +190,34 @@ export default function ClassicLandingView(): React.ReactElement {
             </div>
 
             <div className="education-classic-card glass-panel">
-              <div className="education-classic-header">
-                <div className="edu-icon-circle">
-                  <GraduationCap size={22} />
-                </div>
-                <div className="edu-header-text">
-                  <h3 className="edu-classic-institution">{edu.institution}</h3>
-                  <p className="edu-classic-faculty">{edu.faculty}</p>
+              {/* Top Meta: Icon + Type Tag + Period */}
+              <div className="edu-classic-top">
+                <div className="edu-type-badge">
+                  <div className="edu-icon-circle">
+                    <GraduationCap size={16} />
+                  </div>
+                  <span className="edu-type-text">
+                    {language === 'uk' ? 'Вища освіта' : 'Higher Education'}
+                  </span>
                 </div>
                 <span className="edu-period-badge">{edu.period}</span>
               </div>
-              <div className="edu-classic-body">
-                <div className="edu-badge-row">
-                  <span className="edu-spec-tag">
-                    <Briefcase size={14} />
-                    <span>{edu.specialty}</span>
-                  </span>
-                  <span className="edu-status-tag">{edu.degree} • {edu.status}</span>
+
+              {/* Institution and Faculty Full-Width */}
+              <div className="edu-classic-main">
+                <h3 className="edu-classic-institution">{edu.institution}</h3>
+                <p className="edu-classic-faculty">{edu.faculty}</p>
+              </div>
+
+              {/* Footer: Specialty and Status */}
+              <div className="edu-classic-footer">
+                <div className="edu-spec-tag">
+                  <Briefcase size={14} />
+                  <span>{edu.specialty}</span>
+                </div>
+                <div className="edu-status-tag">
+                  <span className="edu-status-dot" />
+                  <span>{edu.degree} • {edu.status}</span>
                 </div>
               </div>
             </div>

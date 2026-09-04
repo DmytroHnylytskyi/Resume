@@ -7,7 +7,7 @@
  * UI overlay modals, bilingual EN/UK locale switcher button, and performance-optimized state management.
  */
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import ColorPicker from '../../components/ColorPicker';
 import AuthModal from '../../components/AuthModal';
@@ -45,6 +45,30 @@ export default function Home() {
   const tNav = useTranslations('Navbar');
   const tPlacement = useTranslations('Placement');
   
+  /** Device restriction state (phones and tablets restricted from 3D configurator) */
+  const [mounted, setMounted] = useState(false);
+  const [isRestricted, setIsRestricted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const checkRestricted = () => {
+      const ua = navigator.userAgent || '';
+      const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Tablet/i.test(ua);
+      const isIPadOS = /Macintosh/i.test(ua) && navigator.maxTouchPoints > 1;
+      const isTouchCoarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+      const isNarrowScreen = window.innerWidth <= 1024;
+      return isMobileUA || isIPadOS || (isTouchCoarse && isNarrowScreen);
+    };
+
+    setIsRestricted(checkRestricted());
+
+    const handleResize = () => {
+      setIsRestricted(checkRestricted());
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   /** Reference to hidden file input for JSON import */
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -117,6 +141,21 @@ export default function Home() {
     };
     reader.readAsText(file);
   };
+
+  // ── Dedicated View for Mobile Phones & Tablets (Strict Restriction) ──
+  // Neither WebGL 3D Canvas nor desktop UI headers are mounted in DOM
+  if (mounted && isRestricted) {
+    return (
+      <main className="device-restricted-viewport">
+        <MobileNoticeModal />
+      </main>
+    );
+  }
+
+  // Clean SSR / Hydration placeholder with matching theme background
+  if (!mounted) {
+    return <main className="device-restricted-viewport" />;
+  }
 
   return (
     <main className="main-viewport">
@@ -235,7 +274,6 @@ export default function Home() {
       </header>
       
       {/* Overlay Modals & Color Picker Toolbars */}
-      <MobileNoticeModal />
       {authMode && <AuthModal onClose={() => setAuthMode(null)} />}
       {showInstruction && <InstructionModal onClose={() => setShowInstruction(false)} />}
       {showProfile && <UserProfileModal onClose={() => setShowProfile(false)} />}

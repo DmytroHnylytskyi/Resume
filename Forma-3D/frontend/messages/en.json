@@ -223,10 +223,9 @@
     "badge": "Desktop / Laptop Required",
     "title": "3D Builder is Designed for PC",
     "desc1": "This 3D interior configurator is engineered exclusively for desktop PCs and laptops with a mouse and keyboard.",
-    "desc2": "Mobile devices will likely struggle with performance: real-time 3D room rendering, dynamic lighting, and complex model geometry require significant hardware power.",
-    "desc3": "Furthermore, it is impossible to create an ergonomic interface for precise object positioning, rotation gizmos, and catalog management on a small touchscreen.",
+    "desc2": "Mobile devices and tablets are not suited for real-time 3D room rendering, dynamic lighting, and high-polygon model geometry.",
+    "desc3": "Furthermore, precision object positioning, rotation gizmos, and catalog management cannot be operated ergonomically on touchscreens.",
     "advice": "For the best experience, please open Forma-3D on a computer or laptop.",
-    "hubBtn": "Back to Portfolio Hub",
-    "continueBtn": "Continue Anyway"
+    "hubBtn": "Back to Portfolio Hub"
   }
 }

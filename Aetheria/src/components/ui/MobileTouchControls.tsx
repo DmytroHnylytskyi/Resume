@@ -129,11 +129,17 @@ export default function MobileTouchControls(): React.ReactElement | null {
 
   // ── 2. Universal Touch Camera Orbit (Any touch outside joystick & interactive buttons) ──
   const handleGlobalTouchStart = useCallback((e: TouchEvent) => {
-    // If multiple fingers, handle pinch-to-zoom
-    if (e.touches.length === 2) {
-      const t1 = e.touches[0];
-      const t2 = e.touches[1];
+    // Only consider touches that are NOT assigned to the virtual joystick
+    const nonJoystickTouches = Array.from(e.touches).filter(
+      (t) => t.identifier !== joystickTouchIdRef.current
+    );
+
+    // If 2 camera fingers are down, activate pinch-to-zoom
+    if (nonJoystickTouches.length >= 2) {
+      const t1 = nonJoystickTouches[0];
+      const t2 = nonJoystickTouches[1];
       pinchStartDistRef.current = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+      cameraTouchIdRef.current = null;
       return;
     }
 
@@ -165,10 +171,14 @@ export default function MobileTouchControls(): React.ReactElement | null {
   }, []);
 
   const handleGlobalTouchMove = useCallback((e: TouchEvent) => {
-    // 2-finger pinch-to-zoom
-    if (e.touches.length === 2 && pinchStartDistRef.current !== null) {
-      const t1 = e.touches[0];
-      const t2 = e.touches[1];
+    const nonJoystickTouches = Array.from(e.touches).filter(
+      (t) => t.identifier !== joystickTouchIdRef.current
+    );
+
+    // 2-finger pinch-to-zoom (excluding joystick finger)
+    if (nonJoystickTouches.length >= 2 && pinchStartDistRef.current !== null) {
+      const t1 = nonJoystickTouches[0];
+      const t2 = nonJoystickTouches[1];
       const currentDist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
       const deltaDist = pinchStartDistRef.current - currentDist;
 
@@ -177,7 +187,7 @@ export default function MobileTouchControls(): React.ReactElement | null {
       return;
     }
 
-    // 1-finger camera orbit
+    // 1-finger camera orbit (works simultaneously with joystick movement!)
     if (cameraTouchIdRef.current !== null) {
       for (let i = 0; i < e.changedTouches.length; i++) {
         const touch = e.changedTouches[i];
@@ -196,7 +206,11 @@ export default function MobileTouchControls(): React.ReactElement | null {
   }, []);
 
   const handleGlobalTouchEnd = useCallback((e: TouchEvent) => {
-    if (e.touches.length < 2) {
+    const nonJoystickTouches = Array.from(e.touches).filter(
+      (t) => t.identifier !== joystickTouchIdRef.current
+    );
+
+    if (nonJoystickTouches.length < 2) {
       pinchStartDistRef.current = null;
     }
     if (cameraTouchIdRef.current !== null) {

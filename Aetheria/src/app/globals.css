@@ -2291,66 +2291,95 @@ html, body {
   gap: 10px;
 }
 
-/* ── Classic Landing: Education & Certifications Styles ── */
+/* ── Classic Landing: Education Card Styles ── */
 .education-classic-card {
   border-radius: 20px;
   padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
-.education-classic-header {
+.education-classic-card:hover {
+  border-color: var(--border-strong);
+}
+
+.edu-classic-top {
   display: flex;
   align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.edu-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .edu-icon-circle {
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
   background: var(--badge-bg);
   border: 1px solid var(--border-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text-primary);
+  flex-shrink: 0;
 }
 
-.edu-header-text {
-  flex: 1;
+.edu-type-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.edu-period-badge {
+  font-size: 11.5px;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: var(--badge-bg);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.edu-classic-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .edu-classic-institution {
-  font-size: 17px;
-  font-weight: 800;
+  font-size: 16.5px;
+  font-weight: 700;
+  line-height: 1.4;
   color: var(--text-primary);
 }
 
 .edu-classic-faculty {
   font-size: 13px;
   color: var(--text-secondary);
-  margin-top: 2px;
+  line-height: 1.45;
 }
 
-.edu-period-badge {
-  font-size: 12px;
-  font-weight: 700;
-  font-family: ui-monospace, SFMono-Regular, monospace;
-  padding: 4px 12px;
-  border-radius: 12px;
-  background: var(--badge-bg);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-primary);
-}
-
-.edu-badge-row {
+.edu-classic-footer {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
   flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-subtle);
+  margin-top: 2px;
 }
 
 .edu-spec-tag {
@@ -2358,13 +2387,28 @@ html, body {
   align-items: center;
   gap: 6px;
   font-size: 12.5px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text-primary);
 }
 
 .edu-status-tag {
-  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
   color: var(--text-muted);
+  background: var(--badge-bg);
+  border: 1px solid var(--border-subtle);
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.edu-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
 }
 
 .certifications-classic-grid {
@@ -2592,6 +2636,34 @@ html, body {
   .classic-main-content {
     padding: 28px 16px 60px;
     gap: 44px;
+  }
+
+  .education-classic-card {
+    padding: 18px 16px;
+    gap: 14px;
+    border-radius: 18px;
+  }
+
+  .edu-classic-institution {
+    font-size: 15px;
+    line-height: 1.38;
+  }
+
+  .edu-classic-faculty {
+    font-size: 12.5px;
+    line-height: 1.4;
+  }
+
+  .edu-classic-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding-top: 12px;
+  }
+
+  .edu-status-tag {
+    font-size: 11px;
+    padding: 3px 8px;
   }
 
   .classic-nav-links {
@@ -4220,31 +4292,143 @@ nextjs-portal,
   color: #ffffff;
 }
 
-/* Landscape Mode HUD ergonomics on short screens (h <= 500px) */
-@media (orientation: landscape) and (max-height: 500px) {
+/* Landscape Mode HUD ergonomics & Mobile 3D controls (h <= 520px or w <= 900px) */
+@media (orientation: landscape) and (max-height: 520px), (max-width: 900px) {
+  /* ── 1. Top Bar: Icon-Only, Non-Wrapping, Clean Glass Pill ── */
   .island-top-bar {
     top: max(6px, env(safe-area-inset-top, 6px));
-    height: 42px;
+    left: max(10px, env(safe-area-inset-left, 10px));
+    right: max(10px, env(safe-area-inset-right, 10px));
+    height: 44px;
     padding: 0 12px;
+    gap: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
+  .brand-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .brand-name {
+    display: none !important;
+  }
+
+  .fps-badge {
+    display: none !important;
+  }
+
+  .brand-dot {
+    width: 7px;
+    height: 7px;
+    flex-shrink: 0;
+  }
+
+  .brand-tag {
+    height: 26px;
+    padding: 0 8px;
+    font-size: 10.5px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    border-radius: 8px;
+  }
+
+  .top-nav-shortcuts {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+  }
+
+  .nav-shortcut-btn {
+    width: 32px;
+    height: 32px;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px !important;
+    flex-shrink: 0;
+  }
+
+  .nav-shortcut-btn span {
+    display: none !important;
+  }
+
+  .controls-guide-btn .dropdown-chevron {
+    display: none !important;
+  }
+
+  .header-controls-cluster {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .theme-toggle-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px !important;
+    flex-shrink: 0;
+  }
+
+  .lang-toggle-group {
+    height: 32px;
+    border-radius: 9px;
+    padding: 2px;
+    gap: 1px;
+    flex-shrink: 0;
+  }
+
+  .lang-btn {
+    height: 26px;
+    line-height: 26px;
+    padding: 0 6px;
+    border-radius: 6px;
+    font-size: 10.5px;
+    font-weight: 700;
+  }
+
+  /* ── 2. Jump Button: Positioned in Right Thumb Hotspot ── */
+  .mobile-jump-btn {
+    bottom: max(16px, env(safe-area-inset-bottom, 14px)) !important;
+    right: max(18px, env(safe-area-inset-right, 18px)) !important;
+    width: 54px !important;
+    height: 54px !important;
+    z-index: 95;
+  }
+
+  /* ── 3. Mini-Radar: Shifted to the Left of the Jump Button (No Overlap!) ── */
   .mini-radar-wrapper {
-    bottom: max(10px, env(safe-area-inset-bottom, 10px));
-    right: max(14px, env(safe-area-inset-right, 14px));
+    bottom: max(12px, env(safe-area-inset-bottom, 10px)) !important;
+    right: max(86px, calc(env(safe-area-inset-right, 18px) + 64px)) !important;
+    z-index: 60;
+    gap: 4px;
   }
 
   .mini-radar-housing {
-    width: 90px;
-    height: 90px;
+    width: 82px;
+    height: 82px;
   }
 
   .radar-action-container {
-    width: 90px;
+    width: 82px;
   }
 
+  .radar-map-btn {
+    padding: 3px 6px;
+    font-size: 9.5px;
+  }
+
+  /* ── 4. Joystick & Interaction Pill ── */
   .mobile-joystick-wrapper {
-    bottom: max(12px, env(safe-area-inset-bottom, 12px));
-    left: max(14px, env(safe-area-inset-left, 14px));
+    bottom: max(14px, env(safe-area-inset-bottom, 12px));
+    left: max(16px, env(safe-area-inset-left, 16px));
   }
 
   .mobile-joystick-base {
@@ -4257,15 +4441,10 @@ nextjs-portal,
     height: 40px;
   }
 
-  .mobile-jump-btn {
-    bottom: max(120px, calc(env(safe-area-inset-bottom, 10px) + 106px));
-    right: max(18px, env(safe-area-inset-right, 18px));
-    width: 46px;
-    height: 46px;
-  }
-
   .minimal-interaction-pill-wrapper {
-    bottom: max(16px, env(safe-area-inset-bottom, 16px));
+    bottom: max(16px, env(safe-area-inset-bottom, 14px));
+    left: 50%;
+    transform: translateX(-50%);
   }
 
   .tactical-map-modal {

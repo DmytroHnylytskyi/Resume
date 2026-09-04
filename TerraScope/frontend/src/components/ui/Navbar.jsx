@@ -32,28 +32,18 @@ export default function Navbar() {
     <>
       <nav className="glass-panel navbar-container">
         {/* Brand Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
-          <GlobeIcon size={22} color="var(--accent)" style={{ flexShrink: 0 }} />
-          <span className="gradient-text" style={{ fontSize: '1.15rem', fontWeight: 800, letterSpacing: '-0.5px', whiteSpace: 'nowrap' }}>
+        <div className="navbar-brand-section">
+          <GlobeIcon size={21} color="var(--accent)" style={{ flexShrink: 0 }} />
+          <span className="gradient-text navbar-brand-title">
             TerraScope
           </span>
-          <span className="badge badge-accent hide-on-mobile" style={{ marginLeft: '4px', fontSize: '0.7rem' }}>
+          <span className="badge badge-accent hide-on-mobile" style={{ marginLeft: '2px', fontSize: '0.68rem' }}>
             LIVE 3D
           </span>
         </div>
 
         {/* Center: View Mode Switcher */}
-        <div style={{
-          position: 'absolute',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          display: 'flex',
-          alignItems: 'center',
-          background: 'rgba(255, 255, 255, 0.06)',
-          border: '1px solid var(--border-glass)',
-          borderRadius: '20px',
-          padding: '2px'
-        }}>
+        <div className="navbar-mode-switcher">
           {[
             { id: 'day', label: 'Day', icon: Sun, title: 'Daytime Surface Map' },
             { id: 'night', label: 'Night', icon: Moon, title: 'Night City Lights Map' },
@@ -68,19 +58,7 @@ export default function Navbar() {
                 onClick={() => setDayNightMode(mode.id)}
                 title={mode.title}
                 aria-label={mode.title}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '5px',
-                  padding: '4px 8px',
-                  borderRadius: '16px',
-                  border: 'none',
-                  fontSize: '0.76rem',
-                  fontWeight: 500,
-                  cursor: 'pointer',
-                  background: isActive ? 'var(--accent)' : 'transparent',
-                  color: isActive ? '#fff' : 'var(--text-secondary)'
-                }}
+                className={`navbar-mode-btn ${isActive ? 'active' : ''}`}
               >
                 <Icon size={14} style={{ flexShrink: 0 }} />
                 <span className="hide-on-mobile">{mode.label}</span>
@@ -90,7 +68,7 @@ export default function Navbar() {
         </div>
 
         {/* Right Actions & Auth */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+        <div className="navbar-actions-section">
           {mounted && user && (
             <button
               className="btn-ghost"
@@ -128,7 +106,7 @@ export default function Navbar() {
               className="btn-primary"
               onClick={() => setAuthModalOpen(true)}
               title="Sign In"
-              style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '6px 10px', fontSize: '0.82rem' }}
+              style={{ display: 'flex', alignItems: 'center', gap: '5px' }}
             >
               <LogIn size={15} />
               <span className="hide-on-mobile">Sign In</span>
