@@ -11,6 +11,7 @@ export default function LoadingScreen(): React.ReactElement | null {
   const { language, isSceneLoaded, setSceneLoaded, viewMode } = useGameStore();
   const [displayProgress, setDisplayProgress] = useState(0);
   const [fadeOut, setFadeOut] = useState(false);
+  const [gone, setGone] = useState(false);
   const hasStartedRef = useRef(false);
 
   const t = translations[language].loading;
@@ -25,24 +26,27 @@ export default function LoadingScreen(): React.ReactElement | null {
     }
   }, [progress, active, total]);
 
-  // Actual completion detector: only finishes when assets are truly loaded
+  // Actual completion detector: only finishes when assets are truly loaded.
+  // The world is marked ready the MOMENT the fade-out begins — the loader
+  // dissolves into the cinematic intro instead of holding it back.
   useEffect(() => {
     const isFinished =
       displayProgress >= 100 ||
       progress >= 100 ||
       (hasStartedRef.current && !active && total > 0 && loaded >= total);
 
-    if (isFinished) {
-      setDisplayProgress(100);
-      const timer = setTimeout(() => {
+    if (!isFinished) return;
+
+    setDisplayProgress(100);
+    const timers: number[] = [];
+    timers.push(
+      window.setTimeout(() => {
         setFadeOut(true);
-        const doneTimer = setTimeout(() => {
-          setSceneLoaded(true);
-        }, 500);
-        return () => clearTimeout(doneTimer);
-      }, 400);
-      return () => clearTimeout(timer);
-    }
+        setSceneLoaded(true);
+        timers.push(window.setTimeout(() => setGone(true), 650));
+      }, 400)
+    );
+    return () => timers.forEach((id) => window.clearTimeout(id));
   }, [displayProgress, progress, active, loaded, total, setSceneLoaded]);
 
   // Safety fallback: if all assets were cached and queue was empty, mark loaded after 8s
@@ -51,17 +55,15 @@ export default function LoadingScreen(): React.ReactElement | null {
       if (!isSceneLoaded) {
         setDisplayProgress(100);
         setFadeOut(true);
-        const doneTimer = setTimeout(() => {
-          setSceneLoaded(true);
-        }, 400);
-        return () => clearTimeout(doneTimer);
+        setSceneLoaded(true);
+        setTimeout(() => setGone(true), 650);
       }
     }, 8000);
     return () => clearTimeout(safetyTimer);
   }, [isSceneLoaded, setSceneLoaded]);
 
-  // Don't show loading screen if already loaded or in classic view mode
-  if (isSceneLoaded || viewMode === 'classic') return null;
+  // Keep rendering through the fade-out transition, then unmount
+  if (gone || viewMode === 'classic') return null;
 
   return (
     <div className={`loading-screen-backdrop ${fadeOut ? 'fade-out' : ''}`}>

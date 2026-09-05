@@ -8,7 +8,7 @@ import BioModal from '../components/ui/BioModal';
 import ContactsModal from '../components/ui/ContactsModal';
 import SkillsModal from '../components/ui/SkillsModal';
 import ProjectModal from '../components/ui/ProjectModal';
-import WelcomeModal from '../components/ui/WelcomeModal';
+import IntroOverlay from '../components/ui/IntroOverlay';
 import LoadingScreen from '../components/ui/LoadingScreen';
 import ClassicLandingView from '../components/ui/ClassicLandingView';
 import MiniRadar from '../components/ui/MiniRadar';
@@ -29,7 +29,7 @@ const IslandCanvas = dynamic(() => import('../components/3d/IslandCanvas'), {
  * Reactively synchronizes `data-theme` and `document.title` on theme/locale switch.
  */
 export default function HomePage(): React.ReactElement {
-  const { viewMode, theme, language } = useGameStore();
+  const { viewMode, theme, language, isSceneLoaded, setIntroPlaying } = useGameStore();
 
   React.useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -42,10 +42,26 @@ export default function HomePage(): React.ReactElement {
       : 'Aetheria 3D — Portfolio of Dmytro Hnylytskyi';
   }, [language]);
 
+  // Cinematic intro starts only AFTER the world has fully loaded — the loader
+  // is never mixed with the flight. First visit only; respects reduced-motion.
+  // Repeat visitors land straight on the island and can replay from the guide.
+  React.useEffect(() => {
+    if (!isSceneLoaded) return;
+    let reducedMotion = false;
+    try {
+      reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch (_) {}
+    let seen = false;
+    try {
+      seen = localStorage.getItem('aetheria_intro_seen') === '1';
+    } catch (_) {}
+    if (!seen && !reducedMotion) setIntroPlaying(true);
+  }, [isSceneLoaded, setIntroPlaying]);
+
   return (
     <main className="portfolio-app-container" data-theme={theme}>
-      {/* ── Mode Selection Welcome Screen (First visit) ── */}
-      <WelcomeModal />
+      {/* ── Cinematic intro titles + compact post-landing mode card ── */}
+      <IntroOverlay />
 
       {/* ── Project Details Modal (Can open from both 3D & Classic) ── */}
       <ProjectModal />

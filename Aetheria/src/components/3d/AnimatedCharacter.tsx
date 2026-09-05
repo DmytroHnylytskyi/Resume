@@ -1,16 +1,11 @@
 'use client';
 
-import React, { useRef, useEffect, useMemo } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
+import { characterAnimState } from '../../store/characterAnimState';
 import { clone as cloneSkeleton } from 'three/examples/jsm/utils/SkeletonUtils.js';
-
-interface AnimatedCharacterProps {
-  isMoving: boolean;
-  isSprinting: boolean;
-  isJumping: boolean;
-}
 
 const TARGET_HEIGHT = 1.65;
 
@@ -24,12 +19,9 @@ const TARGET_HEIGHT = 1.65;
  * - SkeletonUtils Cloning: Safely clones GLTF skeletal hierarchies to prevent bone-binding collisions.
  * - AnimationMixer State Machine: Implements smooth 0.18s crossfades between Idle, Walk, Run, Jump.
  * - Exact Bounding Normalization: Maintains exact 1.65m character height.
+ * - Zero Re-render Loop: Locomotion flags are read from characterAnimState inside useFrame.
  */
-export default function AnimatedCharacter({
-  isMoving,
-  isSprinting,
-  isJumping
-}: AnimatedCharacterProps): React.ReactElement {
+export default function AnimatedCharacter(): React.ReactElement {
   // ── 1. Load Character Textures ──
   const [diffuseMap, normalMap, specularMap] = useTexture([
     '/model/kaykit_halloween/Arissa_diffuse.png',
@@ -64,14 +56,17 @@ export default function AnimatedCharacter({
     const rawHeight = size.y;
     const scaleFactor = rawHeight > 0 ? TARGET_HEIGHT / rawHeight : 0.0092;
 
-    // Optimized material: FrontSide only, no shadows (shadows disabled globally)
+    // Optimized material: FrontSide only, no shadows (shadows disabled globally).
+    // Matte cloth finish: the phong specular map must NOT be wired as a
+    // roughness map (its bright = shiny regions inverted into low roughness,
+    // producing wet plastic highlights), and low metalness keeps the stencil
+    // costume from glinting under the key light.
     const characterMaterial = new THREE.MeshStandardMaterial({
       map: diffuseMap,
       normalMap: normalMap,
-      normalScale: new THREE.Vector2(0.7, 0.7),
-      roughnessMap: specularMap,
-      roughness: 0.65,
-      metalness: 0.15,
+      normalScale: new THREE.Vector2(0.5, 0.5),
+      roughness: 0.88,
+      metalness: 0.02,
       side: THREE.FrontSide
     });
 
@@ -119,14 +114,14 @@ export default function AnimatedCharacter({
 
   const currentActionRef = useRef<string>('Idle');
 
-  // ── 4. Smooth State Machine Crossfading ──
-  useEffect(() => {
-    let target = 'Idle';
-    if (isJumping) {
-      target = 'Jump';
-    } else if (isMoving) {
-      target = isSprinting ? 'Run' : 'Walk';
-    }
+  // ── 4. Smooth State Machine Crossfading (frame-driven, zero React re-renders) ──
+  useFrame((_, delta) => {
+    const anim = characterAnimState;
+    const target = anim.isJumping
+      ? 'Jump'
+      : anim.isMoving
+        ? (anim.isSprinting ? 'Run' : 'Walk')
+        : 'Idle';
 
     if (currentActionRef.current !== target && actionsMap[target]) {
       const prevAction = actionsMap[currentActionRef.current];
@@ -137,10 +132,7 @@ export default function AnimatedCharacter({
 
       currentActionRef.current = target;
     }
-  }, [isMoving, isSprinting, isJumping, actionsMap]);
 
-  // ── 5. Frame Update ──
-  useFrame((_, delta) => {
     mixer.update(Math.min(delta, 0.1));
   });
 

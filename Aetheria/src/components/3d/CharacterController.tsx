@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useRef, useEffect, useState, Suspense } from 'react';
+import React, { useRef, useEffect, Suspense } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { RigidBody, CapsuleCollider, RapierRigidBody } from '@react-three/rapier';
 import * as THREE from 'three';
 import { useGameStore } from '../../store/useGameStore';
+import { characterAnimState } from '../../store/characterAnimState';
 import { radarState } from '../../store/radarState';
 import { mobileControls } from '../../store/mobileControlsState';
 import AnimatedCharacter from './AnimatedCharacter';
@@ -12,6 +13,18 @@ import AnimatedCharacter from './AnimatedCharacter';
 const WALK_SPEED = 2.6;
 const RUN_SPEED = 4.6;
 const JUMP_FORCE = 5.5;
+
+// ── Cinematic intro flight path (module constants — zero per-frame allocation) ──
+// Hold: camera is perfectly still while assets decode (loading jank stays invisible).
+// Then a slow sky drift, then the bezier dive to the spawn point.
+const INTRO_SKY_A = new THREE.Vector3(26, 38, 36);
+const INTRO_SKY_B = new THREE.Vector3(15, 26, 26);
+const INTRO_SKY_DRIFT_MS = 2200; // drift window after assets are ready
+const INTRO_DESCEND_MS = 2600; // bezier dive duration
+const INTRO_CONTROL = new THREE.Vector3(4, 9, 27); // bezier control point
+const INTRO_END_CAM = new THREE.Vector3(0, 3.6, 18); // matches spawn + steadicam offset
+const INTRO_END_LOOK = new THREE.Vector3(0, 2.2, 14); // spawn + head height
+const INTRO_CENTER_LOOK = new THREE.Vector3(0, 3, 0); // island center during the sky beat
 
 interface CharacterControllerProps {
   playerPosRef?: React.MutableRefObject<THREE.Vector3 | null>;
@@ -37,18 +50,16 @@ export default function CharacterController({
   const rigidBodyRef = useRef<RapierRigidBody>(null);
   const avatarGroupRef = useRef<THREE.Group>(null);
   const { camera, gl } = useThree();
-  const {
-    activeModal,
-    selectedProject,
-    isInitialWelcomeOpen,
-    isTacticalMapOpen,
-    interactionPrompt
-  } = useGameStore();
+  // Granular Zustand subscriptions: whole-store subscription would re-render
+  // this subtree on ANY store change (e.g. proximity prompt edges), causing
+  // frame stalls on integrated GPUs — same cost class as the jump-state fix.
+  const activeModal = useGameStore((s) => s.activeModal);
+  const selectedProject = useGameStore((s) => s.selectedProject);
+  const isInitialWelcomeOpen = useGameStore((s) => s.isInitialWelcomeOpen);
+  const isTacticalMapOpen = useGameStore((s) => s.isTacticalMapOpen);
+  const isIntroPlaying = useGameStore((s) => s.isIntroPlaying);
+  const setIntroPlaying = useGameStore((s) => s.setIntroPlaying);
   const isAnyModalOpen = Boolean(activeModal || selectedProject || isInitialWelcomeOpen || isTacticalMapOpen);
-
-  const [isMoving, setIsMoving] = useState(false);
-  const [isSprinting, setIsSprinting] = useState(false);
-  const [isJumping, setIsJumping] = useState(false);
 
   const keys = useRef({
     forward: false,
@@ -77,17 +88,54 @@ export default function CharacterController({
   const _playerVec = useRef(new THREE.Vector3());
   const _moveDir = useRef(new THREE.Vector3());
 
-  // ── Previous state tracking (only trigger React setState on actual change) ──
-  const prevMoving = useRef(false);
-  const prevSprinting = useRef(false);
-  const prevJumping = useRef(false);
+  // ── Cinematic intro state ──
+  const introStartTime = useRef<number | null>(null);
+  const introDescendStarted = useRef(false);
+  const introDescendStart = useRef(0);
+  const introFromPos = useRef(new THREE.Vector3());
+  const introFromLook = useRef(new THREE.Vector3());
+
+  // Track intro lifecycle: arm the clock when the flight begins,
+  // release it on landing/skip so a replay can re-arm cleanly.
+  useEffect(() => {
+    if (isIntroPlaying) {
+      if (introStartTime.current === null) introStartTime.current = performance.now();
+      introDescendStarted.current = false;
+    } else {
+      introStartTime.current = null;
+    }
+  }, [isIntroPlaying]);
+
+  // Skip: any key press or click ends the flight; the normal steadicam
+  // lerp glides the camera in from wherever it currently is. The first
+  // 600ms are guarded so the click that LAUNCHED the replay cannot skip it.
+  useEffect(() => {
+    if (!isIntroPlaying) return;
+
+    const skipIntro = () => {
+      if (introStartTime.current !== null && performance.now() - introStartTime.current < 600) return;
+      smoothCamPos.current.copy(camera.position);
+      introStartTime.current = null;
+      try {
+        localStorage.setItem('aetheria_intro_seen', '1');
+      } catch (_) {}
+      setIntroPlaying(false);
+    };
+
+    window.addEventListener('keydown', skipIntro);
+    window.addEventListener('pointerdown', skipIntro);
+    return () => {
+      window.removeEventListener('keydown', skipIntro);
+      window.removeEventListener('pointerdown', skipIntro);
+    };
+  }, [isIntroPlaying, camera, setIntroPlaying]);
 
   // ── 1. Mouse Look with Pointer Lock ──
   useEffect(() => {
     const dom = gl.domElement;
 
     const handleCanvasClick = () => {
-      if (!isAnyModalOpen && document.pointerLockElement !== dom) {
+      if (!isAnyModalOpen && !isIntroPlaying && document.pointerLockElement !== dom) {
         try {
           const p = dom.requestPointerLock();
           if (p && 'catch' in p) p.catch(() => {});
@@ -106,7 +154,7 @@ export default function CharacterController({
     };
 
     const handleWheel = (e: WheelEvent) => {
-      if (isAnyModalOpen) return;
+      if (isAnyModalOpen || isIntroPlaying) return;
       const delta = Number.isFinite(e.deltaY) ? e.deltaY : 0;
       cameraDistance.current = Math.max(2.2, Math.min(7.0, cameraDistance.current + delta * 0.002));
     };
@@ -120,7 +168,7 @@ export default function CharacterController({
       document.removeEventListener('mousemove', handleMouseMove);
       dom.removeEventListener('wheel', handleWheel);
     };
-  }, [gl, isAnyModalOpen]);
+  }, [gl, isAnyModalOpen, isIntroPlaying]);
 
   // Release pointer lock and reset keys whenever ANY modal opens
   useEffect(() => {
@@ -136,9 +184,9 @@ export default function CharacterController({
       keys.current.right = false;
       keys.current.jump = false;
       keys.current.shift = false;
-      setIsMoving(false);
-      setIsSprinting(false);
-      setIsJumping(false);
+      characterAnimState.isMoving = false;
+      characterAnimState.isSprinting = false;
+      characterAnimState.isJumping = false;
     }
   }, [isAnyModalOpen]);
 
@@ -146,7 +194,7 @@ export default function CharacterController({
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement)?.tagName)) return;
-      if (isAnyModalOpen) return;
+      if (isAnyModalOpen || isIntroPlaying) return;
 
       const code = e.code;
       if (code === 'KeyW' || code === 'ArrowUp') keys.current.forward = true;
@@ -159,8 +207,10 @@ export default function CharacterController({
       }
       if (code === 'ShiftLeft' || code === 'ShiftRight') keys.current.shift = true;
       if (code === 'KeyE') {
-        if (interactionPrompt && interactionPrompt.action) {
-          interactionPrompt.action();
+        // Read via getState(): subscribing to interactionPrompt would re-render on every proximity edge
+        const prompt = useGameStore.getState().interactionPrompt;
+        if (prompt && prompt.action) {
+          prompt.action();
         }
       }
     };
@@ -182,7 +232,7 @@ export default function CharacterController({
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [interactionPrompt, isAnyModalOpen]);
+  }, [isAnyModalOpen, isIntroPlaying]);
 
   // ── 3. Physics & Camera Update Frame Loop ──
   useFrame(() => {
@@ -208,6 +258,67 @@ export default function CharacterController({
         playerPosRef.current = new THREE.Vector3();
       }
       playerPosRef.current.set(translation.x, translation.y, translation.z);
+    }
+
+    // ── Cinematic Intro Camera: fly over the island, dive to spawn, handoff ──
+    // Replaces the whole input/camera section while active (input is locked).
+    if (isIntroPlaying && introStartTime.current !== null) {
+      // Void-fall safety during the flight (character rests at spawn)
+      if (translation.y < -3.0) {
+        rigidBodyRef.current.setTranslation({ x: spawnPoint[0], y: spawnPoint[1], z: spawnPoint[2] }, true);
+        rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
+      }
+
+      const sinceStart = now - introStartTime.current;
+      if (sinceStart < INTRO_SKY_DRIFT_MS) {
+        // SKY DRIFT: slow glide over the island toward the descent origin
+        // (the flight only begins after the loading screen has finished)
+        const k = sinceStart / INTRO_SKY_DRIFT_MS;
+        const e = k * k * (3 - 2 * k); // smoothstep
+        _playerVec.current.copy(INTRO_SKY_A).lerp(INTRO_SKY_B, e);
+        camera.position.copy(_playerVec.current);
+        camera.lookAt(INTRO_CENTER_LOOK);
+        introDescendStarted.current = false;
+      } else {
+          // DESCENT: easeInOutCubic quadratic bezier from the sky to the steadicam seat
+          if (!introDescendStarted.current) {
+            introDescendStarted.current = true;
+            introDescendStart.current = now;
+            introFromPos.current.copy(camera.position);
+            introFromLook.current.copy(INTRO_CENTER_LOOK);
+          }
+          const t = Math.min(1, (now - introDescendStart.current) / INTRO_DESCEND_MS);
+          const e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+          const inv = 1 - e;
+          _playerVec.current.set(
+            inv * inv * introFromPos.current.x + 2 * inv * e * INTRO_CONTROL.x + e * e * INTRO_END_CAM.x,
+            inv * inv * introFromPos.current.y + 2 * inv * e * INTRO_CONTROL.y + e * e * INTRO_END_CAM.y,
+            inv * inv * introFromPos.current.z + 2 * inv * e * INTRO_CONTROL.z + e * e * INTRO_END_CAM.z
+          );
+          camera.position.copy(_playerVec.current);
+          _moveDir.current.copy(introFromLook.current).lerp(INTRO_END_LOOK, e);
+          camera.lookAt(_moveDir.current);
+
+          if (t >= 1) {
+            // Handoff: seed the steadicam buffers so the normal loop continues seamlessly
+            smoothCamPos.current.copy(INTRO_END_CAM);
+            smoothLookTarget.current.copy(INTRO_END_LOOK);
+            camera.position.copy(INTRO_END_CAM);
+            try {
+              localStorage.setItem('aetheria_intro_seen', '1');
+            } catch (_) {}
+            setIntroPlaying(false);
+          }
+      }
+
+      // Keep radar telemetry alive; discard touch camera input gathered mid-flight
+      radarState.x = translation.x;
+      radarState.z = translation.z;
+      radarState.yaw = cameraYaw.current;
+      mobileControls.lookDeltaX = 0;
+      mobileControls.lookDeltaY = 0;
+      mobileControls.pinchZoomDelta = 0;
+      return;
     }
 
     // Consume mobile touch camera orbit & pinch zoom
@@ -262,11 +373,9 @@ export default function CharacterController({
     isGrounded.current = Math.abs(linvel.y) < 0.25 && timeSinceJump > 400;
     const jumpingNow = !isGrounded.current && timeSinceJump < 600;
 
-    // Only trigger React re-render when state ACTUALLY changes
-    if (jumpingNow !== prevJumping.current) {
-      prevJumping.current = jumpingNow;
-      setIsJumping(jumpingNow);
-    }
+    // Broadcast locomotion flags via the zero-overhead mutable buffer
+    // (React state here was measured to cause 40–55 FPS dips on iGPUs)
+    characterAnimState.isJumping = jumpingNow;
 
     // Direction calculation relative to camera yaw (Keyboard + Mobile Virtual Joystick)
     const fwdKeyboard = (keys.current.forward ? 1 : 0) - (keys.current.backward ? 1 : 0);
@@ -291,15 +400,8 @@ export default function CharacterController({
     const moving = moveDir.lengthSq() > 0.01;
     const sprinting = (keys.current.shift || mobileControls.isSprinting) && moving;
 
-    // Only trigger React re-render when state ACTUALLY changes
-    if (moving !== prevMoving.current) {
-      prevMoving.current = moving;
-      setIsMoving(moving);
-    }
-    if (sprinting !== prevSprinting.current) {
-      prevSprinting.current = sprinting;
-      setIsSprinting(sprinting);
-    }
+    characterAnimState.isMoving = moving;
+    characterAnimState.isSprinting = sprinting;
 
     if (moving) {
       moveDir.normalize();
@@ -331,8 +433,7 @@ export default function CharacterController({
       rigidBodyRef.current.setLinvel({ x: linvel.x, y: JUMP_FORCE, z: linvel.z }, true);
       lastJumpTime.current = now;
       isGrounded.current = false;
-      prevJumping.current = true;
-      setIsJumping(true);
+      characterAnimState.isJumping = true;
       keys.current.jump = false;
       mobileControls.isJumping = false;
     } else if (!isGrounded.current && mobileControls.isJumping) {
@@ -389,11 +490,7 @@ export default function CharacterController({
       <group ref={avatarGroupRef} position={[0, 0, 0]} rotation={[0, Math.PI, 0]}>
         <CharacterErrorBoundary fallback={<CharacterFallback />}>
           <Suspense fallback={<CharacterFallback />}>
-            <AnimatedCharacter
-              isMoving={isMoving}
-              isSprinting={isSprinting}
-              isJumping={isJumping}
-            />
+            <AnimatedCharacter />
           </Suspense>
         </CharacterErrorBoundary>
       </group>

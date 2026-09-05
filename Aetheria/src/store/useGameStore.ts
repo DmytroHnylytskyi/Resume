@@ -11,11 +11,14 @@ import { Locale } from '../types/portfolio';
  */
 export const useGameStore = create<GameState>((set) => ({
   // ── Language / Localization ──
-  language: 'uk',
+  // English is the default entry language (international audience — recruiters,
+  // contest juries); visitors can switch to Ukrainian from the HUD at any time.
+  language: 'en',
   setLanguage: (lang: Locale) => set({ language: lang }),
 
   // ── Color Theme (Dark / Light) ──
-  theme: 'dark',
+  // Light is the default experience: sunlit blue-sky island. Dark = moonlit night.
+  theme: 'light',
   setTheme: (theme: ThemeMode) => set({ theme }),
   toggleTheme: () => set((s) => ({ theme: s.theme === 'dark' ? 'light' : 'dark' })),
 
@@ -24,7 +27,9 @@ export const useGameStore = create<GameState>((set) => ({
   setViewMode: (mode: ViewMode) => set({ viewMode: mode }),
 
   // ── Initial Welcome Mode Selection Modal ──
-  isInitialWelcomeOpen: true,
+  // Legacy full-screen welcome gate is retired in favor of the cinematic intro;
+  // kept as a store flag because several UI guards branch on it.
+  isInitialWelcomeOpen: false,
   setInitialWelcomeOpen: (open: boolean) => set({ isInitialWelcomeOpen: open }),
 
   // ── Scene Asset Preloader State ──

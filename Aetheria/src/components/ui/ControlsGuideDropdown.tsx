@@ -2,23 +2,24 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useGameStore } from '../../store/useGameStore';
-import { 
-  HelpCircle, 
-  ChevronDown, 
-  Keyboard, 
-  MousePointer, 
-  Smartphone, 
-  Gamepad2, 
-  ArrowUp, 
-  Move, 
-  Maximize2, 
-  Map, 
-  Radio, 
-  X 
+import {
+  HelpCircle,
+  ChevronDown,
+  Keyboard,
+  MousePointer,
+  Smartphone,
+  Gamepad2,
+  ArrowUp,
+  Move,
+  Maximize2,
+  Map,
+  Radio,
+  RotateCcw,
+  X
 } from 'lucide-react';
 
 export default function ControlsGuideDropdown(): React.ReactElement {
-  const { language } = useGameStore();
+  const { language, triggerIntroSwoop } = useGameStore();
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'touch' | 'keyboard'>('keyboard');
   const containerRef = useRef<HTMLDivElement>(null);
@@ -327,6 +328,18 @@ export default function ControlsGuideDropdown(): React.ReactElement {
               </div>
             </div>
           )}
+
+          {/* Replay the cinematic intro flight */}
+          <button
+            className="controls-replay-btn"
+            onClick={() => {
+              triggerIntroSwoop();
+              setIsOpen(false);
+            }}
+          >
+            <RotateCcw size={12} />
+            <span>{isUk ? 'Повторити кінематографічне інтро' : 'Replay cinematic intro'}</span>
+          </button>
         </div>
       )}
     </div>
