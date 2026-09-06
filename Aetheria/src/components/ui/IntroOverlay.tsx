@@ -14,7 +14,8 @@ type IntroStage = 'intro' | 'card' | 'hidden';
  * - While `isIntroPlaying`: brand title block over the flying camera
  *   (pure CSS animation — zero WebGL cost) plus a skip hint.
  * - On landing (or instantly for repeat visits): a compact, non-blocking
- *   mode card ("explore the island" / "classic resume") that auto-fades.
+ *   mode card ("explore the island" / "classic resume") that stays on screen
+ *   until the visitor picks a mode.
  * Skipping is handled by CharacterController (any key/click); this overlay
  * only reflects store state.
  */
@@ -26,7 +27,6 @@ export default function IntroOverlay(): React.ReactElement | null {
   const setViewMode = useGameStore((s) => s.setViewMode);
   const [stage, setStage] = useState<IntroStage>('hidden');
   const [leaving, setLeaving] = useState(false);
-  const dismissTimer = useRef<number | null>(null);
   // The mode card may appear at most once per page session — without this
   // guard the "returning visitor" effect re-fires after every dismissal
   // and the card pops back up forever.
@@ -76,23 +76,8 @@ export default function IntroOverlay(): React.ReactElement | null {
   }, [stage, isIntroPlaying, isSceneLoaded, viewMode]);
 
   const dismissCard = () => {
-    if (dismissTimer.current !== null) {
-      window.clearTimeout(dismissTimer.current);
-      dismissTimer.current = null;
-    }
     setStage('hidden');
   };
-
-  // Auto-fade the mode card so it never blocks returning visitors
-  useEffect(() => {
-    if (stage === 'card') {
-      dismissTimer.current = window.setTimeout(dismissCard, 9000);
-      return () => {
-        if (dismissTimer.current !== null) window.clearTimeout(dismissTimer.current);
-      };
-    }
-    return undefined;
-  }, [stage]);
 
   if (stage === 'hidden') return null;
 

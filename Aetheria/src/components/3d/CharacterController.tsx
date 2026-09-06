@@ -94,6 +94,11 @@ export default function CharacterController({
   const introDescendStart = useRef(0);
   const introFromPos = useRef(new THREE.Vector3());
   const introFromLook = useRef(new THREE.Vector3());
+  // Set when the intro was skipped with a pointer gesture: the click event of
+  // that same gesture arrives after `isIntroPlaying` already went false, and
+  // without this flag the canvas would grab pointer lock right as the mode
+  // card appears — leaving the cursor captured with nothing to click with.
+  const introSkipGesture = useRef(false);
 
   // Track intro lifecycle: arm the clock when the flight begins,
   // release it on landing/skip so a replay can re-arm cleanly.
@@ -112,21 +117,31 @@ export default function CharacterController({
   useEffect(() => {
     if (!isIntroPlaying) return;
 
-    const skipIntro = () => {
-      if (introStartTime.current !== null && performance.now() - introStartTime.current < 600) return;
+    const skipIntro = (): boolean => {
+      if (introStartTime.current !== null && performance.now() - introStartTime.current < 600) return false;
       smoothCamPos.current.copy(camera.position);
       introStartTime.current = null;
       try {
         localStorage.setItem('aetheria_intro_seen', '1');
       } catch (_) {}
       setIntroPlaying(false);
+      return true;
+    };
+
+    const onPointerDownSkip = () => {
+      if (skipIntro()) {
+        introSkipGesture.current = true;
+        // Transient by construction: if the matching click never reaches the
+        // canvas (released elsewhere), the flag expires on its own.
+        window.setTimeout(() => { introSkipGesture.current = false; }, 1200);
+      }
     };
 
     window.addEventListener('keydown', skipIntro);
-    window.addEventListener('pointerdown', skipIntro);
+    window.addEventListener('pointerdown', onPointerDownSkip);
     return () => {
       window.removeEventListener('keydown', skipIntro);
-      window.removeEventListener('pointerdown', skipIntro);
+      window.removeEventListener('pointerdown', onPointerDownSkip);
     };
   }, [isIntroPlaying, camera, setIntroPlaying]);
 
@@ -135,6 +150,12 @@ export default function CharacterController({
     const dom = gl.domElement;
 
     const handleCanvasClick = () => {
+      // Consume the click of the intro-skipping gesture without locking the
+      // pointer — the mode card is about to appear and needs the cursor.
+      if (introSkipGesture.current) {
+        introSkipGesture.current = false;
+        return;
+      }
       if (!isAnyModalOpen && !isIntroPlaying && document.pointerLockElement !== dom) {
         try {
           const p = dom.requestPointerLock();

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useGameStore } from '../../store/useGameStore';
 import { developerProfiles, translations, getProjectUrl } from '../../data/resumeData';
 import {
@@ -21,8 +21,35 @@ import {
   GraduationCap,
   ShieldCheck,
   CheckCircle2,
-  Sparkles
+  Sparkles,
+  Printer,
+  ArrowUp
 } from 'lucide-react';
+
+/** Section ids watched by the scroll-spy (order matches the sticky nav). */
+const SECTION_IDS = ['about', 'education', 'certifications', 'skills', 'projects', 'contacts'];
+
+/**
+ * Clipboard fallback for non-secure contexts (plain HTTP previews) and older
+ * browsers where `navigator.clipboard` is unavailable: a hidden textarea +
+ * the deprecated-but-universal execCommand path.
+ */
+function legacyCopyEmail(text: string): boolean {
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    return ok;
+  } catch (_) {
+    return false;
+  }
+}
 
 function GithubIcon({ size = 16 }: { size?: number }) {
   return (
@@ -36,6 +63,9 @@ function GithubIcon({ size = 16 }: { size?: number }) {
 export default function ClassicLandingView(): React.ReactElement {
   const { language, setLanguage, setViewMode, setSelectedProject, theme, toggleTheme } = useGameStore();
   const [copiedEmail, setCopiedEmail] = useState(false);
+  const [activeSection, setActiveSection] = useState('');
+  const [showBackToTop, setShowBackToTop] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
 
   const profile = developerProfiles[language];
   const t = translations[language].landing;
@@ -43,10 +73,119 @@ export default function ClassicLandingView(): React.ReactElement {
   const edu = profile.education[0];
 
   const handleCopyEmail = () => {
-    navigator.clipboard.writeText(profile.contacts.email);
-    setCopiedEmail(true);
-    setTimeout(() => setCopiedEmail(false), 2200);
+    const email = profile.contacts.email;
+    const done = () => {
+      setCopiedEmail(true);
+      setTimeout(() => setCopiedEmail(false), 2200);
+    };
+    // Clipboard API exists only in secure contexts; the legacy path covers
+    // plain-HTTP previews and older browsers.
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(email).then(done).catch(() => {
+        if (legacyCopyEmail(email)) done();
+      });
+    } else if (legacyCopyEmail(email)) {
+      done();
+    }
   };
+
+  // Scroll-spy: highlight the nav link of the section currently in view.
+  // The sticky header is 64px tall, so sections activate only once their
+  // title clears it; the lower margin keeps the last section reachable.
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (visible[0]) setActiveSection(visible[0].target.id);
+      },
+      { rootMargin: '-72px 0px -55% 0px', threshold: 0 }
+    );
+    SECTION_IDS.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, []);
+
+  // Scroll reveal: sections fade up as they enter the viewport. The CSS
+  // hidden state only applies once `reveal-ready` is set here, so the page
+  // renders fully without JS.
+  useEffect(() => {
+    const container = wrapperRef.current?.querySelector('.classic-main-content');
+    if (!container) return undefined;
+    container.classList.add('reveal-ready');
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-revealed');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.06 }
+    );
+    container.querySelectorAll('.classic-section').forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
+  // Back-to-top: the classic wrapper is the scroll container (body is locked).
+  useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el) return undefined;
+    const onScroll = () => setShowBackToTop(el.scrollTop > 600);
+    el.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => el.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    wrapperRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Count-up animation for the hero stat numbers (0 → target) on mount.
+  // Skipped entirely for reduced-motion users, who see the final values.
+  useEffect(() => {
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return undefined;
+    const nodes = wrapperRef.current?.querySelectorAll<HTMLElement>('.hero-stat-value');
+    if (!nodes || nodes.length === 0) return undefined;
+    const targets = heroStats.map((stat) => parseInt(stat.value, 10));
+    const suffixes = heroStats.map((stat) => stat.value.replace(/^\d+/, ''));
+    const duration = 900;
+    const start = performance.now();
+    let raf = 0;
+    const tick = (now: number) => {
+      const progress = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      nodes.forEach((node, i) => {
+        node.textContent = String(Math.round(targets[i] * eased)) + suffixes[i];
+      });
+      if (progress < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const navItems = [
+    { id: 'about', label: t.aboutTitle },
+    { id: 'education', label: t.educationTitle },
+    { id: 'certifications', label: t.certificationsTitle },
+    { id: 'skills', label: t.skillsTitle },
+    { id: 'projects', label: t.projectsTitle },
+    { id: 'contacts', label: t.contactsTitle }
+  ];
+
+  // Quick-credibility metrics derived from the existing profile data
+  // (the "2+" mirrors the hands-on experience claim in the summary).
+  const skillCount = profile.skills.reduce((sum, cat) => sum + cat.items.length, 0);
+  const heroStats = [
+    { value: '2+', label: t.statYears },
+    { value: String(Object.keys(profile.projects).length), label: t.statProjects },
+    { value: String(skillCount), label: t.statTechs }
+  ];
 
   const getCategoryIcon = (idx: number) => {
     switch (idx) {
@@ -58,7 +197,7 @@ export default function ClassicLandingView(): React.ReactElement {
   };
 
   return (
-    <div className="classic-landing-wrapper">
+    <div className="classic-landing-wrapper" ref={wrapperRef}>
       {/* ── Classic Top Navigation Bar ── */}
       <header className="classic-header glass-panel">
         <div className="classic-brand">
@@ -68,12 +207,16 @@ export default function ClassicLandingView(): React.ReactElement {
         </div>
 
         <nav className="classic-nav-links">
-          <a href="#about" className="classic-nav-link">{t.aboutTitle}</a>
-          <a href="#education" className="classic-nav-link">{t.educationTitle}</a>
-          <a href="#certifications" className="classic-nav-link">{t.certificationsTitle}</a>
-          <a href="#skills" className="classic-nav-link">{t.skillsTitle}</a>
-          <a href="#projects" className="classic-nav-link">{t.projectsTitle}</a>
-          <a href="#contacts" className="classic-nav-link">{t.contactsTitle}</a>
+          {navItems.map(({ id, label }) => (
+            <a
+              key={id}
+              href={`#${id}`}
+              className={`classic-nav-link${activeSection === id ? ' active' : ''}`}
+              aria-current={activeSection === id ? 'true' : undefined}
+            >
+              {label}
+            </a>
+          ))}
         </nav>
 
         <div className="classic-header-actions">
@@ -121,6 +264,21 @@ export default function ClassicLandingView(): React.ReactElement {
         </div>
       </header>
 
+      {/* ── Mobile section nav: the desktop links hide ≤1080px, so phones get
+          a sticky horizontally-scrollable chip row (same scroll-spy state) ── */}
+      <nav className="classic-mobile-nav" aria-label="Sections">
+        {navItems.map(({ id, label }) => (
+          <a
+            key={id}
+            href={`#${id}`}
+            className={`classic-mobile-chip${activeSection === id ? ' active' : ''}`}
+            aria-current={activeSection === id ? 'true' : undefined}
+          >
+            {label}
+          </a>
+        ))}
+      </nav>
+
       {/* ── Main Scrollable Content Container ── */}
       <main className="classic-main-content">
         {/* ── HERO SECTION ── */}
@@ -140,11 +298,20 @@ export default function ClassicLandingView(): React.ReactElement {
             </div>
             <div className="hero-meta-item">
               <Briefcase size={15} />
-              <span>Full-Stack & Creative 3D</span>
+              <span>{t.heroFocus}</span>
             </div>
           </div>
 
           <p className="hero-bio">{profile.bio}</p>
+
+          <div className="hero-stats-strip">
+            {heroStats.map((stat, idx) => (
+              <div key={idx} className="hero-stat-card">
+                <span className="hero-stat-value">{stat.value}</span>
+                <span className="hero-stat-label">{stat.label}</span>
+              </div>
+            ))}
+          </div>
 
           <div className="hero-action-buttons">
             <a href="#contacts" className="btn-primary">
@@ -160,6 +327,11 @@ export default function ClassicLandingView(): React.ReactElement {
             <button className="btn-ghost" onClick={handleCopyEmail}>
               {copiedEmail ? <Check size={16} /> : <Copy size={16} />}
               <span>{copiedEmail ? t.copied : t.copyEmail}</span>
+            </button>
+
+            <button className="btn-ghost" onClick={() => window.print()}>
+              <Printer size={16} />
+              <span>{t.downloadPdf}</span>
             </button>
           </div>
         </section>
@@ -240,10 +412,24 @@ export default function ClassicLandingView(): React.ReactElement {
                 </div>
                 <h3 className="cert-classic-title">{cert.title}</h3>
                 <div className="cert-classic-bottom">
-                  <span className="cert-verified-tag">
-                    <CheckCircle2 size={13} />
-                    <span>{language === 'uk' ? 'Підтверджено' : 'Verified'}</span>
-                  </span>
+                  {cert.url ? (
+                    <a
+                      href={cert.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="cert-verified-tag cert-verified-link"
+                      title={t.openLink}
+                    >
+                      <CheckCircle2 size={13} />
+                      <span>{language === 'uk' ? 'Підтверджено' : 'Verified'}</span>
+                      <ExternalLink size={11} className="cert-verified-arrow" />
+                    </a>
+                  ) : (
+                    <span className="cert-verified-tag">
+                      <CheckCircle2 size={13} />
+                      <span>{language === 'uk' ? 'Підтверджено' : 'Verified'}</span>
+                    </span>
+                  )}
                   <span className="cert-category-label">{cert.category}</span>
                 </div>
               </div>
@@ -434,6 +620,16 @@ export default function ClassicLandingView(): React.ReactElement {
           </div>
         </section>
       </main>
+
+      {/* ── Floating back-to-top (the wrapper is the scroll container) ── */}
+      <button
+        className={`back-to-top-btn${showBackToTop ? ' visible' : ''}`}
+        onClick={scrollToTop}
+        aria-label={t.backToTop}
+        title={t.backToTop}
+      >
+        <ArrowUp size={18} />
+      </button>
     </div>
   );
 }

@@ -19,14 +19,18 @@ import CharacterController from './CharacterController';
  * reported while sprinting. Quantized steps, asymmetric thresholds and a
  * cooldown keep resolution changes rare and one-directional instead.
  *
- * Both themes cap dpr well below native (day 0.75, night 0.7): the linear
- * upscale delivers the soft, slightly diffused texture look of the
- * "polished" build while returning GPU headroom — the capacity monitor then
- * rarely needs to step further down.
+ * Resolution quality: the canvas runs with hardware MSAA and the dpr cap
+ * sits at native device pixels (≤2 desktop, ≤1.5 touch devices) — the old
+ * sub-native caps (0.7–0.75) with antialias off rendered the island at
+ * ~540p, which read as jagged edges on desktop and as pixel mush on phones
+ * (a 3x devicePixelRatio panel got ~1/16 of its pixels). Weak GPUs settle
+ * at the floor through the steps below instead of falling into mush.
  */
-const DPR_FLOOR = 0.55;
-const DPR_CAP_DAY = 0.75;
-const DPR_CAP_NIGHT = 0.7;
+const IS_COARSE_POINTER =
+  typeof window !== 'undefined' && !!window.matchMedia?.('(pointer: coarse)').matches;
+const NATIVE_DPR = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
+const DPR_FLOOR = IS_COARSE_POINTER ? 0.75 : 0.85;
+const DPR_CAP = Math.min(NATIVE_DPR, IS_COARSE_POINTER ? 1.5 : 2);
 
 function AdaptiveResolution({
   dpr,
@@ -127,8 +131,8 @@ function NightSkyDome(): React.ReactElement {
       side: THREE.BackSide,
       depthWrite: false,
       uniforms: {
-        uZenith: { value: new THREE.Color('#111a3a') },
-        uHorizon: { value: new THREE.Color('#33466f') }
+        uZenith: { value: new THREE.Color('#1a2750') },
+        uHorizon: { value: new THREE.Color('#405a8c') }
       },
       vertexShader: `
         varying vec3 vLocal;
@@ -385,10 +389,10 @@ export default function IslandCanvas(): React.ReactElement {
   // The adaptive resolution value lives in the dpr PROP itself: fiber
   // reconciles viewport.dpr against this prop on re-renders, so driving it
   // from here is the only churn-free way to change resolution at runtime.
-  const [dpr, setDpr] = React.useState(isLight ? DPR_CAP_DAY : DPR_CAP_NIGHT);
+  const [dpr, setDpr] = React.useState(DPR_CAP);
 
   React.useEffect(() => {
-    setDpr(isLight ? DPR_CAP_DAY : DPR_CAP_NIGHT);
+    setDpr(DPR_CAP);
   }, [isLight]);
 
   return (
@@ -396,16 +400,16 @@ export default function IslandCanvas(): React.ReactElement {
       dpr={dpr}
       camera={{ position: [-18, 22, 36], fov: 45, far: 900 }}
       gl={{
-        antialias: false,
+        antialias: true,
         alpha: false,
         powerPreference: 'high-performance',
         toneMapping: THREE.ACESFilmicToneMapping,
-        toneMappingExposure: isLight ? 1.05 : 1.15
+        toneMappingExposure: isLight ? 1.05 : 1.35
       }}
       performance={{ min: 0.5 }}
     >
       {/* ── Sky Background ── */}
-      <color attach="background" args={[isLight ? '#dbeafe' : '#0a0e20']} />
+      <color attach="background" args={[isLight ? '#dbeafe' : '#101736']} />
 
       {/* ── Night: gradient dome + moon + stars (dark theme only) ── */}
       {!isLight && (
@@ -438,11 +442,11 @@ export default function IslandCanvas(): React.ReactElement {
       ) : (
         <>
           {/* Moonlight key: cold silver-blue from the moon direction */}
-          <directionalLight position={[-60, 80, -95]} intensity={1.7} color="#b6ccff" />
+          <directionalLight position={[-60, 80, -95]} intensity={2.3} color="#c3d6ff" />
           {/* Cool fill from the opposite side keeps shadowed faces readable */}
-          <directionalLight position={[60, 30, 40]} intensity={0.65} color="#33459a" />
-          <ambientLight intensity={1.6} color="#24356b" />
-          <hemisphereLight args={['#3d5490', '#141a2e', 1.3]} />
+          <directionalLight position={[60, 30, 40]} intensity={0.95} color="#405a9e" />
+          <ambientLight intensity={2.2} color="#2f4485" />
+          <hemisphereLight args={['#4a67a5', '#1c2640', 1.6]} />
         </>
       )}
 
@@ -468,7 +472,7 @@ export default function IslandCanvas(): React.ReactElement {
       {isSceneLoaded && (
         <AdaptiveResolution
           dpr={dpr}
-          maxDpr={isLight ? DPR_CAP_DAY : DPR_CAP_NIGHT}
+          maxDpr={DPR_CAP}
           onChange={setDpr}
         />
       )}

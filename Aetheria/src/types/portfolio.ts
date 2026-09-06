@@ -29,6 +29,8 @@ export interface CertificationItem {
   level?: string;
   category: string;
   verified: boolean;
+  /** Public verification link (e.g. HackerRank credential page) */
+  url?: string;
 }
 
 export interface DeveloperProfile {
@@ -47,6 +49,7 @@ export interface DeveloperProfile {
   contacts: {
     email: string;
     telegram: string;
+    telegramHandle: string;
     github: string;
   };
   projects: Record<string, ProjectItem>;
@@ -82,6 +85,7 @@ export interface Translations {
   landing: {
     heroGreeting: string;
     availableForWork: string;
+    heroFocus: string;
     contactMe: string;
     viewIn3D: string;
     aboutTitle: string;
@@ -102,6 +106,11 @@ export interface Translations {
     copyEmail: string;
     copied: string;
     openLink: string;
+    downloadPdf: string;
+    backToTop: string;
+    statYears: string;
+    statProjects: string;
+    statTechs: string;
     rightsReserved: string;
   };
   modals: {

@@ -4,8 +4,6 @@ import './globals.css';
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
   viewportFit: 'cover',
   themeColor: '#dbeafe'
 };
@@ -17,6 +15,10 @@ export const metadata: Metadata = {
   title: 'Aetheria 3D — Portfolio of Dmytro Hnylytskyi',
   description: 'Interactive 3D portfolio & resume of a Full-Stack & 3D Web Developer',
   manifest: '/manifest.json',
+  icons: {
+    icon: [{ url: '/favicon.ico', sizes: '48x48 32x32 24x24 16x16', type: 'image/x-icon' }],
+    apple: '/apple-touch-icon.png'
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
@@ -54,9 +56,37 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // Structured data for search engines: the resume tab is the crawlable
+  // surface, so the Person entity mirrors the public contact channels.
+  const personJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: 'Dmytro Hnylytskyi',
+    jobTitle: 'Full-Stack & Creative 3D Developer',
+    url: 'https://hnylytskyi.dev',
+    email: 'mailto:hnylytskyidmitri@gmail.com',
+    address: { '@type': 'PostalAddress', addressLocality: 'Kyiv', addressCountry: 'UA' },
+    sameAs: ['https://github.com/DmytroHnylytskyi', 'https://t.me/mokydjin']
+  };
+
   return (
     <html lang="en" data-theme="light">
-      <body>{children}</body>
+      <head>
+        {/* Applied before first paint: persisted theme wins, otherwise the OS
+            preference — prevents the light-theme flash for dark-mode visitors. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('aetheria_theme');if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`
+          }}
+        />
+      </head>
+      <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+        />
+        {children}
+      </body>
     </html>
   );
 }

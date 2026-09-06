@@ -59,7 +59,8 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         issuer: "HackerRank",
         level: "Verified Skill",
         category: "Frontend",
-        verified: true
+        verified: true,
+        url: "https://www.hackerrank.com/certificates/1b2b93690e68"
       },
       {
         id: "hackerrank-js",
@@ -67,7 +68,8 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         issuer: "HackerRank",
         level: "Intermediate",
         category: "Frontend",
-        verified: true
+        verified: true,
+        url: "https://www.hackerrank.com/certificates/a4919f8d3fc1"
       },
       {
         id: "hackerrank-node",
@@ -75,7 +77,8 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         issuer: "HackerRank",
         level: "Intermediate",
         category: "Backend",
-        verified: true
+        verified: true,
+        url: "https://www.hackerrank.com/certificates/f643b05e6be5"
       },
       {
         id: "hackerrank-sql",
@@ -83,7 +86,8 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         issuer: "HackerRank",
         level: "Advanced",
         category: "Databases",
-        verified: true
+        verified: true,
+        url: "https://www.hackerrank.com/certificates/4c52e6ea4970"
       },
       {
         id: "hackerrank-rest",
@@ -91,7 +95,8 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         issuer: "HackerRank",
         level: "Intermediate",
         category: "Backend",
-        verified: true
+        verified: true,
+        url: "https://www.hackerrank.com/certificates/e1f99257b9cf"
       },
       {
         id: "hackerrank-python",
@@ -99,15 +104,17 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         issuer: "HackerRank",
         level: "Basic",
         category: "Backend",
-        verified: true
+        verified: true,
+        url: "https://www.hackerrank.com/certificates/a4643cee10ba"
       },
       {
         id: "efset-english",
         title: "EF SET English Certificate",
         issuer: "EF Standard English Test",
-        level: "International Standard",
+        level: "C2 Proficient (78/100)",
         category: "Languages",
-        verified: true
+        verified: true,
+        url: "https://cert.efset.org/7BCsbE"
       }
     ],
     skills: [
@@ -131,6 +138,7 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
     contacts: {
       email: "hnylytskyidmitri@gmail.com",
       telegram: "https://t.me/mokydjin",
+      telegramHandle: "@mokydjin",
       github: "https://github.com/DmytroHnylytskyi"
     },
     projects: {
@@ -229,7 +237,8 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         issuer: "HackerRank",
         level: "Verified Skill",
         category: "Frontend",
-        verified: true
+        verified: true,
+        url: "https://www.hackerrank.com/certificates/1b2b93690e68"
       },
       {
         id: "hackerrank-js",
@@ -237,7 +246,8 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         issuer: "HackerRank",
         level: "Intermediate",
         category: "Frontend",
-        verified: true
+        verified: true,
+        url: "https://www.hackerrank.com/certificates/a4919f8d3fc1"
       },
       {
         id: "hackerrank-node",
@@ -245,7 +255,8 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         issuer: "HackerRank",
         level: "Intermediate",
         category: "Backend",
-        verified: true
+        verified: true,
+        url: "https://www.hackerrank.com/certificates/f643b05e6be5"
       },
       {
         id: "hackerrank-sql",
@@ -253,7 +264,8 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         issuer: "HackerRank",
         level: "Advanced",
         category: "Databases",
-        verified: true
+        verified: true,
+        url: "https://www.hackerrank.com/certificates/4c52e6ea4970"
       },
       {
         id: "hackerrank-rest",
@@ -261,7 +273,8 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         issuer: "HackerRank",
         level: "Intermediate",
         category: "Backend",
-        verified: true
+        verified: true,
+        url: "https://www.hackerrank.com/certificates/e1f99257b9cf"
       },
       {
         id: "hackerrank-python",
@@ -269,15 +282,17 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         issuer: "HackerRank",
         level: "Basic",
         category: "Backend",
-        verified: true
+        verified: true,
+        url: "https://www.hackerrank.com/certificates/a4643cee10ba"
       },
       {
         id: "efset-english",
         title: "EF SET English Certificate",
         issuer: "EF Standard English Test",
-        level: "International Standard",
+        level: "C2 Proficient (78/100)",
         category: "Languages",
-        verified: true
+        verified: true,
+        url: "https://cert.efset.org/7BCsbE"
       }
     ],
     skills: [
@@ -301,6 +316,7 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
     contacts: {
       email: "hnylytskyidmitri@gmail.com",
       telegram: "https://t.me/mokydjin",
+      telegramHandle: "@mokydjin",
       github: "https://github.com/DmytroHnylytskyi"
     },
     projects: {
@@ -402,6 +418,7 @@ export const translations: Record<Locale, Translations> = {
     landing: {
       heroGreeting: "Привіт, я",
       availableForWork: "100% Remote • Відкритий до пропозицій",
+      heroFocus: "Фулстек і креативний 3D",
       contactMe: "Зв'язатися",
       viewIn3D: "Відкрити в 3D",
       aboutTitle: "Про мене",
@@ -422,6 +439,11 @@ export const translations: Record<Locale, Translations> = {
       copyEmail: "Скопіювати Email",
       copied: "Скопійовано!",
       openLink: "Відкрити",
+      downloadPdf: "Завантажити PDF",
+      backToTop: "Догори",
+      statYears: "роки розробки",
+      statProjects: "запущені проєкти",
+      statTechs: "технології у стеку",
       rightsReserved: "Усі права захищено."
     },
     modals: {
@@ -479,6 +501,7 @@ export const translations: Record<Locale, Translations> = {
     landing: {
       heroGreeting: "Hello, I am",
       availableForWork: "100% Remote • Open to Opportunities",
+      heroFocus: "Full-Stack & Creative 3D",
       contactMe: "Get in Touch",
       viewIn3D: "Explore in 3D",
       aboutTitle: "About Me",
@@ -499,6 +522,11 @@ export const translations: Record<Locale, Translations> = {
       copyEmail: "Copy Email",
       copied: "Copied!",
       openLink: "Open Link",
+      downloadPdf: "Download PDF",
+      backToTop: "Back to top",
+      statYears: "years of development",
+      statProjects: "flagship projects",
+      statTechs: "technologies in the stack",
       rightsReserved: "All rights reserved."
     },
     modals: {

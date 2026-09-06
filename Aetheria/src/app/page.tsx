@@ -31,15 +31,68 @@ const IslandCanvas = dynamic(() => import('../components/3d/IslandCanvas'), {
 export default function HomePage(): React.ReactElement {
   const { viewMode, theme, language, isSceneLoaded, setIntroPlaying } = useGameStore();
 
+  // Theme & language persistence: the pre-paint script in layout.tsx has
+  // already set <html data-theme> (stored theme, else OS preference); sync
+  // the store with it once on mount so React takes over, then persist every
+  // change back to localStorage.
   React.useEffect(() => {
+    const htmlTheme = document.documentElement.getAttribute('data-theme');
+    const effective = htmlTheme === 'dark' || htmlTheme === 'light' ? htmlTheme : 'light';
+    if (useGameStore.getState().theme !== effective) useGameStore.setState({ theme: effective });
+
+    let effectiveLang: 'en' | 'uk' | null = null;
+    // A shared ?lang= link wins over the visitor's stored choice — explicit
+    // intent of the person who shared it beats remembered preference.
+    try {
+      const param = new URLSearchParams(window.location.search).get('lang');
+      if (param === 'uk' || param === 'en') effectiveLang = param;
+    } catch (_) {}
+    if (!effectiveLang) {
+      try {
+        const storedLang = localStorage.getItem('aetheria_lang');
+        if (storedLang === 'uk' || storedLang === 'en') effectiveLang = storedLang;
+      } catch (_) {}
+    }
+    if (effectiveLang && useGameStore.getState().language !== effectiveLang) {
+      useGameStore.setState({ language: effectiveLang });
+    }
+    // Runs once: hydration sync only.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  React.useEffect(() => {
+    // Stale-closure guard: right after the hydration sync above, the first
+    // render's effect still carries the pre-sync theme — skip that write.
+    if (useGameStore.getState().theme !== theme) return;
     document.documentElement.setAttribute('data-theme', theme);
+    try {
+      localStorage.setItem('aetheria_theme', theme);
+    } catch (_) {}
   }, [theme]);
 
   React.useEffect(() => {
+    if (useGameStore.getState().language !== language) return;
     document.documentElement.setAttribute('lang', language);
     document.title = language === 'uk'
       ? 'Aetheria 3D — Портфоліо Дмитра Гнилицького'
       : 'Aetheria 3D — Portfolio of Dmytro Hnylytskyi';
+    try {
+      localStorage.setItem('aetheria_lang', language);
+    } catch (_) {}
+    // Reflect the language in the URL so a Ukrainian page can be shared as a
+    // link; the default EN keeps a clean canonical URL without the parameter.
+    try {
+      const url = new URL(window.location.href);
+      if (language === 'uk') {
+        if (url.searchParams.get('lang') !== 'uk') {
+          url.searchParams.set('lang', 'uk');
+          window.history.replaceState(null, '', url);
+        }
+      } else if (url.searchParams.has('lang')) {
+        url.searchParams.delete('lang');
+        window.history.replaceState(null, '', url);
+      }
+    } catch (_) {}
   }, [language]);
 
   // Cinematic intro starts only AFTER the world has fully loaded — the loader
