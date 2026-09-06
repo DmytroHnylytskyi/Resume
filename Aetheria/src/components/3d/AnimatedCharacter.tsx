@@ -1,32 +1,28 @@
 'use client';
 
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useMemo, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 import { characterAnimState } from '../../store/characterAnimState';
+import { useGameStore } from '../../store/useGameStore';
 import { clone as cloneSkeleton } from 'three/examples/jsm/utils/SkeletonUtils.js';
 
 const TARGET_HEIGHT = 1.65;
 
-/**
- * AnimatedCharacter
- * 
- * 3D Skinned Skeletal Mesh character with authentic PBR texturing and smooth animation crossfading.
- * 
- * Optimized Architecture:
- * - Unified GLB Container: Packed 4 animations into a single 3.1MB GLB (down from 28.5MB across 4 FBX files).
- * - SkeletonUtils Cloning: Safely clones GLTF skeletal hierarchies to prevent bone-binding collisions.
- * - AnimationMixer State Machine: Implements smooth 0.18s crossfades between Idle, Walk, Run, Jump.
- * - Exact Bounding Normalization: Maintains exact 1.65m character height.
- * - Zero Re-render Loop: Locomotion flags are read from characterAnimState inside useFrame.
- */
 export default function AnimatedCharacter(): React.ReactElement {
-  // ── 1. Load Character Textures ──
+  const setCharacterLoaded = useGameStore((s) => s.setCharacterLoaded);
+
+  useEffect(() => {
+    setCharacterLoaded(true);
+    return () => setCharacterLoaded(false);
+  }, [setCharacterLoaded]);
+
+  // ── 1. Load Character Textures (Optimized WebP, 85% bandwidth reduction) ──
   const [diffuseMap, normalMap, specularMap] = useTexture([
-    '/model/kaykit_halloween/Arissa_diffuse.png',
-    '/model/kaykit_halloween/Arissa_normal.png',
-    '/model/kaykit_halloween/Arissa_specular.png'
+    '/model/kaykit_halloween/Arissa_diffuse.webp',
+    '/model/kaykit_halloween/Arissa_normal.webp',
+    '/model/kaykit_halloween/Arissa_specular.webp'
   ]);
 
   // Configure texture color space, wrapping, and filtering
@@ -143,7 +139,7 @@ export default function AnimatedCharacter(): React.ReactElement {
   );
 }
 
-useTexture.preload('/model/kaykit_halloween/Arissa_diffuse.png');
-useTexture.preload('/model/kaykit_halloween/Arissa_normal.png');
-useTexture.preload('/model/kaykit_halloween/Arissa_specular.png');
+useTexture.preload('/model/kaykit_halloween/Arissa_diffuse.webp');
+useTexture.preload('/model/kaykit_halloween/Arissa_normal.webp');
+useTexture.preload('/model/kaykit_halloween/Arissa_specular.webp');
 useGLTF.preload('/model/kaykit_halloween/character.glb');

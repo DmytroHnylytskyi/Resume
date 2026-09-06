@@ -35,6 +35,8 @@ export const useGameStore = create<GameState>((set) => ({
   // ── Scene Asset Preloader State ──
   isSceneLoaded: false,
   setSceneLoaded: (loaded: boolean) => set({ isSceneLoaded: loaded }),
+  isCharacterLoaded: false,
+  setCharacterLoaded: (loaded: boolean) => set({ isCharacterLoaded: loaded }),
 
   // ── 3D Landmark & Project Modals ──
   activeModal: null,

@@ -8,7 +8,7 @@ import { Loader2 } from 'lucide-react';
 
 export default function LoadingScreen(): React.ReactElement | null {
   const { progress, active, loaded, total } = useProgress();
-  const { language, isSceneLoaded, setSceneLoaded, viewMode } = useGameStore();
+  const { language, isSceneLoaded, setSceneLoaded, isCharacterLoaded, viewMode } = useGameStore();
   const [displayProgress, setDisplayProgress] = useState(0);
   const [fadeOut, setFadeOut] = useState(false);
   const [gone, setGone] = useState(false);
@@ -26,14 +26,16 @@ export default function LoadingScreen(): React.ReactElement | null {
     }
   }, [progress, active, total]);
 
-  // Actual completion detector: only finishes when assets are truly loaded.
+  // Actual completion detector: only finishes when both scene and character are ready.
   // The world is marked ready the MOMENT the fade-out begins — the loader
-  // dissolves into the cinematic intro instead of holding it back.
+  // dissolves into the cinematic intro with the character fully spawned.
   useEffect(() => {
     const isFinished =
-      displayProgress >= 100 ||
-      progress >= 100 ||
-      (hasStartedRef.current && !active && total > 0 && loaded >= total);
+      isCharacterLoaded && (
+        displayProgress >= 100 ||
+        progress >= 100 ||
+        (hasStartedRef.current && !active && total > 0 && loaded >= total)
+      );
 
     if (!isFinished) return;
 
@@ -47,9 +49,9 @@ export default function LoadingScreen(): React.ReactElement | null {
       }, 400)
     );
     return () => timers.forEach((id) => window.clearTimeout(id));
-  }, [displayProgress, progress, active, loaded, total, setSceneLoaded]);
+  }, [displayProgress, progress, active, loaded, total, isCharacterLoaded, setSceneLoaded]);
 
-  // Safety fallback: if all assets were cached and queue was empty, mark loaded after 8s
+  // Safety fallback: if asset queue stalled, mark loaded after 10s
   useEffect(() => {
     const safetyTimer = setTimeout(() => {
       if (!isSceneLoaded) {
@@ -58,7 +60,7 @@ export default function LoadingScreen(): React.ReactElement | null {
         setSceneLoaded(true);
         setTimeout(() => setGone(true), 650);
       }
-    }, 8000);
+    }, 10000);
     return () => clearTimeout(safetyTimer);
   }, [isSceneLoaded, setSceneLoaded]);
 

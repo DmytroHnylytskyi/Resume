@@ -3,7 +3,7 @@
 import React, { useRef, Suspense, useEffect, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Physics, RigidBody, CuboidCollider } from '@react-three/rapier';
-import { Sky, Stars } from '@react-three/drei';
+import { Sky, Stars, useGLTF, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 import { useGameStore } from '../../store/useGameStore';
 import WorldScene from './WorldScene';
@@ -480,3 +480,8 @@ export default function IslandCanvas(): React.ReactElement {
     </Canvas>
   );
 }
+
+useGLTF.preload('/model/kaykit_halloween/character.glb');
+useTexture.preload('/model/kaykit_halloween/Arissa_diffuse.webp');
+useTexture.preload('/model/kaykit_halloween/Arissa_normal.webp');
+useTexture.preload('/model/kaykit_halloween/Arissa_specular.webp');

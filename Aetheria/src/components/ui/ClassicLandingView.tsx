@@ -169,13 +169,15 @@ export default function ClassicLandingView(): React.ReactElement {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const isUk = language === 'uk';
+
   const navItems = [
-    { id: 'about', label: t.aboutTitle },
-    { id: 'education', label: t.educationTitle },
-    { id: 'certifications', label: t.certificationsTitle },
-    { id: 'skills', label: t.skillsTitle },
-    { id: 'projects', label: t.projectsTitle },
-    { id: 'contacts', label: t.contactsTitle }
+    { id: 'about', label: isUk ? 'Про мене' : 'About' },
+    { id: 'education', label: isUk ? 'Освіта' : 'Education' },
+    { id: 'certifications', label: isUk ? 'Сертифікати' : 'Certificates' },
+    { id: 'skills', label: isUk ? 'Навички' : 'Skills' },
+    { id: 'projects', label: isUk ? 'Проєкти' : 'Projects' },
+    { id: 'contacts', label: isUk ? 'Контакти' : 'Contacts' }
   ];
 
   // Quick-credibility metrics derived from the existing profile data
@@ -259,7 +261,7 @@ export default function ClassicLandingView(): React.ReactElement {
           >
             <Compass size={15} />
             <span className="switch-3d-text-full">{t.viewIn3D}</span>
-            <span className="switch-3d-text-compact">3D</span>
+            <span className="switch-3d-text-compact">{isUk ? '3D Світ' : '3D World'}</span>
           </button>
         </div>
       </header>

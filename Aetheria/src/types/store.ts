@@ -31,6 +31,8 @@ export interface GameState {
   // Loading state
   isSceneLoaded: boolean;
   setSceneLoaded: (loaded: boolean) => void;
+  isCharacterLoaded: boolean;
+  setCharacterLoaded: (loaded: boolean) => void;
 
   // 3D Modals & Prompts
   activeModal: StatueKey | null;

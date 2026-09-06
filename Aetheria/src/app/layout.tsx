@@ -72,6 +72,18 @@ export default function RootLayout({
   return (
     <html lang="en" data-theme="light">
       <head>
+        {/* Preload character assets immediately so 3D avatar is instant on spawn */}
+        <link
+          rel="preload"
+          href="/model/kaykit_halloween/character.glb"
+          as="fetch"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="/model/kaykit_halloween/Arissa_diffuse.webp"
+          as="image"
+        />
         {/* Applied before first paint: persisted theme wins, otherwise the OS
             preference — prevents the light-theme flash for dark-mode visitors. */}
         <script
