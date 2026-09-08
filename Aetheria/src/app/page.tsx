@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic';
 import React from 'react';
 import { useGameStore } from '../store/useGameStore';
+import { enableDayNightThemeSync } from '../store/dayNightState';
 import ControlsHUD from '../components/ui/ControlsHUD';
 import BioModal from '../components/ui/BioModal';
 import ContactsModal from '../components/ui/ContactsModal';
@@ -56,6 +57,11 @@ export default function HomePage(): React.ReactElement {
     if (effectiveLang && useGameStore.getState().language !== effectiveLang) {
       useGameStore.setState({ language: effectiveLang });
     }
+    // Arm the day/night → DOM-theme threshold only now: the store has
+    // adopted the pre-paint html theme, hydration is complete, so the first
+    // crossing (e.g. stored cycle sitting below the horizon) can safely
+    // drive the store theme.
+    enableDayNightThemeSync(effective === 'dark' ? 'dark' : 'light');
     // Runs once: hydration sync only.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

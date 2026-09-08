@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { GameState, ViewMode, ThemeMode } from '../types/store';
 import { StatueKey } from '../types/scene';
 import { Locale } from '../types/portfolio';
+import { registerDayNightThemeSync, toggleDayNight } from './dayNightState';
 
 /**
  * useGameStore
@@ -17,10 +18,12 @@ export const useGameStore = create<GameState>((set) => ({
   setLanguage: (lang: Locale) => set({ language: lang }),
 
   // ── Color Theme (Dark / Light) ──
-  // Light is the default experience: sunlit blue-sky island. Dark = moonlit night.
+  // The binary DOM theme is derived from the continuous day/night cycle
+  // (dayNightState thresholds); this toggle animates the cycle to the
+  // opposite pole through sunset/sunrise instead of flipping instantly.
   theme: 'light',
   setTheme: (theme: ThemeMode) => set({ theme }),
-  toggleTheme: () => set((s) => ({ theme: s.theme === 'dark' ? 'light' : 'dark' })),
+  toggleTheme: () => toggleDayNight(),
 
   // ── View Mode (3D WebGL vs Classic Document Resume) ──
   viewMode: '3d',
@@ -70,5 +73,10 @@ export const useGameStore = create<GameState>((set) => ({
 
   // ── Tactical Island Map ──
   isTacticalMapOpen: false,
-  setTacticalMapOpen: (open) => set({ isTacticalMapOpen: open })
+  setTacticalMapOpen: (open: boolean) => set({ isTacticalMapOpen: open })
 }));
+
+// Wire the DOM theme to the continuous day/night cycle (threshold with
+// hysteresis — see dayNightState.ts). The setter adopts whatever the cycle
+// currently implies, so the store theme stays consistent from first paint.
+registerDayNightThemeSync((theme) => useGameStore.setState({ theme }));

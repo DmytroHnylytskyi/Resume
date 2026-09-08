@@ -5,6 +5,7 @@ import { useGameStore } from '../../store/useGameStore';
 import { developerProfiles, translations } from '../../data/resumeData';
 import { User, Share2, Award, FileText, Sun, Moon, Sparkles } from 'lucide-react';
 import ControlsGuideDropdown from './ControlsGuideDropdown';
+import TimeOfDaySlider from './TimeOfDaySlider';
 
 function FpsBadge(): React.ReactElement {
   const [fps, setFps] = useState(60);
@@ -132,10 +133,14 @@ export default function ControlsHUD(): React.ReactElement {
           {/* Expandable Controls Guide Dropdown */}
           <ControlsGuideDropdown />
 
-          {/* Controls Cluster: Theme Toggle + Language Switcher */}
+          {/* Controls Cluster: Day/Night Slider + Language Switcher */}
           <div className="header-controls-cluster">
+            {/* Continuous day/night cycle scrubber (replaces the old binary button) */}
+            <TimeOfDaySlider />
+
+            {/* Theme fallback button: shown only where the slider is hidden (≤640px) */}
             <button
-              className="nav-shortcut-btn theme-toggle-btn"
+              className="nav-shortcut-btn theme-toggle-btn slider-fallback-btn"
               onClick={toggleTheme}
               title={theme === 'dark' ? (language === 'uk' ? 'Світла тема' : 'Light Mode') : (language === 'uk' ? 'Темна тема' : 'Dark Mode')}
               aria-label={theme === 'dark' ? 'Toggle light mode' : 'Toggle dark mode'}

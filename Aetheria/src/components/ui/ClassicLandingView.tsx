@@ -21,10 +21,17 @@ import {
   GraduationCap,
   ShieldCheck,
   CheckCircle2,
-  Sparkles,
   Printer,
-  ArrowUp
+  ArrowUp,
+  Globe,
+  ChevronDown
 } from 'lucide-react';
+import ResumePrintDocument from './ResumePrintDocument';
+import TimeOfDaySlider from './TimeOfDaySlider';
+import {
+  dayNightState,
+  subscribeToDayNight
+} from '../../store/dayNightState';
 
 /** Section ids watched by the scroll-spy (order matches the sticky nav). */
 const SECTION_IDS = ['about', 'education', 'certifications', 'skills', 'projects', 'contacts'];
@@ -61,11 +68,24 @@ function GithubIcon({ size = 16 }: { size?: number }) {
 }
 
 export default function ClassicLandingView(): React.ReactElement {
-  const { language, setLanguage, setViewMode, setSelectedProject, theme, toggleTheme } = useGameStore();
+  const { language, setLanguage, setViewMode, theme, toggleTheme } = useGameStore();
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [activeSection, setActiveSection] = useState('');
   const [showBackToTop, setShowBackToTop] = useState(false);
+  // In-place expansion of project cards (the classic view's replacement for
+  // the 3D-mode ProjectModal). The first project starts expanded so a busy
+  // reader immediately sees what an "opened" card contains.
+  const [expandedProjects, setExpandedProjects] = useState<Set<string>>(() => new Set(['forma']));
   const wrapperRef = useRef<HTMLDivElement | null>(null);
+
+  const toggleProject = (id: string) => {
+    setExpandedProjects((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   const profile = developerProfiles[language];
   const t = translations[language].landing;
@@ -171,6 +191,45 @@ export default function ClassicLandingView(): React.ReactElement {
 
   const isUk = language === 'uk';
 
+  // Sky tint: a full-viewport backdrop mirroring the current cycle sky even
+  // without the WebGL canvas mounted. Runs off the same LUT the dome
+  // samples, throttled to ~8 fps of DOM updates. The painted gradient is
+  // one continuous scene — glow + horizon→zenith arc in the upper part,
+  // dissolving into the page base color toward the bottom — so the page
+  // background never splits into "sky part" and "flat part". Nights breathe
+  // stronger (opacity follows the night factor) so dark-mode panels settle
+  // onto a distinctly moonlit page.
+  const skyTintRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const el = skyTintRef.current;
+    if (!el) return undefined;
+    const rgba = (c: readonly number[], a: number) =>
+      `rgba(${Math.round(c[0])}, ${Math.round(c[1])}, ${Math.round(c[2])}, ${a})`;
+    const paint = () => {
+      const { zenith, horizon, sunTint } = dayNightState.sky;
+      const night = Math.max(0, Math.min(1, (0.05 - dayNightState.sunElev) / 0.35));
+      // The glow tint follows the reigning body: warm sun by day, cold moon by night.
+      const glowC = night > 0.5 ? horizon : sunTint;
+      // The sky arc dissolves into the page's own --bg-app near the bottom.
+      // The final stop is the ZENITH color at alpha 0 (not `transparent`):
+      // plain `transparent` is rgba(0,0,0,0) and would fade bright skies
+      // through a muddy gray band instead of a clean same-hue dissolve.
+      el.style.background = [
+        `radial-gradient(120% 42% at 50% -8%, ${rgba(glowC, 1)} 0%, ${rgba(glowC, 0)} 55%)`,
+        `linear-gradient(180deg, ${rgba(horizon, 1)} 0%, ${rgba(horizon, 1)} 26%, ${rgba(zenith, 1)} 58%, ${rgba(zenith, 0)} 88%)`
+      ].join(', ');
+      el.style.opacity = String(0.35 + 0.3 * night);
+    };
+    paint();
+    let lastPaint = 0;
+    return subscribeToDayNight(() => {
+      const now = performance.now();
+      if (now - lastPaint < 125) return; // throttle DOM paints
+      lastPaint = now;
+      paint();
+    });
+  }, []);
+
   const navItems = [
     { id: 'about', label: isUk ? 'Про мене' : 'About' },
     { id: 'education', label: isUk ? 'Освіта' : 'Education' },
@@ -200,8 +259,13 @@ export default function ClassicLandingView(): React.ReactElement {
 
   return (
     <div className="classic-landing-wrapper" ref={wrapperRef}>
-      {/* ── Classic Top Navigation Bar ── */}
-      <header className="classic-header glass-panel">
+      {/* Sky tint: cycle-driven backdrop behind the sticky header (see useEffect) */}
+      <div className="classic-sky-tint" ref={skyTintRef} aria-hidden="true" />
+
+      {/* ── Screen-Only Interactive Web View ── */}
+      <div className="classic-web-view">
+        {/* ── Classic Top Navigation Bar ── */}
+        <header className="classic-header glass-panel">
         <div className="classic-brand">
           <div className="brand-dot" />
           <span className="brand-name">{profile.name}</span>
@@ -222,11 +286,14 @@ export default function ClassicLandingView(): React.ReactElement {
         </nav>
 
         <div className="classic-header-actions">
-          {/* Unified Controls Cluster: Theme Toggle + Language Switcher */}
+          {/* Unified Controls Cluster: Time-of-Day Slider + Language Switcher */}
           <div className="header-controls-cluster">
-            {/* Theme Toggle */}
+            {/* Day/Night cycle scrubber (theme toggle lives inside it as a fallback below 640px) */}
+            <TimeOfDaySlider />
+
+            {/* Theme fallback button: shown only where the slider is hidden (≤640px) */}
             <button
-              className="nav-shortcut-btn theme-toggle-btn"
+              className="nav-shortcut-btn theme-toggle-btn slider-fallback-btn"
               onClick={toggleTheme}
               title={theme === 'dark' ? (language === 'uk' ? 'Світла тема' : 'Light Mode') : (language === 'uk' ? 'Темна тема' : 'Dark Mode')}
               aria-label={theme === 'dark' ? 'Toggle light mode' : 'Toggle dark mode'}
@@ -473,86 +540,97 @@ export default function ClassicLandingView(): React.ReactElement {
           </div>
 
           <div className="projects-grid">
-            {Object.values(profile.projects).map((proj) => (
-              <article key={proj.id} className="project-card glass-panel">
-                <div className="project-accent-bar" />
+            {Object.values(profile.projects).map((proj) => {
+              const isExpanded = expandedProjects.has(proj.id);
+              return (
+                <article
+                  key={proj.id}
+                  className={`project-card glass-panel${isExpanded ? ' expanded' : ''}`}
+                  style={{ '--proj-color': proj.color } as React.CSSProperties}
+                >
+                  <div className="project-accent-bar" />
 
-                <div className="project-card-header">
-                  <span className="project-tagline">
-                    {proj.tagline}
-                  </span>
-                  <h3 className="project-title">{proj.title}</h3>
-                </div>
-
-                <p className="project-description">{proj.description}</p>
-
-                {/* Feature Highlights */}
-                <div className="project-features-block">
-                  <span className="features-label">{t.keyFeatures}</span>
-                  <ul className="features-list">
-                    {proj.features.map((feat, fIdx) => (
-                      <li key={fIdx} className="feature-item">
-                        <span className="feature-bullet" />
-                        <span>{feat}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Tech Tags */}
-                <div className="project-tags">
-                  {proj.tags.map((tag, tIdx) => (
-                    <span key={tIdx} className="project-tag">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Action Links Toolbar */}
-                <div className="project-actions-toolbar-wrapper">
-                  <div
-                    className="project-actions-toolbar custom-scrollbar-horizontal"
-                    onWheel={(e) => {
-                      if (e.deltaY !== 0) {
-                        e.currentTarget.scrollLeft += e.deltaY;
-                      }
-                    }}
+                  {/* Clickable header: toggles the feature/link expansion in place */}
+                  <button
+                    type="button"
+                    className="project-card-header"
+                    onClick={() => toggleProject(proj.id)}
+                    aria-expanded={isExpanded}
+                    aria-controls={`proj-details-${proj.id}`}
                   >
-                    <button
-                      className="project-btn primary"
-                      onClick={() => setSelectedProject(proj.id)}
-                    >
-                      <Sparkles size={14} />
-                      <span>{translations[language].modals.projectDetails}</span>
-                    </button>
+                    <span className="project-tagline">
+                      {proj.tagline}
+                    </span>
+                    <span className="project-title-row">
+                      <h3 className="project-title">{proj.title}</h3>
+                      <ChevronDown
+                        size={18}
+                        className={`project-chevron${isExpanded ? ' open' : ''}`}
+                        aria-hidden="true"
+                      />
+                    </span>
+                  </button>
 
-                    {proj.url && (
-                      <a
-                        href={getProjectUrl(proj.id, proj.url)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="project-btn secondary"
-                      >
-                        <span>{t.liveDemo}</span>
-                        <ExternalLink size={14} />
-                      </a>
-                    )}
+                  <p className="project-description">{proj.description}</p>
 
-                    {proj.githubUrl && (
-                      <a
-                        href={proj.githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="project-btn secondary"
-                      >
-                        <GithubIcon size={14} />
-                        <span>{t.sourceCode}</span>
-                      </a>
-                    )}
+                  {/* In-place expandable details: features + links (grid-rows animation) */}
+                  <div className="project-expandable" id={`proj-details-${proj.id}`}>
+                    <div className="project-expandable-inner">
+                      {/* Feature Highlights */}
+                      <div className="project-features-block">
+                        <span className="features-label">{t.keyFeatures}</span>
+                        <ul className="features-list">
+                          {proj.features.map((feat, fIdx) => (
+                            <li key={fIdx} className="feature-item">
+                              <span className="feature-bullet" />
+                              <span>{feat}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      {/* Tech Tags */}
+                      <div className="project-tags">
+                        {proj.tags.map((tag, tIdx) => (
+                          <span key={tIdx} className="project-tag">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* Action Links Toolbar */}
+                      <div className="project-actions-toolbar-wrapper">
+                        <div className="project-actions-toolbar">
+                          {proj.url && (
+                            <a
+                              href={getProjectUrl(proj.id, proj.url)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="project-btn primary"
+                            >
+                              <span>{t.liveDemo}</span>
+                              <ExternalLink size={14} />
+                            </a>
+                          )}
+
+                          {proj.githubUrl && (
+                            <a
+                              href={proj.githubUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="project-btn secondary"
+                            >
+                              <GithubIcon size={14} />
+                              <span>{t.sourceCode}</span>
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </article>
-            ))}
+                </article>
+              );
+            })}
           </div>
         </section>
 
@@ -623,15 +701,19 @@ export default function ClassicLandingView(): React.ReactElement {
         </section>
       </main>
 
-      {/* ── Floating back-to-top (the wrapper is the scroll container) ── */}
-      <button
-        className={`back-to-top-btn${showBackToTop ? ' visible' : ''}`}
-        onClick={scrollToTop}
-        aria-label={t.backToTop}
-        title={t.backToTop}
-      >
-        <ArrowUp size={18} />
-      </button>
+        {/* ── Floating back-to-top (the wrapper is the scroll container) ── */}
+        <button
+          className={`back-to-top-btn${showBackToTop ? ' visible' : ''}`}
+          onClick={scrollToTop}
+          aria-label={t.backToTop}
+          title={t.backToTop}
+        >
+          <ArrowUp size={18} />
+        </button>
+      </div>
+
+      {/* ── Print-Only Executive CV Document (Rendered only on window.print()) ── */}
+      <ResumePrintDocument language={language} />
     </div>
   );
 }

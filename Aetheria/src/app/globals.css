@@ -68,7 +68,7 @@ html, body {
   color: var(--text-primary);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   user-select: none;
-  transition: background-color 0.25s ease, color 0.25s ease;
+  transition: background-color 0.6s ease, color 0.6s ease;
 }
 
 .portfolio-app-container {
@@ -102,7 +102,7 @@ html, body {
   -webkit-backdrop-filter: blur(18px);
   border: 1px solid var(--border-subtle);
   box-shadow: var(--shadow-panel);
-  transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  transition: background 0.45s ease, border-color 0.45s ease, box-shadow 0.45s ease;
 }
 
 /* ── Language & Theme Toggle Groups ── */
@@ -745,7 +745,7 @@ html, body {
   color: var(--text-primary);
   scroll-behavior: smooth;
   user-select: text;
-  transition: background-color 0.25s ease, color 0.25s ease;
+  transition: background-color 0.6s ease, color 0.6s ease;
 }
 
 .classic-header {
@@ -1117,15 +1117,101 @@ html, body {
   gap: 16px;
   position: relative;
   overflow: hidden;
+  /* Per-card accent color (set inline from proj.color — matches the 3D portals) */
+  --proj-color: #71717a;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
+/* Soft colored aura on hover: the card breathes in its project color */
+.project-card:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--proj-color) 45%, transparent);
+  box-shadow: 0 10px 34px -8px color-mix(in srgb, var(--proj-color) 26%, transparent);
+}
+
+.project-card.expanded {
+  border-color: color-mix(in srgb, var(--proj-color) 55%, transparent);
+  box-shadow: 0 12px 40px -10px color-mix(in srgb, var(--proj-color) 22%, transparent);
+}
+
+/* Accent bar wears the project color; thickens on hover/expand */
 .project-accent-bar {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 3px;
-  background: var(--border-strong);
+  background: color-mix(in srgb, var(--proj-color) 70%, transparent);
+  transition: height 0.3s ease, background 0.3s ease;
+}
+
+.project-card:hover .project-accent-bar,
+.project-card.expanded .project-accent-bar {
+  height: 5px;
+  background: var(--proj-color);
+}
+
+/* Clickable header (a real <button> for keyboard/screen readers) */
+.project-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0;
+  margin: -4px 0;
+  border: none;
+  background: transparent;
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.project-card-header:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--proj-color) 70%, transparent);
+  outline-offset: 4px;
+}
+
+.project-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.project-chevron {
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease;
+}
+
+.project-card:hover .project-chevron {
+  color: var(--proj-color);
+}
+
+.project-chevron.open {
+  transform: rotate(180deg);
+  color: var(--proj-color);
+}
+
+/* ── In-place expansion (features + links) ──
+   grid-template-rows 0fr→1fr animates smoothly without hard-coding the
+   content height; the inner wrapper is min-height:0 for the same reason. */
+.project-expandable {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.project-card.expanded .project-expandable {
+  grid-template-rows: 1fr;
+}
+
+.project-expandable-inner {
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .project-card-header {
@@ -1209,80 +1295,65 @@ html, body {
   background: var(--badge-bg);
   border: 1px solid var(--border-subtle);
   color: var(--text-secondary);
+  transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
-/* Scrollable Action Links Toolbar */
+/* Inside a card, tags can echo the project color on hover */
+.project-card .project-tag:hover {
+  border-color: color-mix(in srgb, var(--proj-color) 55%, transparent);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+/* Feature bullets wear the project color */
+.project-card .feature-bullet {
+  background: var(--proj-color);
+  opacity: 0.9;
+}
+
+/* Clean Action Links Toolbar (No scrollbars, flexible button row) */
 .project-actions-toolbar-wrapper {
   margin-top: auto;
-  padding-top: 12px;
-  position: relative;
+  padding-top: 14px;
   width: 100%;
-  overflow: hidden;
 }
 
 .project-actions-toolbar,
 .project-actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-  scroll-snap-type: x proximity;
-  padding: 4px 2px 6px 2px;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border-subtle) transparent;
-}
-
-.project-actions-toolbar::-webkit-scrollbar,
-.custom-scrollbar-horizontal::-webkit-scrollbar {
-  height: 4px;
-}
-
-.project-actions-toolbar::-webkit-scrollbar-track,
-.custom-scrollbar-horizontal::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.project-actions-toolbar::-webkit-scrollbar-thumb,
-.custom-scrollbar-horizontal::-webkit-scrollbar-thumb {
-  background: var(--border-subtle);
-  border-radius: 4px;
-}
-
-.project-actions-toolbar::-webkit-scrollbar-thumb:hover,
-.custom-scrollbar-horizontal::-webkit-scrollbar-thumb:hover {
-  background: var(--border-strong);
+  width: 100%;
 }
 
 .project-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 8px 13px;
+  padding: 8px 14px;
   border-radius: 12px;
   text-decoration: none;
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   font-family: inherit;
   white-space: nowrap;
-  flex-shrink: 0;
-  scroll-snap-align: start;
   user-select: none;
 }
 
 .project-btn.primary {
-  background: var(--btn-primary-bg);
-  color: var(--btn-primary-text);
+  background: var(--proj-color, var(--btn-primary-bg));
+  color: #ffffff;
   border: 1px solid transparent;
 }
 
 .project-btn.primary:hover {
-  background: var(--btn-primary-hover);
-  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--proj-color, #ffffff) 82%, #000000);
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--proj-color) 40%, transparent);
 }
 
 .project-btn.secondary {
@@ -1294,7 +1365,8 @@ html, body {
 .project-btn.secondary:hover {
   background: var(--bg-card-hover);
   border-color: var(--border-strong);
-  transform: translateY(-1px);
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* Contacts Section */
@@ -5109,90 +5181,469 @@ nextjs-portal,
   }
 }
 
-/* ── Print stylesheet: Ctrl+P / "Download PDF" from the classic tab ──
-   Forces the light palette, strips chrome & buttons, keeps cards intact
-   across page breaks and expands external links to their URLs. */
+/* ── Screen-only guard: hide dedicated Print CV on screen ── */
+.classic-print-document {
+  display: none !important;
+}
+
+/* ── Print stylesheet: Executive 2-Page Tech Resume (Ctrl+P / "Download PDF") ──
+   Precision typography, balanced density, high legibility, and A4 optimization. */
 @media print {
-  :root,
-  [data-theme='dark'],
-  [data-theme='light'] {
-    --bg-app: #ffffff;
-    --bg-surface: #ffffff;
-    --bg-card: #ffffff;
-    --bg-card-solid: #ffffff;
-    --bg-card-hover: rgba(0, 0, 0, 0.04);
-    --text-primary: #000000;
-    --text-secondary: #333333;
-    --text-muted: #555555;
-    --border-subtle: rgba(0, 0, 0, 0.18);
-    --border-strong: rgba(0, 0, 0, 0.35);
-    --shadow-panel: none;
-    --shadow-pill: none;
-    --badge-bg: rgba(0, 0, 0, 0.05);
+  @page {
+    size: A4 portrait;
+    margin: 8mm 11mm 8mm 11mm;
   }
 
+  /* Reset all containers so printing does NOT clip to 1 page */
   html,
   body,
-  .classic-landing-wrapper,
-  .classic-main-content {
-    height: auto;
+  .portfolio-app-container,
+  .classic-landing-wrapper {
+    width: 100% !important;
+    height: auto !important;
+    min-height: auto !important;
     overflow: visible !important;
+    position: static !important;
     background: #ffffff !important;
     background-image: none !important;
-    color: #000000 !important;
+    color: #0f172a !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
+  /* Hide the web view completely */
+  .classic-web-view,
   .classic-header,
-  .back-to-top-btn,
   .classic-mobile-nav,
+  .back-to-top-btn,
   .hero-action-buttons,
   .project-actions-toolbar-wrapper {
     display: none !important;
   }
 
-  .glass-panel,
-  .summary-card,
-  .education-classic-card,
-  .cert-classic-card,
-  .skills-group-card,
-  .project-card,
-  .contacts-card,
-  .hero-stat-card {
-    box-shadow: none !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-    border: 1px solid rgba(0, 0, 0, 0.18) !important;
+  /* Show dedicated Executive CV Document */
+  .classic-print-document {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: #0f172a !important;
+    font-size: 8.8pt !important;
+    line-height: 1.34 !important;
+  }
+
+  /* ── Header ── */
+  .cv-header {
+    border-bottom: 2pt solid #0f172a !important;
+    padding-bottom: 5pt !important;
+    margin-bottom: 7pt !important;
     break-inside: avoid;
   }
 
-  .classic-section {
+  .cv-header-top {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2pt !important;
+  }
+
+  .cv-title-group {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1pt !important;
+  }
+
+  .cv-name {
+    font-size: 20pt !important;
+    font-weight: 800 !important;
+    color: #0f172a !important;
+    letter-spacing: -0.4px !important;
+    line-height: 1.05 !important;
+    margin: 0 !important;
+  }
+
+  .cv-role-row {
+    display: flex !important;
+    align-items: center !important;
+    gap: 5pt !important;
+    font-size: 10.5pt !important;
+    font-weight: 600 !important;
+    color: #334155 !important;
+  }
+
+  .cv-dot-sep {
+    color: #94a3b8 !important;
+    font-weight: 400 !important;
+  }
+
+  .cv-meta-item {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 3px !important;
+    font-size: 8.5pt !important;
+    color: #64748b !important;
+    font-weight: 500 !important;
+  }
+
+  .cv-meta-item svg {
+    width: 10px !important;
+    height: 10px !important;
+  }
+
+  .cv-contacts-block {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 3pt 12pt !important;
+    margin-top: 3pt !important;
+    padding-top: 3pt !important;
+    border-top: 0.8pt solid #e2e8f0 !important;
+    font-size: 8.5pt !important;
+  }
+
+  .cv-contact-item {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    color: #0f172a !important;
+    text-decoration: none !important;
+    font-weight: 500 !important;
+  }
+
+  .cv-contact-item svg {
+    color: #475569 !important;
+    width: 10.5px !important;
+    height: 10.5px !important;
+  }
+
+  /* ── Sections ── */
+  .cv-section {
+    margin-bottom: 7.5pt !important;
     break-inside: auto;
-    padding-top: 18px;
   }
 
-  .section-title {
-    color: #000000 !important;
+  .cv-section-title {
+    font-size: 10pt !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.6px !important;
+    color: #0f172a !important;
+    border-bottom: 1.2pt solid #0f172a !important;
+    padding-bottom: 1.5pt !important;
+    margin: 0 0 4pt 0 !important;
+    break-after: avoid;
   }
 
-  a[href^='http']::after {
-    content: ' (' attr(href) ')';
-    font-size: 10px;
-    color: #555555;
-    word-break: break-all;
+  .cv-bio-text {
+    font-size: 8.5pt !important;
+    line-height: 1.32 !important;
+    color: #1e293b !important;
+    margin-bottom: 3.5pt !important;
   }
 
-  /* Reveal states are JS-driven — force everything visible on paper */
-  .classic-main-content .classic-section {
-    opacity: 1 !important;
-    transform: none !important;
+  .cv-bullet-list {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2pt !important;
   }
 
-  .section-title::after {
-    transform: scaleX(1) !important;
+  .cv-bullet-item {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 4pt !important;
+    font-size: 8.3pt !important;
+    line-height: 1.3 !important;
+    color: #1e293b !important;
   }
 
-  .section-header.center .section-title::after {
-    transform: translateX(-50%) scaleX(1) !important;
+  .cv-bullet-marker {
+    color: #0f172a !important;
+    font-size: 8pt !important;
+    line-height: 1.3 !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* ── Skills Matrix ── */
+  .cv-skills-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2.5pt !important;
+    background: #f8fafc !important;
+    border: 0.8pt solid #e2e8f0 !important;
+    border-radius: 3pt !important;
+    padding: 4pt 7pt !important;
+    break-inside: avoid;
+  }
+
+  .cv-skill-line {
+    font-size: 8.2pt !important;
+    line-height: 1.28 !important;
+    color: #334155 !important;
+  }
+
+  .cv-skill-label {
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    margin-right: 4pt !important;
+  }
+
+  .cv-skill-values {
+    color: #1e293b !important;
+  }
+
+  /* ── Featured Projects ── */
+  .cv-projects-container {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 6pt 8pt !important;
+  }
+
+  .cv-project-entry {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2.5pt !important;
+    padding: 5pt 6.5pt !important;
+    border: 0.8pt solid #cbd5e1 !important;
+    border-radius: 3.5pt !important;
+    background: #ffffff !important;
+    break-inside: avoid;
+  }
+
+  .cv-project-heading {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    gap: 3pt !important;
+  }
+
+  .cv-project-title-area {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.5pt !important;
+  }
+
+  .cv-project-title {
+    font-size: 9.2pt !important;
+    font-weight: 800 !important;
+    color: #0f172a !important;
+    margin: 0 !important;
+    line-height: 1.18 !important;
+  }
+
+  .cv-project-tagline {
+    font-size: 7.1pt !important;
+    color: #64748b !important;
+    font-weight: 600 !important;
+  }
+
+  .cv-project-action-links {
+    display: flex !important;
+    align-items: center !important;
+    gap: 3pt !important;
+    flex-shrink: 0 !important;
+  }
+
+  .cv-link-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 2px !important;
+    padding: 1pt 3.5pt !important;
+    background: #e0f2fe !important;
+    border: 0.5pt solid #7dd3fc !important;
+    border-radius: 2.5pt !important;
+    font-size: 6.8pt !important;
+    font-weight: 700 !important;
+    color: #0369a1 !important;
+    text-decoration: none !important;
+  }
+
+  .cv-link-badge.github {
+    background: #f1f5f9 !important;
+    border-color: #cbd5e1 !important;
+    color: #0f172a !important;
+  }
+
+  .cv-link-badge svg {
+    width: 8.5px !important;
+    height: 8.5px !important;
+  }
+
+  .cv-project-stack {
+    font-size: 7.3pt !important;
+    line-height: 1.2 !important;
+    color: #475569 !important;
+    background: #f8fafc !important;
+    padding: 1.5pt 3.5pt !important;
+    border-radius: 2pt !important;
+    border: 0.5pt solid #e2e8f0 !important;
+  }
+
+  .cv-stack-label {
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    margin-right: 2.5pt !important;
+  }
+
+  .cv-project-summary {
+    font-size: 7.8pt !important;
+    line-height: 1.25 !important;
+    color: #334155 !important;
+    margin: 0 !important;
+  }
+
+  .cv-project-bullets {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.2pt !important;
+  }
+
+  .cv-proj-bullet-item {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 3pt !important;
+    font-size: 7.5pt !important;
+    line-height: 1.2 !important;
+    color: #1e293b !important;
+  }
+
+  .cv-proj-bullet-dot {
+    width: 2.5px !important;
+    height: 2.5px !important;
+    border-radius: 50% !important;
+    background: #0f172a !important;
+    margin-top: 4px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* ── Two Column Row: Education + Certifications ── */
+  .cv-dual-section-row {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 9pt !important;
+    margin-top: 3pt !important;
+    break-inside: avoid;
+  }
+
+  .cv-edu-card {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2pt !important;
+    padding: 4.5pt 6.5pt !important;
+    background: #f8fafc !important;
+    border: 0.8pt solid #cbd5e1 !important;
+    border-radius: 3.5pt !important;
+  }
+
+  .cv-edu-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: baseline !important;
+  }
+
+  .cv-edu-school {
+    font-size: 8.6pt !important;
+    font-weight: 800 !important;
+    color: #0f172a !important;
+  }
+
+  .cv-edu-dates {
+    font-size: 7.8pt !important;
+    font-weight: 700 !important;
+    color: #475569 !important;
+  }
+
+  .cv-edu-degree {
+    font-size: 8.2pt !important;
+    font-weight: 700 !important;
+    color: #0369a1 !important;
+  }
+
+  .cv-edu-details {
+    font-size: 7.5pt !important;
+    color: #475569 !important;
+  }
+
+  .cv-certs-compact-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 2.5pt 4.5pt !important;
+  }
+
+  .cv-cert-card {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.8pt !important;
+    padding: 2.5pt 4pt !important;
+    background: #ffffff !important;
+    border: 0.7pt solid #e2e8f0 !important;
+    border-radius: 2.5pt !important;
+  }
+
+  .cv-cert-top {
+    display: flex !important;
+    justify-content: space-between !important;
+    font-size: 6.8pt !important;
+    color: #64748b !important;
+  }
+
+  .cv-cert-name {
+    font-size: 7.7pt !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    line-height: 1.15 !important;
+  }
+
+  .cv-cert-badge {
+    font-size: 6.6pt !important;
+    color: #475569 !important;
+    font-weight: 600 !important;
+  }
+
+  .cv-cert-bottom {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-top: 0.5pt !important;
+  }
+
+  .cv-cert-level {
+    font-size: 6.8pt !important;
+    color: #64748b !important;
+  }
+
+  .cv-cert-link {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 2px !important;
+    font-size: 6.8pt !important;
+    font-weight: 600 !important;
+    color: #166534 !important;
+    text-decoration: none !important;
+  }
+
+  .cv-cert-link svg {
+    width: 8.5px !important;
+    height: 8.5px !important;
+  }
+
+  /* ── Footer ── */
+  .cv-doc-footer {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    border-top: 0.8pt solid #cbd5e1 !important;
+    margin-top: 5pt !important;
+    padding-top: 3pt !important;
+    font-size: 7pt !important;
+    color: #64748b !important;
+    break-inside: avoid;
   }
 }
 
@@ -5232,17 +5683,16 @@ nextjs-portal,
 }
 
 /* Unified hover lift for the content cards (cert & contact cards already
-   had their own lift — these bring summary, skills and projects in line) */
+   had their own lift — these bring summary and skills in line; projects
+   carry their own colored hover in the project-card rules above) */
 .summary-card,
 .skills-group-card,
-.project-card,
 .hero-stat-card {
   transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .summary-card:hover,
-.skills-group-card:hover,
-.project-card:hover {
+.skills-group-card:hover {
   transform: translateY(-3px);
   border-color: var(--border-strong);
 }
@@ -5268,14 +5718,9 @@ nextjs-portal,
   transform: translateY(-1px);
 }
 
-/* Project accent bar brightens and thickens as the card activates */
-.project-accent-bar {
-  transition: height 0.25s ease, background 0.25s ease;
-}
-
+/* Project accent bar is fully colored per-card now (see .project-accent-bar) */
 .project-card:hover .project-accent-bar {
   height: 5px;
-  background: var(--text-primary);
 }
 
 /* Animated underline in the sticky nav (hover feedback; the active section
@@ -5397,3 +5842,223 @@ nextjs-portal,
 
 
 
+/* ═══════════════════════════════════════════════════════════════════════
+   TIME-OF-DAY SLIDER — theme control styled as a day/night cycle scrubber.
+   The track gradient is painted from --sky-track (sampled from the same LUT
+   the WebGL dome uses), so every point of the track previews the exact sky.
+   The thumb glows with the live sky color via --tod-glow.
+   ═══════════════════════════════════════════════════════════════════════ */
+.time-of-day-slider {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 34px;
+  padding: 0 6px 0 4px;
+  border-radius: 12px;
+  background: var(--badge-bg);
+  border: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+  --tod-glow: #ffe9b8;
+}
+
+/* ── Pole buttons (moon / sun icons): click = cinematic flight ── */
+.tod-slider-cap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 9px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
+  transition: color 0.2s ease, background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tod-slider-cap:hover {
+  color: var(--text-primary);
+  background: var(--bg-card-hover);
+  transform: scale(1.08);
+}
+
+.tod-slider-cap:focus-visible {
+  outline: 2px solid var(--border-accent);
+  outline-offset: 1px;
+}
+
+/* The pole you are resting at lights up: moon side is "night theme",
+   sun side is "day theme" — the affordance that this control IS the theme. */
+.tod-cap-moon.lit,
+.tod-cap-sun.lit {
+  color: var(--text-primary);
+  background: var(--bg-card-hover);
+}
+
+.tod-cap-sun.lit {
+  box-shadow: 0 0 8px 1px rgba(255, 200, 90, 0.35), inset 0 0 4px rgba(255, 200, 90, 0.15);
+}
+
+.tod-cap-moon.lit {
+  box-shadow: 0 0 8px 1px rgba(150, 180, 255, 0.35), inset 0 0 4px rgba(150, 180, 255, 0.15);
+}
+
+/* ── Track ── */
+.tod-slider-track-wrapper {
+  --sky-track: linear-gradient(90deg, #1a2750, #ff9e6d 25%, #cfe8fa 50%, #ff7e5c 75%, #1a2750);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: clamp(88px, 10vw, 148px);
+  height: 14px;
+  border-radius: 999px;
+  background: var(--sky-track);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22), inset 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+/* Period ticks: dawn · noon · sunset (subtle reading aid) */
+.tod-tick {
+  position: absolute;
+  top: 50%;
+  width: 1px;
+  height: 6px;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.55);
+  border-radius: 1px;
+  pointer-events: none;
+  box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.25);
+}
+
+/* The native input is fully transparent and stretched over the track:
+   the browser paints only the thumb, keeping touch/keyboard/aria native. */
+.tod-slider-track-wrapper input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background: transparent;
+  cursor: ew-resize;
+  touch-action: pan-y;
+}
+
+.tod-slider-track-wrapper input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--bg-card-solid);
+  border: 2px solid var(--text-primary);
+  box-shadow: 0 0 0 2px var(--tod-glow), 0 0 10px 1px var(--tod-glow), 0 1px 5px rgba(0, 0, 0, 0.45);
+  transition: transform 0.15s ease, box-shadow 0.25s ease;
+}
+
+.tod-slider-track-wrapper input[type='range']:active::-webkit-slider-thumb {
+  transform: scale(1.18);
+  box-shadow: 0 0 0 3px var(--tod-glow), 0 0 16px 3px var(--tod-glow), 0 1px 5px rgba(0, 0, 0, 0.45);
+}
+
+.tod-slider-track-wrapper input[type='range']::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+.tod-slider-track-wrapper input[type='range']::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--bg-card-solid);
+  border: 2px solid var(--text-primary);
+  box-shadow: 0 0 0 2px var(--tod-glow), 0 0 10px 1px var(--tod-glow), 0 1px 5px rgba(0, 0, 0, 0.45);
+}
+
+.tod-slider-track-wrapper input[type='range']:focus-visible {
+  outline: 2px solid var(--border-accent);
+  outline-offset: 2px;
+  border-radius: 999px;
+}
+
+/* ── Period label with a live sky-color dot ── */
+.tod-slider-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  min-width: 58px;
+  text-align: left;
+}
+
+.tod-label-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--tod-glow);
+  box-shadow: 0 0 6px 1px var(--tod-glow);
+  flex-shrink: 0;
+}
+
+/* Compact screens: drop the label, keep the gradient track readable */
+@media (max-width: 1320px) {
+  .tod-slider-label {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .time-of-day-slider {
+    padding: 0 5px 0 3px;
+  }
+
+  .tod-slider-track-wrapper {
+    width: 88px;
+  }
+}
+
+/* Ultra-compact: the slider gives way to the plain toggle button */
+@media (max-width: 640px) {
+  .classic-header .time-of-day-slider,
+  .island-top-bar .time-of-day-slider {
+    display: none;
+  }
+}
+
+/* ── Classic view: cycle-driven atmosphere ──
+   Full-viewport fixed backdrop: the sky (horizon → zenith + the glow of the
+   reigning celestial tint) covers the whole screen and dissolves into the
+   page base color toward the bottom — one continuous atmosphere with no
+   seam. Repainted from the same LUT as the WebGL sky, so the classic resume
+   "flows" through day/night together with the 3D island. */
+.classic-sky-tint {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.classic-web-view {
+  position: relative;
+  z-index: 1;
+}
+
+/* Theme fallback button: visible only where the slider is hidden (≤640px) */
+.slider-fallback-btn {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .slider-fallback-btn {
+    display: inline-flex;
+  }
+}
+
+/* Print never shows the sky tint */
+@media print {
+  .classic-sky-tint {
+    display: none !important;
+  }
+}

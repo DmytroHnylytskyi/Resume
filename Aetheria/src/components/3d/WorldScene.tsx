@@ -9,6 +9,7 @@ import rawIslandSceneData from '../../data/islandScene.json';
 import { IslandSceneData, PlacedObject } from '../../types/scene';
 import { useGameStore } from '../../store/useGameStore';
 import { translations } from '../../data/resumeData';
+import { getNightFactor } from '../../store/dayNightState';
 
 const islandSceneData = rawIslandSceneData as unknown as IslandSceneData;
 
@@ -158,19 +159,47 @@ const GLOW_TARGETS: GlowTarget[] = [
   { color: '#fb7185', radius: 3.6, height: 2.2, intensity: 5.8, position: [16, 0, -8], offsetZ: 2.5 },
 ];
 
+// Night glow boost quantized into steps: writing light intensity/material
+// opacity every frame would dirty the uniform cache constantly (the static
+// pointLights are deliberately zero-dirtiness at noon). ~10 steps across the
+// whole dusk→midnight span is visually smooth at scrubbing speed.
+const NIGHT_BOOST_STEPS = 10;
+const NIGHT_BOOST_MAX = 0.45; // +45% intensity & ring opacity at deep night
+
 function GlowManager(): React.ReactElement {
   const ringsRef = useRef<(THREE.Mesh | null)[]>([]);
+  const lightsRef = useRef<(THREE.PointLight | null)[]>([]);
+  const nightStepRef = useRef(-1);
 
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
-    const pulse = Math.sin(t * 2.5);
 
+    // ── Night boost (quantized): step only when the night factor moved by
+    // ~1/10th, so resting frames write nothing into the uniform cache. ──
+    const step = Math.round(getNightFactor() * NIGHT_BOOST_STEPS);
+    if (step !== nightStepRef.current) {
+      nightStepRef.current = step;
+      const boost = (step / NIGHT_BOOST_STEPS) * NIGHT_BOOST_MAX;
+      for (let i = 0; i < GLOW_TARGETS.length; i++) {
+        const light = lightsRef.current[i];
+        if (light) light.intensity = GLOW_TARGETS[i].intensity * (1 + boost);
+
+        const inner = ringsRef.current[i];
+        if (inner && inner.material) {
+          (inner.material as THREE.MeshBasicMaterial).opacity = 0.7 * (1 + boost);
+        }
+        const outer = ringsRef.current[i + GLOW_TARGETS.length];
+        if (outer && outer.material) {
+          (outer.material as THREE.MeshBasicMaterial).opacity = 0.3 * (1 + boost);
+        }
+      }
+    }
+
+    // ── Constant pulse animation (cheap per-frame rotation only) ──
     for (let i = 0; i < GLOW_TARGETS.length; i++) {
       const ring = ringsRef.current[i];
       if (ring) {
         ring.rotation.z = t * 0.3;
-        const mat = ring.material as THREE.MeshBasicMaterial;
-        if (mat) mat.opacity = 0.65 + 0.25 * pulse;
       }
     }
   });
@@ -200,7 +229,11 @@ function GlowManager(): React.ReactElement {
           </mesh>
 
           {/* Outer Spread */}
-          <mesh position={[0, 0.08, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <mesh
+            ref={(el) => { ringsRef.current[i + GLOW_TARGETS.length] = el; }}
+            position={[0, 0.08, 0]}
+            rotation={[-Math.PI / 2, 0, 0]}
+          >
             <ringGeometry args={[gt.radius * 0.85, gt.radius * 1.45, 32]} />
             <meshBasicMaterial
               color={gt.color}
@@ -214,6 +247,7 @@ function GlowManager(): React.ReactElement {
 
           {/* Static Point Light with constrained sphere radius (zero uniform cache dirtiness) */}
           <pointLight
+            ref={(el) => { lightsRef.current[i] = el; }}
             position={[0, gt.height, 0]}
             color={gt.color}
             intensity={gt.intensity}
