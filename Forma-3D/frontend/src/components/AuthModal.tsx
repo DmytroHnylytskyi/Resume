@@ -80,7 +80,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
       setToken(data.access_token);
       
       // Fetch user profile data
-      const userRes = await fetch(`${API_URL}/users/me/`, {
+      const userRes = await fetch(`${API_URL}/users/me`, {
         headers: { Authorization: `Bearer ${data.access_token}` }
       });
       const userData = await userRes.json();

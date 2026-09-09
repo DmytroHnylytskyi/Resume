@@ -29,7 +29,7 @@ export default function SavedViewsModal({ onClose }) {
   const fetchViews = useCallback(async () => {
     if (!token) return;
     try {
-      const res = await fetch(`${API_URL}/views/`, {
+      const res = await fetch(`${API_URL}/views`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -56,7 +56,7 @@ export default function SavedViewsModal({ onClose }) {
     const activeLayers = Object.keys(layers).filter(k => layers[k].enabled);
 
     try {
-      const res = await fetch(`${API_URL}/views/`, {
+      const res = await fetch(`${API_URL}/views`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

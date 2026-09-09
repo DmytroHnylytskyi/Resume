@@ -47,7 +47,8 @@ app = FastAPI(
     title="TerraScope API",
     description="High-performance async FastAPI backend service providing cached geospatial 3D data layers and JWT user session management.",
     version="1.0.0",
-    lifespan=lifespan
+    lifespan=lifespan,
+    redirect_slashes=False
 )
 
 # Attach Rate Limiter state and exception handler

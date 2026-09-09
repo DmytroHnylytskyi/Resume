@@ -32,27 +32,33 @@ export default function AuthModal({ onClose }) {
     setError(null);
     setLoading(true);
 
-    const endpoint = isRegister ? `${API_URL}/auth/register` : `${API_URL}/auth/token`;
-
     try {
-      let res;
       if (isRegister) {
-        res = await fetch(endpoint, {
+        const regRes = await fetch(`${API_URL}/auth/register`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
+          body: JSON.stringify({ email: email.trim(), password })
         });
-      } else {
-        const formData = new URLSearchParams();
-        formData.append('username', email);
-        formData.append('password', password);
-
-        res = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: formData
-        });
+        const regData = await regRes.json();
+        if (!regRes.ok) {
+          let msg = 'Registration failed';
+          if (typeof regData.detail === 'string') msg = regData.detail;
+          else if (Array.isArray(regData.detail) && regData.detail.length > 0) {
+            msg = regData.detail.map(d => d.msg || 'Invalid field').join(', ');
+          }
+          throw new Error(msg);
+        }
       }
+
+      const formData = new URLSearchParams();
+      formData.append('username', email.trim());
+      formData.append('password', password);
+
+      const res = await fetch(`${API_URL}/auth/token`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: formData
+      });
 
       const data = await res.json();
 
@@ -64,14 +70,6 @@ export default function AuthModal({ onClose }) {
           msg = data.detail.map(d => d.msg || 'Invalid field').join(', ');
         }
         throw new Error(msg);
-      }
-
-      if (isRegister) {
-        // Automatically switch to login or complete login
-        setIsRegister(false);
-        setError('Account created! Please sign in.');
-        setLoading(false);
-        return;
       }
 
       // Fetch complete user profile payload from /api/auth/me

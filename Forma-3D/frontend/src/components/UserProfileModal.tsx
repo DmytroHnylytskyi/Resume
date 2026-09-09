@@ -56,7 +56,7 @@ export default function UserProfileModal({ onClose }: UserProfileModalProps) {
   const fetchProjects = async () => {
     if (!token) return;
     try {
-      const res = await fetch(`${API_URL}/projects/`, {
+      const res = await fetch(`${API_URL}/projects`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -72,7 +72,7 @@ export default function UserProfileModal({ onClose }: UserProfileModalProps) {
   useEffect(() => {
     if (!token) return;
     let isSubscribed = true;
-    fetch(`${API_URL}/projects/`, {
+    fetch(`${API_URL}/projects`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then((res) => (res.ok ? res.json() : []))
@@ -103,7 +103,7 @@ export default function UserProfileModal({ onClose }: UserProfileModalProps) {
     setSaving(true);
     setMessage('');
     try {
-      const res = await fetch(`${API_URL}/projects/`, {
+      const res = await fetch(`${API_URL}/projects`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

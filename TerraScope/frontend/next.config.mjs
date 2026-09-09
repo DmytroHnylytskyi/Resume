@@ -2,6 +2,7 @@
 const nextConfig = {
   output: 'standalone',
   devIndicators: false,
+  skipTrailingSlashRedirect: true,
   async rewrites() {
     return [
       {

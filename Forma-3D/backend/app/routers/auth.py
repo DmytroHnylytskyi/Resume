@@ -102,7 +102,8 @@ async def refresh_token(
     }
 
 
-@router.get("/users/me/", response_model=UserSchema, summary="Get current user profile and projects")
+@router.get("/users/me", response_model=UserSchema, summary="Get current user profile and projects")
+@router.get("/users/me/", response_model=UserSchema, include_in_schema=False)
 async def read_users_me(current_user: User = Depends(get_current_user)) -> User:
     """Returns profile details and saved 3D project list of the authenticated user."""
     return current_user

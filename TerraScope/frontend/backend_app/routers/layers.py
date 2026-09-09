@@ -282,15 +282,17 @@ async def get_earthquakes(
 async def get_flights(db: AsyncSession = Depends(database.get_db)):
     """
     Fetches live commercial flight state vectors from OpenSky Network API.
+    Uses high-density global corridor bounding box (US, Atlantic, Europe)
+    to guarantee rapid response (<1s) without datacenter timeouts.
 
-    Cache TTL: 30 Seconds.
+    Cache TTL: 45 Seconds.
     """
-    url = "https://opensky-network.org/api/states/all"
+    url = "https://opensky-network.org/api/states/all?lamin=20&lamax=65&lomin=-125&lomax=45"
     headers = {"User-Agent": "TerraScope/1.0 (https://terrascope.app)"}
     return await get_cached_or_fetch(
         db=db,
-        cache_key="flights",
-        ttl_seconds=30,
+        cache_key="flights_live_v2",
+        ttl_seconds=45,
         fetch_url=url,
         headers=headers,
         fallback_data=FALLBACK_FLIGHTS

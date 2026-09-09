@@ -21,7 +21,8 @@ from ..schemas import ProjectCreate, ProjectResponse, ProjectUpdate
 router = APIRouter(prefix="/projects", tags=["projects"])
 
 
-@router.get("/", response_model=List[ProjectResponse], summary="List user's 3D projects")
+@router.get("", response_model=List[ProjectResponse], summary="List user's 3D projects")
+@router.get("/", response_model=List[ProjectResponse], include_in_schema=False)
 async def get_projects(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
@@ -35,7 +36,8 @@ async def get_projects(
     return list(result.scalars().all())
 
 
-@router.post("/", response_model=ProjectResponse, status_code=status.HTTP_201_CREATED, summary="Create new 3D project")
+@router.post("", response_model=ProjectResponse, status_code=status.HTTP_201_CREATED, summary="Create new 3D project")
+@router.post("/", response_model=ProjectResponse, status_code=status.HTTP_201_CREATED, include_in_schema=False)
 async def create_project(
     project_data: ProjectCreate,
     current_user: User = Depends(get_current_user),

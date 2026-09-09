@@ -15,6 +15,7 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 
+from .database import async_engine, Base
 from .routers import analytics, auth, courses, teacher
 
 load_dotenv()
@@ -27,7 +28,10 @@ limiter = Limiter(key_func=get_remote_address, default_limits=["200/minute"])
 async def lifespan(app: FastAPI):
     """Lifespan context manager handling application startup and graceful shutdown."""
     os.makedirs("uploads", exist_ok=True)
+    async with async_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
     yield
+    await async_engine.dispose()
 
 
 app = FastAPI(
@@ -35,6 +39,7 @@ app = FastAPI(
     description="Asynchronous Full-stack LMS REST API with RBAC, lesson progression, and course assignments.",
     version="2.0.0",
     lifespan=lifespan,
+    redirect_slashes=False,
     docs_url="/docs",
     redoc_url="/redoc",
 )

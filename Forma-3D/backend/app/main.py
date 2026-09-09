@@ -51,6 +51,7 @@ app = FastAPI(
     description="Asynchronous REST API for 3D furniture customization, user authentication, and cloud scene storage.",
     version="2.0.0",
     lifespan=lifespan,
+    redirect_slashes=False,
     docs_url="/docs",
     redoc_url="/redoc",
 )

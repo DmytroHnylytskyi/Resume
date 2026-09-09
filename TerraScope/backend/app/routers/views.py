@@ -14,7 +14,8 @@ from .. import models, schemas, database, auth_utils
 
 router = APIRouter(tags=["views"])
 
-@router.get("/", response_model=List[schemas.SavedViewResponse])
+@router.get("", response_model=List[schemas.SavedViewResponse])
+@router.get("/", response_model=List[schemas.SavedViewResponse], include_in_schema=False)
 async def get_user_views(
     db: AsyncSession = Depends(database.get_db),
     current_user: models.User = Depends(auth_utils.get_current_user)
@@ -37,7 +38,8 @@ async def get_user_views(
     views = result.scalars().all()
     return views
 
-@router.post("/", response_model=schemas.SavedViewResponse, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=schemas.SavedViewResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=schemas.SavedViewResponse, status_code=status.HTTP_201_CREATED, include_in_schema=False)
 async def create_saved_view(
     view_in: schemas.SavedViewCreate,
     db: AsyncSession = Depends(database.get_db),
