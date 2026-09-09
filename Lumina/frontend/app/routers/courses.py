@@ -362,7 +362,7 @@ async def complete_lesson(
     res_prog = await db.execute(stmt_prog)
     db_progress = res_prog.scalars().first()
 
-    now_utc = datetime.now(timezone.utc)
+    now_utc = models.utc_now()
 
     if not db_progress:
         db_progress = models.Progress(

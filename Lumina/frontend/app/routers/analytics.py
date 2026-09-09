@@ -53,7 +53,7 @@ async def get_user_analytics(
     res_subs = await db.execute(stmt_subs)
     submissions_count = res_subs.scalar() or 0
 
-    thirty_days_ago = datetime.now(timezone.utc) - timedelta(days=30)
+    thirty_days_ago = models.utc_now() - timedelta(days=30)
     stmt_act = (
         select(
             func.date(models.Progress.completed_at).label("date"),

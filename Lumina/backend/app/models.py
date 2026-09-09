@@ -12,6 +12,12 @@ from sqlalchemy.orm import relationship
 from .database import Base
 
 
+def utc_now() -> datetime:
+    """Return naive UTC datetime for cross-database compatibility."""
+    return datetime.now(timezone.utc).replace(tzinfo=None)
+
+
+
 class User(Base):
     """User account model.
 
@@ -102,7 +108,7 @@ class CourseAssignment(Base):
     teacher_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     student_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False)
-    assigned_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
+    assigned_at = Column(DateTime, default=utc_now, nullable=False)
 
     course = relationship("Course", back_populates="assignments")
     deadlines = relationship("AssignmentDeadline", back_populates="assignment", cascade="all, delete-orphan")
@@ -216,7 +222,7 @@ class HomeworkSubmission(Base):
     lesson_id = Column(Integer, ForeignKey("lessons.id", ondelete="CASCADE"), nullable=False)
     content = Column(Text, nullable=True)
     attachments = Column(JSON, default=list)
-    submitted_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
+    submitted_at = Column(DateTime, default=utc_now, nullable=False)
 
     student = relationship("User")
     lesson = relationship("Lesson", back_populates="submissions")
@@ -264,7 +270,7 @@ class CourseSchedule(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False)
-    scheduled_date = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
+    scheduled_date = Column(DateTime, default=utc_now, nullable=False)
 
     user = relationship("User", back_populates="schedules")
     course = relationship("Course", back_populates="schedules")
