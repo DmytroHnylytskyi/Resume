@@ -71,6 +71,12 @@ export default function ProjectModal(): React.ReactElement | null {
 
         {/* Modal Body */}
         <div className="modal-body custom-scrollbar">
+          {/* Live-demo screenshot (shared with the classic card preview) */}
+          <div className="project-modal-shot">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={`/shots/${project.id}.jpg`} alt={project.title} loading="lazy" draggable={false} />
+          </div>
+
           {/* Main Description */}
           <div className="project-modal-desc-box">
             <p className="project-modal-desc-text">{project.description}</p>

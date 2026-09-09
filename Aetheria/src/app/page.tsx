@@ -57,6 +57,27 @@ export default function HomePage(): React.ReactElement {
     if (effectiveLang && useGameStore.getState().language !== effectiveLang) {
       useGameStore.setState({ language: effectiveLang });
     }
+
+    // Direct mode check via URL (?mode=classic / ?mode=3d) or section hash
+    try {
+      const modeParam = new URLSearchParams(window.location.search).get('mode');
+      const hash = window.location.hash;
+      if (
+        modeParam === 'classic' ||
+        hash === '#resume' ||
+        hash === '#classic' ||
+        hash === '#projects' ||
+        hash === '#about' ||
+        hash === '#education' ||
+        hash === '#skills' ||
+        hash === '#certifications' ||
+        hash === '#contacts'
+      ) {
+        useGameStore.setState({ viewMode: 'classic' });
+      } else if (modeParam === '3d') {
+        useGameStore.setState({ viewMode: '3d' });
+      }
+    } catch (_) {}
     // Arm the day/night → DOM-theme threshold only now: the store has
     // adopted the pre-paint html theme, hydration is complete, so the first
     // crossing (e.g. stored cycle sitting below the horizon) can safely

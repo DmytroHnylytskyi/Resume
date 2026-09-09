@@ -39,20 +39,48 @@ export default function TimeOfDaySlider(): React.ReactElement {
   const isUk = language === 'uk';
 
   useEffect(() => {
-    const sync = () => {
+    const compute = () => {
       const { t, sky } = dayNightState;
-      setValue(t);
-      setLabel(getTimeOfDayLabel(t, language));
-      // Sun tint by day, horizon tone by night — the thumb announces the sky.
-      const nf = Math.max(0, Math.min(1, (0.05 - dayNightState.sunElev) / 0.35));
-      const c = nf > 0.5 ? sky.horizon : sky.sunTint;
-      setGlow(`rgb(${Math.round(c[0])}, ${Math.round(c[1])}, ${Math.round(c[2])})`);
-      // Which pole are we resting at? (affordance: this control IS the theme)
       const sunElev = dayNightState.sunElev;
-      setLitPole(sunElev > 0.06 ? 'sun' : sunElev < -0.04 ? 'moon' : null);
+      const nf = Math.max(0, Math.min(1, (0.05 - sunElev) / 0.35));
+      const c = nf > 0.5 ? sky.horizon : sky.sunTint;
+      return {
+        t,
+        label: getTimeOfDayLabel(t, language),
+        glow: `rgb(${Math.round(c[0])}, ${Math.round(c[1])}, ${Math.round(c[2])})`,
+        litPole: sunElev > 0.06 ? 'sun' as const : sunElev < -0.04 ? 'moon' as const : null
+      };
     };
-    sync();
-    return subscribeToDayNight(sync);
+    const apply = () => {
+      const s = compute();
+      setValue(s.t);
+      setLabel(s.label);
+      setGlow(s.glow);
+      setLitPole(s.litPole);
+    };
+    apply();
+    // Throttle the subscription to ~25 fps: a toggle tween fires the engine
+    // listener every frame (60/s), and 4 setState per frame re-render this
+    // tiny component needlessly. The native thumb keeps rendering at 60 fps
+    // on its own; 40 ms UI sync keeps the glow/label visibly flowing during
+    // slow cinematic tweens (80 ms read as visible steps on gradients).
+    let last = performance.now();
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const onTick = () => {
+      const now = performance.now();
+      if (now - last >= 40) {
+        last = now;
+        if (timer !== undefined) { clearTimeout(timer); timer = undefined; }
+        apply();
+      } else if (timer === undefined) {
+        // Trailing edge: always land on the final state, never drop it
+        timer = setTimeout(() => { timer = undefined; last = performance.now(); apply(); }, 40 - (now - last));
+      }
+    };
+    return () => {
+      if (timer !== undefined) clearTimeout(timer);
+      return subscribeToDayNight(onTick)();
+    };
   }, [language]);
 
   // One-time static paints: track gradient never changes (it previews the cycle).

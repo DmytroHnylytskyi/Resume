@@ -396,10 +396,18 @@ function AtmosphereSky(): React.ReactElement {
   }, [scene]);
 
   const lastVersion = useRef(0);
+  const lastApplyAt = useRef(0);
 
   // ── Director: applies the cycle to uniforms/lights only when it moved ──
+  // Throttled to ~30 Hz: every uniform write re-uploads uniforms into all
+  // scene materials, and sky/light gradients are visually identical at 30
+  // samples per second — while scrubbing cost halves. Version is compared
+  // AFTER the time gate so no update is ever lost (the freshest state wins).
   useFrame(() => {
     if (dayNightState.version === lastVersion.current) return;
+    const now = performance.now();
+    if (now - lastApplyAt.current < 33) return;
+    lastApplyAt.current = now;
     lastVersion.current = dayNightState.version;
 
     const s = dayNightState;
