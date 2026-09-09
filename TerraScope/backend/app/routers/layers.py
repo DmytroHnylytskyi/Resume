@@ -278,25 +278,140 @@ async def get_earthquakes(
         fetch_url=config["url"]
     )
 
+async def fetch_flights_data() -> Optional[Dict[str, Any]]:
+    """
+    Fetches real-time flight telemetry from Flightradar24 global live feed,
+    converting to OpenSky-compatible state vectors format.
+    Falls back to OpenSky Network if needed.
+    """
+    fr24_url = "https://data-cloud.flightradar24.com/zones/fcgi/feed.js?bounds=75,-60,-170,170"
+    fr24_headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "Accept": "application/json"
+    }
+    now_ts = int(datetime.now(timezone.utc).timestamp())
+    
+    # 1. Primary: Flightradar24 worldwide live radar
+    try:
+        async with httpx.AsyncClient(timeout=6.0) as client:
+            resp = await client.get(fr24_url, headers=fr24_headers)
+            if resp.status_code == 200:
+                data = resp.json()
+                states = []
+                for k, v in data.items():
+                    if k in ("full_count", "version", "stats") or not isinstance(v, list) or len(v) < 14:
+                        continue
+                    icao24 = str(v[0]).lower()
+                    lat = float(v[1])
+                    lng = float(v[2])
+                    heading = float(v[3]) if v[3] is not None else 0.0
+                    alt_meters = float(v[4]) * 0.3048 if v[4] else 10000.0
+                    speed_ms = float(v[5]) * 0.514444 if v[5] else 230.0
+                    callsign = str(v[13] or v[16] or v[0]).strip()
+                    on_ground = bool(v[14]) if len(v) > 14 else False
+                    
+                    origin = v[11] if len(v) > 11 and v[11] else ""
+                    dest = v[12] if len(v) > 12 and v[12] else ""
+                    airline = v[18] if len(v) > 18 and v[18] else ""
+                    
+                    if origin and dest:
+                        origin_country = f"{origin} → {dest}" + (f" ({airline})" if airline else "")
+                    elif airline:
+                        origin_country = f"Airline: {airline}"
+                    elif len(v) > 8 and v[8]:
+                        origin_country = f"Aircraft: {v[8]}"
+                    else:
+                        origin_country = "Commercial Aviation"
+                        
+                    states.append([
+                        icao24,
+                        callsign,
+                        origin_country,
+                        now_ts,
+                        now_ts,
+                        lng,
+                        lat,
+                        alt_meters,
+                        on_ground,
+                        speed_ms,
+                        heading,
+                        0.0,
+                        None,
+                        alt_meters,
+                        None,
+                        False,
+                        0
+                    ])
+                if len(states) > 0:
+                    logger.info(f"Successfully fetched {len(states)} live flights from Flightradar24")
+                    return {"time": now_ts, "states": states}
+    except Exception as e:
+        logger.warning(f"Flightradar24 fetch failed: {e}")
+
+    # 2. Secondary fallback: OpenSky Network (short 3.0s timeout)
+    try:
+        opensky_url = "https://opensky-network.org/api/states/all?lamin=20&lamax=65&lomin=-125&lomax=45"
+        opensky_headers = {"User-Agent": "TerraScope/1.0 (https://terrascope.app)"}
+        async with httpx.AsyncClient(timeout=3.0) as client:
+            resp = await client.get(opensky_url, headers=opensky_headers)
+            if resp.status_code == 200:
+                parsed = resp.json()
+                if isinstance(parsed, dict) and "states" in parsed:
+                    return parsed
+    except Exception as e:
+        logger.warning(f"OpenSky fallback fetch failed: {e}")
+
+    return None
+
 @router.get("/flights")
 async def get_flights(db: AsyncSession = Depends(database.get_db)):
     """
-    Fetches live commercial flight state vectors from OpenSky Network API.
-    Uses high-density global corridor bounding box (US, Atlantic, Europe)
-    to guarantee rapid response (<1s) without datacenter timeouts.
+    Fetches live commercial flight state vectors with real-time positioning.
+    Uses worldwide telemetry feeds with database-backed caching to prevent rate limits.
 
     Cache TTL: 45 Seconds.
     """
-    url = "https://opensky-network.org/api/states/all?lamin=20&lamax=65&lomin=-125&lomax=45"
-    headers = {"User-Agent": "TerraScope/1.0 (https://terrascope.app)"}
-    return await get_cached_or_fetch(
-        db=db,
-        cache_key="flights_live_v2",
-        ttl_seconds=45,
-        fetch_url=url,
-        headers=headers,
-        fallback_data=FALLBACK_FLIGHTS
-    )
+    cache_key = "flights_live_v3"
+    ttl_seconds = 45
+    now = datetime.now(timezone.utc)
+    
+    # Fast path: Check SQLite cache table for unexpired entry
+    result = await db.execute(select(models.CacheEntry).where(models.CacheEntry.cache_key == cache_key))
+    cache_entry = result.scalar_one_or_none()
+    if cache_entry and cache_entry.expires_at.replace(tzinfo=timezone.utc) > now:
+        return Response(content=cache_entry.data, media_type="application/json")
+        
+    lock = get_lock_for_key(cache_key)
+    async with lock:
+        result = await db.execute(select(models.CacheEntry).where(models.CacheEntry.cache_key == cache_key))
+        cache_entry = result.scalar_one_or_none()
+        if cache_entry and cache_entry.expires_at.replace(tzinfo=timezone.utc) > now:
+            return Response(content=cache_entry.data, media_type="application/json")
+            
+        data = await fetch_flights_data()
+        if data is None:
+            if cache_entry:
+                return Response(content=cache_entry.data, media_type="application/json")
+            data = FALLBACK_FLIGHTS
+            
+        expires_at = now + timedelta(seconds=ttl_seconds)
+        json_data = json.dumps(data)
+        
+        if cache_entry:
+            cache_entry.data = json_data
+            cache_entry.expires_at = expires_at
+            cache_entry.created_at = now
+        else:
+            cache_entry = models.CacheEntry(
+                cache_key=cache_key,
+                data=json_data,
+                expires_at=expires_at,
+                created_at=now
+            )
+            db.add(cache_entry)
+            
+        await db.commit()
+        return Response(content=json_data, media_type="application/json")
 
 @router.get("/weather")
 async def get_weather(db: AsyncSession = Depends(database.get_db)):
