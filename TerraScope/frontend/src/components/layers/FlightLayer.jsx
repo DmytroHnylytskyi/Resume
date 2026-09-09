@@ -51,7 +51,9 @@ export default function FlightLayer() {
   }, [data]);
   
   const count = flights.length;
-  const selectedIcao = selectedItem?.type === 'flight' ? selectedItem.data.icao24 : null;
+  const selectedFlightId = selectedItem?.type === 'flight' && selectedItem.data?.icao24
+    ? String(selectedItem.data.icao24).trim().toLowerCase()
+    : null;
 
   useEffect(() => {
     return () => {
@@ -62,7 +64,7 @@ export default function FlightLayer() {
   useEffect(() => {
     if (meshRef.current && count > 0) {
       flights.forEach((flight, i) => {
-        const icao24 = flight[0];
+        const flightId = String(flight[0] || `flight_${i}`).trim().toLowerCase();
         const lng = flight[5];
         const lat = flight[6];
         const heading = flight[10] || 0;
@@ -79,7 +81,7 @@ export default function FlightLayer() {
         dummy.rotateZ(THREE.MathUtils.degToRad(-heading));
         
         // Prominent 2D scale
-        const isSelected = icao24 === selectedIcao;
+        const isSelected = Boolean(selectedFlightId) && flightId === selectedFlightId;
         const scale = isSelected ? 0.055 : 0.038;
         dummy.scale.set(scale, scale, scale);
         
@@ -93,19 +95,21 @@ export default function FlightLayer() {
         meshRef.current.instanceColor.needsUpdate = true;
       }
     }
-  }, [flights, count, selectedIcao]);
+  }, [flights, count, selectedFlightId]);
 
   const handleClick = (e) => {
     e.stopPropagation();
     if (e.instanceId !== undefined && flights[e.instanceId]) {
       const flight = flights[e.instanceId];
-      const callsign = flight[1]?.trim() || `FLT-${flight[0].toUpperCase()}`;
+      const flightId = String(flight[0] || `flight_${e.instanceId}`).trim();
+      const callsign = flight[1]?.trim() || `FLT-${flightId.toUpperCase()}`;
       const velocityMs = flight[9] || 0;
       const velocityKmh = Math.round(velocityMs * 3.6);
       const altitudeMeters = Math.round(flight[7] || 10000);
 
       const flightData = {
-        icao24: flight[0],
+        id: flightId,
+        icao24: flightId,
         callsign: callsign,
         origin_country: flight[2] || 'International Transponder',
         altitude: altitudeMeters,
@@ -113,7 +117,7 @@ export default function FlightLayer() {
         heading: Math.round(flight[10] || 0),
         longitude: flight[5],
         latitude: flight[6],
-        trackingType: "Live ADS-B Radio Vector (OpenSky Network)"
+        trackingType: "Live ADS-B Radar Vector"
       };
 
       selectItem('flight', flightData);

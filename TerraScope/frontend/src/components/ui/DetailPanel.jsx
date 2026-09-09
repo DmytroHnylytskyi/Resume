@@ -157,7 +157,7 @@ function WeatherDetail({ data }) {
       </div>
       <div className="detail-row">
         <span className="detail-label">Humidity</span>
-        <span className="detail-value">{data.humidity || 60}%</span>
+        <span className="detail-value">{data.humidity !== undefined && data.humidity !== null ? `${data.humidity}%` : '55%'}</span>
       </div>
       <div className="detail-row">
         <span className="detail-label">Wind Speed</span>

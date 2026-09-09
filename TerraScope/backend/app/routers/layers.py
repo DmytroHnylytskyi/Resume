@@ -301,13 +301,14 @@ async def fetch_flights_data() -> Optional[Dict[str, Any]]:
                 for k, v in data.items():
                     if k in ("full_count", "version", "stats") or not isinstance(v, list) or len(v) < 14:
                         continue
-                    icao24 = str(v[0]).lower()
+                    raw_icao = str(v[0]).strip().lower() if v[0] else ""
+                    icao24 = raw_icao if raw_icao else f"fr24_{k.lower()}"
                     lat = float(v[1])
                     lng = float(v[2])
                     heading = float(v[3]) if v[3] is not None else 0.0
                     alt_meters = float(v[4]) * 0.3048 if v[4] else 10000.0
                     speed_ms = float(v[5]) * 0.514444 if v[5] else 230.0
-                    callsign = str(v[13] or v[16] or v[0]).strip()
+                    callsign = str(v[13] or v[16] or (raw_icao.upper() if raw_icao else k)).strip()
                     on_ground = bool(v[14]) if len(v) > 14 else False
                     
                     origin = v[11] if len(v) > 11 and v[11] else ""
@@ -421,7 +422,7 @@ async def get_weather(db: AsyncSession = Depends(database.get_db)):
     Cache TTL: 15 Minutes (900 seconds).
     """
     now = datetime.now(timezone.utc)
-    cache_key = "weather_openmeteo_70v1"
+    cache_key = "weather_openmeteo_70v2"
     
     # Check SQLite cache
     result = await db.execute(select(models.CacheEntry).where(models.CacheEntry.cache_key == cache_key))
@@ -436,10 +437,10 @@ async def get_weather(db: AsyncSession = Depends(database.get_db)):
         if cache_entry and cache_entry.expires_at.replace(tzinfo=timezone.utc) > now:
             return Response(content=cache_entry.data, media_type="application/json")
 
-        # Batch query Open-Meteo API for capital coordinates
+        # Batch query Open-Meteo API for capital coordinates with live humidity, temp, and wind
         lats = ",".join(str(c["lat"]) for c in CAPITAL_COORDINATES)
         lngs = ",".join(str(c["lng"]) for c in CAPITAL_COORDINATES)
-        url = f"https://api.open-meteo.com/v1/forecast?latitude={lats}&longitude={lngs}&current_weather=true"
+        url = f"https://api.open-meteo.com/v1/forecast?latitude={lats}&longitude={lngs}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m"
 
         try:
             if _http_client:
@@ -454,19 +455,22 @@ async def get_weather(db: AsyncSession = Depends(database.get_db)):
                 
                 items = data if isinstance(data, list) else [data]
                 for idx, item in enumerate(items):
-                    current = item.get("current_weather", {})
+                    current = item.get("current", item.get("current_weather", {}))
                     city_meta = CAPITAL_COORDINATES[idx] if idx < len(CAPITAL_COORDINATES) else CAPITAL_COORDINATES[0]
-                    code = current.get("weathercode", 0)
+                    code = current.get("weather_code", current.get("weathercode", 0))
                     condition = WMO_WEATHER_CODES.get(code, "Clear Sky")
+                    temp = current.get("temperature_2m", current.get("temperature", 20))
+                    wind = current.get("wind_speed_10m", current.get("windspeed", 10))
+                    humidity = current.get("relative_humidity_2m", 60)
                     
                     results.append({
                         "name": city_meta["name"],
                         "country": city_meta["country"],
                         "lat": city_meta["lat"],
                         "lng": city_meta["lng"],
-                        "temp": round(current.get("temperature", 20)),
-                        "wind": round(current.get("windspeed", 10)),
-                        "humidity": 65,
+                        "temp": round(temp),
+                        "wind": round(wind),
+                        "humidity": round(humidity),
                         "desc": condition
                     })
 

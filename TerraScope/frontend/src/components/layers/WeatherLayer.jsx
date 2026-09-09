@@ -42,7 +42,7 @@ export default function WeatherLayer() {
         lng: item.lng,
         temp: item.temp ?? 20,
         desc: item.desc || "Clear Sky",
-        humidity: item.humidity ?? 65,
+        humidity: typeof item.humidity === 'number' ? item.humidity : 55,
         wind: item.wind ?? 10
       }));
     }
