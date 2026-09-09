@@ -11,8 +11,8 @@ from datetime import datetime, timezone
 from .database import Base
 
 def utc_now():
-    """Generates timezone-aware current UTC datetime."""
-    return datetime.now(timezone.utc)
+    """Generates naive UTC datetime for seamless cross-database compatibility."""
+    return datetime.now(timezone.utc).replace(tzinfo=None)
 
 class User(Base):
     """

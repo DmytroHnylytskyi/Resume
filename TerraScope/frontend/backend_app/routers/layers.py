@@ -40,6 +40,13 @@ def set_http_client(client: httpx.AsyncClient):
     global _http_client
     _http_client = client
 
+def is_cache_valid(cache_entry: Optional[models.CacheEntry], now: datetime) -> bool:
+    """Safely validates cache expiration across SQLite and PostgreSQL datetime drivers."""
+    if not cache_entry or not cache_entry.expires_at:
+        return False
+    exp = cache_entry.expires_at.replace(tzinfo=None) if cache_entry.expires_at.tzinfo else cache_entry.expires_at
+    return exp > now
+
 # Capital City Coordinates for Open-Meteo Batch Queries (70 World Capitals)
 CAPITAL_COORDINATES = [
     {"name": "Kyiv", "country": "Ukraine", "lat": 50.4501, "lng": 30.5234},
@@ -176,12 +183,12 @@ async def get_cached_or_fetch(
     Returns:
         Response: FastAPI Response with raw JSON string content.
     """
-    now = datetime.now(timezone.utc)
+    now = datetime.now(timezone.utc).replace(tzinfo=None)
     
-    # Fast path: Check SQLite cache table for unexpired entry
+    # Fast path: Check cache table for unexpired entry
     result = await db.execute(select(models.CacheEntry).where(models.CacheEntry.cache_key == cache_key))
     cache_entry = result.scalar_one_or_none()
-    if cache_entry and cache_entry.expires_at.replace(tzinfo=timezone.utc) > now:
+    if is_cache_valid(cache_entry, now):
         return Response(content=cache_entry.data, media_type="application/json")
 
     # Lock acquisition to prevent Cache Stampede on cache miss
@@ -190,7 +197,7 @@ async def get_cached_or_fetch(
         # Re-check cache after acquiring lock in case another request populated it
         result = await db.execute(select(models.CacheEntry).where(models.CacheEntry.cache_key == cache_key))
         cache_entry = result.scalar_one_or_none()
-        if cache_entry and cache_entry.expires_at.replace(tzinfo=timezone.utc) > now:
+        if is_cache_valid(cache_entry, now):
             return Response(content=cache_entry.data, media_type="application/json")
 
         data = None
@@ -374,19 +381,19 @@ async def get_flights(db: AsyncSession = Depends(database.get_db)):
     """
     cache_key = "flights_live_v3"
     ttl_seconds = 45
-    now = datetime.now(timezone.utc)
+    now = datetime.now(timezone.utc).replace(tzinfo=None)
     
-    # Fast path: Check SQLite cache table for unexpired entry
+    # Fast path: Check cache table for unexpired entry
     result = await db.execute(select(models.CacheEntry).where(models.CacheEntry.cache_key == cache_key))
     cache_entry = result.scalar_one_or_none()
-    if cache_entry and cache_entry.expires_at.replace(tzinfo=timezone.utc) > now:
+    if is_cache_valid(cache_entry, now):
         return Response(content=cache_entry.data, media_type="application/json")
         
     lock = get_lock_for_key(cache_key)
     async with lock:
         result = await db.execute(select(models.CacheEntry).where(models.CacheEntry.cache_key == cache_key))
         cache_entry = result.scalar_one_or_none()
-        if cache_entry and cache_entry.expires_at.replace(tzinfo=timezone.utc) > now:
+        if is_cache_valid(cache_entry, now):
             return Response(content=cache_entry.data, media_type="application/json")
             
         data = await fetch_flights_data()
@@ -421,20 +428,20 @@ async def get_weather(db: AsyncSession = Depends(database.get_db)):
 
     Cache TTL: 15 Minutes (900 seconds).
     """
-    now = datetime.now(timezone.utc)
+    now = datetime.now(timezone.utc).replace(tzinfo=None)
     cache_key = "weather_openmeteo_70v2"
     
-    # Check SQLite cache
+    # Check cache
     result = await db.execute(select(models.CacheEntry).where(models.CacheEntry.cache_key == cache_key))
     cache_entry = result.scalar_one_or_none()
-    if cache_entry and cache_entry.expires_at.replace(tzinfo=timezone.utc) > now:
+    if is_cache_valid(cache_entry, now):
         return Response(content=cache_entry.data, media_type="application/json")
 
     lock = get_lock_for_key(cache_key)
     async with lock:
         result = await db.execute(select(models.CacheEntry).where(models.CacheEntry.cache_key == cache_key))
         cache_entry = result.scalar_one_or_none()
-        if cache_entry and cache_entry.expires_at.replace(tzinfo=timezone.utc) > now:
+        if is_cache_valid(cache_entry, now):
             return Response(content=cache_entry.data, media_type="application/json")
 
         # Batch query Open-Meteo API for capital coordinates with live humidity, temp, and wind
