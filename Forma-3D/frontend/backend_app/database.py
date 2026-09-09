@@ -28,15 +28,30 @@ elif DATABASE_URL.startswith("postgresql://") and not DATABASE_URL.startswith("p
 elif DATABASE_URL.startswith("sqlite://") and not DATABASE_URL.startswith("sqlite+aiosqlite://"):
     DATABASE_URL = DATABASE_URL.replace("sqlite://", "sqlite+aiosqlite://", 1)
 
+SCHEMA_NAME = "forma"
+
 connect_args = {}
 if "sqlite" in DATABASE_URL:
     connect_args["check_same_thread"] = False
+else:
+    connect_args["server_settings"] = {"search_path": f"{SCHEMA_NAME},public"}
+
+engine_kwargs = {
+    "echo": False,
+    "future": True,
+    "connect_args": connect_args,
+    "pool_pre_ping": True,
+}
+if not DATABASE_URL.startswith("sqlite"):
+    engine_kwargs.update({
+        "pool_size": 3,
+        "max_overflow": 2,
+        "pool_recycle": 300,
+    })
 
 engine = create_async_engine(
     DATABASE_URL,
-    echo=False,
-    future=True,
-    connect_args=connect_args,
+    **engine_kwargs,
 )
 
 AsyncSessionLocal = async_sessionmaker(

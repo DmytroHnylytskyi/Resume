@@ -20,6 +20,7 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 
+from sqlalchemy import text
 from .database import Base, engine
 from .routers import auth, projects
 
@@ -38,6 +39,8 @@ async def lifespan(app: FastAPI):
     """Lifespan context manager handling asynchronous database schema initialization."""
     logger.info("Initializing database schema on startup...")
     async with engine.begin() as conn:
+        if not engine.url.drivername.startswith("sqlite"):
+            await conn.execute(text("CREATE SCHEMA IF NOT EXISTS forma"))
         await conn.run_sync(Base.metadata.create_all)
     logger.info("Database initialized successfully.")
     yield

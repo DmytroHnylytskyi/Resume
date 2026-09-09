@@ -14,6 +14,7 @@ from fastapi.staticfiles import StaticFiles
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
+from sqlalchemy import text
 
 from .database import async_engine, Base
 from .routers import analytics, auth, courses, teacher
@@ -29,6 +30,8 @@ async def lifespan(app: FastAPI):
     """Lifespan context manager handling application startup and graceful shutdown."""
     os.makedirs("uploads", exist_ok=True)
     async with async_engine.begin() as conn:
+        if not async_engine.url.drivername.startswith("sqlite"):
+            await conn.execute(text("CREATE SCHEMA IF NOT EXISTS lumina"))
         await conn.run_sync(Base.metadata.create_all)
     yield
     await async_engine.dispose()

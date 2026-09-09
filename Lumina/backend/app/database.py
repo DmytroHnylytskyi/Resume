@@ -24,17 +24,28 @@ elif RAW_DB_URL.startswith("postgres://"):
 else:
     ASYNC_DATABASE_URL = RAW_DB_URL
 
-# SQLite connect arguments
+SCHEMA_NAME = "lumina"
+
 connect_args = (
     {"check_same_thread": False}
     if ASYNC_DATABASE_URL.startswith("sqlite")
-    else {}
+    else {"server_settings": {"search_path": f"{SCHEMA_NAME},public"}}
 )
+
+engine_kwargs = {
+    "connect_args": connect_args,
+    "pool_pre_ping": True,
+}
+if not ASYNC_DATABASE_URL.startswith("sqlite"):
+    engine_kwargs.update({
+        "pool_size": 3,
+        "max_overflow": 2,
+        "pool_recycle": 300,
+    })
 
 async_engine = create_async_engine(
     ASYNC_DATABASE_URL,
-    connect_args=connect_args,
-    pool_pre_ping=True,
+    **engine_kwargs,
 )
 
 AsyncSessionLocal = async_sessionmaker(
