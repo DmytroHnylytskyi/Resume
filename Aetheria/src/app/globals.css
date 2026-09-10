@@ -11,10 +11,10 @@
 [data-theme='dark'] {
   --bg-app: #000000;
   --bg-surface: #09090b;
-  --bg-card: rgba(18, 18, 20, 0.82);
-  --bg-card-solid: #121214;
+  --bg-card: rgba(14, 15, 20, 0.92);
+  --bg-card-solid: #0e0f14;
   --bg-card-hover: rgba(255, 255, 255, 0.08);
-  --bg-pill: rgba(18, 18, 20, 0.88);
+  --bg-pill: rgba(14, 15, 20, 0.94);
   --border-subtle: rgba(255, 255, 255, 0.12);
   --border-strong: rgba(255, 255, 255, 0.24);
   --border-accent: rgba(255, 255, 255, 0.4);
@@ -38,10 +38,10 @@
 [data-theme='light'] {
   --bg-app: #ffffff;
   --bg-surface: #f4f4f5;
-  --bg-card: rgba(255, 255, 255, 0.86);
+  --bg-card: rgba(255, 255, 255, 0.88);
   --bg-card-solid: #ffffff;
   --bg-card-hover: rgba(0, 0, 0, 0.05);
-  --bg-pill: rgba(255, 255, 255, 0.92);
+  --bg-pill: rgba(255, 255, 255, 0.90);
   --border-subtle: rgba(0, 0, 0, 0.08);
   --border-strong: rgba(0, 0, 0, 0.18);
   --border-accent: rgba(0, 0, 0, 0.3);
@@ -107,21 +107,23 @@ html, body {
 /* ── Glass Panel Utilities ── */
 .glass-panel {
   background: var(--bg-card);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--border-subtle);
   box-shadow: var(--shadow-panel);
-  transition: background 0.45s ease, border-color 0.45s ease, box-shadow 0.45s ease;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 [data-theme='dark'] .glass-panel {
-  background: linear-gradient(145deg, rgba(var(--tod-glow-rgb), 0.04) 0%, var(--bg-card) 100%);
-  border-color: rgba(var(--tod-glow-rgb), 0.14);
+  background: var(--bg-card);
+  border-color: rgba(var(--tod-glow-rgb), 0.16);
+  box-shadow: var(--shadow-panel), 0 0 16px -4px rgba(var(--tod-glow-rgb), 0.1);
 }
 
 [data-theme='light'] .glass-panel {
-  background: linear-gradient(145deg, rgba(var(--tod-glow-rgb), 0.07) 0%, var(--bg-card) 100%);
+  background: var(--bg-card);
   border-color: rgba(var(--tod-glow-rgb), 0.18);
+  box-shadow: var(--shadow-panel), 0 0 16px -4px rgba(var(--tod-glow-rgb), 0.08);
 }
 
 /* ── Language & Theme Toggle Groups ── */
@@ -224,6 +226,18 @@ html, body {
   padding: 0 18px;
   z-index: 100;
   transition: opacity 0.45s ease, transform 0.45s ease;
+}
+
+[data-theme='dark'] .island-top-bar {
+  background: rgba(14, 15, 20, 0.90) !important;
+  border: 1px solid rgba(var(--tod-glow-rgb), 0.18) !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55), 0 0 16px rgba(var(--tod-glow-rgb), 0.08) !important;
+}
+
+[data-theme='light'] .island-top-bar {
+  background: rgba(255, 255, 255, 0.88) !important;
+  border: 1px solid rgba(var(--tod-glow-rgb), 0.2) !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.08), 0 0 16px rgba(var(--tod-glow-rgb), 0.06) !important;
 }
 
 /* Cinematic intro: slide the HUD chrome out of the flight shot */
@@ -2447,15 +2461,17 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 18px;
-  background: rgba(13, 13, 16, 0.94);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.92), 0 0 1px rgba(255, 255, 255, 0.3);
+  background: rgba(14, 15, 20, 0.94);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(var(--tod-glow-rgb), 0.2);
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.92), 0 0 20px rgba(var(--tod-glow-rgb), 0.1);
 }
 
 [data-theme='light'] .resume-modal-card.obsidian-modal {
-  background: rgba(255, 255, 255, 0.97);
-  border-color: rgba(0, 0, 0, 0.12);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.14), 0 0 1px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.90);
+  border-color: rgba(var(--tod-glow-rgb), 0.22);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.14), 0 0 20px rgba(var(--tod-glow-rgb), 0.08);
 }
 
 /* Ambient Top Accent Lines */
@@ -3700,18 +3716,18 @@ nextjs-portal,
   position: relative;
   overflow: hidden;
   cursor: pointer;
-  border: 1.5px solid rgba(255, 255, 255, 0.14);
-  background: rgba(9, 9, 11, 0.82);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.55), inset 0 0 24px rgba(139, 92, 246, 0.14);
+  border: 1.5px solid rgba(var(--tod-glow-rgb), 0.25);
+  background: rgba(14, 15, 20, 0.92) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(var(--tod-glow-rgb), 0.08);
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .mini-radar-housing:hover {
   transform: scale(1.04);
-  border-color: rgba(251, 191, 36, 0.5);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65), 0 0 16px rgba(251, 191, 36, 0.25);
+  border-color: rgba(var(--tod-glow-rgb), 0.6);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65), 0 0 16px rgba(var(--tod-glow-rgb), 0.25);
 }
 
 /* Island Schematic Footprint on Mini-Radar */
@@ -4285,13 +4301,13 @@ nextjs-portal,
   top: calc(100% + 10px);
   right: 0;
   width: 330px;
-  background: rgba(9, 9, 11, 0.96);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(251, 191, 36, 0.25);
+  background: rgba(14, 15, 20, 0.94) !important;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(var(--tod-glow-rgb), 0.28) !important;
   border-radius: 20px;
   padding: 16px 18px;
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.75), 0 0 30px rgba(139, 92, 246, 0.15);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.75), 0 0 24px rgba(var(--tod-glow-rgb), 0.14) !important;
   z-index: 150;
   display: flex;
   flex-direction: column;
@@ -4502,14 +4518,14 @@ nextjs-portal,
 
 /* ── 1. Mini-Radar in Light Theme ── */
 [data-theme='light'] .mini-radar-housing {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: rgba(0, 0, 0, 0.12);
-  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.1), inset 0 0 20px rgba(0, 0, 0, 0.04);
+  background: rgba(255, 255, 255, 0.88) !important;
+  border-color: rgba(var(--tod-glow-rgb), 0.22) !important;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.1), inset 0 0 20px rgba(var(--tod-glow-rgb), 0.05) !important;
 }
 
 [data-theme='light'] .mini-radar-housing:hover {
-  border-color: rgba(217, 119, 6, 0.5);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.16), 0 0 16px rgba(217, 119, 6, 0.2);
+  border-color: rgba(var(--tod-glow-rgb), 0.6) !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.16), 0 0 16px rgba(var(--tod-glow-rgb), 0.25) !important;
 }
 
 [data-theme='light'] .radar-grid-ring.r-inner {
@@ -4589,9 +4605,9 @@ nextjs-portal,
 }
 
 [data-theme='light'] .controls-dropdown-menu {
-  background: rgba(255, 255, 255, 0.97);
-  border-color: rgba(217, 119, 6, 0.3);
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.14), 0 4px 20px rgba(217, 119, 6, 0.1);
+  background: rgba(255, 255, 255, 0.89) !important;
+  border-color: rgba(var(--tod-glow-rgb), 0.22) !important;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.12), 0 0 20px rgba(var(--tod-glow-rgb), 0.08) !important;
 }
 
 [data-theme='light'] .controls-menu-header {
