@@ -100,11 +100,33 @@ export const dayNightState = {
   sky: { zenith: [46, 127, 214], horizon: [207, 232, 250], sunTint: [255, 233, 184] } as SkySample
 };
 
+/**
+ * Broadcasts the live dynamic sky and time-of-day colors directly into
+ * document root CSS variables so DOM panels, buttons, borders, and cards
+ * dynamically harmonize with the WebGL atmosphere in real-time.
+ */
+export function syncCssDynamicVariables(): void {
+  if (typeof document === 'undefined') return;
+  const { sky, sunElev } = dayNightState;
+  const nf = Math.max(0, Math.min(1, (0.05 - sunElev) / 0.35));
+  const glow = nf > 0.5 ? sky.horizon : sky.sunTint;
+  const root = document.documentElement;
+
+  const glowRgb = `${Math.round(glow[0])}, ${Math.round(glow[1])}, ${Math.round(glow[2])}`;
+  root.style.setProperty('--tod-glow-rgb', glowRgb);
+  root.style.setProperty('--tod-glow', `rgb(${glowRgb})`);
+  root.style.setProperty('--tod-sky-horizon', `rgb(${Math.round(sky.horizon[0])}, ${Math.round(sky.horizon[1])}, ${Math.round(sky.horizon[2])})`);
+  root.style.setProperty('--tod-sky-zenith', `rgb(${Math.round(sky.zenith[0])}, ${Math.round(sky.zenith[1])}, ${Math.round(sky.zenith[2])})`);
+  root.style.setProperty('--tod-sky-suntint', `rgb(${Math.round(sky.sunTint[0])}, ${Math.round(sky.sunTint[1])}, ${Math.round(sky.sunTint[2])})`);
+  root.style.setProperty('--tod-night-factor', nf.toFixed(3));
+}
+
 function applyDerived(): void {
   const t = dayNightState.displayT;
   dayNightState.sunElev = Math.sin((t - 0.25) * TAU);
   dayNightState.moonElev = Math.sin((t + 0.25) * TAU);
   sampleSkyInto(t, dayNightState.sky);
+  syncCssDynamicVariables();
 }
 
 // Prime the derived fields for the initial (pre-interaction) state.
@@ -143,6 +165,7 @@ export function registerDayNightThemeSync(setter: ThemeSetter): void {
 export function enableDayNightThemeSync(currentTheme: 'dark' | 'light'): void {
   lastTheme = currentTheme;
   syncEnabled = true;
+  syncCssDynamicVariables();
   syncThemeIfCrossed();
 }
 
