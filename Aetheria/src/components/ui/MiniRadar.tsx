@@ -29,7 +29,7 @@ const LANDMARKS: LandmarkDef[] = [
     shortUk: 'Forma-3D',
     shortEn: 'Forma-3D',
     type: 'project',
-    projectId: 'forma-3d',
+    projectId: 'forma',
     x: 0,
     z: -16,
     color: '#34d399'

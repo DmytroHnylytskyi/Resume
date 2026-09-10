@@ -199,10 +199,10 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         githubUrl: "https://github.com/DmytroHnylytskyi/Resume/tree/main/Aetheria",
         color: "#fbbf24",
         features: [
-          "Оптимізований рендеринг оточення через THREE.InstancedMesh (~300 об'єктів у ~15 draw calls)",
+          "Оптимізований рендеринг оточення через THREE.InstancedMesh (~300 об'єктів за ~15 викликів відмальовки (draw calls))",
           "Фізична симуляція Rapier 3D з фіксованим 60 Hz кроком та контролером від 3-ї особи",
-          "Скелетна анімація персонажа (FBX) з плавним кросфейдом стейтів (Idle, Walk, Run, Jump)",
-          "Миттєве перемикання мов (UK/EN) та тем (Dark/Light) через централізований Zustand стор"
+          "Скелетна анімація персонажа (FBX/GLB) з плавним змішуванням станів (Idle, Walk, Run, Jump)",
+          "Миттєве перемикання мов (UK/EN) та тем (Dark/Light) через централізоване сховище (store) Zustand 5"
         ]
       }
     }
@@ -371,7 +371,7 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         id: "aetheria",
         title: "Aetheria (Interactive 3D WebGL Portfolio & Hub)",
         tagline: "Interactive 3D spatial island & developer portfolio hub",
-        description: "Comprehensive interactive 3D WebGL portfolio built with Next.js 15, Three.js, React Three Fiber, and Rapier 3D featuring GPU Instanced rendering, locked 60 FPS real-time physics, and responsive UI.",
+        description: "Comprehensive interactive 3D WebGL portfolio built with Next.js 15, Three.js, React Three Fiber, and Rapier 3D featuring GPU instanced batch rendering, deterministic 60 Hz Rapier 3D physics simulation, and zero-latency dual-mode UI.",
         tags: ["Next.js 15", "React 19", "Three.js", "React Three Fiber", "Rapier 3D", "TypeScript", "Zustand 5"],
         url: "",
         githubUrl: "https://github.com/DmytroHnylytskyi/Resume/tree/main/Aetheria",
@@ -379,7 +379,7 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         features: [
           "Optimized environment rendering via THREE.InstancedMesh (~300 props in ~15 draw calls)",
           "Rapier 3D physics simulation with fixed 60 Hz timestep and third-person controller",
-          "Skeletal character animation blending (FBX) with smooth transitions (Idle, Walk, Run, Jump)",
+          "Skeletal character animation blending (FBX rig pipeline) with smooth state transitions (Idle, Walk, Run, Jump)",
           "Zero-latency bilingual switching (UK/EN) and theme toggle (Dark/Light) via Zustand 5"
         ]
       }
@@ -412,7 +412,7 @@ export const translations: Record<Locale, Translations> = {
     },
     loading: {
       title: "Завантаження світу...",
-      subtitle: "Компіляція 3D-ассетів, текстур та фізики острова",
+      subtitle: "Компіляція шейдерів, завантаження 3D-асетів та фізики острова",
       tip: "Порада: Ви можете перемикатися між 3D та класичним резюме у будь-який момент."
     },
     landing: {
@@ -427,7 +427,7 @@ export const translations: Record<Locale, Translations> = {
       aboutSubtitle: "Інженерний підхід, архітектура та ключові компетенції",
       educationTitle: "Освіта & Академічний бекграунд",
       educationSubtitle: "Профільна вища інженерна освіта",
-      educationYears: "вивчання інженерії ПЗ",
+      educationYears: "вивчення інженерії ПЗ",
       certificationsTitle: "Підтверджені Сертифікації",
       certificationsSubtitle: "Міжнародні та технічні оцінки кваліфікації (HackerRank & EF SET)",
       skillsTitle: "Стек & Навички",
@@ -443,7 +443,7 @@ export const translations: Record<Locale, Translations> = {
       contactsTitle: "Контакти",
       contactsSubtitle: "Завжди відкритий до цікавих віддалених проєктів та пропозицій",
       ctaHeadline: "Є ідея для проєкту?",
-      ctaText: "Давайте створимо щось швидке, красиве та технічно надійне — від схеми бази даних до WebGL-клієнта.",
+      ctaText: "Створімо щось швидке, красиве та технічно надійне — від схеми бази даних до WebGL-клієнта.",
       ctaButton: "Зв'язатися зі мною",
       copyEmail: "Скопіювати Email",
       copied: "Скопійовано!",

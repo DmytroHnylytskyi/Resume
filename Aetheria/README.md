@@ -58,7 +58,8 @@ The application features a dual-experience architecture:
 
 ```text
 ├── public/
-│   └── kaykit_halloween/      # 3D GLB assets, FBX character animations, and textures
+│   ├── model/kaykit_halloween/ # 3D GLB assets, character model, textures
+│   └── shots/                 # Live project showcase screenshot previews
 ├── src/
 │   ├── app/
 │   │   ├── globals.css        # Theme variables, glassmorphism, responsive styles
@@ -66,7 +67,7 @@ The application features a dual-experience architecture:
 │   │   └── page.tsx           # Main page orchestrating 3D and Classic views
 │   ├── components/
 │   │   ├── 3d/
-│   │   │   ├── AnimatedCharacter.tsx    # FBX skeletal mesh and animation state machine
+│   │   │   ├── AnimatedCharacter.tsx    # Skeletal mesh and animation state machine
 │   │   │   ├── CharacterController.tsx  # Rapier physics body, input, and 3rd-person camera
 │   │   │   ├── IslandCanvas.tsx         # R3F Canvas, sky dome, lighting, and physics container
 │   │   │   └── WorldScene.tsx           # Instanced props, colliders, glows, proximity detection
@@ -74,15 +75,25 @@ The application features a dual-experience architecture:
 │   │       ├── BioModal.tsx             # Biography and engineering background modal
 │   │       ├── ClassicLandingView.tsx   # Full classic CV landing page
 │   │       ├── ContactsModal.tsx        # Contact links with one-click copy helpers
+│   │       ├── ControlsGuideDropdown.tsx# Expandable keyboard & touch controls guide
 │   │       ├── ControlsHUD.tsx          # Top bar navigation, FPS meter, interaction pill
+│   │       ├── IntroOverlay.tsx         # Cinematic intro titles and mode selection card
+│   │       ├── LandscapeOrientationGuard.tsx # Mobile landscape orientation enforcement
 │   │       ├── LoadingScreen.tsx        # Asset loading screen with progress percentage
+│   │       ├── MiniRadar.tsx            # HUD mini-radar and tactical island map modal
+│   │       ├── MobileTouchControls.tsx  # Dual-zone virtual joystick and camera touch
 │   │       ├── ProjectModal.tsx         # Detailed project showcase modal
+│   │       ├── ResumePrintDocument.tsx  # Executive print-only CV document for PDF
 │   │       ├── SkillsModal.tsx          # Tech stack and verified certificates tabs
-│   │       └── WelcomeModal.tsx         # Initial mode and language selection screen
+│   │       └── TimeOfDaySlider.tsx      # Continuous day/night cycle sky scrubber
 │   ├── data/
 │   │   ├── islandScene.json   # Placed 3D object positions, rotations, and scales
 │   │   └── resumeData.ts      # Profile, projects, certifications, and translations
 │   ├── store/
+│   │   ├── characterAnimState.ts # Shared zero-overhead mutable animation buffer
+│   │   ├── dayNightState.ts   # Continuous day/night state and color LUT
+│   │   ├── mobileControlsState.ts # Touch joystick state
+│   │   ├── radarState.ts      # Zero-allocation radar telemetry buffer
 │   │   └── useGameStore.ts    # Global Zustand store (mode, theme, language, modals)
 │   └── types/
 │       ├── portfolio.ts       # Profile, project, and translation interfaces
@@ -99,17 +110,17 @@ The application features a dual-experience architecture:
 
 #### Prerequisites
 
-- Node.js 18.18.0 or higher
+- Node.js 20.0.0 or higher
 - npm 9.0.0 or higher
 
 #### Installation
 
 ```bash
 # Clone the repository
-git clone https://github.com/DmytroHnylytskyi/portfolio-aetheria.git
+git clone https://github.com/DmytroHnylytskyi/Resume.git
 
 # Navigate to project directory
-cd portfolio-aetheria
+cd Resume/Aetheria
 
 # Install dependencies
 npm install
@@ -198,17 +209,17 @@ Aetheria — це інтерактивне 3D WebGL портфоліо та го
 
 #### Системні вимоги
 
-- Node.js 18.18.0 або вище
+- Node.js 20.0.0 або вище
 - npm 9.0.0 або вище
 
 #### Встановлення
 
 ```bash
 # Клонування репозиторію
-git clone https://github.com/DmytroHnylytskyi/portfolio-aetheria.git
+git clone https://github.com/DmytroHnylytskyi/Resume.git
 
 # Перехід у директорію проєкту
-cd portfolio-aetheria
+cd Resume/Aetheria
 
 # Встановлення залежностей
 npm install
