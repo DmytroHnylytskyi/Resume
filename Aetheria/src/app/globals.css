@@ -863,8 +863,8 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 max(28px, env(safe-area-inset-right));
-  gap: 16px;
+  padding: 0 max(20px, env(safe-area-inset-right));
+  gap: clamp(8px, 1.2vw, 16px);
   z-index: 100;
   border-bottom: 1px solid var(--border-subtle);
   background: var(--bg-card);
@@ -876,7 +876,7 @@ html, body {
 .header-left {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   flex-shrink: 0;
 }
 
@@ -931,6 +931,14 @@ html, body {
   transition: all 0.2s ease;
 }
 
+.status-text-full {
+  display: inline;
+}
+
+.status-text-compact {
+  display: none;
+}
+
 .header-status-pill:hover {
   background: rgba(34, 197, 94, 0.16);
   border-color: rgba(34, 197, 94, 0.45);
@@ -956,7 +964,7 @@ html, body {
 .classic-nav-links {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: clamp(10px, 1.1vw, 18px);
 }
 
 .classic-nav-link {
@@ -1001,7 +1009,7 @@ html, body {
 .classic-header-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: clamp(6px, 0.8vw, 10px);
   flex-shrink: 0;
 }
 
@@ -6607,7 +6615,7 @@ nextjs-portal,
   position: relative;
   display: inline-flex;
   align-items: center;
-  width: clamp(88px, 10vw, 148px);
+  width: clamp(82px, 8.5vw, 136px);
   height: 14px;
   border-radius: 999px;
   background: var(--sky-track);
@@ -6698,10 +6706,57 @@ nextjs-portal,
   flex-shrink: 0;
 }
 
-/* Compact screens: drop the label, keep the gradient track readable */
-@media (max-width: 1320px) {
+/* ── Compact & Medium screen adaptations (no header clipping) ── */
+@media (max-width: 1440px) {
   .tod-slider-label {
-    display: none;
+    display: none !important;
+  }
+
+  .status-text-full {
+    display: none !important;
+  }
+
+  .status-text-compact {
+    display: inline !important;
+  }
+
+  .classic-header {
+    padding: 0 max(16px, env(safe-area-inset-right)) !important;
+  }
+}
+
+@media (max-width: 1240px) {
+  .switch-3d-text-full {
+    display: none !important;
+  }
+
+  .switch-3d-text-compact {
+    display: inline !important;
+  }
+
+  .switch-3d-btn {
+    padding: 0 10px !important;
+  }
+
+  .header-cta-pill {
+    padding: 7px 12px !important;
+    font-size: 12px !important;
+  }
+}
+
+@media (max-width: 1120px) {
+  .header-status-text {
+    display: none !important;
+  }
+
+  .header-status-pill {
+    padding: 4px 7px !important;
+  }
+}
+
+@media (max-width: 980px) {
+  .classic-nav-links {
+    display: none !important;
   }
 }
 

@@ -335,7 +335,8 @@ export default function ClassicLandingView(): React.ReactElement {
             <a href="#contacts" className="header-status-pill" title={profile.status}>
               <span className="status-dot pulse-dot" />
               <span className="header-status-text">
-                {isUk ? 'Доступний до проєктів' : 'Available for work'}
+                <span className="status-text-full">{isUk ? 'Доступний до проєктів' : 'Available for work'}</span>
+                <span className="status-text-compact">{isUk ? 'Доступний' : 'Available'}</span>
               </span>
             </a>
           </div>
