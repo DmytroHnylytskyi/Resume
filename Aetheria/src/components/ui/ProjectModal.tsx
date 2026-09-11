@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 import { useGameStore } from '../../store/useGameStore';
 import { developerProfiles, translations, getProjectUrl } from '../../data/resumeData';
 import { X, ExternalLink, Sparkles, Layers, Box } from 'lucide-react';
+import { useModalFocus } from '../../hooks/useModalFocus';
 
 function GithubIcon({ size = 16 }: { size?: number }) {
   return (
@@ -16,6 +17,9 @@ function GithubIcon({ size = 16 }: { size?: number }) {
 
 export default function ProjectModal(): React.ReactElement | null {
   const { selectedProject, setSelectedProject, language } = useGameStore();
+
+  const isOpen = selectedProject !== null;
+  const panelRef = useModalFocus<HTMLDivElement>(isOpen, () => setSelectedProject(null));
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -49,7 +53,15 @@ export default function ProjectModal(): React.ReactElement | null {
 
   return (
     <div className="modal-backdrop-blur" onClick={() => setSelectedProject(null)}>
-      <div className="resume-modal-card obsidian-modal project-modal-card glass-panel" onClick={(e) => e.stopPropagation()}>
+      <div
+        ref={panelRef}
+        className="resume-modal-card obsidian-modal project-modal-card glass-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-label={project.title}
+        tabIndex={-1}
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Ambient Glow Line */}
         <div className={`modal-accent-line ${accent}`} />
 
@@ -57,15 +69,15 @@ export default function ProjectModal(): React.ReactElement | null {
         <div className="modal-header">
           <div className="modal-badge-group">
             <div className={`modal-badge-icon ${accent}-badge`}>
-              <Box size={20} />
+              <Box size={20} aria-hidden="true" />
             </div>
             <div>
               <span className="project-modal-pill-tag">{project.tagline}</span>
               <h2 className="modal-title">{project.title}</h2>
             </div>
           </div>
-          <button className="modal-close-btn" onClick={() => setSelectedProject(null)} title={t.close}>
-            <X size={18} />
+          <button className="modal-close-btn" onClick={() => setSelectedProject(null)} title={t.close} aria-label={t.close}>
+            <X size={18} aria-hidden="true" />
           </button>
         </div>
 
@@ -74,7 +86,7 @@ export default function ProjectModal(): React.ReactElement | null {
           {/* Live-demo screenshot (shared with the classic card preview) */}
           <div className="project-modal-shot">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={`/shots/${project.id}.jpg`} alt={project.title} loading="lazy" draggable={false} />
+            <img src={`/shots/${project.id}.jpg`} alt={project.title} loading="lazy" decoding="async" draggable={false} />
           </div>
 
           {/* Main Description */}

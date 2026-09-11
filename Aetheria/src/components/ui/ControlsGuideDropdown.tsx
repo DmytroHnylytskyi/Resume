@@ -76,15 +76,17 @@ export default function ControlsGuideDropdown(): React.ReactElement {
         className={`nav-shortcut-btn controls-guide-btn ${isOpen ? 'active' : ''}`}
         onClick={() => setIsOpen((prev) => !prev)}
         title={isUk ? 'Інструкція з керування [H]' : 'Controls guide [H]'}
+        aria-expanded={isOpen}
+        aria-haspopup="true"
       >
-        <HelpCircle size={15} className="controls-guide-icon" />
+        <HelpCircle size={15} className="controls-guide-icon" aria-hidden="true" />
         <span>{isUk ? 'Керування' : 'Controls'}</span>
-        <ChevronDown size={13} className={`dropdown-chevron ${isOpen ? 'open' : ''}`} />
+        <ChevronDown size={13} className={`dropdown-chevron ${isOpen ? 'open' : ''}`} aria-hidden="true" />
       </button>
 
       {/* Expandable Glass Dropdown Menu */}
       {isOpen && (
-        <div className="controls-dropdown-menu glass-panel">
+        <div className="controls-dropdown-menu glass-panel" role="dialog" aria-label={isUk ? 'Інструкція з керування' : 'Controls guide'}>
           {/* Header */}
           <div className="controls-menu-header">
             <div className="controls-menu-title-group">
@@ -99,8 +101,8 @@ export default function ControlsGuideDropdown(): React.ReactElement {
                   : (isUk ? 'Керування та гарячі клавіші' : 'Controls & Shortcuts')}
               </h4>
             </div>
-            <button className="controls-menu-close" onClick={() => setIsOpen(false)}>
-              <X size={14} />
+            <button className="controls-menu-close" onClick={() => setIsOpen(false)} aria-label={isUk ? 'Закрити' : 'Close'}>
+              <X size={14} aria-hidden="true" />
             </button>
           </div>
 

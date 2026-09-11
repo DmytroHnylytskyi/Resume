@@ -1,14 +1,15 @@
 import { create } from 'zustand';
-import { GameState, ViewMode, ThemeMode } from '../types/store';
+import { GameState, ViewMode, ThemeMode, CameraMode } from '../types/store';
 import { StatueKey } from '../types/scene';
 import { Locale } from '../types/portfolio';
 import { registerDayNightThemeSync, toggleDayNight } from './dayNightState';
 
 /**
  * useGameStore
- * 
+ *
  * Central reactive Zustand state store for Aetheria portfolio.
- * Coordinates UI modes, internationalization, theme toggling, modal visibility, and 3D interactions.
+ * Coordinates UI modes, internationalization, theme toggling, modal
+ * visibility and 3D interactions.
  */
 export const useGameStore = create<GameState>((set) => ({
   // ── Language / Localization ──
@@ -25,7 +26,7 @@ export const useGameStore = create<GameState>((set) => ({
   setTheme: (theme: ThemeMode) => set({ theme }),
   toggleTheme: () => toggleDayNight(),
 
-  // ── View Mode (3D WebGL vs Classic Document Resume) ──
+  // ── View Mode: 3D WebGL vs Classic Document Resume ──
   viewMode: '3d',
   setViewMode: (mode: ViewMode) => set({ viewMode: mode }),
 
@@ -61,7 +62,7 @@ export const useGameStore = create<GameState>((set) => ({
   toggleAudio: () => set((s) => ({ isAudioMuted: !s.isAudioMuted })),
 
   cameraMode: 'third_person',
-  setCameraMode: (mode) => set({ cameraMode: mode }),
+  setCameraMode: (mode: CameraMode) => set({ cameraMode: mode }),
   toggleCameraMode: () =>
     set((s) => ({ cameraMode: s.cameraMode === 'third_person' ? 'bird_eye' : 'third_person' })),
 

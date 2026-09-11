@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useGameStore } from '../../store/useGameStore';
 import { developerProfiles, translations } from '../../data/resumeData';
 import { X, Share2, Mail, Send, ExternalLink, Copy, Check, Clock } from 'lucide-react';
+import { useModalFocus } from '../../hooks/useModalFocus';
 
 function GithubIcon({ size = 18 }: { size?: number }) {
   return (
@@ -18,6 +19,9 @@ export default function ContactsModal(): React.ReactElement | null {
   const { activeModal, setActiveModal, language } = useGameStore();
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [copiedTg, setCopiedTg] = useState(false);
+
+  const isOpen = activeModal === 'contacts';
+  const panelRef = useModalFocus<HTMLDivElement>(isOpen, () => setActiveModal(null));
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -52,7 +56,15 @@ export default function ContactsModal(): React.ReactElement | null {
 
   return (
     <div className="modal-backdrop-blur" onClick={() => setActiveModal(null)}>
-      <div className="resume-modal-card obsidian-modal glass-panel" onClick={(e) => e.stopPropagation()}>
+      <div
+        ref={panelRef}
+        className="resume-modal-card obsidian-modal glass-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-label={t.contactsAndSocial}
+        tabIndex={-1}
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Ambient Top Glow Line */}
         <div className="modal-accent-line cyan" />
 
@@ -60,7 +72,7 @@ export default function ContactsModal(): React.ReactElement | null {
         <div className="modal-header">
           <div className="modal-badge-group">
             <div className="modal-badge-icon cyan-badge">
-              <Share2 size={20} />
+              <Share2 size={20} aria-hidden="true" />
             </div>
             <div>
               <h2 className="modal-title">{t.contactsAndSocial}</h2>
@@ -69,8 +81,8 @@ export default function ContactsModal(): React.ReactElement | null {
               </p>
             </div>
           </div>
-          <button className="modal-close-btn" onClick={() => setActiveModal(null)} title={t.close}>
-            <X size={18} />
+          <button className="modal-close-btn" onClick={() => setActiveModal(null)} title={t.close} aria-label={t.close}>
+            <X size={18} aria-hidden="true" />
           </button>
         </div>
 
@@ -113,6 +125,7 @@ export default function ContactsModal(): React.ReactElement | null {
                 className="contact-quick-copy-btn"
                 onClick={handleCopyTg}
                 title={language === 'uk' ? 'Скопіювати @mokydjin' : 'Copy @mokydjin'}
+                aria-label={language === 'uk' ? 'Скопіювати Telegram @mokydjin' : 'Copy Telegram handle @mokydjin'}
               >
                 {copiedTg ? <Check size={14} className="copied-icon" /> : <Copy size={14} />}
               </button>
@@ -139,6 +152,7 @@ export default function ContactsModal(): React.ReactElement | null {
                 className="contact-quick-copy-btn"
                 onClick={handleCopyEmail}
                 title={language === 'uk' ? 'Скопіювати Email' : 'Copy Email'}
+                aria-label={language === 'uk' ? 'Скопіювати email-адресу' : 'Copy email address'}
               >
                 {copiedEmail ? <Check size={14} className="copied-icon" /> : <Copy size={14} />}
               </button>

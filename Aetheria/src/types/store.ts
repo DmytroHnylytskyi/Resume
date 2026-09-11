@@ -10,6 +10,8 @@ export interface InteractionPrompt {
 export type ViewMode = '3d' | 'classic';
 export type ThemeMode = 'dark' | 'light';
 
+export type CameraMode = 'third_person' | 'bird_eye';
+
 export interface GameState {
   // Locale
   language: Locale;
@@ -49,8 +51,8 @@ export interface GameState {
   // Audio & Camera
   isAudioMuted: boolean;
   toggleAudio: () => void;
-  cameraMode: 'third_person' | 'bird_eye';
-  setCameraMode: (mode: 'third_person' | 'bird_eye') => void;
+  cameraMode: CameraMode;
+  setCameraMode: (mode: CameraMode) => void;
   toggleCameraMode: () => void;
 
   // Cinematic Intro Swoop

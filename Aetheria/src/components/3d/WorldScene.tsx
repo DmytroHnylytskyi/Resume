@@ -121,6 +121,7 @@ function InstancedModelGroup({ modelPath, instances }: InstancedModelGroupProps)
       {meshData.meshes.map((data, idx) => (
         <instancedMesh
           key={idx}
+          name={`DEBUG:${modelPath}#${idx}`}
           ref={(el) => { meshRefs.current[idx] = el; }}
           args={[data.geometry, data.material as THREE.Material, instances.length]}
           frustumCulled={true}
@@ -358,12 +359,45 @@ function GraveFloatingParticles(): React.ReactElement {
 }
 
 // ══════════════════════════════════════════════════════
+// 2b. STATUE COLLIDER COMPOUNDS — measured from the GLB vertex profiles
+// (pedestal + figure volumes), so hitboxes hug the visible silhouette:
+// no more walking into the mesh, no floating above the pedestal after a
+// jump. Offsets are in the statue's local space, base at y=0 (the clone
+// is base-shifted in LandmarkProp). Boxes rotate with the placed statue.
+// ══════════════════════════════════════════════════════
+interface LandmarkBox {
+  halfExtents: [number, number, number];
+  offset: [number, number, number];
+}
+
+const LANDMARK_COLLIDER_DEFS: Record<string, LandmarkBox[]> = {
+  // AngelStatue: plinth 0–1.27, body+wings 1.27–2.86, head 2.86–3.81 (H 3.81)
+  'AngelStatue by Zsky - 6v4CL0nKfT.glb': [
+    { halfExtents: [1.25, 0.64, 1.76], offset: [0.03, 0.64, -0.24] },
+    { halfExtents: [0.9, 0.8, 1.28], offset: [0.03, 2.07, -0.35] },
+    { halfExtents: [0.74, 0.48, 1.09], offset: [0.03, 3.34, -0.16] }
+  ],
+  // Stag Statue: rock base 0–1.93, torso 1.93–3.09, head+antlers 3.09–4.63 (H 4.63)
+  'Stag Statue by Quaternius - cKloIsNcT8.glb': [
+    { halfExtents: [0.57, 0.97, 0.57], offset: [0, 0.97, 0] },
+    { halfExtents: [0.45, 0.58, 0.31], offset: [0.07, 2.51, 0.04] },
+    { halfExtents: [1.08, 0.77, 0.64], offset: [-0.63, 3.86, 0.04] }
+  ],
+  // Fox Statue: plinth 0–1.56, body 1.56–2.19, head/tail 2.19–3.75 (H 3.75)
+  'Fox Statue by Quaternius - abxyXID5EA.glb': [
+    { halfExtents: [0.54, 0.78, 0.54], offset: [0, 0.78, 0] },
+    { halfExtents: [0.68, 0.32, 0.75], offset: [0.08, 1.88, -0.15] },
+    { halfExtents: [0.34, 0.78, 0.62], offset: [0.05, 2.97, 0.17] }
+  ]
+};
+
+// ══════════════════════════════════════════════════════
 // 3. LANDMARK PROPS (Unique interactive objects with solid colliders)
 // ══════════════════════════════════════════════════════
 function LandmarkProp({ obj }: { obj: PlacedObject }): React.ReactElement {
   const { scene } = useGLTF(obj.modelPath);
 
-  const { clonedScene, finalScale } = useMemo(() => {
+  const { clonedScene, finalScale, fallbackBox } = useMemo(() => {
     const clone = scene.clone(true);
     const uScale = getUnitScale(clone);
     const rawScale = Array.isArray(obj.scale) ? obj.scale[0] : (obj.scale || 1);
@@ -390,7 +424,17 @@ function LandmarkProp({ obj }: { obj: PlacedObject }): React.ReactElement {
     wrapper.matrixAutoUpdate = false;
     wrapper.updateMatrix();
 
-    return { clonedScene: wrapper, finalScale: rawScale * uScale };
+    // Post-shift the visible mesh spans y 0..size.y — the fallback collider
+    // hugs exactly that box (sizes are translation-invariant).
+    const size = box.getSize(new THREE.Vector3()).multiplyScalar(rawScale * uScale);
+    return {
+      clonedScene: wrapper,
+      finalScale: rawScale * uScale,
+      fallbackBox: {
+        halfExtents: [size.x / 2, size.y / 2, size.z / 2] as [number, number, number],
+        offset: [0, size.y / 2, 0] as [number, number, number]
+      }
+    };
   }, [scene, obj.scale]);
 
   const lowerPath = obj.modelPath.toLowerCase();
@@ -399,8 +443,10 @@ function LandmarkProp({ obj }: { obj: PlacedObject }): React.ReactElement {
   if (isCrypt) {
     return (
       <group position={obj.position} rotation={obj.rotation}>
+        {/* Measured Crypt.glb footprint: 6 × 8 (x/z); collider top stays at
+            the roofline (5.0) — the spire above is not walkable surface. */}
         <RigidBody type="fixed" colliders={false} position={[0, 2.5, 0]}>
-          <CuboidCollider args={[2.8, 2.5, 3.8]} />
+          <CuboidCollider args={[3.0, 2.5, 4.0]} />
         </RigidBody>
         <group scale={finalScale}>
           <primitive object={clonedScene} />
@@ -409,11 +455,19 @@ function LandmarkProp({ obj }: { obj: PlacedObject }): React.ReactElement {
     );
   }
 
-  // Statues
+  // Statues: compound boxes measured from the model's vertex profile
+  // (LANDMARK_COLLIDER_DEFS), falling back to a single bbox-fit box for
+  // any unmeasured statue. Boxes live inside the rotated group, so they
+  // turn with the placement exactly like the visible mesh.
+  const filename = obj.modelPath.split('/').pop() || '';
+  const boxes: LandmarkBox[] = LANDMARK_COLLIDER_DEFS[filename] ?? [fallbackBox];
+
   return (
     <group position={obj.position} rotation={obj.rotation}>
-      <RigidBody type="fixed" colliders={false} position={[0, 1.8, 0]}>
-        <CylinderCollider args={[1.8, 1.1]} />
+      <RigidBody type="fixed" colliders={false}>
+        {boxes.map((b, i) => (
+          <CuboidCollider key={i} args={b.halfExtents} position={b.offset} />
+        ))}
       </RigidBody>
       <group scale={finalScale}>
         <primitive object={clonedScene} />
@@ -428,7 +482,7 @@ function LandmarkProp({ obj }: { obj: PlacedObject }): React.ReactElement {
 function TreeProp({ obj }: { obj: PlacedObject }): React.ReactElement {
   const { scene } = useGLTF(obj.modelPath);
 
-  const { clonedScene, finalScale } = useMemo(() => {
+  const { clonedScene, finalScale, fallbackBox } = useMemo(() => {
     const clone = scene.clone(true);
     const uScale = getUnitScale(clone);
     const rawScale = Array.isArray(obj.scale) ? obj.scale[0] : (obj.scale || 1);
@@ -455,7 +509,17 @@ function TreeProp({ obj }: { obj: PlacedObject }): React.ReactElement {
     wrapper.matrixAutoUpdate = false;
     wrapper.updateMatrix();
 
-    return { clonedScene: wrapper, finalScale: rawScale * uScale };
+    // Post-shift the visible mesh spans y 0..size.y — the fallback collider
+    // hugs exactly that box (sizes are translation-invariant).
+    const size = box.getSize(new THREE.Vector3()).multiplyScalar(rawScale * uScale);
+    return {
+      clonedScene: wrapper,
+      finalScale: rawScale * uScale,
+      fallbackBox: {
+        halfExtents: [size.x / 2, size.y / 2, size.z / 2] as [number, number, number],
+        offset: [0, size.y / 2, 0] as [number, number, number]
+      }
+    };
   }, [scene, obj.scale]);
 
   return (
@@ -615,41 +679,62 @@ function ProximityManager({
 // 6. EXACT MODEL COLLISION BOUNDS DICTIONARY
 //    Derived from authentic 3D model geometry measurements
 // ══════════════════════════════════════════════════════
+interface ColliderBox {
+  halfExtents: [number, number, number];
+  offset: [number, number, number];
+}
+
 interface ModelBound {
   halfExtents: [number, number, number];
-  heightOffset: number;
+  /** Legacy single-height form; ignored when offset is present. */
+  heightOffset?: number;
+  /** Full center offset in model space (default: [0, heightOffset, 0]). */
+  offset?: [number, number, number];
+  /** Additional boxes for composite props (skull/lantern baked into a bench, etc.). */
+  extraBoxes?: ColliderBox[];
 }
 
 const MODEL_COLLIDER_DEFS: Record<string, ModelBound> = {
   // Benches (Accurate seat surface alignment: 0.5m total height, halfExtents.y = 0.25)
   'Bench.glb': { halfExtents: [1.0, 0.25, 0.38], heightOffset: 0.25 },
-  'Bench-cp2QnHh7bf.glb': { halfExtents: [1.0, 0.25, 0.45], heightOffset: 0.25 },
+  // Composite prop: bench + skull-with-candles + lantern baked into one GLB.
+  // Offsets measured from the LIVE render (instanced world AABB): the model is
+  // centered on its origin — seat slab at world y 0.92..1.06 (x ±1.0, z ±0.5),
+  // skull-with-candles on the -x end up to y 2.0, lantern on the +x end to 1.92.
+  'Bench-cp2QnHh7bf.glb': {
+    halfExtents: [1.0, 0.07, 0.5],
+    offset: [0, 0.49, 0],
+    extraBoxes: [
+      { halfExtents: [0.43, 0.47, 0.5], offset: [-0.58, 1.03, 0] },
+      { halfExtents: [0.33, 0.43, 0.4], offset: [0.62, 0.99, 0] }
+    ]
+  },
 
   // Fences (Perimeter and internal dividers)
   'Fence.glb': { halfExtents: [2.05, 1.1, 0.3], heightOffset: 1.1 },
   'Fence Broken.glb': { halfExtents: [2.05, 1.1, 0.3], heightOffset: 1.1 },
   'Fence Gate.glb': { halfExtents: [2.05, 1.1, 0.3], heightOffset: 1.1 },
-  'Iron Fence.glb': { halfExtents: [2.05, 1.1, 0.3], heightOffset: 1.1 },
-  'Damaged Iron fence.glb': { halfExtents: [2.05, 1.1, 0.3], heightOffset: 1.1 },
+  'Iron Fence.glb': { halfExtents: [2.05, 1.1, 0.09], heightOffset: 1.1 },
+  'Damaged Iron fence.glb': { halfExtents: [2.05, 1.1, 0.09], heightOffset: 1.1 },
   'Fence Pillar.glb': { halfExtents: [0.35, 1.1, 0.35], heightOffset: 1.1 },
   'Broken Fence Pillar.glb': { halfExtents: [0.35, 0.7, 0.35], heightOffset: 0.7 },
 
   // Coffins
   'Coffin.glb': { halfExtents: [1.05, 0.7, 1.55], heightOffset: 0.7 },
-  'Coffin-ySERERWPgE.glb': { halfExtents: [1.05, 0.7, 1.55], heightOffset: 0.7 },
+  'Coffin-ySERERWPgE.glb': { halfExtents: [1.05, 0.45, 1.55], heightOffset: 0.45 },
 
   // Graves & Gravestones
   'Grave.glb': { halfExtents: [1.05, 1.1, 0.55], heightOffset: 1.1 },
   'Damaged Grave.glb': { halfExtents: [1.05, 1.1, 0.55], heightOffset: 1.1 },
   'Gravestone.glb': { halfExtents: [0.75, 0.85, 0.3], heightOffset: 0.85 },
-  'Gravestone-lrEHKjTy29.glb': { halfExtents: [0.75, 0.85, 0.3], heightOffset: 0.85 },
+  'Gravestone-lrEHKjTy29.glb': { halfExtents: [1.0, 1.1, 0.5], heightOffset: 1.1 },
   'Grave Marker.glb': { halfExtents: [0.45, 0.65, 0.3], heightOffset: 0.65 },
 
   // Shrines, Plaques & Altars
   'Shrine.glb': { halfExtents: [0.65, 0.95, 0.65], heightOffset: 0.95 },
   'Shrine-Qq8M5LSXQ2.glb': { halfExtents: [0.65, 0.95, 0.65], heightOffset: 0.95 },
-  'Plaque.glb': { halfExtents: [0.55, 0.65, 0.35], heightOffset: 0.65 },
-  'Plaque Candles.glb': { halfExtents: [0.55, 0.65, 0.35], heightOffset: 0.65 },
+  'Plaque.glb': { halfExtents: [1.0, 0.2, 1.0], heightOffset: 0.2 },
+  'Plaque Candles.glb': { halfExtents: [1.0, 0.57, 1.0], heightOffset: 0.57 },
 
   // Arch & Gates
   'Arch.glb': { halfExtents: [1.3, 1.4, 0.4], heightOffset: 1.4 },
@@ -660,25 +745,28 @@ const MODEL_COLLIDER_DEFS: Record<string, ModelBound> = {
   'Post.glb': { halfExtents: [0.35, 1.1, 0.35], heightOffset: 1.1 },
   'Post Lantern.glb': { halfExtents: [0.35, 1.2, 0.35], heightOffset: 1.2 },
   'Post With Skull.glb': { halfExtents: [0.35, 1.2, 0.35], heightOffset: 1.2 },
-  'Hanging Lantern.glb': { halfExtents: [0.35, 1.1, 0.35], heightOffset: 1.1 },
+  'Hanging Lantern.glb': { halfExtents: [0.35, 0.7, 0.35], heightOffset: 0.7 },
   'Lantern.glb': { halfExtents: [0.3, 0.5, 0.3], heightOffset: 0.5 },
 
   // Pumpkins & Ground Scatter
-  'Jackolantern.glb': { halfExtents: [0.4, 0.4, 0.4], heightOffset: 0.4 },
-  'Pumpkin Orange Jacko.glb': { halfExtents: [0.4, 0.4, 0.4], heightOffset: 0.4 },
-  'Pumpkin.glb': { halfExtents: [0.4, 0.4, 0.4], heightOffset: 0.4 },
-  'Small Pumpkin.glb': { halfExtents: [0.3, 0.3, 0.3], heightOffset: 0.3 },
+  'Jackolantern.glb': { halfExtents: [0.75, 0.65, 0.7], heightOffset: 0.65 },
+  'Pumpkin Orange Jacko.glb': { halfExtents: [0.75, 0.65, 0.7], heightOffset: 0.65 },
+  'Pumpkin.glb': { halfExtents: [0.5, 0.35, 0.5], heightOffset: 0.35 },
+  'Small Pumpkin.glb': { halfExtents: [0.5, 0.35, 0.5], heightOffset: 0.35 },
   'Small Pumpkin-KnfqSrTtUX.glb': { halfExtents: [0.3, 0.3, 0.3], heightOffset: 0.3 },
-  'Yellow pumpkin.glb': { halfExtents: [0.4, 0.4, 0.4], heightOffset: 0.4 },
-  'Skull.glb': { halfExtents: [0.3, 0.3, 0.3], heightOffset: 0.3 },
-  'Skull Candle.glb': { halfExtents: [0.3, 0.4, 0.3], heightOffset: 0.4 },
-  'Candles.glb': { halfExtents: [0.3, 0.4, 0.3], heightOffset: 0.4 },
+  'Yellow pumpkin.glb': { halfExtents: [0.3, 0.28, 0.3], heightOffset: 0.28 },
+  'Skull.glb': { halfExtents: [0.46, 0.45, 0.46], heightOffset: 0.45 },
+  'Skull Candle.glb': { halfExtents: [0.46, 0.6, 0.47], heightOffset: 0.6 },
+  'Candles.glb': { halfExtents: [0.23, 0.4, 0.18], heightOffset: 0.4 },
   'Candle Melted.glb': { halfExtents: [0.3, 0.3, 0.3], heightOffset: 0.3 },
-  'Bone.glb': { halfExtents: [0.3, 0.25, 0.3], heightOffset: 0.25 },
-  'Bone-gVT6iydSY6.glb': { halfExtents: [0.3, 0.25, 0.3], heightOffset: 0.25 },
-  'Bone-2jLwMoAb2y.glb': { halfExtents: [0.3, 0.25, 0.3], heightOffset: 0.25 },
-  'Ribcage.glb': { halfExtents: [0.45, 0.35, 0.45], heightOffset: 0.35 },
-  'Rocks.glb': { halfExtents: [0.55, 0.4, 0.55], heightOffset: 0.4 }
+  // Bones & flat Rocks: ground scatter with FLAT colliders matching the
+  // measured model heights — the capsule auto-steps them, so the character
+  // walks over naturally (no invisible platform, no pass-through).
+  'Bone.glb': { halfExtents: [0.36, 0.14, 0.1], heightOffset: 0.14 },
+  'Bone-gVT6iydSY6.glb': { halfExtents: [0.31, 0.09, 0.15], heightOffset: 0.09 },
+  'Bone-2jLwMoAb2y.glb': { halfExtents: [0.56, 0.14, 0.1], heightOffset: 0.14 },
+  'Ribcage.glb': { halfExtents: [0.43, 0.43, 0.38], heightOffset: 0.43 },
+  'Rocks.glb': { halfExtents: [0.83, 0.05, 0.86], heightOffset: 0.05 },
 };
 
 interface ObstacleColliderItem {
@@ -733,6 +821,18 @@ export default function WorldScene({ playerPosRef }: WorldSceneProps): React.Rea
           const def = MODEL_COLLIDER_DEFS[filename];
           if (def) {
             const rawScale = Array.isArray(obj.scale) ? obj.scale[0] : (obj.scale || 1);
+            const off = def.offset ?? [0, def.heightOffset ?? 0, 0];
+            // XZ offsets live in the MODEL's local frame — rotate them by the
+            // placement yaw, or rotated instances (π etc.) get mirrored
+            // colliders hanging in the air next to the visible prop.
+            const yaw = (obj.rotation || [0, 0, 0])[1];
+            const cy = Math.cos(yaw);
+            const sy = Math.sin(yaw);
+            const rotXZ = (ox: number, oz: number): [number, number] => [
+              ox * cy + oz * sy,
+              -ox * sy + oz * cy
+            ];
+            const [mainOx, mainOz] = rotXZ(off[0], off[2]);
             colliders.push({
               id: obj.id,
               halfExtents: [
@@ -741,11 +841,28 @@ export default function WorldScene({ playerPosRef }: WorldSceneProps): React.Rea
                 def.halfExtents[2] * rawScale
               ],
               position: [
-                obj.position[0],
-                obj.position[1] + def.heightOffset * rawScale,
-                obj.position[2]
+                obj.position[0] + mainOx * rawScale,
+                obj.position[1] + off[1] * rawScale,
+                obj.position[2] + mainOz * rawScale
               ],
               rotation: obj.rotation || [0, 0, 0]
+            });
+            (def.extraBoxes ?? []).forEach((box, bi) => {
+              const [ex, ez] = rotXZ(box.offset[0], box.offset[2]);
+              colliders.push({
+                id: `${obj.id}-x${bi}`,
+                halfExtents: [
+                  box.halfExtents[0] * rawScale,
+                  box.halfExtents[1] * rawScale,
+                  box.halfExtents[2] * rawScale
+                ],
+                position: [
+                  obj.position[0] + ex * rawScale,
+                  obj.position[1] + box.offset[1] * rawScale,
+                  obj.position[2] + ez * rawScale
+                ],
+                rotation: obj.rotation || [0, 0, 0]
+              });
             });
           }
         }

@@ -105,8 +105,19 @@ export const dayNightState = {
  * document root CSS variables so DOM panels, buttons, borders, and cards
  * dynamically harmonize with the WebGL atmosphere in real-time.
  */
+let lastCssSync = 0;
+
 export function syncCssDynamicVariables(): void {
   if (typeof document === 'undefined') return;
+  // ~30 Hz cap: these 6 properties live on :root, so every write invalidates
+  // style for the WHOLE document (all glass panels, glows, buttons). During a
+  // tween the engine ticks at 60 fps — 60 full-document recalcs blew the
+  // frame budget and stuttered everything, slider thumb included. The colors
+  // are soft washes; 30 repaints/s is indistinguishable. The trailing ticks
+  // of the oily displayT chase always land the final colors.
+  const now = performance.now();
+  if (now - lastCssSync < 33) return;
+  lastCssSync = now;
   const { sky, sunElev } = dayNightState;
   const nf = Math.max(0, Math.min(1, (0.05 - sunElev) / 0.35));
   const glow = nf > 0.5 ? sky.horizon : sky.sunTint;

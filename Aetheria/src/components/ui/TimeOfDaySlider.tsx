@@ -29,7 +29,11 @@ export default function TimeOfDaySlider(): React.ReactElement {
   const language = useGameStore((s) => s.language);
   // Render-neutral initial state (0.5/Noon matches SSR; see dayNightState
   // bootstrap note) — the mount effect adopts the restored position at once.
-  const [value, setValue] = useState(0.5);
+  // The thumb is deliberately OUTSIDE React: the engine writes input.value
+  // via ref at 60 fps (no re-render, no reconciliation — a controlled input
+  // re-rendered every frame and read as a jerky thumb). React owns only the
+  // low-frequency label/glow/pole.
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const [label, setLabel] = useState('Noon');
   const [glow, setGlow] = useState('#cfe8fa');
   const [litPole, setLitPole] = useState<'moon' | 'sun' | null>(null);
@@ -53,34 +57,22 @@ export default function TimeOfDaySlider(): React.ReactElement {
     };
     const apply = () => {
       const s = compute();
-      setValue(s.t);
+      if (inputRef.current) inputRef.current.value = String(s.t);
       setLabel(s.label);
       setGlow(s.glow);
       setLitPole(s.litPole);
     };
     apply();
-    // Throttle the subscription to ~25 fps: a toggle tween fires the engine
-    // listener every frame (60/s), and 4 setState per frame re-render this
-    // tiny component needlessly. The native thumb keeps rendering at 60 fps
-    // on its own; 40 ms UI sync keeps the glow/label visibly flowing during
-    // slow cinematic tweens (80 ms read as visible steps on gradients).
-    let last = performance.now();
-    let timer: ReturnType<typeof setTimeout> | undefined;
-    const onTick = () => {
-      const now = performance.now();
-      if (now - last >= 40) {
-        last = now;
-        if (timer !== undefined) { clearTimeout(timer); timer = undefined; }
-        apply();
-      } else if (timer === undefined) {
-        // Trailing edge: always land on the final state, never drop it
-        timer = setTimeout(() => { timer = undefined; last = performance.now(); apply(); }, 40 - (now - last));
-      }
-    };
-    return () => {
-      if (timer !== undefined) clearTimeout(timer);
-      return subscribeToDayNight(onTick)();
-    };
+
+    // Live sync at engine rate (every frame): a throttled version read as a
+    // jerky ~20 fps thumb next to the buttery 60 fps sky tween. This
+    // component is tiny — identical label/pole strings bail React out, and
+    // at rest the engine emits no ticks at all, so idle cost is zero.
+    // The subscription lives HERE in the effect body: putting it inside the
+    // cleanup (`return subscribeToDayNight(onTick)()`) subscribed and
+    // instantly unsubscribed, so cap clicks moved the sky but never the thumb.
+    const unsubscribe = subscribeToDayNight(apply);
+    return unsubscribe;
   }, [language]);
 
   // One-time static paints: track gradient never changes (it previews the cycle).
@@ -89,7 +81,6 @@ export default function TimeOfDaySlider(): React.ReactElement {
   }, []);
 
   const handleChange = (v: number) => {
-    setValue(v);
     setLabel(getTimeOfDayLabel(v, language));
     setTimeOfDay(v);
   };
@@ -124,11 +115,12 @@ export default function TimeOfDaySlider(): React.ReactElement {
         <span className="tod-tick" style={{ left: '50%' }} aria-hidden="true" />
         <span className="tod-tick" style={{ left: '75%' }} aria-hidden="true" />
         <input
+          ref={inputRef}
           type="range"
           min={0}
           max={0.999}
           step={0.001}
-          value={value}
+          defaultValue={0.5}
           onChange={(e) => handleChange(Number.parseFloat(e.target.value))}
           aria-label={isUk ? 'Час доби' : 'Time of day'}
         />

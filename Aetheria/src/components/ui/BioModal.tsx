@@ -4,9 +4,13 @@ import React, { useEffect } from 'react';
 import { useGameStore } from '../../store/useGameStore';
 import { developerProfiles, translations } from '../../data/resumeData';
 import { X, User, MapPin, Sparkles, GraduationCap, Briefcase } from 'lucide-react';
+import { useModalFocus } from '../../hooks/useModalFocus';
 
 export default function BioModal(): React.ReactElement | null {
   const { activeModal, setActiveModal, language } = useGameStore();
+
+  const isOpen = activeModal === 'bio';
+  const panelRef = useModalFocus<HTMLDivElement>(isOpen, () => setActiveModal(null));
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -26,7 +30,15 @@ export default function BioModal(): React.ReactElement | null {
 
   return (
     <div className="modal-backdrop-blur" onClick={() => setActiveModal(null)}>
-      <div className="resume-modal-card obsidian-modal glass-panel" onClick={(e) => e.stopPropagation()}>
+      <div
+        ref={panelRef}
+        className="resume-modal-card obsidian-modal glass-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-label={profile.name}
+        tabIndex={-1}
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Ambient Top Glow Line */}
         <div className="modal-accent-line gold" />
 
@@ -41,8 +53,8 @@ export default function BioModal(): React.ReactElement | null {
               <p className="modal-subtitle">{profile.role}</p>
             </div>
           </div>
-          <button className="modal-close-btn" onClick={() => setActiveModal(null)} title={t.close}>
-            <X size={18} />
+          <button className="modal-close-btn" onClick={() => setActiveModal(null)} title={t.close} aria-label={t.close}>
+            <X size={18} aria-hidden="true" />
           </button>
         </div>
 

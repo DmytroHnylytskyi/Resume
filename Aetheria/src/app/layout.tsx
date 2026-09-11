@@ -1,11 +1,26 @@
 import type { Metadata, Viewport } from 'next';
+import { Space_Grotesk } from 'next/font/google';
 import './globals.css';
+
+/* Brand display face for headlines, brand marks and section titles.
+   Self-hosted via next/font (no external request at runtime); falls back
+   to the system stack while loading. */
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+  variable: '--font-display'
+});
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
-  themeColor: '#dbeafe'
+  // Matches --bg-app of both themes (the site is pure black/white)
+  themeColor: [
+    { media: '(prefers-color-scheme: dark)', color: '#000000' },
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' }
+  ]
 };
 
 export const metadata: Metadata = {
@@ -23,6 +38,17 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: 'black-translucent',
     title: 'Aetheria 3D'
+  },
+  // Bilingual SEO: the UK version is served from the same origin with ?lang=uk
+  // (page.tsx also mirrors this into the shareable URL). x-default points
+  // crawlers at the canonical EN page.
+  alternates: {
+    canonical: '/',
+    languages: {
+      'en': '/',
+      'uk': '/?lang=uk',
+      'x-default': '/'
+    }
   },
   openGraph: {
     type: 'website',
@@ -70,7 +96,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" data-theme="light">
+    <html lang="en" data-theme="light" className={spaceGrotesk.variable}>
       <head>
         {/* Preload character assets immediately so 3D avatar is instant on spawn */}
         <link

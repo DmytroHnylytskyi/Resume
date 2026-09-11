@@ -1,62 +1,11 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useGameStore } from '../../store/useGameStore';
 import { developerProfiles, translations } from '../../data/resumeData';
 import { User, Share2, Award, FileText, Sun, Moon, Sparkles } from 'lucide-react';
 import ControlsGuideDropdown from './ControlsGuideDropdown';
 import TimeOfDaySlider from './TimeOfDaySlider';
-
-function FpsBadge(): React.ReactElement {
-  const [fps, setFps] = useState(60);
-  const frameCount = useRef(0);
-  const lastTime = useRef(performance.now());
-
-  useEffect(() => {
-    let animId: number;
-    const loop = (now: number) => {
-      frameCount.current++;
-      const elapsed = now - lastTime.current;
-      if (elapsed >= 400) {
-        setFps(Math.round((frameCount.current * 1000) / elapsed));
-        frameCount.current = 0;
-        lastTime.current = now;
-      }
-      animId = requestAnimationFrame(loop);
-    };
-    animId = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(animId);
-  }, []);
-
-  return (
-    <div
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '6px',
-        background: 'var(--badge-bg)',
-        border: '1px solid var(--border-subtle)',
-        borderRadius: '20px',
-        padding: '3px 9px',
-        fontSize: '11px',
-        fontWeight: 700,
-        fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
-        color: 'var(--text-primary)'
-      }}
-    >
-      <span
-        style={{
-          width: '6px',
-          height: '6px',
-          borderRadius: '50%',
-          backgroundColor: 'var(--text-primary)',
-          opacity: 0.8
-        }}
-      />
-      <span>{fps} FPS</span>
-    </div>
-  );
-}
 
 export default function ControlsHUD(): React.ReactElement {
   const {
@@ -99,7 +48,6 @@ export default function ControlsHUD(): React.ReactElement {
           <div className="brand-dot" />
           <span className="brand-name">{profile.name}</span>
           <span className="brand-tag">{t.brandTag}</span>
-          <FpsBadge />
         </div>
 
         {/* Quick Nav, Theme & Mode Controls */}
@@ -109,24 +57,25 @@ export default function ControlsHUD(): React.ReactElement {
             className="nav-shortcut-btn mode-switch-btn"
             onClick={() => setViewMode(viewMode === '3d' ? 'classic' : '3d')}
             title={t.viewClassic}
+            aria-label={t.viewClassic}
           >
-            <FileText size={15} />
+            <FileText size={15} aria-hidden="true" />
             <span>{t.viewClassic}</span>
           </button>
 
           {/* Quick Modals */}
           <button className="nav-shortcut-btn" onClick={() => setActiveModal('bio')}>
-            <User size={15} />
+            <User size={15} aria-hidden="true" />
             <span>{t.bio}</span>
           </button>
 
           <button className="nav-shortcut-btn" onClick={() => setActiveModal('skills')}>
-            <Award size={15} />
+            <Award size={15} aria-hidden="true" />
             <span>{t.skills}</span>
           </button>
 
           <button className="nav-shortcut-btn" onClick={() => setActiveModal('contacts')}>
-            <Share2 size={15} />
+            <Share2 size={15} aria-hidden="true" />
             <span>{t.contacts}</span>
           </button>
 
@@ -145,7 +94,7 @@ export default function ControlsHUD(): React.ReactElement {
               title={theme === 'dark' ? (language === 'uk' ? 'Світла тема' : 'Light Mode') : (language === 'uk' ? 'Темна тема' : 'Dark Mode')}
               aria-label={theme === 'dark' ? 'Toggle light mode' : 'Toggle dark mode'}
             >
-              {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
+              {theme === 'dark' ? <Sun size={15} aria-hidden="true" /> : <Moon size={15} aria-hidden="true" />}
             </button>
 
             <div className="lang-toggle-group mini">
@@ -177,7 +126,7 @@ export default function ControlsHUD(): React.ReactElement {
           >
             {isTouchDevice ? (
               <span className="interaction-touch-badge">
-                <Sparkles size={14} />
+                <Sparkles size={14} aria-hidden="true" />
               </span>
             ) : (
               <kbd className="interaction-key">E</kbd>
@@ -191,12 +140,12 @@ export default function ControlsHUD(): React.ReactElement {
         </div>
       )}
 
-      {/* ── Easter Egg Floating Toast ── */}
+      {/* ── Easter Egg Floating Toast (announced politely) ── */}
       {easterEggToast && (
-        <div className="easter-egg-toast-wrapper">
+        <div className="easter-egg-toast-wrapper" role="status" aria-live="polite">
           <div className="easter-egg-toast glass-panel">
             <div className="easter-egg-icon-box">
-              <Sparkles size={20} className="easter-egg-sparkle-icon" />
+              <Sparkles size={20} className="easter-egg-sparkle-icon" aria-hidden="true" />
             </div>
             <div className="easter-egg-content">
               <h4 className="easter-egg-title">{easterEggToast.title}</h4>

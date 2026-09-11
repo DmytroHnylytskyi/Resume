@@ -4,10 +4,14 @@ import React, { useState, useEffect } from 'react';
 import { useGameStore } from '../../store/useGameStore';
 import { developerProfiles, translations } from '../../data/resumeData';
 import { X, Award, CheckCircle2, ShieldCheck, Layers, Code2, Cpu, Wrench } from 'lucide-react';
+import { useModalFocus } from '../../hooks/useModalFocus';
 
 export default function SkillsModal(): React.ReactElement | null {
   const { activeModal, setActiveModal, language } = useGameStore();
   const [activeTab, setActiveTab] = useState<'skills' | 'certifications'>('skills');
+
+  const isOpen = activeModal === 'skills';
+  const panelRef = useModalFocus<HTMLDivElement>(isOpen, () => setActiveModal(null));
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -35,7 +39,15 @@ export default function SkillsModal(): React.ReactElement | null {
 
   return (
     <div className="modal-backdrop-blur" onClick={() => setActiveModal(null)}>
-      <div className="resume-modal-card obsidian-modal glass-panel" onClick={(e) => e.stopPropagation()}>
+      <div
+        ref={panelRef}
+        className="resume-modal-card obsidian-modal glass-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-label={t.skillsAndTech}
+        tabIndex={-1}
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Ambient Top Glow Line */}
         <div className="modal-accent-line violet" />
 
@@ -43,7 +55,7 @@ export default function SkillsModal(): React.ReactElement | null {
         <div className="modal-header">
           <div className="modal-badge-group">
             <div className="modal-badge-icon violet-badge">
-              <Award size={20} />
+              <Award size={20} aria-hidden="true" />
             </div>
             <div>
               <h2 className="modal-title">{t.skillsAndTech}</h2>
@@ -52,8 +64,8 @@ export default function SkillsModal(): React.ReactElement | null {
               </p>
             </div>
           </div>
-          <button className="modal-close-btn" onClick={() => setActiveModal(null)} title={t.close}>
-            <X size={18} />
+          <button className="modal-close-btn" onClick={() => setActiveModal(null)} title={t.close} aria-label={t.close}>
+            <X size={18} aria-hidden="true" />
           </button>
         </div>
 

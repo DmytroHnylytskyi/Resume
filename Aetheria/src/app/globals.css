@@ -5,6 +5,24 @@
   --tod-sky-zenith: #2e7fd6;
   --tod-sky-suntint: #ffe9b8;
   --tod-night-factor: 0;
+
+  /* ── Z-Index Scale (documented layer map) ──
+     60   radar / floating HUD widgets
+     90   sticky mobile chip nav
+     100  top bars (island HUD, classic header)
+     150  floating toasts above chrome
+     500  dropdown menus
+     600  loading screen / orientation guard
+     1000 modal backdrops + panels
+     1100 orientation guard (must top everything)      */
+  --z-hud-widget: 60;
+  --z-nav-sticky: 90;
+  --z-top-bar: 100;
+  --z-toast: 150;
+  --z-dropdown: 500;
+  --z-overlay: 600;
+  --z-modal: 1000;
+  --z-guard: 1100;
 }
 
 :root,
@@ -20,8 +38,8 @@
   --border-accent: rgba(255, 255, 255, 0.4);
   --text-primary: #ffffff;
   --text-secondary: #a1a1aa;
-  --text-muted: #71717a;
-  
+  --text-muted: #8f8f9a;
+
   /* Live Atmospheric Primary & Accent */
   --btn-primary-bg: #ffffff;
   --btn-primary-text: #000000;
@@ -47,7 +65,7 @@
   --border-accent: rgba(0, 0, 0, 0.3);
   --text-primary: #09090b;
   --text-secondary: #52525b;
-  --text-muted: #71717a;
+  --text-muted: #6b6b76;
 
   /* Live Atmospheric Primary & Accent */
   --btn-primary-bg: #09090b;
@@ -69,13 +87,39 @@
   -webkit-font-smoothing: antialiased;
 }
 
+/* ── Keyboard Focus Contract ──
+   Every interactive control gets a visible ring on keyboard focus
+   (WCAG 2.2: ≥2px perimeter, 3:1 contrast). Mouse clicks stay clean —
+   :focus-visible only reacts to keyboard/touch-programmatic focus. ── */
+:focus-visible {
+  outline: 2px solid var(--border-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Inputs with their own ring styling keep a uniform shape */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  border-radius: 6px;
+}
+
+/* ── Typography Stacks ──
+   --font-display: brand face (Space Grotesk via next/font) for headlines,
+   brand marks, section titles and hero numbers.
+   --font-body-stack: system UI stack for long-form reading. */
+:root {
+  --font-display: 'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-body-stack: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
 html, body {
   width: 100%;
   height: 100%;
   overflow: hidden;
   background-color: var(--bg-app);
   color: var(--text-primary);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: var(--font-body-stack);
   user-select: none;
   transition: background-color 0.6s ease, color 0.6s ease;
 }
@@ -157,7 +201,7 @@ html, body {
   background: transparent;
   border: none;
   color: var(--text-secondary);
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 700;
   padding: 0 9px;
   height: 26px;
@@ -224,7 +268,7 @@ html, body {
   align-items: center;
   justify-content: space-between;
   padding: 0 18px;
-  z-index: 100;
+  z-index: var(--z-top-bar);
   transition: opacity 0.45s ease, transform 0.45s ease;
 }
 
@@ -257,9 +301,9 @@ html, body {
   margin-top: 10px;
   padding: 9px 12px;
   border-radius: 10px;
-  border: 1px solid rgba(148, 163, 184, 0.28);
-  background: rgba(148, 163, 184, 0.1);
-  color: var(--text-primary, #e2e8f0);
+  border: 1px solid var(--border-strong);
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -267,8 +311,8 @@ html, body {
 }
 
 .controls-replay-btn:hover {
-  background: rgba(99, 102, 241, 0.18);
-  border-color: rgba(99, 102, 241, 0.45);
+  background: var(--bg-card-hover);
+  border-color: var(--border-accent);
 }
 
 .brand-badge {
@@ -286,6 +330,7 @@ html, body {
 }
 
 .brand-name {
+  font-family: var(--font-display);
   font-size: 14.5px;
   font-weight: 600;
   letter-spacing: 0.2px;
@@ -294,7 +339,7 @@ html, body {
 }
 
 .brand-tag {
-  font-size: 10.5px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.8px;
   padding: 3px 8px;
@@ -359,7 +404,7 @@ html, body {
   display: flex;
   justify-content: center;
   pointer-events: none;
-  z-index: 100;
+  z-index: var(--z-top-bar);
   animation: slide-up-fade 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -417,7 +462,7 @@ html, body {
   display: flex;
   justify-content: center;
   pointer-events: none;
-  z-index: 150;
+  z-index: var(--z-toast);
   animation: easter-egg-bounce-in 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -496,7 +541,7 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 500;
+  z-index: var(--z-dropdown);
   opacity: 1;
   transition: opacity 0.5s ease;
 }
@@ -583,7 +628,7 @@ html, body {
 }
 
 .loading-tip {
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--text-muted);
   line-height: 1.4;
   margin-top: 4px;
@@ -597,7 +642,7 @@ html, body {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  z-index: 1000;
+  z-index: var(--z-modal);
   padding: max(16px, env(safe-area-inset-top, 16px)) 14px max(24px, env(safe-area-inset-bottom, 24px));
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -721,7 +766,7 @@ html, body {
 }
 
 .mode-card-tag {
-  font-size: 10px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 1px;
   font-weight: 700;
@@ -841,8 +886,13 @@ html, body {
   font-size: 13px;
   font-weight: 600;
   box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35), 0 0 1px rgba(255, 255, 255, 0.2);
-  z-index: 600;
+  z-index: var(--z-overlay);
   animation: toast-in 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Empty live region stays in the a11y tree but leaves the visual layout */
+.interactive-toast-pill[data-visible='false'] {
+  display: none;
 }
 
 @keyframes toast-in {
@@ -899,7 +949,7 @@ html, body {
   justify-content: space-between;
   padding: 0 max(16px, env(safe-area-inset-right));
   gap: clamp(8px, 1vw, 14px);
-  z-index: 100;
+  z-index: var(--z-top-bar);
   border-bottom: 1px solid var(--border-subtle);
   background: var(--bg-card);
   backdrop-filter: blur(20px);
@@ -943,7 +993,7 @@ html, body {
   border-radius: 8px;
   background: var(--btn-primary-bg);
   color: var(--btn-primary-text);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: -0.5px;
   display: inline-flex;
@@ -972,7 +1022,7 @@ html, body {
   border: 1px solid rgba(34, 197, 94, 0.28);
   color: var(--text-primary);
   text-decoration: none;
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
   transition: all 0.2s ease;
@@ -1153,6 +1203,55 @@ html, body {
   flex-wrap: wrap;
 }
 
+/* ── Hero entrance choreography (motion-safe only) ──
+   The letters carry their own inline animation-delay (set per-char in
+   ClassicLandingView), so one keyframes pair covers the whole name.
+   The remaining hero blocks rise in a 7-step cascade: eyebrow → name →
+   role → bio → buttons → socials → stats. All gated behind
+   prefers-reduced-motion: no-preference; reduced-motion visitors get the
+   fully rendered hero immediately. */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-name-char {
+    animation: hero-char-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .hero-eyebrow-row,
+  .hero-role-display,
+  .hero-bio-lead,
+  .hero-actions-container,
+  .hero-stats-grid {
+    animation: hero-rise-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .hero-eyebrow-row { animation-delay: 0.05s; }
+  .hero-role-display { animation-delay: 0.55s; }
+  .hero-bio-lead { animation-delay: 0.68s; }
+  .hero-actions-container { animation-delay: 0.82s; }
+  .hero-stats-grid { animation-delay: 0.95s; }
+}
+
+@keyframes hero-char-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.35em) rotate(2deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+@keyframes hero-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .hero-status-tag {
   display: inline-flex;
   align-items: center;
@@ -1183,23 +1282,41 @@ html, body {
 .hero-headline-block {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .hero-name-display {
-  font-size: clamp(44px, 7vw, 84px);
+  font-family: var(--font-display);
+  /* Moderate exaggerated-minimalism scale: each word one display line */
+  font-size: clamp(52px, 9vw, 110px);
   font-weight: 800;
-  line-height: 1.02;
-  letter-spacing: -0.035em;
+  line-height: 0.98;
+  letter-spacing: -0.05em;
   color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+
+.hero-name-line {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.hero-name-char {
+  display: inline-block;
+  will-change: transform, opacity;
 }
 
 .hero-role-display {
-  font-size: clamp(20px, 3.2vw, 32px);
+  /* Mono eyebrow above the fold: uppercase tracking, editorial rhythm */
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: clamp(13px, 1.6vw, 16px);
   font-weight: 600;
-  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
   color: var(--text-secondary);
-  line-height: 1.25;
+  line-height: 1.4;
 }
 
 .hero-bio-lead {
@@ -1328,44 +1445,107 @@ html, body {
 }
 
 /* Hero Stats Strip */
+/* Loud-minimal stat strip: no boxes, no top rule — cells float free,
+   separated by short vertical accents that FADE at both ends (pure
+   ::before gradients, no hard border edges anywhere in the row). */
 .hero-stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
-  margin-top: 16px;
-  padding-top: 24px;
-  border-top: 1px solid var(--border-subtle);
+  grid-template-columns: repeat(4, 1fr);
+  margin-top: 26px;
+  padding-top: 0;
+  border-top: none;
 }
 
 .hero-stat-card {
-  padding: 18px 20px;
-  border-radius: 16px;
-  background: var(--badge-bg);
-  border: 1px solid var(--border-subtle);
+  position: relative;
+  padding: 6px 22px 4px 22px;
+  background: transparent;
+  border: none;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  transition: transform 0.25s ease, border-color 0.25s ease;
+  gap: 6px;
 }
 
-.hero-stat-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--border-strong);
+/* Fading vertical accent between cells: 70% height, transparent tips */
+.hero-stat-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 18%;
+  bottom: 18%;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    var(--border-strong) 22%,
+    var(--border-strong) 78%,
+    transparent 100%
+  );
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+/* First cell opens the row — no leading accent */
+.hero-stat-card:first-child {
+  padding-left: 0;
+}
+
+.hero-stat-card:first-child::before {
+  display: none;
 }
 
 .hero-stat-value {
-  font-size: 26px;
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3vw, 34px);
   font-weight: 800;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.03em;
   color: var(--text-primary);
-  line-height: 1.1;
+  line-height: 1.05;
 }
 
 .hero-stat-label {
-  font-size: 12.5px;
-  line-height: 1.4;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 12px;
+  line-height: 1.5;
   color: var(--text-secondary);
   font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Two columns on tablets, stacked plain rows on phones */
+@media (max-width: 860px) {
+  .hero-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 14px;
+  }
+
+  .hero-stat-card {
+    padding: 6px 18px 0 18px;
+  }
+
+  /* Row-leading cells (1st and 3rd) drop the accent */
+  .hero-stat-card:nth-child(odd) {
+    padding-left: 0;
+  }
+
+  .hero-stat-card:nth-child(odd)::before {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-stat-card {
+    padding: 10px 0 0 0;
+  }
+
+  .hero-stat-card::before {
+    display: none;
+  }
 }
 
 /* ── Section Structure ── */
@@ -1391,14 +1571,26 @@ html, body {
 }
 
 .section-tag {
-  font-size: 11px;
-  font-weight: 700;
+  /* Editorial eyebrow: mono, uppercase, led by an em dash */
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 12px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.16em;
   color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-tag::before {
+  content: '—';
+  color: var(--text-secondary);
+  font-weight: 400;
 }
 
 .section-title {
+  font-family: var(--font-display);
   font-size: clamp(26px, 3.8vw, 36px);
   font-weight: 800;
   letter-spacing: -0.025em;
@@ -1453,7 +1645,7 @@ html, body {
 
 .tab-badge {
   font-family: ui-monospace, SFMono-Regular, monospace;
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 700;
   padding: 1px 6px;
   border-radius: 6px;
@@ -1503,7 +1695,7 @@ html, body {
   border: 1px solid rgba(34, 197, 94, 0.35);
   background: transparent;
   color: var(--text-primary);
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -1586,6 +1778,18 @@ html, body {
   background: var(--badge-bg);
   border: 1px solid var(--border-subtle);
   cursor: pointer;
+  /* Reset native button chrome: the media tile is a plain visual button */
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  display: block;
+  width: 100%;
+}
+
+.editorial-project-media:focus-visible {
+  outline: 2px solid var(--border-accent);
+  outline-offset: 3px;
 }
 
 .editorial-project-media img {
@@ -1608,7 +1812,7 @@ html, body {
   border-radius: 999px;
   background: rgba(10, 10, 14, 0.82);
   color: #ffffff;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.04em;
   backdrop-filter: blur(8px);
@@ -1628,7 +1832,7 @@ html, body {
   border-radius: 8px;
   background: rgba(10, 10, 14, 0.85);
   color: #ffffff;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
@@ -1733,7 +1937,7 @@ html, body {
   border-radius: 8px;
   background: var(--badge-bg);
   border: 1px solid var(--border-subtle);
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-primary);
   transition: all 0.2s ease;
@@ -1789,6 +1993,13 @@ html, body {
   opacity: 0.9;
 }
 
+/* Diagonal arrow nudge on every project action hover — one shared gesture
+   with the hero and header CTAs */
+.project-action-link.primary:hover .cta-arrow,
+.project-action-link.primary:hover svg {
+  transform: translate(2px, -2px);
+}
+
 .project-action-link.secondary {
   background: var(--badge-bg);
   color: var(--text-primary);
@@ -1830,8 +2041,14 @@ html, body {
 /* ── About Section ── */
 .editorial-about-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 16px;
+}
+
+/* Asymmetric hierarchy: the philosophy card (first) spans both columns
+   like a lead paragraph; the follow-up facts sit as compact cards. */
+.editorial-about-card:first-child {
+  grid-column: span 2;
 }
 
 .editorial-about-card {
@@ -1859,6 +2076,25 @@ html, body {
   font-size: 14px;
   line-height: 1.6;
   color: var(--text-secondary);
+}
+
+/* Lead (first) card reads as an opening statement */
+.editorial-about-card:first-child .about-card-text {
+  font-size: clamp(16px, 1.6vw, 18.5px);
+  line-height: 1.65;
+  color: var(--text-primary);
+  max-width: 720px;
+}
+
+/* Single narrow column (mobile): back to equal stacking */
+@media (max-width: 640px) {
+  .editorial-about-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .editorial-about-card:first-child {
+    grid-column: auto;
+  }
 }
 
 /* ── Education Card ── */
@@ -1891,7 +2127,7 @@ html, body {
   border-radius: 8px;
   background: var(--badge-bg);
   border: 1px solid var(--border-subtle);
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-primary);
   width: fit-content;
@@ -2019,8 +2255,8 @@ html, body {
   transition: all 0.2s ease;
 }
 
-.pill-arrow-hint {
-  font-size: 11px;
+.pill-arrow-icon {
+  display: inline-flex;
   opacity: 0.5;
   transition: transform 0.2s ease, opacity 0.2s ease;
 }
@@ -2031,7 +2267,7 @@ html, body {
   transform: translateY(-2px);
 }
 
-.interactive-skill-tag:hover .pill-arrow-hint {
+.interactive-skill-tag:hover .pill-arrow-icon {
   opacity: 1;
   transform: translate(1px, -1px);
 }
@@ -2071,7 +2307,7 @@ html, body {
 }
 
 .cert-issuer {
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--text-secondary);
   text-transform: uppercase;
@@ -2079,7 +2315,7 @@ html, body {
 }
 
 .cert-level {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   font-family: ui-monospace, SFMono-Regular, monospace;
   padding: 2px 7px;
@@ -2131,7 +2367,7 @@ html, body {
 }
 
 .cert-category {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-muted);
 }
 
@@ -2205,6 +2441,10 @@ html, body {
   opacity: 0.92;
 }
 
+.cta-big-btn:hover .cta-arrow {
+  transform: translate(2px, -2px);
+}
+
 .cta-copy-btn {
   display: inline-flex;
   align-items: center;
@@ -2268,7 +2508,7 @@ html, body {
 }
 
 .contact-label {
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-secondary);
 }
@@ -2426,7 +2666,7 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 500;
+  z-index: var(--z-dropdown);
   padding: 20px;
   animation: modal-fade-in 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -2565,6 +2805,7 @@ html, body {
 }
 
 .modal-title {
+  font-family: var(--font-display);
   font-size: 19px;
   font-weight: 800;
   color: var(--text-primary);
@@ -2637,7 +2878,7 @@ html, body {
   background: rgba(52, 211, 153, 0.12);
   border: 1px solid rgba(52, 211, 153, 0.3);
   color: #34d399;
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -2663,7 +2904,7 @@ html, body {
   background: var(--badge-bg);
   border: 1px solid var(--border-subtle);
   color: var(--text-secondary);
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 600;
 }
 
@@ -2734,13 +2975,13 @@ html, body {
 }
 
 .subcard-subtitle {
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--text-muted);
   margin-top: 2px;
 }
 
 .subcard-period-pill {
-  font-size: 11.5px;
+  font-size: 12px;
   color: #fbbf24;
   font-weight: 700;
   font-family: ui-monospace, SFMono-Regular, monospace;
@@ -2777,7 +3018,7 @@ html, body {
   gap: 5px;
   padding: 4px 9px;
   border-radius: 10px;
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 600;
   background: var(--badge-bg);
   border: 1px solid var(--border-subtle);
@@ -2854,7 +3095,7 @@ html, body {
 }
 
 .highlight-index-badge {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   font-family: ui-monospace, SFMono-Regular, monospace;
   color: #fbbf24;
@@ -2954,7 +3195,7 @@ html, body {
 }
 
 .tab-count-badge {
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 800;
   padding: 1px 6px;
   border-radius: 8px;
@@ -3008,7 +3249,7 @@ html, body {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 600;
   padding: 4px 10px;
   border-radius: 10px;
@@ -3058,7 +3299,7 @@ html, body {
 }
 
 .cert-banner-desc {
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--text-secondary);
   line-height: 1.4;
   margin-top: 2px;
@@ -3100,7 +3341,7 @@ html, body {
 }
 
 .cert-issuer-badge {
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 700;
   color: #c084fc;
   background: rgba(192, 132, 252, 0.12);
@@ -3109,7 +3350,7 @@ html, body {
 }
 
 .cert-level-badge {
-  font-size: 10.5px;
+  font-size: 12px;
   color: var(--text-muted);
 }
 
@@ -3131,13 +3372,13 @@ html, body {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 10.5px;
+  font-size: 12px;
   color: #34d399;
   font-weight: 600;
 }
 
 .cert-category-tag {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -3167,7 +3408,7 @@ html, body {
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--text-muted);
 }
 
@@ -3241,7 +3482,7 @@ html, body {
 }
 
 .contact-role-label {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-muted);
 }
 
@@ -3290,7 +3531,7 @@ html, body {
 }
 
 .project-modal-pill-tag {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.8px;
@@ -3364,7 +3605,7 @@ html, body {
 }
 
 .project-modal-tech-tag {
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 600;
   padding: 4px 10px;
   border-radius: 10px;
@@ -3428,7 +3669,7 @@ html, body {
 
   .welcome-brand-badge {
     padding: 2px 7px;
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .welcome-title {
@@ -3472,7 +3713,7 @@ html, body {
   }
 
   .mode-card-desc {
-    font-size: 11.5px;
+    font-size: 12px;
     line-height: 1.35;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -3516,7 +3757,7 @@ html, body {
   .brand-tag {
     height: 26px;
     padding: 0 7px;
-    font-size: 10px;
+    font-size: 12px;
     letter-spacing: 0.6px;
     border-radius: 8px;
     white-space: nowrap;
@@ -3555,7 +3796,7 @@ html, body {
     line-height: 26px;
     padding: 0 6px;
     border-radius: 6px;
-    font-size: 10.5px;
+    font-size: 12px;
     font-weight: 700;
   }
 
@@ -3609,7 +3850,7 @@ html, body {
   }
 
   .edu-status-tag {
-    font-size: 11px;
+    font-size: 12px;
     padding: 3px 8px;
   }
 
@@ -3632,7 +3873,7 @@ html, body {
 
   .modal-action-btn {
     padding: 9px 12px;
-    font-size: 11.5px;
+    font-size: 12px;
   }
 }
 
@@ -3673,7 +3914,7 @@ html, body {
     height: 24px;
     line-height: 24px;
     padding: 0 5px;
-    font-size: 10px;
+    font-size: 12px;
   }
 
   .switch-3d-btn {
@@ -3699,7 +3940,7 @@ nextjs-portal,
   position: fixed;
   bottom: 24px;
   right: 24px;
-  z-index: 60;
+  z-index: var(--z-hud-widget);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -3923,7 +4164,7 @@ nextjs-portal,
   gap: 6px;
   padding: 5px 10px;
   border-radius: 14px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.3px;
   color: var(--text-primary);
@@ -3952,7 +4193,7 @@ nextjs-portal,
   gap: 6px;
   padding: 4px 10px;
   border-radius: 20px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-primary);
   background: rgba(9, 9, 11, 0.9);
@@ -4018,7 +4259,7 @@ nextjs-portal,
 }
 
 .tactical-map-subtitle {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--text-secondary);
 }
@@ -4217,7 +4458,7 @@ nextjs-portal,
 }
 
 .legend-title {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--text-secondary);
   letter-spacing: 0.5px;
@@ -4235,7 +4476,7 @@ nextjs-portal,
   gap: 6px;
   padding: 5px 10px;
   border-radius: 12px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-primary);
   background: rgba(255, 255, 255, 0.05);
@@ -4308,7 +4549,7 @@ nextjs-portal,
   border-radius: 20px;
   padding: 16px 18px;
   box-shadow: 0 20px 48px rgba(0, 0, 0, 0.75), 0 0 24px rgba(var(--tod-glow-rgb), 0.14) !important;
-  z-index: 150;
+  z-index: var(--z-toast);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -4378,7 +4619,7 @@ nextjs-portal,
   border: 1px solid transparent;
   background: transparent;
   color: var(--text-secondary);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -4398,7 +4639,7 @@ nextjs-portal,
 }
 
 .controls-touch-badge {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   padding: 2.5px 7px;
   border-radius: 6px;
@@ -4447,7 +4688,7 @@ nextjs-portal,
 }
 
 .controls-action-desc {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--text-primary);
   text-align: right;
@@ -4455,7 +4696,7 @@ nextjs-portal,
 
 .ctrl-key {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   padding: 2.5px 6px;
   border-radius: 5px;
@@ -4483,7 +4724,7 @@ nextjs-portal,
 }
 
 .controls-mouse-badge {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   padding: 2px 6px;
   border-radius: 5px;
@@ -4506,7 +4747,7 @@ nextjs-portal,
 }
 
 .controls-footer-text {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--text-secondary);
   line-height: 1.4;
@@ -4821,7 +5062,7 @@ nextjs-portal,
   left: max(18px, env(safe-area-inset-left, 18px));
   pointer-events: auto;
   touch-action: none;
-  z-index: 90;
+  z-index: var(--z-nav-sticky);
 }
 
 .mobile-joystick-base {
@@ -4918,7 +5159,7 @@ nextjs-portal,
   pointer-events: auto;
   touch-action: none;
   transition: transform 0.15s ease, background 0.15s ease;
-  z-index: 90;
+  z-index: var(--z-nav-sticky);
 }
 
 .mobile-jump-btn:active {
@@ -5042,7 +5283,7 @@ nextjs-portal,
 
   .radar-map-btn {
     padding: 4px 8px;
-    font-size: 10px;
+    font-size: 12px;
   }
 
   /* Reposition Interaction Pill above joystick/radar */
@@ -5142,7 +5383,8 @@ nextjs-portal,
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999;
+  /* Top of the documented z scale */
+  z-index: var(--z-guard);
   padding: max(20px, env(safe-area-inset-top, 20px)) 20px max(24px, env(safe-area-inset-bottom, 24px));
   animation: modal-fade-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -5295,7 +5537,7 @@ nextjs-portal,
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.4;
   color: var(--text-secondary);
 }
@@ -5309,7 +5551,7 @@ nextjs-portal,
   border-radius: 50%;
   background: rgba(251, 191, 36, 0.2);
   color: #fbbf24;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   flex-shrink: 0;
   margin-top: 1px;
@@ -5383,7 +5625,7 @@ nextjs-portal,
     height: 30px !important;
     padding: 0 10px !important;
     border-radius: 9px !important;
-    font-size: 11.5px !important;
+    font-size: 12px !important;
   }
 
   /* ── 1. Top Bar: Icon-Only, Non-Wrapping, Clean Glass Pill ── */
@@ -5423,7 +5665,7 @@ nextjs-portal,
   .brand-tag {
     height: 24px;
     padding: 0 6px;
-    font-size: 10px;
+    font-size: 12px;
     white-space: nowrap;
     flex-shrink: 0;
     border-radius: 7px;
@@ -5482,7 +5724,7 @@ nextjs-portal,
     line-height: 24px;
     padding: 0 5px;
     border-radius: 5px;
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 700;
   }
 
@@ -5499,7 +5741,7 @@ nextjs-portal,
   .mini-radar-wrapper {
     bottom: max(10px, env(safe-area-inset-bottom, 8px)) !important;
     right: max(78px, calc(env(safe-area-inset-right, 16px) + 58px)) !important;
-    z-index: 60;
+    z-index: var(--z-hud-widget);
     gap: 3px;
   }
 
@@ -5564,7 +5806,7 @@ nextjs-portal,
   }
 
   .tactical-map-subtitle {
-    font-size: 10px;
+    font-size: 12px;
   }
 
   .tactical-map-canvas-container {
@@ -5608,7 +5850,7 @@ nextjs-portal,
   }
 
   .legend-title {
-    font-size: 10px;
+    font-size: 12px;
   }
 
   .legend-items-row {
@@ -5620,7 +5862,7 @@ nextjs-portal,
   .legend-chip {
     padding: 4px 8px;
     border-radius: 8px;
-    font-size: 11px;
+    font-size: 12px;
     gap: 5px;
   }
 
@@ -5650,7 +5892,7 @@ nextjs-portal,
 .intro-overlay {
   position: fixed;
   inset: 0;
-  z-index: 600;
+  z-index: var(--z-overlay);
   pointer-events: none;
 }
 
@@ -5668,6 +5910,7 @@ nextjs-portal,
 
 .intro-title {
   margin: 0;
+  font-family: var(--font-display);
   font-size: clamp(46px, 9vw, 96px);
   font-weight: 800;
   line-height: 1;
@@ -5724,7 +5967,7 @@ nextjs-portal,
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -5784,13 +6027,14 @@ nextjs-portal,
 }
 
 .intro-mode-btn.secondary {
-  background: rgba(148, 163, 184, 0.12);
-  color: var(--text-primary, #e2e8f0);
-  border-color: rgba(148, 163, 184, 0.28);
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: var(--border-strong);
 }
 
 .intro-mode-btn.secondary:hover {
-  background: rgba(148, 163, 184, 0.2);
+  background: var(--bg-card-hover);
+  border-color: var(--border-accent);
 }
 
 @keyframes intro-title-in {
@@ -5864,7 +6108,9 @@ nextjs-portal,
   background: var(--badge-bg);
 }
 
-/* ── Hero quick-stats strip ── */
+/* ── Hero quick-stats strip (legacy layout helper, superseded by the
+   loud-minimal .hero-stats-grid strip — kept only if a strip variant
+   ever returns; component currently renders .hero-stats-grid) ── */
 .hero-stats-strip {
   display: flex;
   flex-wrap: wrap;
@@ -5872,36 +6118,12 @@ nextjs-portal,
   margin-top: 26px;
 }
 
-.hero-stat-card {
-  flex: 1 1 150px;
-  max-width: 220px;
-  padding: 14px 18px;
-  border: 1px solid var(--border-subtle);
-  border-radius: 14px;
-  background: var(--bg-card);
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.hero-stat-value {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--text-primary);
-  line-height: 1.1;
-}
-
-.hero-stat-label {
-  font-size: 12.5px;
-  color: var(--text-secondary);
-}
-
 /* ── Back-to-top floating button ── */
 .back-to-top-btn {
   position: fixed;
   bottom: 26px;
   right: 26px;
-  z-index: 500;
+  z-index: var(--z-dropdown);
   width: 46px;
   height: 46px;
   border-radius: 50%;
@@ -5931,7 +6153,9 @@ nextjs-portal,
 }
 
 /* ── Scroll reveal (progressive enhancement: hidden state applies only
-   after JS marks the container reveal-ready, so no-JS stays visible) ── */
+   after JS marks the container reveal-ready, so no-JS stays visible).
+   Inner stagger: header block leads, content follows a beat later —
+   each section reads as a two-step phrase, not a single block. ── */
 @media (prefers-reduced-motion: no-preference) {
   .classic-main-content.reveal-ready .classic-section {
     opacity: 0;
@@ -5942,6 +6166,39 @@ nextjs-portal,
   .classic-main-content.reveal-ready .classic-section.is-revealed {
     opacity: 1;
     transform: translateY(0);
+  }
+
+  /* Inner content enters 120ms behind the section shell */
+  .classic-main-content.reveal-ready .classic-section .section-header,
+  .classic-main-content.reveal-ready .classic-section .editorial-projects-list,
+  .classic-main-content.reveal-ready .classic-section .editorial-about-grid,
+  .classic-main-content.reveal-ready .classic-section .editorial-edu-card,
+  .classic-main-content.reveal-ready .classic-section .editorial-skills-grid,
+  .classic-main-content.reveal-ready .classic-section .editorial-cert-grid,
+  .classic-main-content.reveal-ready .classic-section .contacts-grid,
+  .classic-main-content.reveal-ready .editorial-cta-banner {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    transition-delay: 0s;
+  }
+
+  .classic-main-content.reveal-ready .classic-section.is-revealed .section-header {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.08s;
+  }
+
+  .classic-main-content.reveal-ready .classic-section.is-revealed .editorial-projects-list,
+  .classic-main-content.reveal-ready .classic-section.is-revealed .editorial-about-grid,
+  .classic-main-content.reveal-ready .classic-section.is-revealed .editorial-edu-card,
+  .classic-main-content.reveal-ready .classic-section.is-revealed .editorial-skills-grid,
+  .classic-main-content.reveal-ready .classic-section.is-revealed .editorial-cert-grid,
+  .classic-main-content.reveal-ready .classic-section.is-revealed .contacts-grid,
+  .classic-main-content.reveal-ready .classic-section.is-revealed .editorial-cta-banner {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.16s;
   }
 }
 
@@ -6448,20 +6705,16 @@ nextjs-portal,
 
 /* Unified hover lift for the content cards (cert & contact cards already
    had their own lift — these bring summary and skills in line; projects
-   carry their own colored hover in the project-card rules above) */
+   carry their own colored hover in the project-card rules above; the hero
+   stat cells are intentionally exempt: the strip is quiet by design) */
 .summary-card,
-.skills-group-card,
-.hero-stat-card {
+.skills-group-card {
   transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .summary-card:hover,
 .skills-group-card:hover {
   transform: translateY(-3px);
-  border-color: var(--border-strong);
-}
-
-.hero-stat-card:hover {
   border-color: var(--border-strong);
 }
 
@@ -6549,17 +6802,17 @@ nextjs-portal,
 }
 
 /* ── Mobile section nav: sticky chip row shown only where the desktop
-   nav-links are hidden (≤1080px / short landscape). Sits under the 64px
+   nav-links are hidden (≤1040px / short landscape). Sits under the 64px
    header (z-index 100) with the same scroll-spy active state. ── */
 .classic-mobile-nav {
   display: none;
 }
 
-@media (max-width: 1080px), (orientation: landscape) and (max-height: 520px) {
+@media (max-width: 1040px), (orientation: landscape) and (max-height: 520px) {
   .classic-mobile-nav {
     position: sticky;
     top: 64px;
-    z-index: 90;
+    z-index: var(--z-nav-sticky);
     display: flex;
     gap: 8px;
     padding: 10px 16px;
@@ -6749,7 +7002,7 @@ nextjs-portal,
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-secondary);
   white-space: nowrap;
@@ -6868,4 +7121,183 @@ nextjs-portal,
   .island-top-bar .time-of-day-slider {
     display: none;
   }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   TOUCH TARGET FLOOR — coarse pointers (phones, tablets) get ≥44px hit
+   areas on compact controls. Visual size stays the same; only the
+   interactive box grows, so dense HUD clusters don't shift.
+   ═══════════════════════════════════════════════════════════════════════ */
+@media (pointer: coarse) {
+  .lang-btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .lang-toggle-group {
+    height: auto;
+    min-height: 44px;
+    padding: 4px;
+  }
+
+  .lang-toggle-group .lang-btn {
+    padding: 0 14px;
+    height: 36px;
+    line-height: 36px;
+  }
+
+  .theme-toggle-btn,
+  .theme-toggle-btn.mini {
+    width: 44px;
+    height: 44px;
+  }
+
+  .classic-mobile-chip {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .nav-shortcut-btn {
+    min-height: 44px;
+  }
+
+  .classic-nav-link {
+    padding: 12px 14px;
+  }
+
+  .back-to-top-btn {
+    width: 48px;
+    height: 48px;
+  }
+
+  .modal-close-btn {
+    width: 44px;
+    height: 44px;
+  }
+
+  .controls-menu-close {
+    width: 44px;
+    height: 44px;
+  }
+
+  .contact-quick-copy-btn {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   INTERACTIVE FEATURE PACK — island mini-map, tech DNA map, typed bio
+   cursor, rotating role, magnetic CTAs and the nav spotlight.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── C2: gliding nav spotlight ── */
+.classic-nav-links {
+  position: relative;
+}
+
+.nav-spotlight {
+  position: absolute;
+  bottom: 0;
+  height: 1.5px;
+  border-radius: 2px;
+  background: var(--border-accent);
+  pointer-events: none;
+  transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.25s ease;
+  z-index: 1;
+}
+
+/* ── C1: magnetic CTAs ──
+   The delegated listener writes translate() inline on ANY button/a; this
+   transition smooths both the pull and the glide home. Keep the list of
+   self-transforming controls excluded in the listener (SKIP list). */
+.btn-primary.magnetic,
+.btn-secondary.magnetic {
+  transition: transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
+              opacity 0.2s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+@media (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  /* Scope: interactive controls the delegated magnet touches. Elements with
+     their own richer transitions (buttons above, cards, pills with lifts)
+     re-declare transform transitions and win the cascade. */
+  .classic-landing-wrapper button,
+  .classic-landing-wrapper a.classic-nav-link,
+  .classic-landing-wrapper a.hero-social-pill,
+  .classic-landing-wrapper a.header-cta-pill,
+  .classic-landing-wrapper a.header-status-pill,
+  .classic-landing-wrapper .lang-btn,
+  .classic-landing-wrapper .theme-toggle-btn,
+  .classic-landing-wrapper .classic-mobile-chip,
+  .classic-landing-wrapper .back-to-top-btn,
+  .classic-landing-wrapper .project-tag-pill,
+  .classic-landing-wrapper .skill-pill,
+  .classic-landing-wrapper .contact-card,
+  .classic-landing-wrapper .cert-verify-link {
+    transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
+                background 0.2s ease, border-color 0.2s ease, color 0.2s ease,
+                box-shadow 0.25s ease, opacity 0.2s ease;
+  }
+}
+
+/* ── B2: typed bio cursor ── */
+.hero-bio-lead.typed {
+  min-height: 3.4em;
+}
+
+.typed-cursor {
+  display: inline-block;
+  width: 0.55em;
+  height: 1.05em;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  background: var(--text-primary);
+  opacity: 0;
+}
+
+.typed-cursor.on {
+  opacity: 1;
+}
+
+.typed-cursor.done {
+  animation: cursor-blink 1.06s steps(1) infinite;
+}
+
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .typed-cursor { display: none; }
+}
+
+
+/* ── D2: rotating specialty line ── */
+.hero-rotating-row {
+  display: block;
+  margin-top: 4px;
+}
+
+.rotating-role {
+  display: inline-flex;
+  overflow: hidden;
+}
+
+.rotating-role-text {
+  display: inline-block;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 12.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+  transition: opacity 0.42s ease;
+}
+
+.rotating-role-text.fading {
+  opacity: 0;
 }

@@ -578,13 +578,41 @@ function AtmosphereSky(): React.ReactElement {
  *   the canvas never re-renders or recompiles shaders on theme change.
  * - Rapier 3D Physics: Runs an asynchronous, deterministic physics world at locked 60Hz.
  */
+/**
+ * CanvasA11y — applies the accessibility contract to the raw <canvas> DOM
+ * element. R3F spreads extra props onto its wrapper div only, so the role,
+ * label and shortcut hints are set imperatively here, once, right after
+ * mount and on every language switch.
+ */
+function CanvasA11y({ label }: { label: string }): null {
+  const gl = useThree((s) => s.gl);
+
+  useEffect(() => {
+    const el = gl.domElement as HTMLCanvasElement;
+    el.setAttribute('role', 'img');
+    el.setAttribute('aria-label', label);
+    // Global hotkeys available while the island is mounted
+    // (E interact · H controls guide · M tactical map · Esc close modal)
+    el.setAttribute('aria-keyshortcuts', 'E H M Escape');
+  }, [gl, label]);
+
+  return null;
+}
+
 export default function IslandCanvas(): React.ReactElement {
   const playerPosRef = useRef<THREE.Vector3 | null>(null);
   const isSceneLoaded = useGameStore((s) => s.isSceneLoaded);
+  const language = useGameStore((s) => s.language);
   // The adaptive resolution value lives in the dpr PROP itself: fiber
   // reconciles viewport.dpr against this prop on re-renders, so driving it
   // from here is the only churn-free way to change resolution at runtime.
   const [dpr, setDpr] = React.useState(DPR_CAP);
+
+  // Screen readers receive nothing from a WebGL canvas: this label is the
+  // only description they can announce (WCAG canvas guidance).
+  const canvasAriaLabel = language === 'uk'
+    ? 'Інтерактивний 3D-острів-портфоліо. Клавіші WASD або стрілки — рух, Shift — спринт, пробіл — стрибок, миша — огляд камери, E — взаємодія. Доступна класична версія резюме.'
+    : 'Interactive 3D portfolio island. Move with WASD or arrow keys, Shift to sprint, Space to jump, drag the mouse to orbit the camera, E to interact. A classic resume view is also available.';
 
   return (
     <Canvas
@@ -600,6 +628,9 @@ export default function IslandCanvas(): React.ReactElement {
     >
       {/* ── Continuous day/night atmosphere (dome, sun/moon, stars, lights) ── */}
       <AtmosphereSky />
+
+      {/* ── Canvas accessibility contract (role + localized label) ── */}
+      <CanvasA11y label={canvasAriaLabel} />
 
       {/* ── High-Speed Rapier 3D Physics Simulation with Fixed 60Hz Timestep ── */}
       <Suspense fallback={null}>

@@ -27,6 +27,8 @@ import {
 } from 'lucide-react';
 import ResumePrintDocument from './ResumePrintDocument';
 import TimeOfDaySlider from './TimeOfDaySlider';
+import TypedBio from './TypedBio';
+import RotatingRole from './RotatingRole';
 import { dayNightState, subscribeToDayNight } from '../../store/dayNightState';
 
 /** Section ids watched by the scroll-spy (order matches the sticky nav). */
@@ -84,7 +86,6 @@ export default function ClassicLandingView(): React.ReactElement {
   const [selectedSkillFilter, setSelectedSkillFilter] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [kyivTime, setKyivTime] = useState<string>('');
-  const [ambientGlow, setAmbientGlow] = useState<string>('rgba(99, 102, 241, 0.12)');
   const toastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
 
@@ -135,17 +136,34 @@ export default function ClassicLandingView(): React.ReactElement {
     return () => clearInterval(interval);
   }, []);
 
-  // Ambient sky glow reacting live to dayNightState slider scrubbing!
+  // Ambient sky glow reacting live to dayNightState — paints DIRECTLY to
+  // the DOM node via ref. A setState here re-rendered the whole 1000-line
+  // landing every engine tick (60/s during cap tweens), blowing the frame
+  // budget and stuttering the whole page including the slider thumb.
+  const auraRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     const updateAura = () => {
+      const el = auraRef.current;
+      if (!el) return;
       const { sky, sunElev } = dayNightState;
       const nf = Math.max(0, Math.min(1, (0.05 - sunElev) / 0.35));
       const c = nf > 0.5 ? sky.horizon : sky.sunTint;
       const alpha = 0.14 + 0.1 * (1 - nf);
-      setAmbientGlow(`rgba(${Math.round(c[0])}, ${Math.round(c[1])}, ${Math.round(c[2])}, ${alpha.toFixed(2)})`);
+      el.style.background = `radial-gradient(ellipse 90% 45% at 50% -12%, rgba(${Math.round(c[0])}, ${Math.round(c[1])}, ${Math.round(c[2])}, ${alpha.toFixed(2)}) 0%, transparent 70%)`;
     };
     updateAura();
-    return subscribeToDayNight(updateAura)();
+    // ~30 Hz paint cap (same cadence as the skyTint backdrop): the engine
+    // ticks every frame, but a soft gradient wash doesn't need 60 repaints.
+    let lastPaint = 0;
+    const throttled = () => {
+      const now = performance.now();
+      if (now - lastPaint < 33) return;
+      lastPaint = now;
+      updateAura();
+    };
+    // NOTE: the returned function is the UNSUBSCRIBE handle — `()()` here
+    // would subscribe and instantly unsub. Keep the handle as the cleanup.
+    return subscribeToDayNight(throttled);
   }, []);
 
   // Sky tint: a full-viewport backdrop mirroring the current cycle sky even
@@ -183,14 +201,28 @@ export default function ClassicLandingView(): React.ReactElement {
     });
   }, []);
 
-  // Scroll-spy: highlight nav link currently in view
+  // Scroll-spy: highlight nav link currently in view + mirror the section
+  // into the URL hash so any scroll position is copy-paste shareable.
+  // replaceState keeps this out of the back/forward history — scrolling is
+  // not navigation, and Back should still exit to wherever the visitor came
+  // from, not replay every section they scrolled past.
   useEffect(() => {
+    let lastHash = window.location.hash.slice(1);
     const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries
           .filter((entry) => entry.isIntersecting)
           .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-        if (visible[0]) setActiveSection(visible[0].target.id);
+        if (visible[0]) {
+          const id = visible[0].target.id;
+          setActiveSection(id);
+          if (id !== lastHash) {
+            lastHash = id;
+            try {
+              window.history.replaceState(null, '', `#${id}`);
+            } catch (_) {}
+          }
+        }
       },
       { rootMargin: '-72px 0px -55% 0px', threshold: 0 }
     );
@@ -235,8 +267,108 @@ export default function ClassicLandingView(): React.ReactElement {
     wrapperRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Card cursor spotlight & 3D tilt
+  // Capability gate shared by card tilt, magnetic CTAs and the nav
+  // spotlight: fine pointer only, never for reduced-motion visitors.
+  // Touch devices never fire the synthetic mousemove these effects feed
+  // on, and the transforms fight native scrolling there.
+  const allowsCardEffects = typeof window !== 'undefined'
+    && window.matchMedia
+    && window.matchMedia('(pointer: fine)').matches
+    && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ── C1: Magnetic CTA buttons ──
+  // Hero CTAs lean up to ~4px toward the cursor while it's inside the
+  // button. Subtle attraction, not a chasing button.
+  const handleMagneticMove = (e: React.MouseEvent<HTMLElement>) => {
+    if (!allowsCardEffects) return;
+    const btn = e.currentTarget;
+    const rect = btn.getBoundingClientRect();
+    const dx = e.clientX - (rect.left + rect.width / 2);
+    const dy = e.clientY - (rect.top + rect.height / 2);
+    // 0.24 strength; ROUNDED to whole pixels — fractional translate puts text
+    // on the subpixel grid and it renders blurry on non-retina displays.
+    btn.style.transform = `translate(${Math.round(dx * 0.24)}px, ${Math.round(dy * 0.24)}px)`;
+  };
+
+  const handleMagneticLeave = (e: React.MouseEvent<HTMLElement>) => {
+    if (!allowsCardEffects) return;
+    e.currentTarget.style.transform = '';
+  };
+
+  // ── C1: Global magnetic effect ──
+  // Every interactive control on the page (buttons, nav links, pills, chips)
+  // leans up to ~4px toward the cursor via ONE delegated listener — no
+  // per-element handlers. Skip-list exempts controls whose transform is
+  // owned by richer effects (magnetic hero CTAs, tilting cards/media).
+  const magnetized = useRef<HTMLElement | null>(null);
+  const allowsCardEffectsRef = useRef(allowsCardEffects);
+  allowsCardEffectsRef.current = allowsCardEffects;
+
+  useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el || !allowsCardEffectsRef.current) return undefined;
+
+    const MAGNET_SELECTOR = [
+      'button:not([data-magnetic="off"])',
+      'a:not([data-magnetic="off"])'
+    ].join(', ');
+    // Controls that already carry richer transforms
+    const SKIP = '.magnetic, .editorial-project-media';
+
+    const onMove = (e: MouseEvent) => {
+      const target = (e.target as HTMLElement | null)?.closest<HTMLElement>(MAGNET_SELECTOR);
+      if (!target || target.closest(SKIP) || !el.contains(target)) return;
+      const rect = target.getBoundingClientRect();
+      const dx = e.clientX - (rect.left + rect.width / 2);
+      const dy = e.clientY - (rect.top + rect.height / 2);
+      // 0.24 strength; integer pixels only — fractional translate blurs text
+      target.style.transform = `translate(${Math.round(dx * 0.24)}px, ${Math.round(dy * 0.24)}px)`;
+      magnetized.current = target;
+    };
+
+    const onOut = (e: MouseEvent) => {
+      const target = (e.target as HTMLElement | null)?.closest<HTMLElement>(MAGNET_SELECTOR);
+      if (target) target.style.transform = '';
+    };
+
+    el.addEventListener('mousemove', onMove, { passive: true });
+    el.addEventListener('mouseout', onOut, { passive: true });
+    return () => {
+      el.removeEventListener('mousemove', onMove);
+      el.removeEventListener('mouseout', onOut);
+      if (magnetized.current) magnetized.current.style.transform = '';
+    };
+  }, []);
+
+  // ── C2: Spotlight nav indicator ──
+  // A single absolutely-positioned underline glides between nav links on
+  // hover (Linear-style). It reads the hovered link's bounds and morphs;
+  // the existing ::after underline keeps serving the ACTIVE (scroll-spy)
+  // link, so hover-motion and reading state stay independent signals.
+  const navLinksRef = useRef<HTMLDivElement | null>(null);
+  const [spotlight, setSpotlight] = useState<{ left: number; width: number; opacity: number }>({
+    left: 0, width: 0, opacity: 0
+  });
+
+  const handleNavMouseEnter = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!allowsCardEffects) return;
+    const link = e.currentTarget;
+    const navRect = navLinksRef.current?.getBoundingClientRect();
+    const linkRect = link.getBoundingClientRect();
+    if (!navRect) return;
+    setSpotlight({
+      left: linkRect.left - navRect.left,
+      width: linkRect.width,
+      opacity: 1
+    });
+  };
+
+  const handleNavMouseLeave = () => {
+    setSpotlight((s) => ({ ...s, opacity: 0 }));
+  };
+
   const handleCardMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    if (!allowsCardEffects) return;
     const card = e.currentTarget;
     const rect = card.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -252,6 +384,7 @@ export default function ClassicLandingView(): React.ReactElement {
   };
 
   const handleCardMouseLeave = (e: React.MouseEvent<HTMLElement>) => {
+    if (!allowsCardEffects) return;
     const card = e.currentTarget;
     card.style.transform = '';
   };
@@ -304,28 +437,26 @@ export default function ClassicLandingView(): React.ReactElement {
       <div className="classic-sky-tint" ref={skyTintRef} aria-hidden="true" />
 
       {/* ── Dynamic Ambient Aura responding to TimeOfDaySlider ── */}
-      <div
-        className="hero-ambient-aura"
-        style={{
-          background: `radial-gradient(ellipse 90% 45% at 50% -12%, ${ambientGlow} 0%, transparent 70%)`
-        }}
-        aria-hidden="true"
-      />
+      <div className="hero-ambient-aura" ref={auraRef} aria-hidden="true" />
 
-      {/* ── Floating Interactive Toast ── */}
-      {toastMessage && (
-        <div className="interactive-toast-pill" role="status" aria-live="polite">
-          <Sparkles size={14} className="toast-icon" />
-          <span>{toastMessage}</span>
-        </div>
-      )}
+      {/* ── Floating Interactive Toast ──
+          Always-mounted polite live region: screen readers announce content
+          changes; the pill itself is hidden (not unmounted) when empty so
+          the live region persists across toasts. */}
+      <div className="interactive-toast-pill" data-visible={toastMessage ? 'true' : 'false'} role="status" aria-live="polite">
+        {toastMessage && (
+          <>
+            <Sparkles size={14} className="toast-icon" aria-hidden="true" />
+            <span>{toastMessage}</span>
+          </>
+        )}
+      </div>
 
       {/* ── Screen Interactive Web View ── */}
       <div className="classic-web-view">
         {/* ── Minimalist Editorial Navigation ── */}
         <header className="classic-header glass-panel">
           <div className="header-left">
-            {/* Brand Monogram */}
             <a href="#hero" className="header-brand">
               <span className="brand-monogram">DH</span>
               <span className="brand-name">{profile.name}</span>
@@ -342,13 +473,20 @@ export default function ClassicLandingView(): React.ReactElement {
           </div>
 
           {/* Desktop Nav Links */}
-          <nav className="classic-nav-links" aria-label="Main Navigation">
+          <nav className="classic-nav-links" aria-label="Main Navigation" ref={navLinksRef} onMouseLeave={handleNavMouseLeave}>
+            {/* C2: gliding spotlight underline (hover-motion signal) */}
+            <span
+              className="nav-spotlight"
+              style={{ left: spotlight.left, width: spotlight.width, opacity: spotlight.opacity }}
+              aria-hidden="true"
+            />
             {navItems.map(({ id, label }) => (
               <a
                 key={id}
                 href={`#${id}`}
                 className={`classic-nav-link${activeSection === id ? ' active' : ''}`}
                 aria-current={activeSection === id ? 'true' : undefined}
+                onMouseEnter={handleNavMouseEnter}
               >
                 {label}
               </a>
@@ -409,6 +547,22 @@ export default function ClassicLandingView(): React.ReactElement {
           </div>
         </header>
 
+        {/* ── Mobile Section Nav: sticky chip row replacing the hidden desktop
+            nav-links on narrow screens (CSS shows it ≤1040px / short landscape).
+            Shares the scroll-spy active state with the desktop nav. ── */}
+        <nav className="classic-mobile-nav" aria-label={isUk ? 'Мобільна навігація' : 'Mobile Navigation'}>
+          {navItems.map(({ id, label }) => (
+            <a
+              key={id}
+              href={`#${id}`}
+              className={`classic-mobile-chip${activeSection === id ? ' active' : ''}`}
+              aria-current={activeSection === id ? 'true' : undefined}
+            >
+              {label}
+            </a>
+          ))}
+        </nav>
+
         {/* ── Main Scrollable Content ── */}
         <main className="classic-main-content">
           {/* ── HERO SECTION ── */}
@@ -428,23 +582,54 @@ export default function ClassicLandingView(): React.ReactElement {
               )}
             </div>
 
-            {/* Big, Crisp Editorial Headline */}
+            {/* Big, Crisp Editorial Headline — each word on its own line with
+                per-letter reveal spans (CSS-staggered; the decorative clones
+                are aria-hidden so screen readers announce one clean name). */}
             <div className="hero-headline-block">
-              <h1 className="hero-name-display">{profile.name}</h1>
+              <h1 className="hero-name-display" aria-label={profile.name}>
+                {profile.name.split(' ').map((word, wIdx) => (
+                  <span key={wIdx} className="hero-name-line" aria-hidden="true">
+                    {word.split('').map((ch, chIdx) => (
+                      <span
+                        key={`c${chIdx}`}
+                        className="hero-name-char"
+                        style={{ animationDelay: `${(0.12 + (wIdx * word.length + chIdx) * 0.035).toFixed(3)}s` }}
+                      >
+                        {ch}
+                      </span>
+                    ))}
+                  </span>
+                ))}
+              </h1>
               <h2 className="hero-role-display">{profile.role}</h2>
+              {/* Rotating specialty line under the role — decorative carousel */}
+              <span className="hero-rotating-row">
+                <RotatingRole />
+              </span>
             </div>
 
-            <p className="hero-bio-lead">{profile.bio}</p>
+            {/* Terminal-typed lead paragraph (static under reduced-motion) */}
+            <TypedBio />
 
             {/* Action Buttons & Socials */}
             <div className="hero-actions-container">
               <div className="hero-action-buttons">
-                <a href="#contacts" className="btn-primary">
+                <a
+                  href="#contacts"
+                  className="btn-primary magnetic"
+                  onMouseMove={handleMagneticMove}
+                  onMouseLeave={handleMagneticLeave}
+                >
                   <span>{isUk ? 'Давайте співпрацювати' : "Let's collaborate"}</span>
                   <ArrowUpRight size={16} className="cta-arrow" />
                 </a>
 
-                <button className="btn-secondary" onClick={() => setViewMode('3d')}>
+                <button
+                  className="btn-secondary magnetic"
+                  onClick={() => setViewMode('3d')}
+                  onMouseMove={handleMagneticMove}
+                  onMouseLeave={handleMagneticLeave}
+                >
                   <Compass size={15} />
                   <span>{t.viewIn3D}</span>
                 </button>
@@ -501,6 +686,7 @@ export default function ClassicLandingView(): React.ReactElement {
                 </div>
               ))}
             </div>
+
           </section>
 
           {/* ── SELECTED WORK / FEATURED PROJECTS ── */}
@@ -522,24 +708,27 @@ export default function ClassicLandingView(): React.ReactElement {
                   onMouseLeave={handleCardMouseLeave}
                 >
                   {/* Media Preview Container with Click-to-Modal Lightbox */}
-                  <div
+                  <button
+                    type="button"
                     className="editorial-project-media"
                     onClick={() => setSelectedProject(proj.id)}
                     title={isUk ? 'Натисніть для детального перегляду' : 'Click to inspect project details'}
+                    aria-label={`${isUk ? 'Детальний огляд проєкту' : 'Inspect project details'}: ${proj.title}`}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={PROJECT_SHOTS[proj.id] ?? `/shots/${proj.id}.jpg`}
                       alt={proj.title}
                       loading="lazy"
+                      decoding="async"
                       draggable={false}
                     />
 
-                    <div className="media-quick-inspect">
-                      <Sparkles size={14} />
+                    <span className="media-quick-inspect">
+                      <Sparkles size={14} aria-hidden="true" />
                       <span>{isUk ? 'Огляд деталей' : 'Quick Details'}</span>
-                    </div>
-                  </div>
+                    </span>
+                  </button>
 
                   {/* Project Info & Description */}
                   <div className="editorial-project-body">
@@ -733,7 +922,7 @@ export default function ClassicLandingView(): React.ReactElement {
                           title={isUk ? `Натисніть, щоб підсвітити проєкти з ${skill}` : `Click to spotlight projects using ${skill}`}
                         >
                           <span>{skill}</span>
-                          <span className="pill-arrow-hint">↗</span>
+                          <ArrowUpRight size={12} className="pill-arrow-icon" aria-hidden="true" />
                         </button>
                       );
                     })}
