@@ -1,3 +1,10 @@
+/**
+ * store.ts — type contract of the central Zustand game store.
+ * `GameState` lists every reactive slice (locale, theme, view mode, loading
+ * flags, modals, HUD prompt, camera mode) together with its setter actions;
+ * the implementation lives in src/store/useGameStore.ts.
+ */
+
 import { StatueKey } from './scene';
 import { Locale } from './portfolio';
 

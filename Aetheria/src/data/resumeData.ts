@@ -1,9 +1,27 @@
+/**
+ * resumeData — single source of truth for all portfolio content.
+ *
+ * Exports the bilingual `developerProfiles` (UK/EN), the `translations`
+ * tree consumed by every UI component, and the cross-project URL resolver.
+ * Edit profile facts, project cards, and copy here — the components stay
+ * presentational.
+ */
+
 import { DeveloperProfile, Locale, Translations } from '../types/portfolio';
 
 const FORMA_URL = process.env.NEXT_PUBLIC_FORMA_URL || "https://forma.hnylytskyi.dev";
 const TERRASCOPE_URL = process.env.NEXT_PUBLIC_TERRASCOPE_URL || "https://terrascope.hnylytskyi.dev";
 const LUMINA_URL = process.env.NEXT_PUBLIC_LUMINA_URL || "https://lumina.hnylytskyi.dev";
 
+/**
+ * getProjectUrl — resolves a sibling project's base URL for the current
+ * browsing context. Resolution order:
+ *   1. localhost/127.0.0.1 → the fixed dev ports (3001–3003);
+ *   2. *.herokuapp.com host → the sibling Heroku app domains;
+ *   3. otherwise (production / custom domain) → the NEXT_PUBLIC_* override
+ *      or the default hnylytskyi.dev subdomain.
+ * `fallbackUrl` is returned for unknown project ids.
+ */
 export function getProjectUrl(projectId: string, fallbackUrl?: string): string {
   if (typeof window !== 'undefined') {
     const hostname = window.location.hostname;

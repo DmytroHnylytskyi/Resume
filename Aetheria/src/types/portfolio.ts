@@ -1,3 +1,11 @@
+/**
+ * portfolio.ts — data model of the portfolio content.
+ * Interfaces here describe the shape of `developerProfiles` and
+ * `translations` in src/data/resumeData.ts (profile, education,
+ * certifications, skills, contacts, projects, and every localized string
+ * tree the UI renders).
+ */
+
 export type Locale = 'uk' | 'en';
 
 export interface ProjectItem {

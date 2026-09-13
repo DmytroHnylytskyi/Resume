@@ -6,6 +6,15 @@ import { useGameStore } from '../../store/useGameStore';
 import { translations } from '../../data/resumeData';
 import { Loader2 } from 'lucide-react';
 
+/**
+ * LoadingScreen — asset preloader overlay.
+ *
+ * Mirrors drei's useProgress while the island loads and flips
+ * `isSceneLoaded` the moment the fade-out begins, so the loader dissolves
+ * straight into the cinematic intro with the character already spawned.
+ * Completion requires BOTH scene and character ready; a 10 s safety
+ * fallback releases a stalled asset queue so the app never hangs here.
+ */
 export default function LoadingScreen(): React.ReactElement | null {
   const { progress, active, loaded, total } = useProgress();
   const { language, isSceneLoaded, setSceneLoaded, isCharacterLoaded, viewMode } = useGameStore();

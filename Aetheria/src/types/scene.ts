@@ -1,3 +1,10 @@
+/**
+ * scene.ts — schema of the authored island scene and its interactive kinds.
+ * `IslandSceneData` mirrors the structure of src/data/islandScene.json
+ * (spawn point + placed 3D objects); `StatueKey`/`PortalKey` enumerate the
+ * knowledge statues and project portals the interaction system dispatches to.
+ */
+
 export type StatueKey = 'bio' | 'skills' | 'contacts';
 export type PortalKey = 'forma' | 'terrascope' | 'lumina';
 

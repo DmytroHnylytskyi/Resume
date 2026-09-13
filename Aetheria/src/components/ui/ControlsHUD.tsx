@@ -7,6 +7,14 @@ import { User, Share2, Award, FileText, Sun, Moon, Sparkles } from 'lucide-react
 import ControlsGuideDropdown from './ControlsGuideDropdown';
 import TimeOfDaySlider from './TimeOfDaySlider';
 
+/**
+ * ControlsHUD — 3D-view chrome.
+ *
+ * Top glass navigation bar (brand badge, quick modals, view-mode switch,
+ * controls guide, day/night slider, language toggle), the floating `[E]`
+ * proximity interaction pill, and the easter-egg toast. Hidden while the
+ * cinematic intro is playing.
+ */
 export default function ControlsHUD(): React.ReactElement {
   const {
     setActiveModal,

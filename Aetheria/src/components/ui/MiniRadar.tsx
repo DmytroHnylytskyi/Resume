@@ -110,7 +110,19 @@ const LANDMARKS: LandmarkDef[] = [
 const RADAR_RADIUS_PX = 62;
 const RADAR_USABLE_RADIUS = 44;
 const ISLAND_SPAN = 22; // World coordinate extent [-22, 22]
+// World-to-map spread on the tactical modal: island coordinates are mapped
+// onto ±44% of the square container (6%..94%), preserving a 1:1 aspect.
+const TACTICAL_MAP_SPREAD_PERCENT = 44;
 
+/**
+ * MiniRadar — HUD mini-radar + expanded tactical island map.
+ *
+ * Polls the shared `radarState` buffer in a requestAnimationFrame loop
+ * (zero React re-renders) to translate world coordinates onto the radar
+ * disc and the tactical map. Landmark blips are fixed at authentic island
+ * coordinates; on the expanded map ([M], Esc, or radar click) they become
+ * navigation pins that open the matching project modal or statue dialog.
+ */
 export default function MiniRadar(): React.ReactElement | null {
   const {
     language,
@@ -125,6 +137,16 @@ export default function MiniRadar(): React.ReactElement | null {
   } = useGameStore();
 
   const [hoveredLandmark, setHoveredLandmark] = useState<LandmarkDef | null>(null);
+
+  // Single navigation entry for map pins and legend chips: a landmark
+  // resolves to either a project showcase or a statue dialog.
+  const openLandmark = (lm: LandmarkDef) => {
+    if (lm.projectId) {
+      setSelectedProject(lm.projectId);
+    } else if (lm.modalKey) {
+      setActiveModal(lm.modalKey);
+    }
+  };
 
   const playerRadarRef = useRef<HTMLDivElement>(null);
   const tacticalPlayerRef = useRef<HTMLDivElement>(null);
@@ -157,8 +179,8 @@ export default function MiniRadar(): React.ReactElement | null {
         const clampedX = Math.max(-ISLAND_SPAN, Math.min(ISLAND_SPAN, px));
         const clampedZ = Math.max(-ISLAND_SPAN, Math.min(ISLAND_SPAN, pz));
 
-        const mapX = 50 + (clampedX / ISLAND_SPAN) * 44;
-        const mapY = 50 + (clampedZ / ISLAND_SPAN) * 44;
+        const mapX = 50 + (clampedX / ISLAND_SPAN) * TACTICAL_MAP_SPREAD_PERCENT;
+        const mapY = 50 + (clampedZ / ISLAND_SPAN) * TACTICAL_MAP_SPREAD_PERCENT;
 
         tacticalPlayerRef.current.style.left = `${mapX}%`;
         tacticalPlayerRef.current.style.top = `${mapY}%`;
@@ -320,22 +342,16 @@ export default function MiniRadar(): React.ReactElement | null {
 
               {/* Interactive Landmark Pins */}
               {LANDMARKS.map((lm) => {
-                // Map island coordinates [-22, 22] to 1:1 container % [6% to 94%]
-                const mapLeft = 50 + (lm.x / ISLAND_SPAN) * 44;
-                const mapTop = 50 + (lm.z / ISLAND_SPAN) * 44;
+                // Map island coordinates [-22, 22] to 1:1 container %
+                const mapLeft = 50 + (lm.x / ISLAND_SPAN) * TACTICAL_MAP_SPREAD_PERCENT;
+                const mapTop = 50 + (lm.z / ISLAND_SPAN) * TACTICAL_MAP_SPREAD_PERCENT;
 
                 return (
                   <div
                     key={lm.id}
                     className="tactical-pin-wrapper"
                     style={{ left: `${mapLeft}%`, top: `${mapTop}%` }}
-                    onClick={() => {
-                      if (lm.projectId) {
-                        setSelectedProject(lm.projectId);
-                      } else if (lm.modalKey) {
-                        setActiveModal(lm.modalKey);
-                      }
-                    }}
+                    onClick={() => openLandmark(lm)}
                   >
                     <div
                       className="tactical-pin-gem"
@@ -367,13 +383,7 @@ export default function MiniRadar(): React.ReactElement | null {
                   <button
                     key={lm.id}
                     className="legend-chip glass-panel"
-                    onClick={() => {
-                      if (lm.projectId) {
-                        setSelectedProject(lm.projectId);
-                      } else if (lm.modalKey) {
-                        setActiveModal(lm.modalKey);
-                      }
-                    }}
+                    onClick={() => openLandmark(lm)}
                   >
                     <span className="legend-chip-dot" style={{ backgroundColor: lm.color }} />
                     <span>{language === 'uk' ? lm.nameUk : lm.nameEn}</span>

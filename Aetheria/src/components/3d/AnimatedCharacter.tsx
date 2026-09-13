@@ -1,5 +1,15 @@
 'use client';
 
+/**
+ * AnimatedCharacter — the playable avatar.
+ *
+ * Renders the Arissa GLB with optimized WebP textures and drives a skeletal
+ * animation state machine: locomotion flags are polled from the shared
+ * `characterAnimState` buffer inside useFrame (zero React re-renders) and
+ * crossfaded on the AnimationMixer (Idle/Walk/Run loop, Jump plays once).
+ * The model is auto-scaled to TARGET_HEIGHT regardless of authored units.
+ */
+
 import React, { useRef, useMemo, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF, useTexture } from '@react-three/drei';
@@ -9,6 +19,9 @@ import { useGameStore } from '../../store/useGameStore';
 import { clone as cloneSkeleton } from 'three/examples/jsm/utils/SkeletonUtils.js';
 
 const TARGET_HEIGHT = 1.65;
+// Scale used only if the bbox measurement degenerates (empty/flat model);
+// reproduces the ratio for the shipped 1.65 m character as a safe default.
+const DEGENERATE_SCALE_FALLBACK = 0.0092;
 
 export default function AnimatedCharacter(): React.ReactElement {
   const setCharacterLoaded = useGameStore((s) => s.setCharacterLoaded);
@@ -50,7 +63,7 @@ export default function AnimatedCharacter(): React.ReactElement {
     const box = new THREE.Box3().setFromObject(clone);
     const size = box.getSize(new THREE.Vector3());
     const rawHeight = size.y;
-    const scaleFactor = rawHeight > 0 ? TARGET_HEIGHT / rawHeight : 0.0092;
+    const scaleFactor = rawHeight > 0 ? TARGET_HEIGHT / rawHeight : DEGENERATE_SCALE_FALLBACK;
 
     // Optimized material: FrontSide only, no shadows (shadows disabled globally).
     // Matte cloth finish: the phong specular map must NOT be wired as a

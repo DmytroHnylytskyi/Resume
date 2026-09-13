@@ -568,17 +568,6 @@ function AtmosphereSky(): React.ReactElement {
 }
 
 /**
- * IslandCanvas
- *
- * Root 3D WebGL Canvas entry point for Aetheria.
- *
- * Architecture & Performance Highlights:
- * - Continuous Day/Night Cycle: AtmosphereSky renders the whole cycle with a
- *   permanent light rig; the theme toggle/slider drive a mutable store, so
- *   the canvas never re-renders or recompiles shaders on theme change.
- * - Rapier 3D Physics: Runs an asynchronous, deterministic physics world at locked 60Hz.
- */
-/**
  * CanvasA11y — applies the accessibility contract to the raw <canvas> DOM
  * element. R3F spreads extra props onto its wrapper div only, so the role,
  * label and shortcut hints are set imperatively here, once, right after
@@ -599,6 +588,17 @@ function CanvasA11y({ label }: { label: string }): null {
   return null;
 }
 
+/**
+ * IslandCanvas
+ *
+ * Root 3D WebGL Canvas entry point for Aetheria.
+ *
+ * Architecture & Performance Highlights:
+ * - Continuous Day/Night Cycle: AtmosphereSky renders the whole cycle with a
+ *   permanent light rig; the theme toggle/slider drive a mutable store, so
+ *   the canvas never re-renders or recompiles shaders on theme change.
+ * - Rapier 3D Physics: Runs an asynchronous, deterministic physics world at locked 60Hz.
+ */
 export default function IslandCanvas(): React.ReactElement {
   const playerPosRef = useRef<THREE.Vector3 | null>(null);
   const isSceneLoaded = useGameStore((s) => s.isSceneLoaded);

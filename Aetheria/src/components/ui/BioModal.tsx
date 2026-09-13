@@ -1,26 +1,22 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useGameStore } from '../../store/useGameStore';
 import { developerProfiles, translations } from '../../data/resumeData';
 import { X, User, MapPin, Sparkles, GraduationCap, Briefcase } from 'lucide-react';
 import { useModalFocus } from '../../hooks/useModalFocus';
 
+/**
+ * BioModal — biography dialog (Knowledge Statue `[E]` target).
+ * Renders the developer profile: bio quote, first education entry, and the
+ * numbered engineering highlights from `developerProfiles`. Focus, Tab trap
+ * and Escape are owned by useModalFocus.
+ */
 export default function BioModal(): React.ReactElement | null {
   const { activeModal, setActiveModal, language } = useGameStore();
 
   const isOpen = activeModal === 'bio';
   const panelRef = useModalFocus<HTMLDivElement>(isOpen, () => setActiveModal(null));
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && activeModal === 'bio') {
-        setActiveModal(null);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeModal, setActiveModal]);
 
   if (activeModal !== 'bio') return null;
 

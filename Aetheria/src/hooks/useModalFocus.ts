@@ -18,10 +18,12 @@ const FOCUSABLE_SELECTOR = [
  * - the first focusable control inside the modal (ideally the close button,
  *   which is first in DOM order) receives focus;
  * - Tab is trapped inside the modal (Shift+Tab wraps back to the last element);
+ * - Escape calls `onClose` (every Aetheria dialog exposes this convention);
  * - on close, focus is restored to the element that opened the modal.
  *
  * Screen-reader semantics (role="dialog" / aria-modal) stay in the JSX; this
- * hook only owns focus behavior, mirroring the WCAG 2.2 dialog pattern.
+ * hook owns ALL keyboard behavior (focus trap + Escape), so modals must not
+ * register their own window keydown handlers for those keys.
  */
 export function useModalFocus<T extends HTMLElement>(
   isActive: boolean,
@@ -43,6 +45,10 @@ export function useModalFocus<T extends HTMLElement>(
     }
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+        return;
+      }
       if (e.key !== 'Tab') return;
       const current = panelRef.current;
       if (!current) return;

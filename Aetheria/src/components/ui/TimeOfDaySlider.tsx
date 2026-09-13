@@ -5,6 +5,7 @@ import { Sun, Moon } from 'lucide-react';
 import { useGameStore } from '../../store/useGameStore';
 import {
   dayNightState,
+  getNightFactor,
   setTimeOfDay,
   flyToDayNight,
   subscribeToDayNight,
@@ -46,7 +47,7 @@ export default function TimeOfDaySlider(): React.ReactElement {
     const compute = () => {
       const { t, sky } = dayNightState;
       const sunElev = dayNightState.sunElev;
-      const nf = Math.max(0, Math.min(1, (0.05 - sunElev) / 0.35));
+      const nf = getNightFactor();
       const c = nf > 0.5 ? sky.horizon : sky.sunTint;
       return {
         t,

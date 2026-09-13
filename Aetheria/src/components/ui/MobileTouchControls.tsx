@@ -1,5 +1,18 @@
 'use client';
 
+/**
+ * MobileTouchControls — dual-zone touch gameplay layer.
+ *
+ * LEFT: a virtual analog thumbstick writing into the shared zero-allocation
+ * `mobileControls` buffer (radial clamp + deadzone, sprint when pushed to
+ * the rim). RIGHT: a floating jump button. Any other touch orbits the
+ * camera; two fingers pinch-zoom — all deltas accumulate into the same
+ * buffer, consumed by CharacterController's frame loop. Listeners are
+ * window-level and passive (except the joystick move, which needs
+ * preventDefault to stop page scroll), and the layer unmounts in classic
+ * view or while any modal is open.
+ */
+
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { mobileControls } from '../../store/mobileControlsState';
 import { useGameStore } from '../../store/useGameStore';
@@ -7,6 +20,8 @@ import { ArrowUp } from 'lucide-react';
 
 const JOYSTICK_MAX_RADIUS = 42; // Maximum pixel displacement for knob
 const JOYSTICK_DEADZONE = 5;
+// Thumb distance (fraction of max radius) beyond which sprint engages.
+const JOYSTICK_SPRINT_RATIO = 0.78;
 
 export default function MobileTouchControls(): React.ReactElement | null {
   const {
@@ -45,6 +60,21 @@ export default function MobileTouchControls(): React.ReactElement | null {
   }, []);
 
   // ── 1. Virtual Thumbstick Handlers (Left Thumb) ──
+  // Shared radial clamp: maps a raw thumb offset to the visual knob position
+  // and the normalized move vector consumed by the physics loop.
+  const applyJoystickDelta = useCallback((dx: number, dy: number) => {
+    const dist = Math.hypot(dx, dy);
+    const angle = Math.atan2(dy, dx);
+    const clampedDist = Math.min(dist, JOYSTICK_MAX_RADIUS);
+    const clampedX = Math.cos(angle) * clampedDist;
+    const clampedY = Math.sin(angle) * clampedDist;
+
+    setKnobPos({ x: clampedX, y: clampedY });
+    mobileControls.moveX = clampedX / JOYSTICK_MAX_RADIUS;
+    mobileControls.moveZ = clampedY / JOYSTICK_MAX_RADIUS;
+    mobileControls.isSprinting = clampedDist / JOYSTICK_MAX_RADIUS > JOYSTICK_SPRINT_RATIO;
+  }, []);
+
   const handleJoystickTouchStart = useCallback((e: React.TouchEvent) => {
     if (joystickTouchIdRef.current !== null) return;
     const touch = e.changedTouches[0];
@@ -63,20 +93,10 @@ export default function MobileTouchControls(): React.ReactElement | null {
 
     const dx = touch.clientX - joystickCenterRef.current.x;
     const dy = touch.clientY - joystickCenterRef.current.y;
-    const dist = Math.hypot(dx, dy);
-
-    if (dist > JOYSTICK_DEADZONE) {
-      const angle = Math.atan2(dy, dx);
-      const clampedDist = Math.min(dist, JOYSTICK_MAX_RADIUS);
-      const clampedX = Math.cos(angle) * clampedDist;
-      const clampedY = Math.sin(angle) * clampedDist;
-
-      setKnobPos({ x: clampedX, y: clampedY });
-      mobileControls.moveX = clampedX / JOYSTICK_MAX_RADIUS;
-      mobileControls.moveZ = clampedY / JOYSTICK_MAX_RADIUS;
-      mobileControls.isSprinting = clampedDist / JOYSTICK_MAX_RADIUS > 0.78;
+    if (Math.hypot(dx, dy) > JOYSTICK_DEADZONE) {
+      applyJoystickDelta(dx, dy);
     }
-  }, []);
+  }, [applyJoystickDelta]);
 
   const handleJoystickTouchMove = useCallback((e: TouchEvent) => {
     if (joystickTouchIdRef.current === null) return;
@@ -86,28 +106,19 @@ export default function MobileTouchControls(): React.ReactElement | null {
       if (touch.identifier === joystickTouchIdRef.current) {
         const dx = touch.clientX - joystickCenterRef.current.x;
         const dy = touch.clientY - joystickCenterRef.current.y;
-        const dist = Math.hypot(dx, dy);
 
-        if (dist <= JOYSTICK_DEADZONE) {
+        if (Math.hypot(dx, dy) <= JOYSTICK_DEADZONE) {
           setKnobPos({ x: 0, y: 0 });
           mobileControls.moveX = 0;
           mobileControls.moveZ = 0;
           mobileControls.isSprinting = false;
         } else {
-          const angle = Math.atan2(dy, dx);
-          const clampedDist = Math.min(dist, JOYSTICK_MAX_RADIUS);
-          const clampedX = Math.cos(angle) * clampedDist;
-          const clampedY = Math.sin(angle) * clampedDist;
-
-          setKnobPos({ x: clampedX, y: clampedY });
-          mobileControls.moveX = clampedX / JOYSTICK_MAX_RADIUS;
-          mobileControls.moveZ = clampedY / JOYSTICK_MAX_RADIUS;
-          mobileControls.isSprinting = clampedDist / JOYSTICK_MAX_RADIUS > 0.78;
+          applyJoystickDelta(dx, dy);
         }
         break;
       }
     }
-  }, []);
+  }, [applyJoystickDelta]);
 
   const handleJoystickTouchEnd = useCallback((e: TouchEvent) => {
     if (joystickTouchIdRef.current === null) return;

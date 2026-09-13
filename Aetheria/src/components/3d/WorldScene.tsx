@@ -1,5 +1,17 @@
 'use client';
 
+/**
+ * WorldScene — static environment module for the Aetheria island.
+ *
+ * Owns everything that is NOT the character: instanced prop batching,
+ * landmark/tree colliders, the glow manager, grave-pit particles, the
+ * proximity interaction tracker, and the compound obstacle physics body.
+ * Rendering strategy: repeated props are grouped by model and drawn as
+ * `THREE.InstancedMesh` batches; unique interactive landmarks get measured
+ * compound colliders (`LANDMARK_COLLIDER_DEFS`, `MODEL_COLLIDER_DEFS`) so
+ * hitboxes match the visible silhouettes.
+ */
+
 import React, { useMemo, useRef, useEffect, Suspense } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
@@ -23,6 +35,12 @@ if (typeof window !== 'undefined') {
   });
 }
 
+/**
+ * getUnitScale — normalizes an authored GLTF's unit system to meters.
+ * Downloaded assets arrive in wildly different scales (cm, mm, raw units);
+ * the largest bbox dimension is snapped to the [1, 10) band so downstream
+ * code can place every prop with the same intuitive numbers.
+ */
 function getUnitScale(scene: THREE.Object3D): number {
   const box = new THREE.Box3().setFromObject(scene);
   const size = box.getSize(new THREE.Vector3());
@@ -121,7 +139,7 @@ function InstancedModelGroup({ modelPath, instances }: InstancedModelGroupProps)
       {meshData.meshes.map((data, idx) => (
         <instancedMesh
           key={idx}
-          name={`DEBUG:${modelPath}#${idx}`}
+          name={`${modelPath}#${idx}`}
           ref={(el) => { meshRefs.current[idx] = el; }}
           args={[data.geometry, data.material as THREE.Material, instances.length]}
           frustumCulled={true}
@@ -363,7 +381,8 @@ function GraveFloatingParticles(): React.ReactElement {
 // (pedestal + figure volumes), so hitboxes hug the visible silhouette:
 // no more walking into the mesh, no floating above the pedestal after a
 // jump. Offsets are in the statue's local space, base at y=0 (the clone
-// is base-shifted in LandmarkProp). Boxes rotate with the placed statue.
+// is base-shifted in usePreparedSceneClone). Boxes rotate with the placed
+// statue.
 // ══════════════════════════════════════════════════════
 interface LandmarkBox {
   halfExtents: [number, number, number];
@@ -391,16 +410,21 @@ const LANDMARK_COLLIDER_DEFS: Record<string, LandmarkBox[]> = {
   ]
 };
 
-// ══════════════════════════════════════════════════════
-// 3. LANDMARK PROPS (Unique interactive objects with solid colliders)
-// ══════════════════════════════════════════════════════
-function LandmarkProp({ obj }: { obj: PlacedObject }): React.ReactElement {
-  const { scene } = useGLTF(obj.modelPath);
+/**
+ * usePreparedSceneClone — shared prep pipeline for unique (non-instanced)
+ * props (landmarks, trees): clones the GLTF scene, normalizes its unit
+ * scale, base-shifts it to y=0, freezes matrices (the prop is static), and
+ * measures the fallback collider box that hugs the resulting geometry.
+ */
+function usePreparedSceneClone(
+  modelPath: string,
+  rawScale: number
+): { clonedScene: THREE.Group; finalScale: number; fallbackBox: LandmarkBox } {
+  const { scene } = useGLTF(modelPath);
 
-  const { clonedScene, finalScale, fallbackBox } = useMemo(() => {
+  return useMemo(() => {
     const clone = scene.clone(true);
-    const uScale = getUnitScale(clone);
-    const rawScale = Array.isArray(obj.scale) ? obj.scale[0] : (obj.scale || 1);
+    const uScale = getUnitScale(scene);
 
     const wrapper = new THREE.Group();
     wrapper.add(clone);
@@ -435,7 +459,15 @@ function LandmarkProp({ obj }: { obj: PlacedObject }): React.ReactElement {
         offset: [0, size.y / 2, 0] as [number, number, number]
       }
     };
-  }, [scene, obj.scale]);
+  }, [scene, rawScale]);
+}
+
+// ══════════════════════════════════════════════════════
+// 3. LANDMARK PROPS (Unique interactive objects with solid colliders)
+// ══════════════════════════════════════════════════════
+function LandmarkProp({ obj }: { obj: PlacedObject }): React.ReactElement {
+  const rawScale = Array.isArray(obj.scale) ? obj.scale[0] : (obj.scale || 1);
+  const { clonedScene, finalScale, fallbackBox } = usePreparedSceneClone(obj.modelPath, rawScale);
 
   const lowerPath = obj.modelPath.toLowerCase();
   const isCrypt = lowerPath.includes('crypt');
@@ -480,47 +512,8 @@ function LandmarkProp({ obj }: { obj: PlacedObject }): React.ReactElement {
 // 4. TREE PROP (Trunk colliders)
 // ══════════════════════════════════════════════════════
 function TreeProp({ obj }: { obj: PlacedObject }): React.ReactElement {
-  const { scene } = useGLTF(obj.modelPath);
-
-  const { clonedScene, finalScale, fallbackBox } = useMemo(() => {
-    const clone = scene.clone(true);
-    const uScale = getUnitScale(clone);
-    const rawScale = Array.isArray(obj.scale) ? obj.scale[0] : (obj.scale || 1);
-
-    const wrapper = new THREE.Group();
-    wrapper.add(clone);
-
-    const box = new THREE.Box3().setFromObject(wrapper);
-    if (!box.isEmpty()) {
-      clone.position.y -= box.min.y;
-    }
-
-    clone.traverse((child) => {
-      if ((child as THREE.Mesh).isMesh) {
-        const mesh = child as THREE.Mesh;
-        mesh.castShadow = false;
-        mesh.receiveShadow = false;
-        mesh.frustumCulled = true;
-        mesh.matrixAutoUpdate = false;
-        mesh.updateMatrix();
-      }
-    });
-
-    wrapper.matrixAutoUpdate = false;
-    wrapper.updateMatrix();
-
-    // Post-shift the visible mesh spans y 0..size.y — the fallback collider
-    // hugs exactly that box (sizes are translation-invariant).
-    const size = box.getSize(new THREE.Vector3()).multiplyScalar(rawScale * uScale);
-    return {
-      clonedScene: wrapper,
-      finalScale: rawScale * uScale,
-      fallbackBox: {
-        halfExtents: [size.x / 2, size.y / 2, size.z / 2] as [number, number, number],
-        offset: [0, size.y / 2, 0] as [number, number, number]
-      }
-    };
-  }, [scene, obj.scale]);
+  const rawScale = Array.isArray(obj.scale) ? obj.scale[0] : (obj.scale || 1);
+  const { clonedScene, finalScale } = usePreparedSceneClone(obj.modelPath, rawScale);
 
   return (
     <group position={obj.position} rotation={obj.rotation}>

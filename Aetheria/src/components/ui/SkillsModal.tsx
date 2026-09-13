@@ -1,27 +1,22 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useGameStore } from '../../store/useGameStore';
 import { developerProfiles, translations } from '../../data/resumeData';
 import { X, Award, CheckCircle2, ShieldCheck, Layers, Code2, Cpu, Wrench } from 'lucide-react';
 import { useModalFocus } from '../../hooks/useModalFocus';
 
+/**
+ * SkillsModal — skills & certifications dialog (Skills Altar `[E]` target).
+ * Two tabs: categorized tech-stack chips and verified certificates with
+ * verification links. Focus, Tab trap and Escape are owned by useModalFocus.
+ */
 export default function SkillsModal(): React.ReactElement | null {
   const { activeModal, setActiveModal, language } = useGameStore();
   const [activeTab, setActiveTab] = useState<'skills' | 'certifications'>('skills');
 
   const isOpen = activeModal === 'skills';
   const panelRef = useModalFocus<HTMLDivElement>(isOpen, () => setActiveModal(null));
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && activeModal === 'skills') {
-        setActiveModal(null);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeModal, setActiveModal]);
 
   if (activeModal !== 'skills') return null;
 
