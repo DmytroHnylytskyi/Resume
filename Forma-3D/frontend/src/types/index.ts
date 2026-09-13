@@ -1,3 +1,10 @@
+/**
+ * types/index.ts — shared domain model of the Forma-3D frontend.
+ * Defines the furniture catalog schema (`CatalogCategory`, `CatalogItem`),
+ * the persisted scene object (`PlacedObject`), and the union state types
+ * consumed by the Zustand store and UI components.
+ */
+
 import * as THREE from 'three';
 
 export interface CatalogCategory {

@@ -1,5 +1,12 @@
 'use client';
 
+/**
+ * Toast — global transient notification stack (bottom-right).
+ * Renders the `toasts` slice from the store with animated enter/exit
+ * transitions, auto-dismisses each toast after 3 s, and offers a manual
+ * close button. Toast type drives the icon and accent color.
+ */
+
 import { useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
