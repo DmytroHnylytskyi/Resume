@@ -7,9 +7,15 @@ Provides:
 """
 
 from typing import AsyncGenerator
+import os
+
 import pytest
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+
+# Auth modules abort at import time when JWT secrets are missing (fail-fast
+# policy), so tests inject fixed test-only keys BEFORE importing the app.
+os.environ.setdefault("SECRET_KEY", "test-only-secret-key-not-for-production")
 
 from app.database import Base, get_db
 from app.main import app

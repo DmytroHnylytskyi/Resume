@@ -13,6 +13,17 @@ from sqlalchemy.pool import StaticPool
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
+# Auth modules abort at import time when JWT secrets are missing (fail-fast
+# policy), so tests inject fixed test-only keys BEFORE importing the app.
+os.environ.setdefault("SECRET_KEY", "test-only-secret-key-not-for-production")
+os.environ.setdefault("REFRESH_SECRET_KEY", "test-only-refresh-secret-not-for-production")
+# Synthetic fixture passwords for the in-memory test users only. Defined once
+# here so login assertions in the test modules reference the same constants.
+os.environ.setdefault("TEACHER_TEST_PASSWORD", "test-only-teacher-password-not-for-production")
+os.environ.setdefault("STUDENT_TEST_PASSWORD", "test-only-student-password-not-for-production")
+TEACHER_TEST_PASSWORD = os.environ["TEACHER_TEST_PASSWORD"]
+STUDENT_TEST_PASSWORD = os.environ["STUDENT_TEST_PASSWORD"]
+
 from app.database import Base, get_db
 from app.main import app
 from app.auth_utils import get_password_hash, create_access_token
@@ -76,7 +87,7 @@ async def teacher_user(db_session: AsyncSession):
     """Creates a sample teacher user in the test database."""
     user = models.User(
         email="teacher@lumina.dev",
-        hashed_password=get_password_hash("teacherpass123"),
+        hashed_password=get_password_hash(TEACHER_TEST_PASSWORD),
         role="teacher",
     )
     db_session.add(user)
@@ -90,7 +101,7 @@ async def student_user(db_session: AsyncSession):
     """Creates a sample student user in the test database."""
     user = models.User(
         email="student@lumina.dev",
-        hashed_password=get_password_hash("studentpass123"),
+        hashed_password=get_password_hash(STUDENT_TEST_PASSWORD),
         role="student",
     )
     db_session.add(user)

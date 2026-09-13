@@ -1,3 +1,10 @@
+/**
+ * FeaturesDeck — landing "Why choose Lumina?" card deck.
+ * The four feature cards deal out one-by-one on each click and reset once
+ * the whole deck is dealt, turning the feature list into a small game-like
+ * interaction; all copy comes from the i18n tree.
+ */
+
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Video, BookOpen, Target, TrendingUp } from 'lucide-react';

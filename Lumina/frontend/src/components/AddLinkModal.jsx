@@ -1,3 +1,10 @@
+/**
+ * AddLinkModal — small dialog for attaching an external web link to a
+ * lesson. Normalizes bare domains to https://, previews the resolved
+ * favicon/domain via attachmentUtils, and hands the {title, url} pair back
+ * through `onAdd`.
+ */
+
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link as LinkIcon, X } from 'lucide-react';

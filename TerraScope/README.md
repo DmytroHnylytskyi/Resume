@@ -64,7 +64,7 @@ TerraScope is an interactive 3D geospatial intelligence and planetary visualizat
 - **ASGI Server**: Uvicorn
 - **Database & ORM**: SQLAlchemy 2.0 (Async), aiosqlite, Alembic (database migrations)
 - **HTTP Client**: HTTPX (asynchronous client with connection pooling)
-- **Security & Auth**: PyJWT (HS256 Bearer tokens), Passlib / Bcrypt password hashing
+- **Security & Auth**: PyJWT (HS256 Bearer tokens), Bcrypt password hashing
 - **Rate Limiting**: SlowAPI
 
 ### Core Capabilities
@@ -214,16 +214,20 @@ Container networking:
 - Frontend: `http://localhost:3000`
 - Backend API: `http://localhost:8000`
 
+> **Deployment note:** `frontend/backend_app/` is a deployment-time fork of
+> `backend/app/` used by `frontend/Procfile` to run the FastAPI API and
+> `next start` inside a single container/dyno (`frontend/requirements.txt`
+> holds its Python dependencies). Keep the copy in sync with `backend/app/`.
+
 ### Environment Variables
 
 #### Backend Configuration (`backend/.env` or root `.env`)
-| Variable | Default Value | Description |
+| Variable | Required | Description |
 | :--- | :--- | :--- |
-| `SECRET_KEY` | `terrascope-super-secret-jwt-key-2026` | Secret key used for signing JWT access tokens |
-| `ENV_MODE` | `development` | Deployment mode (`development` or `production`) |
-| `DATABASE_URL` | `sqlite+aiosqlite:///./sql_app.db` | SQLAlchemy async connection string |
-| `NASA_API_KEY` | `DEMO_KEY` | NASA Open API key for NeoWs queries |
-| `PORT` | `8000` | HTTP port for backend server |
+| `SECRET_KEY` | Yes — no default; the server refuses to start without it | Secret key used for signing JWT access tokens. Generate with `python -c "import secrets; print(secrets.token_urlsafe(48))"` |
+| `DATABASE_URL` | No (`sqlite+aiosqlite:///./sql_app.db`) | SQLAlchemy async connection string |
+| `NASA_API_KEY` | No (`DEMO_KEY`) | NASA Open API key for NeoWs queries |
+| `PORT` | No (`8000`) | HTTP port for backend server |
 
 #### Frontend Configuration (`frontend/.env.local`)
 | Variable | Default Value | Description |
@@ -310,7 +314,7 @@ TerraScope — інтерактивна платформа для 3D-візуа�
 - **ASGI-сервер**: Uvicorn
 - **База даних та ORM**: SQLAlchemy 2.0 (Async), aiosqlite, Alembic (міграції бази даних)
 - **HTTP-клієнт**: HTTPX (асинхронний клієнт з пулом з'єднань)
-- **Безпека та автентифікація**: PyJWT (токени HS256 Bearer), хешування паролів Passlib / Bcrypt
+- **Безпека та автентифікація**: PyJWT (токени HS256 Bearer), хешування паролів Bcrypt
 - **Лімітування запитів**: SlowAPI
 
 ### Ключові можливості
@@ -460,16 +464,20 @@ docker compose up -d --build
 - Фронтенд: `http://localhost:3000`
 - Бекенд API: `http://localhost:8000`
 
+> **Примітка щодо розгортання:** `frontend/backend_app/` — це копія `backend/app/` для деплою,
+> яку використовує `frontend/Procfile`, щоб запускати FastAPI API та `next start` в одному
+> контейнері (Python-залежності — у `frontend/requirements.txt`). Тримайте копію синхронною
+> з `backend/app/`.
+
 ### Змінні оточення
 
 #### Конфігурація бекенду (`backend/.env` або кореневий `.env`)
-| Змінна | Значення за замовчуванням | Опис |
+| Змінна | Обов'язкова | Опис |
 | :--- | :--- | :--- |
-| `SECRET_KEY` | `terrascope-super-secret-jwt-key-2026` | Секретний ключ для підпису токенів доступу JWT |
-| `ENV_MODE` | `development` | Режим розгортання (`development` або `production`) |
-| `DATABASE_URL` | `sqlite+aiosqlite:///./sql_app.db` | Рядок асинхронного підключення SQLAlchemy |
-| `NASA_API_KEY` | `DEMO_KEY` | Ключ NASA Open API для запитів до NeoWs |
-| `PORT` | `8000` | HTTP-порт для сервера бекенду |
+| `SECRET_KEY` | Так — без значення за замовчуванням; сервер не стартує без неї | Секретний ключ для підпису токенів доступу JWT. Згенеруйте: `python -c "import secrets; print(secrets.token_urlsafe(48))"` |
+| `DATABASE_URL` | Ні (`sqlite+aiosqlite:///./sql_app.db`) | Рядок асинхронного підключення SQLAlchemy |
+| `NASA_API_KEY` | Ні (`DEMO_KEY`) | Ключ NASA Open API для запитів до NeoWs |
+| `PORT` | Ні (`8000`) | HTTP-порт для сервера бекенду |
 
 #### Конфігурація фронтенду (`frontend/.env.local`)
 | Змінна | Значення за замовчуванням | Опис |

@@ -107,7 +107,7 @@ export const dayNightState = {
  */
 let lastCssSync = 0;
 
-export function syncCssDynamicVariables(): void {
+function syncCssDynamicVariables(): void {
   if (typeof document === 'undefined') return;
   // ~30 Hz cap: these 6 properties live on :root, so every write invalidates
   // style for the WHOLE document (all glass panels, glows, buttons). During a

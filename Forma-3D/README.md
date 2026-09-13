@@ -141,13 +141,14 @@ Forma-3D is a browser-based 3D scene editor running via WebGL. The application a
 │   │   │   ├── FurnitureCatalog.tsx
 │   │   │   ├── InstructionModal.tsx
 │   │   │   ├── InteractivePlacementGhost.tsx
+│   │   │   ├── MobileNoticeModal.tsx
 │   │   │   ├── PlaceableObject.tsx
 │   │   │   ├── SceneViewport.tsx
 │   │   │   ├── Toast.tsx
 │   │   │   ├── TransformToolbar.tsx
 │   │   │   └── UserProfileModal.tsx
 │   │   ├── data/
-│   │   │   └── catalogData.ts     # 183 asset catalog items and categories
+│   │   │   └── catalogData.ts     # 66 asset catalog items and categories
 │   │   ├── hooks/
 │   │   │   └── useHotkeys.ts      # Global keyboard shortcuts listener
 │   │   ├── store/
@@ -166,6 +167,13 @@ Forma-3D is a browser-based 3D scene editor running via WebGL. The application a
 ├── docker-compose.yml             # Multi-container Docker composition
 └── README.md
 ```
+
+> **Deployment note:** `frontend/backend_app/` is a deployment-time fork of
+> `backend/app/` used by `frontend/Procfile` to run the FastAPI API and
+> `next start` inside a single container/dyno (`frontend/requirements.txt`
+> holds its Python dependencies). Keep the copy in sync with `backend/app/`;
+> only `main.py` intentionally differs (it additionally mounts the routers
+> under the `/api` prefix).
 
 ---
 

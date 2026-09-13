@@ -1,3 +1,9 @@
+/**
+ * i18n.js — i18next instance with the full EN/UK translation trees inlined.
+ * Both locales ship together (no async loading), so switching is instant;
+ * the trees are the single source of UI copy for the entire app.
+ */
+
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 

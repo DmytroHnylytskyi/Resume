@@ -1,3 +1,11 @@
+/**
+ * CourseForm — shared create/edit form for courses with their lessons.
+ * Used by both CreateCourseModal and EditCourseModal: renders the course
+ * name/description fields, a repeatable lesson editor (title, description,
+ * resource type from RESOURCE_TYPES) with file/link attachments per lesson,
+ * and delegates uploads to the shared upload utils.
+ */
+
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Paperclip, Link as LinkIcon } from 'lucide-react';

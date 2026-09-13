@@ -69,6 +69,11 @@ Lumina/
 └── .github/workflows/     # GitHub Actions CI pipeline
 ```
 
+> **Deployment note:** `frontend/app/` and `frontend/requirements.txt` are a deployment-time
+> fork of `backend/app/` used by `frontend/Procfile` to run the API and serve the built SPA
+> from a single dyno. Its `main.py` intentionally differs (adds `/api` route aliases and
+> static `dist/` SPA serving). Keep the copy in sync with `backend/app/`.
+
 ## Running the Application
 
 ### Docker (Recommended)
@@ -179,6 +184,11 @@ Lumina/
 ├── docker-compose.yml     # Оркестрація кількох контейнерів
 └── .github/workflows/     # CI конвеєр GitHub Actions
 ```
+
+> **Примітка щодо розгортання:** `frontend/app/` та `frontend/requirements.txt` — це копія
+> `backend/app/` для деплою, яку використовує `frontend/Procfile`, щоб запускати API та
+> роздавати зібрану SPA з одного дина. Її `main.py` свідомо відрізняється (додає аліаси `/api`
+> та роздачу статики `dist/`). Тримайте копію синхронною з `backend/app/`.
 
 ## Запуск додатку
 

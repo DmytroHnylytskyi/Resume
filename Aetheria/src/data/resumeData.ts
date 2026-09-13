@@ -591,6 +591,3 @@ export const translations: Record<Locale, Translations> = {
     }
   }
 };
-
-// Helper for backward compatibility
-export const developerProfile = developerProfiles.uk;

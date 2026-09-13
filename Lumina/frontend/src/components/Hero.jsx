@@ -1,3 +1,9 @@
+/**
+ * Hero — landing hero banner.
+ * Displays the headline/subtitle copy and the primary CTA that scrolls the
+ * visitor down to the "How It Works" guide section.
+ */
+
 import React from 'react';
 import './Hero.css';
 import { useTranslation } from 'react-i18next';

@@ -1,3 +1,9 @@
+/**
+ * main.jsx — application bootstrap.
+ * Mounts React with the provider stack: TanStack Query (optimistic-update
+ * caching layer) → React Router → AuthProvider (JWT session context) → App.
+ */
+
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';

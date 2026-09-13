@@ -1,3 +1,11 @@
+/**
+ * EditCourseModal — edit an existing course in place.
+ * Hydrates the shared CourseForm from the course's current lessons, drops
+ * lessons whose title was cleared, converts YouTube URLs to embed form,
+ * and PUTs the full course payload (title, description, lessons) to the
+ * teacher API before notifying the parent via `onCourseUpdated`.
+ */
+
 import { API_URL } from '../config';
 import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from './AuthContext';

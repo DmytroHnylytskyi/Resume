@@ -6,6 +6,12 @@ import { AuthContext } from '../components/AuthContext';
 import TeacherDashboard from '../components/TeacherDashboard';
 import EditCourseModal from '../components/EditCourseModal';
 
+/**
+ * TeacherPage — educator workspace route (`/teacher`).
+ * Loads the teacher's own courses and per-course schedule dates directly
+ * from the API, exposes edit-in-place via EditCourseModal, and passes the
+ * fetched data down to TeacherDashboard for student/assignment management.
+ */
 export default function TeacherPage() {
   const { user, token } = useContext(AuthContext);
   const { t } = useTranslation();

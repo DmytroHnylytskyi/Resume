@@ -1,3 +1,10 @@
+/**
+ * CreateCourseModal — course authoring dialog.
+ * Collects the course meta and its lessons through the shared CourseForm,
+ * converts YouTube watch URLs to embed form, and POSTs the new course (or
+ * a personal-library course when `isPersonal` is set) to the backend.
+ */
+
 import { API_URL } from '../config';
 import React, { useState, useContext } from 'react';
 import { AuthContext } from './AuthContext';

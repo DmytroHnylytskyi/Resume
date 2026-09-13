@@ -1,3 +1,10 @@
+/**
+ * HowToUse — "How it works" onboarding slider on the landing page.
+ * Presents the product walkthrough (register → choose role → build library
+ * → assign → track) as swipeable/clickable steps with inline SVG icons,
+ * supporting both pointer and touch navigation.
+ */
+
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import './HowToUse.css';

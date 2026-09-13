@@ -1,3 +1,10 @@
+/**
+ * AuthModal — sign-in / registration dialog.
+ * Posts the OAuth2 form credentials to the FastAPI /auth endpoints and
+ * stores the returned JWT in the AuthContext session. Visibility is
+ * controlled by App (opened from the Navbar sign-in button).
+ */
+
 import { API_URL } from '../config';
 import React, { useState, useContext } from 'react';
 import { AuthContext } from './AuthContext';

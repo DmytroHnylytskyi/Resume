@@ -20,13 +20,20 @@ from . import database, models
 
 load_dotenv()
 
-# JWT configuration constants
-DEFAULT_SECRET = "terrascope-super-secret-jwt-key-2026"
-SECRET_KEY = os.getenv("SECRET_KEY", DEFAULT_SECRET)
-ENV_MODE = os.getenv("ENV_MODE", "development")
+# JWT configuration constants. The signing key is mandatory: silently
+# falling back to a hard-coded secret would let a misconfigured deployment
+# sign forgeable tokens, so the process refuses to start without one.
+def _required_secret(name: str) -> str:
+    """Returns the mandatory environment variable or aborts at startup."""
+    value = os.getenv(name)
+    if not value:
+        raise RuntimeError(
+            f"Environment variable {name} is required but not set. "
+            'Generate one with: python -c "import secrets; print(secrets.token_urlsafe(48))"'
+        )
+    return value
 
-if ENV_MODE == "production" and SECRET_KEY == DEFAULT_SECRET:
-    raise ValueError("CRITICAL SECURITY ERROR: SECRET_KEY must be set in environment variables for production deployment.")
+SECRET_KEY = _required_secret("SECRET_KEY")
 
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24 hours validity

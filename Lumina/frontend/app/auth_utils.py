@@ -20,8 +20,21 @@ from . import database, models
 
 load_dotenv()
 
-SECRET_KEY = os.getenv("SECRET_KEY", "lumina-dev-secret-key-change-in-production-123456789")
-REFRESH_SECRET_KEY = os.getenv("REFRESH_SECRET_KEY", "lumina-refresh-secret-key-change-in-prod-987654321")
+# JWT configuration. The signing keys are mandatory: silently falling back
+# to hard-coded secrets would let a misconfigured deployment sign forgeable
+# tokens, so the process refuses to start without them.
+def _required_secret(name: str) -> str:
+    """Returns the mandatory environment variable or aborts at startup."""
+    value = os.getenv(name)
+    if not value:
+        raise RuntimeError(
+            f"Environment variable {name} is required but not set. "
+            'Generate one with: python -c "import secrets; print(secrets.token_urlsafe(48))"'
+        )
+    return value
+
+SECRET_KEY = _required_secret("SECRET_KEY")
+REFRESH_SECRET_KEY = _required_secret("REFRESH_SECRET_KEY")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "60"))  # 1 hour
 REFRESH_TOKEN_EXPIRE_DAYS = int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS", "7"))  # 7 days

@@ -84,8 +84,11 @@ The application features a dual-experience architecture:
 │   │       ├── MobileTouchControls.tsx  # Dual-zone virtual joystick and camera touch
 │   │       ├── ProjectModal.tsx         # Detailed project showcase modal
 │   │       ├── ResumePrintDocument.tsx  # Executive print-only CV document for PDF
+│   │       ├── RotatingRole.tsx         # Hero specialty phrase carousel
 │   │       ├── SkillsModal.tsx          # Tech stack and verified certificates tabs
-│   │       └── TimeOfDaySlider.tsx      # Continuous day/night cycle sky scrubber
+│   │       ├── TimeOfDaySlider.tsx      # Continuous day/night cycle sky scrubber
+│   │       ├── TypedBio.tsx             # Terminal-style self-typing hero bio
+│   │       └── icons.tsx                # Shared inline SVG brand icons
 │   ├── data/
 │   │   ├── islandScene.json   # Placed 3D object positions, rotations, and scales
 │   │   └── resumeData.ts      # Profile, projects, certifications, and translations

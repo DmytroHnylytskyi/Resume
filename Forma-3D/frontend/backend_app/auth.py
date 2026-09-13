@@ -22,7 +22,20 @@ from .schemas import TokenData
 
 load_dotenv()
 
-SECRET_KEY = os.getenv("SECRET_KEY", "super-secret-forma-3d-jwt-key-change-in-production-32chars")
+# JWT configuration. The signing key is mandatory: silently falling back to
+# a hard-coded secret would let a misconfigured deployment sign forgeable
+# tokens, so the process refuses to start without one.
+def _required_secret(name: str) -> str:
+    """Returns the mandatory environment variable or aborts at startup."""
+    value = os.getenv(name)
+    if not value:
+        raise RuntimeError(
+            f"Environment variable {name} is required but not set. "
+            'Generate one with: python -c "import secrets; print(secrets.token_urlsafe(48))"'
+        )
+    return value
+
+SECRET_KEY = _required_secret("SECRET_KEY")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24
 REFRESH_TOKEN_EXPIRE_DAYS = 30

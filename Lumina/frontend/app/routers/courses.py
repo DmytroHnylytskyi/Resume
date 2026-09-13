@@ -5,7 +5,6 @@ dynamic media type detection, homework submissions, and student completion progr
 """
 
 import os
-import re
 import shutil
 import uuid
 from datetime import datetime, timezone
@@ -197,8 +196,11 @@ async def upload_file(
             detail=f"File extension '.{ext}' is not allowed. Allowed: {', '.join(sorted(ALLOWED_EXTENSIONS))}",
         )
 
-    clean_name = re.sub(r"[^a-zA-Z0-9_\.-]", "_", raw_filename)
-    unique_name = f"{uuid.uuid4().hex}_{clean_name}"
+    # Store the file under a fully opaque server-generated name: the client
+    # never influences any byte of the on-disk path (the original filename is
+    # kept as response metadata only). This rules out path traversal and
+    # filename-collision attacks by construction.
+    unique_name = f"{uuid.uuid4().hex}.{ext}"
 
     if not os.environ.get("CLOUDINARY_URL"):
         os.makedirs("uploads", exist_ok=True)

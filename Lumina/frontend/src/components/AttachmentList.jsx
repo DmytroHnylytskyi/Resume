@@ -1,8 +1,15 @@
+/**
+ * AttachmentList — renders a lesson's attachment/materials list.
+ * Classifies every attachment through attachmentUtils (category detection,
+ * icon mapping, byte formatting) and supports inline preview for browser-
+ * friendly types plus download/open actions for the rest.
+ */
+
 import React, { useState } from 'react';
-import { 
-  FileText, FileSpreadsheet, FileArchive, Image as ImageIcon, 
-  Film, Music, Globe, FileCode, Layout, HardDrive, Video, 
-  Paperclip, ExternalLink, Download, Eye, X 
+import {
+  FileText, FileSpreadsheet, FileArchive, Image as ImageIcon,
+  Film, Music, Globe, FileCode, Layout, HardDrive, Video,
+  Paperclip, ExternalLink, Download, Eye, X
 } from 'lucide-react';
 import { 
   normalizeAttachment, 

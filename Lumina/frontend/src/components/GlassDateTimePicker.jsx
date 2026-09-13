@@ -1,3 +1,11 @@
+/**
+ * GlassDateTimePicker — glassmorphism calendar popover for course deadlines.
+ * Renders a month grid with localized (EN/UK) labels and a time slot, and
+ * portals the panel to <body> so it escapes any overflow container. The
+ * CAL_VARS list forwards the consumer's CSS custom properties to the portal
+ * so the popover matches its trigger's glass theme.
+ */
+
 import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { Calendar, ChevronLeft, ChevronRight, Clock, Check, X } from 'lucide-react';

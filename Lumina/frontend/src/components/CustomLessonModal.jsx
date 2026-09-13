@@ -1,3 +1,11 @@
+/**
+ * CustomLessonModal — build a one-off lesson for a specific student.
+ * Collects the lesson title/description, a single resource of any type
+ * (video URL, PDF/Drive/document upload, or web link), uploads attachments
+ * through the shared upload utils, then posts the custom assignment to the
+ * teacher API and reports success via `onLessonCreated`.
+ */
+
 import { API_URL } from '../config';
 import React, { useState, useContext } from 'react';
 import { AuthContext } from './AuthContext';

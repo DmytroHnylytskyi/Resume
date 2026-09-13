@@ -1,3 +1,11 @@
+/**
+ * attachmentUtils — shared helpers for lesson attachments & materials.
+ * Provides byte formatting, hostname extraction, and `normalizeAttachment`,
+ * which maps the several attachment shapes stored by the backend (legacy
+ * URL strings, {name,url} objects, uploaded file records) onto one runtime
+ * shape with a detected category used for icons and preview decisions.
+ */
+
 export const formatBytes = (bytes) => {
   if (!bytes || isNaN(bytes) || bytes === 0) return '';
   const k = 1024;
