@@ -3729,8 +3729,11 @@ html, body {
   }
 
   .classic-header {
-    height: auto;
-    min-height: calc(52px + env(safe-area-inset-top, 0px));
+    /* Fixed height (not auto): the sticky mobile nav chips align to the
+       header bottom, so a content-driven height left them detached from the
+       header with a strip of page showing between the two bars. */
+    height: calc(64px + env(safe-area-inset-top, 0px));
+    min-height: calc(64px + env(safe-area-inset-top, 0px));
     padding-top: max(8px, env(safe-area-inset-top, 8px));
     padding-bottom: 8px;
     padding-left: max(14px, env(safe-area-inset-left, 14px));
@@ -3767,7 +3770,7 @@ html, body {
   .classic-header-actions {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     flex-shrink: 0;
   }
 
@@ -3781,21 +3784,27 @@ html, body {
   .theme-toggle-btn {
     width: 32px;
     height: 32px;
-    border-radius: 9px !important;
+    border-radius: 50% !important;
   }
 
   .lang-toggle-group {
     height: 32px;
-    border-radius: 9px;
+    border-radius: 999px;
     padding: 2px;
     gap: 1px;
+  }
+
+  /* .mini carries (0,2,0) specificity and a fixed 34px height that would
+     otherwise out-rank the single-class mobile overrides above. */
+  .lang-toggle-group.mini {
+    height: 32px;
   }
 
   .lang-btn {
     height: 26px;
     line-height: 26px;
     padding: 0 6px;
-    border-radius: 6px;
+    border-radius: 999px;
     font-size: 12px;
     font-weight: 700;
   }
@@ -3803,7 +3812,7 @@ html, body {
   .switch-3d-btn {
     height: 32px;
     padding: 0 10px;
-    border-radius: 9px;
+    border-radius: 999px;
     font-size: 12px;
     gap: 5px;
     white-space: nowrap;
@@ -3819,6 +3828,18 @@ html, body {
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.3px;
+  }
+
+  /* CTA matches the 32px control row (the ≤1360 tier sets a smaller
+     padding/height, which left it visibly shorter than its neighbours). */
+  .classic-header .header-cta-pill {
+    height: 32px !important;
+    padding: 0 13px !important;
+  }
+
+  .classic-header .header-cta-pill svg {
+    width: 15px;
+    height: 15px;
   }
 
   .classic-main-content {
@@ -3894,7 +3915,7 @@ html, body {
   }
 
   .classic-header-actions {
-    gap: 4px;
+    gap: 3px;
   }
 
   .header-controls-cluster {
@@ -3910,6 +3931,10 @@ html, body {
     height: 30px;
   }
 
+  .lang-toggle-group.mini {
+    height: 30px;
+  }
+
   .lang-btn {
     height: 24px;
     line-height: 24px;
@@ -3919,7 +3944,14 @@ html, body {
 
   .switch-3d-btn {
     height: 30px;
-    padding: 0 8px;
+    padding: 0 6px;
+  }
+
+  /* Padding only: the 32px height comes from the ≤900px block so the CTA
+     stays on the same control row height everywhere (the 5600-block rules
+     later in the file pin theme/lang/3D at 32px even here). */
+  .classic-header .header-cta-pill {
+    padding: 0 8px !important;
   }
 }
 
@@ -5600,8 +5632,8 @@ nextjs-portal,
 @media (orientation: landscape) and (max-height: 600px), (max-width: 1080px) and (orientation: landscape), (max-width: 900px) {
   /* ── 0. Classic Landing View Top Header (Landscape Mobile) ── */
   .classic-header {
-    height: calc(40px + env(safe-area-inset-top, 0px)) !important;
-    min-height: calc(40px + env(safe-area-inset-top, 0px)) !important;
+    height: calc(52px + env(safe-area-inset-top, 0px)) !important;
+    min-height: calc(52px + env(safe-area-inset-top, 0px)) !important;
     padding-top: max(4px, env(safe-area-inset-top, 4px)) !important;
     padding-bottom: 4px !important;
     padding-left: max(16px, env(safe-area-inset-left, 16px)) !important;
@@ -5622,9 +5654,9 @@ nextjs-portal,
   }
 
   .switch-3d-btn {
-    height: 30px !important;
+    height: 32px !important;
     padding: 0 10px !important;
-    border-radius: 9px !important;
+    border-radius: 999px !important;
     font-size: 12px !important;
   }
 
@@ -5633,7 +5665,10 @@ nextjs-portal,
     top: max(4px, env(safe-area-inset-top, 4px));
     left: max(10px, env(safe-area-inset-left, 10px));
     right: max(10px, env(safe-area-inset-right, 10px));
-    height: 38px;
+    /* 48px: coarse-pointer controls are capped at 40px (see the touch-floor
+       block at the end of the file) — a 38px bar left them taller than the
+       bar itself. */
+    height: 48px;
     padding: 0 10px;
     gap: 6px;
     display: flex;
@@ -5674,18 +5709,21 @@ nextjs-portal,
   .top-nav-shortcuts {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
     flex-shrink: 0;
   }
 
-  .nav-shortcut-btn {
-    width: 30px;
-    height: 30px;
+  /* :not(slider-fallback) — otherwise this !important display rule (later in
+     the file) beats the ≥641px `display: none` on .slider-fallback-btn and
+     the moon fallback shows NEXT TO the slider in 3D landscape (641-900px). */
+  .nav-shortcut-btn:not(.slider-fallback-btn) {
+    width: 32px;
+    height: 32px;
     padding: 0 !important;
     display: inline-flex !important;
     align-items: center;
     justify-content: center;
-    border-radius: 8px !important;
+    border-radius: 50% !important;
     flex-shrink: 0;
   }
 
@@ -5700,30 +5738,41 @@ nextjs-portal,
   .header-controls-cluster {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
     flex-shrink: 0;
   }
 
   .theme-toggle-btn {
-    width: 30px;
-    height: 30px;
-    border-radius: 8px !important;
+    width: 32px;
+    height: 32px;
+    border-radius: 50% !important;
     flex-shrink: 0;
   }
 
+  /* Slider matches the 32px circular/pill control row instead of floating
+     at 34px with a 12px radius. */
+  .time-of-day-slider {
+    height: 32px;
+    border-radius: 999px;
+  }
+
   .lang-toggle-group {
-    height: 30px;
-    border-radius: 8px;
+    height: 32px;
+    border-radius: 999px;
     padding: 2px;
     gap: 1px;
     flex-shrink: 0;
+  }
+
+  .lang-toggle-group.mini {
+    height: 32px;
   }
 
   .lang-btn {
     height: 24px;
     line-height: 24px;
     padding: 0 5px;
-    border-radius: 5px;
+    border-radius: 999px;
     font-size: 12px;
     font-weight: 700;
   }
@@ -6829,6 +6878,25 @@ nextjs-portal,
   }
 }
 
+/* Glue the sticky chips to the header bottom: the offset must equal the
+   exact header height per orientation, otherwise scrolling shows a strip of
+   page between the two bars or tucks the chips under the header. */
+@media (max-width: 900px) {
+  .classic-mobile-nav {
+    top: calc(64px + env(safe-area-inset-top, 0px));
+  }
+}
+
+@media (orientation: landscape) and (max-height: 600px),
+  (max-width: 1080px) and (orientation: landscape) {
+  /* Landscape header is 52px + safe-area (see the mobile landscape block);
+     also slim the row down so both bars stay light on short screens. */
+  .classic-mobile-nav {
+    top: calc(52px + env(safe-area-inset-top, 0px));
+    padding: 6px 12px;
+  }
+}
+
 .classic-mobile-chip {
   flex-shrink: 0;
   padding: 7px 14px;
@@ -7121,6 +7189,42 @@ nextjs-portal,
   .island-top-bar .time-of-day-slider {
     display: none;
   }
+
+  /* 3D HUD compact footprint (≤640px is portrait on touch devices, where the
+     orientation guard overlays the world; narrow desktop windows still need
+     every control visible): pre-32px icon sizes and tighter gaps keep the
+     UA/EN group inside the bar; the text tag yields its width to them.
+     min-height caps also defeat the generic coarse-pointer 44px floor, which
+     would otherwise stretch these 30px controls into olives. */
+  .island-top-bar .nav-shortcut-btn:not(.slider-fallback-btn) {
+    width: 30px;
+    height: 30px;
+    min-height: 30px;
+  }
+
+  .island-top-bar .top-nav-shortcuts,
+  .island-top-bar .header-controls-cluster {
+    gap: 4px;
+  }
+
+  .island-top-bar .theme-toggle-btn {
+    width: 30px;
+    height: 30px;
+    min-height: 30px;
+  }
+
+  .island-top-bar .lang-toggle-group {
+    height: 30px;
+    min-height: 30px;
+  }
+
+  .island-top-bar .lang-toggle-group .lang-btn {
+    min-height: 24px;
+  }
+
+  .island-top-bar .brand-tag {
+    display: none;
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -7184,6 +7288,97 @@ nextjs-portal,
   .contact-quick-copy-btn {
     width: 44px;
     height: 44px;
+  }
+}
+
+/* Portrait / tablet: keep the a11y 44px floor on the classic control row —
+   the portrait header (64px + safe-area) has room for it. */
+@media (pointer: coarse) and (max-width: 1040px) {
+  .classic-header .header-cta-pill,
+  .classic-header .switch-3d-btn {
+    min-height: 44px;
+  }
+}
+
+/* Landscape phones & small tablets: both top bars are compact (island 48px,
+   classic header 52px + safe-area), so the 44px coarse floor made controls
+   overflow the bars (the lang group even reached 54px). Cap the WHOLE
+   landscape top-bar row at 40px so every control fits with margins. */
+@media (pointer: coarse) and (orientation: landscape) and (max-height: 600px),
+  (pointer: coarse) and (max-width: 1080px) and (orientation: landscape) {
+  .classic-header .header-cta-pill,
+  .classic-header .switch-3d-btn,
+  .island-top-bar .nav-shortcut-btn,
+  .island-top-bar .theme-toggle-btn {
+    min-height: 40px;
+    min-width: 40px;
+  }
+
+  /* The generic coarse block pins the theme toggle at explicit 44×44 —
+     re-pin it at 40px here (same property, later in the file). */
+  .classic-header .theme-toggle-btn,
+  .island-top-bar .theme-toggle-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* 42px: 40 would leave the 32px lang buttons flush against the group's
+     4px coarse padding + border. */
+  .classic-header .lang-toggle-group,
+  .island-top-bar .lang-toggle-group {
+    min-height: 42px;
+  }
+
+  .classic-header .lang-toggle-group .lang-btn,
+  .island-top-bar .lang-toggle-group .lang-btn {
+    height: 32px;
+    line-height: 32px;
+    min-height: 32px;
+    min-width: 40px;
+  }
+
+  .classic-header .time-of-day-slider,
+  .island-top-bar .time-of-day-slider {
+    min-height: 40px;
+  }
+
+  /* Keeps the 7-control HUD row inside 641px-wide landscape viewports. */
+  .island-top-bar .tod-slider-track-wrapper {
+    width: 72px;
+  }
+
+  /* Placed after the generic coarse block so 40px wins over its 44px. */
+  .classic-mobile-chip {
+    min-height: 40px;
+  }
+}
+
+/* Portrait tablets (641-1040px): the island bar is also 48px there, so the
+   same 40px cap applies — without it the coarse floor produced 32×44 olive
+   buttons and a 54px lang group. ≤640px portrait keeps its compact 30px
+   footprint (the orientation guard covers touch users there). */
+@media (pointer: coarse) and (min-width: 641px) and (max-width: 1040px) {
+  .island-top-bar .nav-shortcut-btn,
+  .island-top-bar .theme-toggle-btn {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  .island-top-bar .lang-toggle-group {
+    min-height: 42px;
+  }
+
+  .island-top-bar .lang-toggle-group .lang-btn {
+    height: 32px;
+    line-height: 32px;
+    min-height: 32px;
+    min-width: 40px;
+  }
+
+  .island-top-bar .time-of-day-slider {
+    min-height: 40px;
   }
 }
 
