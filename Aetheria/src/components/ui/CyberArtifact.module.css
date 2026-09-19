@@ -1,0 +1,263 @@
+.host {
+  --cyber-cyan: #45e8ff;
+  --cyber-magenta: #ff4ca8;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  contain: strict;
+}
+
+.field {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.dock {
+  position: fixed;
+  left: max(20px, env(safe-area-inset-left));
+  bottom: max(20px, env(safe-area-inset-bottom));
+  z-index: var(--z-hud-widget, 20);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  isolation: isolate;
+  border: 1px solid rgba(var(--tod-glow-rgb, 100, 160, 255), 0.65);
+  border-radius: 9999px;
+  background: var(--bg-card-solid);
+  box-shadow:
+    0 12px 36px -12px rgba(0, 0, 0, 0.65),
+    0 0 22px -5px rgba(69, 232, 255, 0.5),
+    0 0 44px -15px rgba(255, 76, 168, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1px 12px rgba(var(--tod-glow-rgb, 100, 160, 255), 0.16);
+  pointer-events: auto;
+  user-select: none;
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .dock {
+    background:
+      linear-gradient(125deg, rgba(69, 232, 255, 0.14), rgba(255, 76, 168, 0.09)),
+      color-mix(in srgb, var(--bg-card-solid) 72%, transparent);
+    backdrop-filter: blur(26px) saturate(180%);
+    -webkit-backdrop-filter: blur(26px) saturate(180%);
+  }
+}
+
+.dock::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(110deg, transparent 15%, rgba(255, 255, 255, 0.14) 45%, transparent 65%);
+}
+
+.dockButton {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.dockButton[aria-pressed='true'] {
+  color: var(--text-primary);
+  background: rgba(var(--tod-glow-rgb, 100, 160, 255), 0.17);
+  border-color: rgba(var(--tod-glow-rgb, 100, 160, 255), 0.65);
+  box-shadow:
+    inset 0 0 15px rgba(var(--tod-glow-rgb, 100, 160, 255), 0.2),
+    0 0 12px -4px var(--cyber-cyan);
+}
+
+.dockButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.dockButton:focus-visible {
+  outline: 2px solid var(--tod-glow, #45e8ff);
+  outline-offset: 3px;
+}
+
+.dockIcon {
+  display: block;
+  flex-shrink: 0;
+  width: 15px;
+  height: 15px;
+  color: inherit;
+}
+
+.dockLabel {
+  display: inline-block;
+  line-height: 1;
+}
+
+.dockDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(140, 150, 170, 0.5);
+  flex-shrink: 0;
+}
+
+.dockButton[aria-pressed='true'] .dockDot {
+  background: #22c55e;
+  box-shadow: 0 0 10px #22c55e, 0 0 3px #22c55e;
+}
+
+.dockButton[data-state='waiting'] .dockDot {
+  background: #eab308;
+  box-shadow: 0 0 8px #eab308;
+}
+
+.dockButton[data-state='unavailable'] .dockDot {
+  background: #ef4444;
+  box-shadow: 0 0 6px rgba(239, 68, 68, 0.5);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dock:hover {
+    border-color: var(--cyber-cyan);
+  }
+
+  .dockButton:hover {
+    color: var(--text-primary);
+    background: var(--badge-bg);
+    border-color: rgba(var(--tod-glow-rgb, 100, 160, 255), 0.4);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .dockButton {
+    transition: transform 180ms ease;
+  }
+
+  .dockIcon {
+    transition: transform 200ms ease;
+  }
+
+  .dockButton:active {
+    transform: scale(0.97);
+  }
+
+  .dockButton[data-state='waiting'] .dockDot {
+    animation: pulseDot 1s infinite alternate ease-in-out;
+  }
+}
+
+@keyframes pulseDot {
+  from { opacity: 0.45; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1.15); }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .host [data-project-media]:hover {
+    filter:
+      drop-shadow(-2px 0 0 rgba(69, 232, 255, 0.45))
+      drop-shadow(2px 0 0 rgba(255, 76, 168, 0.4));
+  }
+
+  .host [data-spatial-card]:hover h3,
+  .host [data-contact-link]:hover strong,
+  .host [data-editorial-card]:hover p {
+    text-shadow: -1px 0 rgba(69, 232, 255, 0.65), 1px 0 rgba(255, 76, 168, 0.6);
+  }
+
+  .dockButton:hover .dockIcon {
+    transform: scale(1.08);
+  }
+}
+
+@media (max-width: 600px) {
+  .dock {
+    padding: 3px;
+    gap: 3px;
+  }
+
+  .dockButton {
+    height: 34px;
+    padding: 0 9px;
+    font-size: 11.5px;
+    gap: 5px;
+  }
+
+  .dockIcon {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+@media (pointer: coarse) {
+  .dockButton {
+    min-width: 44px;
+    height: 44px;
+    padding: 0 12px;
+  }
+
+  .field {
+    opacity: 0.6;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .host [data-project-media] {
+    filter: none;
+  }
+
+  .dock,
+  .dockButton,
+  .dockIcon,
+  .dockDot {
+    animation: none;
+    transition: none;
+    transform: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .overlay,
+  .dock::before {
+    display: none;
+  }
+
+  .dock,
+  .dockButton {
+    border-color: CanvasText;
+    background: Canvas;
+    color: CanvasText;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .dockButton[aria-pressed='true'] {
+    outline: 2px solid Highlight;
+  }
+}
+
+@media print {
+  .overlay,
+  .dock {
+    display: none !important;
+  }
+}

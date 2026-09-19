@@ -1,0 +1,253 @@
+.host {
+  --quantum-edge: rgba(var(--tod-glow-rgb), 0.65);
+}
+
+/* Override fixed chromatic colors with the shared sky palette. */
+.host [data-project-media]:hover {
+  filter: none;
+}
+
+.host [data-spatial-grid] {
+  perspective: 1250px;
+  perspective-origin: 50% 40%;
+}
+
+.host [data-quantum-card][data-spatial-card],
+.host [data-quantum-card][data-spatial-orbit],
+.host [data-quantum-card][data-quantum-console] {
+  --layer-depth: var(--quantum-depth, 0.65);
+  transform:
+    translate3d(0, var(--spatial-y, 0px), var(--spatial-z, 0px))
+    rotateX(var(--spatial-rx, 0deg))
+    rotateY(var(--spatial-ry, 0deg));
+  transition: none;
+}
+
+.host [data-quantum-card][data-spatial-card]::before {
+  background:
+    radial-gradient(
+      280px circle at var(--quantum-light-x, 50%) var(--quantum-light-y, 30%),
+      rgba(var(--tod-glow-rgb), 0.24),
+      transparent 72%
+    ) padding-box,
+    linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
+    conic-gradient(
+      from 130deg at var(--quantum-light-x, 50%) var(--quantum-light-y, 30%),
+      var(--border-subtle),
+      var(--tod-glow),
+      var(--tod-sky-horizon),
+      var(--border-subtle),
+      var(--tod-glow),
+      var(--border-subtle)
+    ) border-box;
+}
+
+.host [data-quantum-card][data-spatial-card]::after {
+  transform: translateZ(0);
+  box-shadow:
+    0 28px 48px -20px rgba(0, 0, 0, 0.65),
+    0 0 32px -16px var(--tod-glow),
+    inset 0 1px 0 rgba(var(--tod-glow-rgb), 0.3);
+}
+
+.host [data-quantum-card] [data-spatial-icon] {
+  transform: translateZ(calc(10px * var(--quantum-depth, 0.65)));
+}
+
+.host [data-quantum-console] {
+  transform-origin: 50% 50%;
+  box-shadow:
+    0 42px 65px -40px rgba(0, 0, 0, 0.7),
+    0 0 65px -42px var(--tod-glow),
+    inset 0 1px 0 var(--quantum-edge);
+}
+
+.host [data-quantum-console]::before {
+  background: radial-gradient(
+    480px circle at var(--quantum-light-x, 50%) var(--quantum-light-y, 30%),
+    rgba(var(--tod-glow-rgb), 0.25),
+    transparent 75%
+  );
+}
+
+.host [data-quantum-console]::after {
+  background:
+    radial-gradient(circle at 65% 32%, var(--tod-glow) 0 2px, transparent 4px),
+    radial-gradient(circle at 29% 64%, var(--tod-sky-horizon) 0 2px, transparent 4px),
+    repeating-radial-gradient(
+      circle,
+      transparent 0 59px,
+      rgba(var(--tod-glow-rgb), 0.22) 60px 61px,
+      transparent 62px 88px
+    ),
+    conic-gradient(
+      from 20deg,
+      transparent,
+      rgba(var(--tod-glow-rgb), 0.22) 65deg,
+      transparent 66deg,
+      transparent 200deg,
+      var(--tod-sky-zenith) 265deg,
+      transparent 266deg
+    );
+}
+
+.host [data-editorial-card],
+.host [data-editorial-card]:first-child {
+  background:
+    linear-gradient(
+      90deg,
+      var(--tod-glow),
+      var(--tod-sky-horizon),
+      transparent
+    ) 24px 0 / 65% 1px no-repeat,
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 7px,
+      rgba(var(--tod-glow-rgb), 0.025) 7px 8px
+    ),
+    radial-gradient(
+      ellipse at 100% 0%,
+      rgba(var(--tod-glow-rgb), 0.13),
+      transparent 65%
+    ),
+    var(--bg-card);
+}
+
+.host [data-editorial-card]::before {
+  background:
+    radial-gradient(
+      380px circle at var(--pointer-x, 50%) var(--pointer-y, 0%),
+      rgba(var(--tod-glow-rgb), 0.2),
+      transparent 72%
+    ),
+    linear-gradient(
+      115deg,
+      transparent 30%,
+      rgba(var(--tod-glow-rgb), 0.08) 44%,
+      transparent 65%
+    );
+}
+
+.host [data-contact-console] {
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      var(--tod-glow),
+      var(--tod-sky-horizon),
+      transparent
+    ) 50% 0 / 85% 1px no-repeat,
+    radial-gradient(
+      ellipse at 100% 0%,
+      rgba(var(--tod-glow-rgb), 0.18),
+      transparent 62%
+    ),
+    var(--bg-card-solid);
+}
+
+.host [data-section-caption] > span:first-child {
+  position: relative;
+}
+
+.host [data-section-caption] > span:first-child::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-top: 1px solid var(--tod-glow);
+  border-right: 1px solid var(--tod-glow);
+  border-radius: 8px;
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .host [data-project-media]:hover {
+    filter:
+      drop-shadow(-1px 0 0 var(--tod-glow))
+      drop-shadow(1px 0 0 var(--tod-sky-horizon));
+  }
+
+  .host [data-spatial-card]:hover h3,
+  .host [data-contact-link]:hover strong,
+  .host [data-editorial-card]:hover p {
+    text-shadow:
+      -0.7px 0 rgba(var(--tod-glow-rgb), 0.55),
+      0.7px 0 var(--tod-sky-horizon);
+  }
+
+  .host [data-technology-tags] > button {
+    transition: transform 420ms cubic-bezier(0.2, 1.5, 0.4, 1);
+  }
+
+  .host [data-technology-tags] > button:hover {
+    transform: perspective(600px) translateY(-5px) rotateX(8deg);
+    box-shadow: 0 10px 22px -16px var(--tod-glow);
+  }
+
+  .host [data-contact-link]:hover {
+    box-shadow:
+      inset 0 1px 0 rgba(var(--tod-glow-rgb), 0.5),
+      0 16px 30px -24px var(--tod-glow);
+  }
+}
+
+@media (max-width: 899px), (pointer: coarse) {
+  .host [data-quantum-card][data-spatial-card]::after {
+    transform: translateZ(0);
+    box-shadow: 0 20px 32px -25px rgba(0, 0, 0, 0.6);
+  }
+
+  .host [data-quantum-console] {
+    box-shadow:
+      0 20px 35px -28px rgba(0, 0, 0, 0.6),
+      inset 0 1px 0 var(--quantum-edge);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .host [data-quantum-card][data-spatial-card],
+  .host [data-quantum-card][data-spatial-orbit],
+  .host [data-quantum-card][data-quantum-console],
+  .host [data-quantum-card] [data-spatial-icon] {
+    transform: none;
+    will-change: auto;
+  }
+
+  .host [data-project-media]:hover {
+    filter: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .host [data-quantum-card],
+  .host [data-editorial-card],
+  .host [data-editorial-card]:first-child,
+  .host [data-contact-console] {
+    background: Canvas;
+    border-color: CanvasText;
+    box-shadow: none;
+  }
+
+  .host [data-quantum-card]::before,
+  .host [data-quantum-card]::after,
+  .host [data-section-caption] > span:first-child::after {
+    display: none;
+  }
+
+  .host [data-project-media]:hover {
+    filter: none;
+  }
+}
+
+@media print {
+  .host [data-quantum-card][data-spatial-card],
+  .host [data-quantum-card][data-spatial-orbit],
+  .host [data-quantum-card][data-quantum-console] {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .host [data-section-caption] > span:first-child::after {
+    display: none;
+  }
+}

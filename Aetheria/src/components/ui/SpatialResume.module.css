@@ -1,0 +1,593 @@
+.host {
+  --spatial-light: var(--tod-glow);
+  --spatial-sky: var(--tod-sky-zenith);
+}
+
+.atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  contain: strict;
+}
+
+.glow,
+.sky,
+.beam {
+  position: absolute;
+  pointer-events: none;
+  transform: translate3d(0, 0, 0);
+}
+
+.glow {
+  left: -30%;
+  top: -25%;
+  width: 120%;
+  height: 120%;
+}
+
+.sky {
+  right: -35%;
+  bottom: -35%;
+  width: 120%;
+  height: 125%;
+}
+
+.beam {
+  left: 12%;
+  top: -25%;
+  width: 65%;
+  height: 150%;
+}
+
+.glow::before,
+.sky::before,
+.beam::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+.glow::before {
+  background: radial-gradient(ellipse at 35% 40%, rgba(var(--tod-glow-rgb), 1), rgba(var(--tod-glow-rgb), 0.4) 36%, transparent 68%);
+}
+
+.sky::before {
+  background: radial-gradient(ellipse at 65% 60%, var(--tod-sky-horizon), var(--tod-sky-zenith) 35%, transparent 70%);
+}
+
+.beam::before {
+  background: radial-gradient(ellipse at 50% 50%, rgba(var(--tod-glow-rgb), 0.95), rgba(var(--tod-glow-rgb), 0.24) 22%, transparent 60%);
+}
+
+.host [data-spatial-grid] {
+  perspective: 1100px;
+  perspective-origin: 50% 45%;
+  gap: 32px;
+  padding: 22px 0;
+}
+
+.host main[data-reveal-ready='true'] [data-reveal] > [data-spatial-grid] {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+.host [data-spatial-card] {
+  --layer-depth: 1;
+  position: relative;
+  isolation: auto;
+  overflow: visible;
+  transform-style: preserve-3d;
+  transform:
+    translate3d(0, var(--spatial-y, 0px), var(--spatial-z, 0px))
+    rotateX(clamp(-10deg, var(--spatial-rx, 0deg), 10deg))
+    rotateY(clamp(-10deg, var(--spatial-ry, 0deg), 10deg));
+  transform-origin: 50% 50%;
+  backface-visibility: hidden;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.host [data-spatial-card]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  transform: translateZ(0);
+  border: 1px solid rgba(var(--tod-glow-rgb), 0.6);
+  background:
+    radial-gradient(ellipse at 0% 0%, rgba(var(--tod-glow-rgb), 0.3), transparent 65%),
+    radial-gradient(ellipse at 100% 100%, var(--tod-sky-zenith), transparent 85%),
+    var(--bg-card-solid);
+  box-shadow:
+    0 32px 50px -20px rgba(0, 0, 0, 0.85),
+    0 14px 20px -12px rgba(0, 0, 0, 0.9),
+    0 0 32px -8px rgba(var(--tod-glow-rgb), 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.host [data-spatial-card]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: auto;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 1;
+  transform: translateZ(0);
+  border: 1px solid transparent;
+  background:
+    radial-gradient(280px circle at var(--pointer-x, 50%) var(--pointer-y, 0%), rgba(var(--tod-glow-rgb), 0.3), transparent 75%) padding-box,
+    linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
+    radial-gradient(190px circle at var(--pointer-x, 50%) var(--pointer-y, 0%), #ffffff, var(--tod-glow) 22%, var(--border-strong) 75%) border-box;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1px 0 rgba(var(--tod-glow-rgb), 0.4);
+}
+
+.host [data-spatial-card] > * {
+  position: relative;
+  transform: translateZ(calc(6px * var(--layer-depth)));
+}
+
+.host [data-spatial-card] [data-spatial-title] {
+  transform: translateZ(calc(8px * var(--layer-depth)));
+  text-shadow: 0 5px 12px rgba(0, 0, 0, 0.2), 0 10px 24px rgba(var(--tod-glow-rgb), 0.25);
+}
+
+.host [data-spatial-card] [data-spatial-heading] {
+  transform-style: preserve-3d;
+  transform: translateZ(calc(4px * var(--layer-depth)));
+}
+
+.host [data-spatial-heading] [data-spatial-icon] {
+  transform: translateZ(calc(10px * var(--layer-depth)));
+  border-color: rgba(var(--tod-glow-rgb), 0.85);
+  background: linear-gradient(135deg, rgba(var(--tod-glow-rgb), 0.28), transparent), var(--bg-card-solid);
+  box-shadow:
+    0 8px 16px -6px rgba(0, 0, 0, 0.6),
+    0 0 16px -4px rgba(var(--tod-glow-rgb), 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.host [data-spatial-card] [data-spatial-meta] {
+  transform: translateZ(calc(6px * var(--layer-depth)));
+}
+
+.host [data-spatial-moving] {
+  will-change: transform;
+}
+
+.host [data-spatial-card]:hover,
+.host [data-spatial-card]:focus-within {
+  z-index: 3;
+}
+
+.host [data-spatial-card]:hover::after {
+  border-color: var(--tod-glow);
+  box-shadow:
+    0 48px 75px -25px rgba(0, 0, 0, 0.9),
+    0 0 48px -8px rgba(var(--tod-glow-rgb), 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.host [data-cinematic-name] {
+  position: relative;
+  font-size: clamp(56px, 7.6vw, 108px);
+  line-height: 0.98;
+  font-weight: 800;
+  letter-spacing: -0.075em;
+  perspective: 1000px;
+}
+
+.host [data-cinematic-name] > span {
+  color: var(--text-primary);
+  text-shadow: 0 2px 0 rgba(var(--tod-glow-rgb), 0.4), 0 14px 40px rgba(var(--tod-glow-rgb), 0.35);
+}
+
+@supports ((background-clip: text) or (-webkit-background-clip: text)) {
+  .host [data-cinematic-name] > span {
+    background-image: linear-gradient(
+      112deg,
+      var(--text-primary) 0%,
+      var(--text-primary) 18%,
+      var(--tod-glow) 28%,
+      var(--text-primary) 34%,
+      var(--tod-sky-horizon) 40%,
+      var(--text-primary) 46%,
+      var(--text-primary) 65%,
+      var(--tod-glow) 78%,
+      var(--text-primary) 86%,
+      var(--text-primary) 100%
+    );
+    background-size: 300% 100%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    text-shadow: none;
+    filter: drop-shadow(0 2px 0 rgba(var(--tod-glow-rgb), 0.35)) drop-shadow(0 12px 24px rgba(var(--tod-glow-rgb), 0.3));
+  }
+}
+
+.host :global(.classic-header) > div[aria-hidden='true'] {
+  height: 3px;
+  overflow: visible;
+}
+
+.host :global(.classic-header) > div[aria-hidden='true'] > div {
+  background: linear-gradient(90deg, var(--tod-sky-horizon), var(--tod-glow) 70%, #ffffff);
+  box-shadow: 0 0 5px #ffffff, 0 0 14px var(--tod-glow), 0 0 32px var(--tod-glow);
+}
+
+.host [data-orbit-lab] {
+  perspective: 1000px;
+  animation: none;
+  background: radial-gradient(ellipse at 70% 0%, rgba(var(--tod-glow-rgb), 0.26), transparent 65%), var(--bg-card);
+  border-color: rgba(var(--tod-glow-rgb), 0.6);
+  box-shadow:
+    0 40px 85px -35px rgba(0, 0, 0, 0.75),
+    0 0 65px -20px rgba(var(--tod-glow-rgb), 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.host [data-spatial-orbit] {
+  overflow: visible;
+  transform-style: preserve-3d;
+  transform:
+    translate3d(0, var(--spatial-y, 0px), var(--spatial-z, 0px))
+    rotateX(var(--spatial-rx, 0deg))
+    rotateY(var(--spatial-ry, 0deg));
+}
+
+.host [data-orbit-core] {
+  position: relative;
+  transform: translateZ(58px);
+  border-color: var(--tod-glow);
+  background: radial-gradient(circle at 25% 20%, rgba(var(--tod-glow-rgb), 0.5), transparent 70%), var(--bg-card-solid);
+  box-shadow:
+    0 0 14px rgba(var(--tod-glow-rgb), 0.7),
+    0 0 45px rgba(var(--tod-glow-rgb), 0.5),
+    0 0 95px -12px rgba(var(--tod-glow-rgb), 0.7),
+    inset 0 0 28px rgba(var(--tod-glow-rgb), 0.3);
+}
+
+.host [data-orbit-core]::before,
+.host [data-orbit-core]::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.host [data-orbit-core]::before {
+  inset: -14px;
+  border: 1px solid rgba(var(--tod-glow-rgb), 0.7);
+  background: radial-gradient(circle, rgba(var(--tod-glow-rgb), 0.2), transparent 70%);
+  box-shadow: 0 0 28px -8px var(--tod-glow);
+}
+
+.host [data-orbit-core]::after {
+  inset: -27px;
+  border: 1px dashed rgba(var(--tod-glow-rgb), 0.45);
+}
+
+.host [data-orbit-halo] {
+  transform: translateZ(-45px) scale(1.4);
+  background: radial-gradient(circle, rgba(var(--tod-glow-rgb), 0.65), rgba(var(--tod-glow-rgb), 0.2) 45%, transparent 70%);
+}
+
+.host [data-orbit-ring],
+.host [data-orbit-secondary] {
+  border: 2px solid rgba(var(--tod-glow-rgb), 0.2);
+  border-top-color: #ffffff;
+  border-right-color: var(--tod-glow);
+  box-shadow:
+    0 0 8px rgba(var(--tod-glow-rgb), 0.6),
+    0 0 22px rgba(var(--tod-glow-rgb), 0.35),
+    inset 0 0 14px rgba(var(--tod-glow-rgb), 0.3);
+}
+
+.host [data-orbit-ring] {
+  transform: rotateZ(-28deg) rotateX(64deg);
+  animation: none;
+}
+
+.host [data-orbit-secondary] {
+  opacity: 0.9;
+  transform: rotateZ(48deg) rotateX(66deg);
+}
+
+.host [data-orbit-ring]::after,
+.host [data-orbit-secondary]::after {
+  content: '';
+  position: absolute;
+  top: 12%;
+  left: 12%;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 10px #ffffff, 0 0 24px var(--tod-glow), 0 0 40px var(--tod-glow);
+}
+
+.host [data-orbit-satellite] {
+  top: 50%;
+  left: 50%;
+  right: auto;
+  margin-top: -21px;
+  margin-left: -21px;
+  transform: translate3d(100px, -35px, 75px);
+  border-color: var(--tod-glow);
+  box-shadow: 0 0 12px rgba(var(--tod-glow-rgb), 0.8), 0 0 32px rgba(var(--tod-glow-rgb), 0.5);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .host [data-cinematic-name] > span {
+    animation: nameSpectrum 8s ease-in-out infinite;
+    animation-delay: calc(var(--word-index, 0) * -1.5s);
+  }
+
+  .host [data-spatial-card] > *,
+  .host [data-spatial-heading] [data-spatial-icon] {
+    transition: transform 450ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .host [data-spatial-orbit][data-spatial-active='true'] [data-orbit-core]::before {
+    animation: corePulse 4s ease-in-out infinite;
+  }
+
+  .host [data-spatial-orbit][data-spatial-active='true'] [data-orbit-core]::after {
+    animation: coreCage 24s linear infinite;
+  }
+
+  .host [data-spatial-orbit][data-spatial-active='true'] [data-orbit-ring] {
+    animation: orbitPrimary 12s linear infinite;
+  }
+
+  .host [data-spatial-orbit][data-spatial-active='true'] [data-orbit-secondary] {
+    animation: orbitSecondary 17s linear infinite;
+  }
+
+  .host [data-spatial-orbit][data-spatial-active='true'] [data-orbit-satellite] {
+    animation: satelliteFlight 14s linear infinite;
+  }
+
+  .glow::before,
+  .sky::before,
+  .beam::before {
+    animation: auroraBreath 18s ease-in-out infinite alternate;
+  }
+
+  .sky::before {
+    animation-delay: -9s;
+    animation-duration: 23s;
+  }
+
+  .beam::before {
+    animation-delay: -5s;
+    animation-duration: 21s;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
+  .host [data-spatial-card]:not(:hover):not(:focus-within) {
+    --layer-depth: 0.7;
+  }
+}
+
+@keyframes nameSpectrum {
+  0%, 100% { background-position: 100% 50%; }
+  50% { background-position: 0% 50%; }
+}
+
+@keyframes corePulse {
+  0%, 100% { transform: scale(0.96); opacity: 0.4; }
+  50% { transform: scale(1.22); opacity: 0.95; }
+}
+
+@keyframes coreCage {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes orbitPrimary {
+  from { transform: rotateZ(-28deg) rotateX(64deg) rotateZ(0deg); }
+  to { transform: rotateZ(-28deg) rotateX(64deg) rotateZ(360deg); }
+}
+
+@keyframes orbitSecondary {
+  from { transform: rotateZ(48deg) rotateX(66deg) rotateZ(360deg); }
+  to { transform: rotateZ(48deg) rotateX(66deg) rotateZ(0deg); }
+}
+
+@keyframes satelliteFlight {
+  from { transform: rotateZ(0deg) translate3d(100px, 0, 75px) rotateZ(0deg); }
+  to { transform: rotateZ(360deg) translate3d(100px, 0, 75px) rotateZ(-360deg); }
+}
+
+@keyframes auroraBreath {
+  from { transform: translate3d(-3%, 2%, 0) scale(0.95) rotate(-5deg); opacity: 0.65; }
+  to { transform: translate3d(5%, -4%, 0) scale(1.14) rotate(6deg); opacity: 1; }
+}
+
+.host[data-spatial-paused] [data-cinematic-name] > span,
+.host[data-spatial-paused] [data-orbit-ring],
+.host[data-spatial-paused] [data-orbit-secondary],
+.host[data-spatial-paused] [data-orbit-satellite],
+.host[data-spatial-paused] [data-orbit-core]::before,
+.host[data-spatial-paused] [data-orbit-core]::after,
+.host[data-spatial-paused] .glow::before,
+.host[data-spatial-paused] .sky::before,
+.host[data-spatial-paused] .beam::before {
+  animation-play-state: paused;
+}
+
+@media (max-width: 899px), (pointer: coarse) {
+  .host [data-spatial-grid] {
+    perspective: 1600px;
+    gap: 22px;
+    padding: 12px 0;
+  }
+
+  .host [data-spatial-card] {
+    --layer-depth: 0.4;
+  }
+
+  .host [data-spatial-card]::after {
+    transform: translateZ(0);
+    box-shadow: 0 18px 35px -20px rgba(0, 0, 0, 0.6);
+  }
+
+  .host [data-cinematic-name] {
+    font-size: clamp(46px, 10.8vw, 82px);
+  }
+
+  .host [data-cinematic-name] > span {
+    animation: none;
+    filter: none;
+  }
+
+  .host [data-orbit-core] {
+    box-shadow: 0 0 35px rgba(var(--tod-glow-rgb), 0.45);
+  }
+
+  .host [data-spatial-orbit][data-spatial-active] [data-orbit-satellite],
+  .host [data-spatial-orbit] [data-orbit-satellite] {
+    animation: none;
+    transform: translate3d(70px, -35px, 30px);
+  }
+
+  .glow,
+  .sky {
+    width: 100%;
+    height: 100%;
+  }
+
+  .glow::before,
+  .sky::before {
+    animation: none;
+  }
+
+  .beam {
+    display: none;
+  }
+}
+
+/* Sensor transforms are smoothed by JS; do not add a second CSS delay. */
+@media (prefers-reduced-motion: no-preference) {
+  .host[data-spatial-gyro] [data-spatial-grid] {
+    perspective: 1000px;
+  }
+
+  .host[data-spatial-gyro] [data-spatial-card] {
+    --layer-depth: 0.65;
+    transition: none;
+  }
+
+  .host[data-spatial-gyro] [data-spatial-orbit] {
+    transition: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .host [data-orbit-satellite] {
+    margin-top: -16px;
+    margin-left: -16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .host [data-spatial-grid],
+  .host [data-orbit-lab],
+  .host [data-cinematic-name] {
+    perspective: none;
+  }
+
+  .host [data-spatial-card],
+  .host [data-spatial-orbit] {
+    transform: none;
+    will-change: auto;
+  }
+
+  .host [data-spatial-card] > *,
+  .host [data-spatial-card] [data-spatial-title],
+  .host [data-spatial-card] [data-spatial-heading],
+  .host [data-spatial-card] [data-spatial-meta],
+  .host [data-spatial-heading] [data-spatial-icon],
+  .host [data-spatial-card]::before,
+  .host [data-spatial-card]::after {
+    transform: none;
+    transition: none;
+  }
+
+  .host [data-spatial-card]::after {
+    display: none;
+  }
+
+  .host [data-spatial-card] {
+    isolation: isolate;
+    background: var(--bg-card-solid);
+    border-color: var(--border-strong);
+  }
+
+  .host [data-spatial-card]::before {
+    z-index: -1;
+  }
+
+  .host [data-cinematic-name] > span,
+  .host [data-orbit-ring],
+  .host [data-orbit-secondary],
+  .host [data-orbit-satellite],
+  .host [data-orbit-core]::before,
+  .host [data-orbit-core]::after,
+  .glow::before,
+  .sky::before,
+  .beam::before {
+    animation: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .host [data-cinematic-name] > span {
+    background: none;
+    color: CanvasText;
+    -webkit-text-fill-color: CanvasText;
+    filter: none;
+  }
+
+  .host [data-spatial-card] {
+    border-color: CanvasText;
+  }
+
+  .host [data-spatial-card]::before {
+    background: Canvas;
+    border-color: CanvasText;
+  }
+
+  .host [data-spatial-card]::after,
+  .atmosphere {
+    display: none;
+  }
+}
+
+@media print {
+  .atmosphere {
+    display: none;
+  }
+
+  .host [data-spatial-card],
+  .host [data-spatial-orbit] {
+    transform: none;
+    will-change: auto;
+  }
+
+  .host *,
+  .host *::before,
+  .host *::after {
+    animation: none !important;
+  }
+}
