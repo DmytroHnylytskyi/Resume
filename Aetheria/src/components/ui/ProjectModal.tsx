@@ -13,8 +13,20 @@ import { GithubIcon } from './icons';
  * Live Demo / Source Code actions for the project id in the store.
  * Focus, Tab trap and Escape are owned by useModalFocus.
  */
+const PROJECT_SHOTS: Record<string, string> = {
+  forma: '/shots/forma.jpg',
+  terrascope: '/shots/terrascope.jpg',
+  lumina: '/shots/lumina.jpg',
+  aetheria: '/shots/aetheria.jpg'
+};
+
 export default function ProjectModal(): React.ReactElement | null {
   const { selectedProject, setSelectedProject, language } = useGameStore();
+  const [failedImg, setFailedImg] = React.useState(false);
+
+  React.useEffect(() => {
+    setFailedImg(false);
+  }, [selectedProject]);
 
   const isOpen = selectedProject !== null;
   const panelRef = useModalFocus<HTMLDivElement>(isOpen, () => setSelectedProject(null));
@@ -71,10 +83,38 @@ export default function ProjectModal(): React.ReactElement | null {
 
         {/* Modal Body */}
         <div className="modal-body custom-scrollbar">
-          {/* Live-demo screenshot (shared with the classic card preview) */}
-          <div className="project-modal-shot">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={`/shots/${project.id}.jpg`} alt={project.title} loading="lazy" decoding="async" draggable={false} />
+          {/* Live-demo screenshot (shared with the classic card preview) in macOS window frame */}
+          <div className="project-modal-window">
+            <div className="project-modal-chrome" aria-hidden="true">
+              <div className="project-modal-dots">
+                <span className="dot-close" />
+                <span className="dot-min" />
+                <span className="dot-max" />
+              </div>
+              <span className="project-modal-url">
+                <span className="project-modal-url-dot" />
+                {project.url ? project.url.replace(/^https?:\/\//, '') : `${project.id}.dev`}
+              </span>
+              <span className="project-modal-chrome-tag">{project.id} / preview</span>
+            </div>
+            <div className="project-modal-shot">
+              {failedImg ? (
+                <div className="project-modal-shot-fallback">
+                  <span>{project.title}</span>
+                  <small>{language === 'uk' ? 'Попередній перегляд інтерфейсу' : 'Interface preview'}</small>
+                </div>
+              ) : (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img
+                  src={PROJECT_SHOTS[project.id] ?? `/shots/${project.id}.jpg`}
+                  alt={project.title}
+                  loading="eager"
+                  decoding="async"
+                  draggable={false}
+                  onError={() => setFailedImg(true)}
+                />
+              )}
+            </div>
           </div>
 
           {/* Main Description */}

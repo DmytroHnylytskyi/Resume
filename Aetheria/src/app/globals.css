@@ -3619,20 +3619,116 @@ html, body {
   gap: 10px;
 }
 
-/* ── Project modal screenshot ── */
-.project-modal-shot {
+/* ── Project modal window frame & screenshot ── */
+.project-modal-window {
   border-radius: 14px;
   overflow: hidden;
-  margin-bottom: 4px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(var(--tod-glow-rgb, 100, 160, 255), 0.35);
+  background: #0c0d14;
+  box-shadow: 0 16px 36px -12px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+}
+
+.project-modal-chrome {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 34px;
+  padding: 0 12px;
+  background: linear-gradient(180deg, rgba(28, 30, 42, 0.95), rgba(20, 22, 32, 0.95));
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  user-select: none;
+}
+
+.project-modal-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.project-modal-dots span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: block;
+}
+
+.project-modal-dots .dot-close { background: #ff5f56; }
+.project-modal-dots .dot-min { background: #ffbd2e; }
+.project-modal-dots .dot-max { background: #27c93f; }
+
+.project-modal-url {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 2px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 5px;
+  background: rgba(10, 11, 16, 0.6);
+  color: var(--text-secondary);
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 11px;
+}
+
+.project-modal-url-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--tod-glow, #38bdf8);
+}
+
+.project-modal-chrome-tag {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.project-modal-shot {
+  position: relative;
+  width: 100%;
   aspect-ratio: 16 / 10;
-  background: var(--badge-bg);
+  background: #090a0f;
+  overflow: hidden;
 }
 
 .project-modal-shot img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
+  background: #090a0f;
+}
+
+.project-modal-shot-fallback {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 30px 16px;
+  background: radial-gradient(ellipse at 50% 50%, rgba(var(--tod-glow-rgb, 100, 160, 255), 0.15), #0f1118);
+  color: #ffffff;
+  text-align: center;
+}
+
+.project-modal-shot-fallback span {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.project-modal-shot-fallback small {
+  font-size: 12px;
+  color: var(--text-secondary);
 }
 
 

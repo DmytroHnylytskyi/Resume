@@ -18,7 +18,6 @@ const PROJECT_SHOTS: Record<string, string> = {
 };
 
 const MOTION_PROPERTIES = [
-  '--image-y',
   '--media-rx',
   '--media-ry',
   '--light-x',
@@ -139,8 +138,6 @@ export default function ProjectsScrollScene({
           -1,
           1
         );
-
-        element.style.setProperty('--image-y', `${(-relative * 26).toFixed(2)}px`);
 
         if (element !== hovered) return;
 
@@ -303,18 +300,26 @@ export default function ProjectsScrollScene({
                 aria-label={`${detailsLabel}: ${project.title}`}
               >
                 <span className={styles.mediaVisual}>
+                  <span className={styles.mediaChrome} aria-hidden="true">
+                    <span className={styles.trafficLights}>
+                      <span className={styles.dotClose} />
+                      <span className={styles.dotMin} />
+                      <span className={styles.dotMax} />
+                    </span>
+                    <span className={styles.chromeLabel}>
+                      <span className={styles.chromeDot} />
+                      {project.url ? project.url.replace(/^https?:\/\//, '') : `${project.id}.dev`}
+                    </span>
+                    <span className={styles.chromeAction}>preview</span>
+                  </span>
                   <span className={styles.imageWindow}>
                     <span className={styles.imagePlane}>
                       <ProjectImage project={project} isUk={isUk} />
                     </span>
                   </span>
-                  <span className={styles.mediaChrome} aria-hidden="true">
-                    <span /><span /><span />
-                    <span className={styles.chromeLabel}>{project.id} / preview</span>
-                  </span>
                   <span className={styles.mediaAction}>
                     {isUk ? 'Дослідити проєкт' : 'Explore project'}
-                    <ArrowUpRight size={20} aria-hidden="true" />
+                    <ArrowUpRight size={15} aria-hidden="true" />
                   </span>
                   <span className={styles.specular} aria-hidden="true" />
                 </span>

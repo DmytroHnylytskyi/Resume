@@ -5,8 +5,7 @@ import classic from '../components/ui/ClassicLandingView.module.css';
 import spatial from '../components/ui/SpatialResume.module.css';
 import details from '../components/ui/CreativeDetails.module.css';
 import quantum from '../components/ui/QuantumExperience.module.css';
-import { CYBER_GYRO_EVENT, mountCyberArtifact } from './cyberArtifact';
-import type { CyberGyroDetail } from './cyberArtifact';
+import { mountCyberArtifact } from './cyberArtifact';
 
 interface ScrollRoot {
   readonly current: HTMLDivElement | null;
@@ -46,14 +45,10 @@ export default function useSpatialResume(scrollRoot: ScrollRoot): void {
     let hover: HTMLElement | null = null;
     let mouseX = 0;
     let mouseY = 0;
-    let gyroX = 0;
-    let gyroY = 0;
-    let gyroActive = false;
     let previousScroll = root.scrollTop;
     let velocity = 0;
     let atmosphereY = 0;
     let atmosphereTarget = 0;
-    let baseline: { beta: number; gamma: number; angle: number } | null = null;
 
     root.classList.add(spatial.host, details.host, quantum.host);
 
@@ -118,7 +113,6 @@ export default function useSpatialResume(scrollRoot: ScrollRoot): void {
       }));
 
       let moving = velocity !== 0;
-      root.toggleAttribute('data-spatial-gyro', gyroActive);
 
       measurements.forEach(({ card, rect: bounds }) => {
         const relative = clamp(
@@ -131,11 +125,11 @@ export default function useSpatialResume(scrollRoot: ScrollRoot): void {
         // Bounded screen-space input avoids offsetParent assumptions.
         const inputX = pointed
           ? clamp((mouseX - bounds.left) / Math.max(1, bounds.width) * 2 - 1, -1, 1)
-          : gyroActive ? gyroX : 0;
+          : 0;
         const inputY = pointed
           ? clamp((mouseY - bounds.top) / Math.max(1, bounds.height) * 2 - 1, -1, 1)
-          : gyroActive ? gyroY : 0;
-        const active = pointed || gyroActive;
+          : 0;
+        const active = pointed;
         const direction = card.index % 2 ? 1 : -1;
         const drift = Math.min(10, Math.abs(velocity) * 0.004);
         const targetY = -relative * (compact ? 6 : 18);
@@ -295,29 +289,6 @@ export default function useSpatialResume(scrollRoot: ScrollRoot): void {
       schedule();
     };
 
-    const onGyro = (event: Event) => {
-      const detail = (event as CustomEvent<CyberGyroDetail>).detail;
-      if (!detail?.active || reduced.matches || document.hidden) {
-        gyroActive = false;
-        gyroX = gyroY = 0;
-        baseline = null;
-        schedule();
-        return;
-      }
-      if (!Number.isFinite(detail.beta) || !Number.isFinite(detail.gamma)) return;
-      const angle = window.screen.orientation?.angle ?? 0;
-      if (!baseline || baseline.angle !== angle) {
-        baseline = { beta: detail.beta, gamma: detail.gamma, angle };
-      }
-      const db = ((detail.beta - baseline.beta + 540) % 360) - 180;
-      const dg = detail.gamma - baseline.gamma;
-      const radians = angle * Math.PI / 180;
-      gyroX = clamp((dg * Math.cos(radians) + db * Math.sin(radians)) / 28, -1, 1);
-      gyroY = clamp((db * Math.cos(radians) - dg * Math.sin(radians)) / 28, -1, 1);
-      gyroActive = true;
-      schedule();
-    };
-
     const onScroll = () => {
       hover = null;
       schedule();
@@ -330,9 +301,6 @@ export default function useSpatialResume(scrollRoot: ScrollRoot): void {
       velocity = 0;
       previousScroll = root.scrollTop;
       hover = null;
-      gyroActive = false;
-      baseline = null;
-      root.removeAttribute('data-spatial-gyro');
       cards.forEach(reset);
       schedule();
     };
@@ -350,7 +318,6 @@ export default function useSpatialResume(scrollRoot: ScrollRoot): void {
     resize?.observe(root);
     if (main) resize?.observe(main);
 
-    root.addEventListener(CYBER_GYRO_EVENT, onGyro);
     root.addEventListener('pointermove', onPointer, { passive: true });
     root.addEventListener('pointerleave', clearPointer);
     root.addEventListener('pointercancel', clearPointer);
@@ -369,7 +336,6 @@ export default function useSpatialResume(scrollRoot: ScrollRoot): void {
       mutation.disconnect();
       intersection?.disconnect();
       resize?.disconnect();
-      root.removeEventListener(CYBER_GYRO_EVENT, onGyro);
       root.removeEventListener('pointermove', onPointer);
       root.removeEventListener('pointerleave', clearPointer);
       root.removeEventListener('pointercancel', clearPointer);
@@ -384,7 +350,6 @@ export default function useSpatialResume(scrollRoot: ScrollRoot): void {
       });
       decorations.forEach((_attributes, element) => restore(element));
       root.removeAttribute('data-spatial-paused');
-      root.removeAttribute('data-spatial-gyro');
       root.classList.remove(spatial.host, details.host, quantum.host);
       atmosphere.remove();
     };

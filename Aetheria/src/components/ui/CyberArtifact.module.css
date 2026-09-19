@@ -125,16 +125,6 @@
   box-shadow: 0 0 10px #22c55e, 0 0 3px #22c55e;
 }
 
-.dockButton[data-state='waiting'] .dockDot {
-  background: #eab308;
-  box-shadow: 0 0 8px #eab308;
-}
-
-.dockButton[data-state='unavailable'] .dockDot {
-  background: #ef4444;
-  box-shadow: 0 0 6px rgba(239, 68, 68, 0.5);
-}
-
 @media (hover: hover) and (pointer: fine) {
   .dock:hover {
     border-color: var(--cyber-cyan);
@@ -159,15 +149,6 @@
   .dockButton:active {
     transform: scale(0.97);
   }
-
-  .dockButton[data-state='waiting'] .dockDot {
-    animation: pulseDot 1s infinite alternate ease-in-out;
-  }
-}
-
-@keyframes pulseDot {
-  from { opacity: 0.45; transform: scale(0.85); }
-  to { opacity: 1; transform: scale(1.15); }
 }
 
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {

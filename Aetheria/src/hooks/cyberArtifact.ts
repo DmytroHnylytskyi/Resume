@@ -3,18 +3,6 @@ import { useGameStore } from '../store/useGameStore';
 import { createCyberAudio } from './cyberAudio';
 import styles from '../components/ui/CyberArtifact.module.css';
 
-type OrientationConstructor = typeof DeviceOrientationEvent & {
-  requestPermission?: () => Promise<string>;
-};
-
-export const CYBER_GYRO_EVENT = 'cyber-artifact:gyro';
-
-export interface CyberGyroDetail {
-  active: boolean;
-  beta: number;
-  gamma: number;
-}
-
 interface Particle {
   x: number;
   y: number;
@@ -33,7 +21,6 @@ const icon = (body: string) =>
 const speaker = '<path d="m11 5-5 4H2v6h4l5 4Z"/>';
 const audioOn = icon(`${speaker}<path d="M16 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/>`);
 const audioOff = icon(`${speaker}<path d="m16 9 6 6m0-6-6 6"/>`);
-const gyroIcon = icon('<circle cx="12" cy="12" r="9"/><path d="m16 8-3 5-5 3 3-5Z"/>');
 
 export function mountCyberArtifact(root: HTMLElement): () => void {
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -58,15 +45,6 @@ export function mountCyberArtifact(root: HTMLElement): () => void {
   let phase = 0;
   let dirty = true;
   let soundEnabled = false;
-  let gyroAttached = false;
-  let gyroPending = false;
-  let gyroState: 'off' | 'waiting' | 'active' | 'unavailable' = 'off';
-  let gyroTimer: ReturnType<typeof setTimeout> | undefined;
-  let beta = 0;
-  let gamma = 0;
-  let gyroX = 0;
-  let gyroY = 0;
-  let baseline: { beta: number; gamma: number; angle: number } | null = null;
   let language = useGameStore.getState().language;
 
   root.classList.add(styles.host);
@@ -82,44 +60,23 @@ export function mountCyberArtifact(root: HTMLElement): () => void {
   dock.className = styles.dock;
   dock.setAttribute('role', 'group');
   const soundBtn = document.createElement('button');
-  const gyroBtn = document.createElement('button');
-  soundBtn.type = gyroBtn.type = 'button';
-  soundBtn.className = gyroBtn.className = styles.dockButton;
-  dock.append(soundBtn, gyroBtn);
+  soundBtn.type = 'button';
+  soundBtn.className = styles.dockButton;
+  dock.append(soundBtn);
   root.append(overlay, dock);
-
-  const publishGyro = (active: boolean) => {
-    root.dispatchEvent(new CustomEvent<CyberGyroDetail>(CYBER_GYRO_EVENT, {
-      detail: { active, beta, gamma }
-    }));
-  };
 
   const labels = () => {
     const uk = language === 'uk';
-    dock.setAttribute('aria-label', uk ? 'Керування ефектами' : 'Interactive controls');
+    dock.setAttribute('aria-label', uk ? 'Керування звуком' : 'Audio controls');
     soundBtn.setAttribute('aria-pressed', String(soundEnabled));
     soundBtn.setAttribute('aria-label', soundEnabled
       ? (uk ? 'Вимкнути звук' : 'Mute sound')
       : (uk ? 'Увімкнути звук' : 'Enable sound'));
     soundBtn.innerHTML = `${soundEnabled ? audioOn : audioOff}<span class="${styles.dockLabel}">${uk ? 'Звук' : 'Audio'}</span><span class="${styles.dockDot}" aria-hidden="true"></span>`;
-    gyroBtn.setAttribute('aria-pressed', String(gyroAttached));
-    gyroBtn.setAttribute('data-state', gyroState);
-    gyroBtn.setAttribute('aria-busy', String(gyroPending || gyroState === 'waiting'));
-    gyroBtn.setAttribute('aria-label', gyroAttached
-      ? (uk ? 'Вимкнути гіроскоп' : 'Disable gyroscope')
-      : (uk ? 'Дозволити гіроскоп' : 'Enable gyroscope'));
-    gyroBtn.title = gyroState === 'unavailable'
-      ? (uk ? 'Датчик недоступний або доступ заборонено' : 'Sensor unavailable or permission denied')
-      : reduced.matches ? (uk ? 'Рух вимкнено налаштуваннями системи' : 'Motion disabled by system preference') : '';
-    const text = gyroState === 'unavailable' ? (uk ? 'Н/Д' : 'N/A') : (uk ? 'Гіро' : 'Gyro');
-    gyroBtn.innerHTML = `${gyroIcon}<span class="${styles.dockLabel}">${text}</span><span class="${styles.dockDot}" aria-hidden="true"></span>`;
   };
 
   const targets = () => {
     if (pointerPresent && fine.matches) return [pointerX, pointerY, 1];
-    if (gyroState === 'active') {
-      return [width * (0.5 + gyroX * 0.34), height * (0.5 + gyroY * 0.34), 1];
-    }
     return [width / 2, height / 2, 0];
   };
 
@@ -315,8 +272,6 @@ export function mountCyberArtifact(root: HTMLElement): () => void {
     velocity = acceleration = emission = 0;
     particles.length = 0;
     previousScroll = root.scrollTop;
-    baseline = null;
-    publishGyro(false);
     context?.clearRect(0, 0, width, height);
     overlay.hidden = reduced.matches;
     labels();
@@ -331,78 +286,6 @@ export function mountCyberArtifact(root: HTMLElement): () => void {
     soundEnabled = enabled;
     soundBtn.disabled = false;
     labels();
-  };
-
-  const detachGyro = () => {
-    window.removeEventListener('deviceorientation', onOrientation);
-    clearTimeout(gyroTimer);
-    gyroAttached = false;
-    baseline = null;
-    publishGyro(false);
-  };
-
-  const onOrientation = (event: DeviceOrientationEvent) => {
-    if (disposed || document.hidden || !gyroAttached || event.beta === null
-      || event.gamma === null || !Number.isFinite(event.beta) || !Number.isFinite(event.gamma)) return;
-    beta = event.beta;
-    gamma = event.gamma;
-    const angle = window.screen.orientation?.angle ?? 0;
-    if (!baseline || baseline.angle !== angle) baseline = { beta, gamma, angle };
-    const db = ((beta - baseline.beta + 540) % 360) - 180;
-    const dg = gamma - baseline.gamma;
-    const radians = angle * Math.PI / 180;
-    gyroX = clamp((dg * Math.cos(radians) + db * Math.sin(radians)) / 28, -1, 1);
-    gyroY = clamp((db * Math.cos(radians) - dg * Math.sin(radians)) / 28, -1, 1);
-    if (gyroState !== 'active') {
-      gyroState = 'active';
-      clearTimeout(gyroTimer);
-      labels();
-    }
-    publishGyro(!reduced.matches);
-    schedule();
-  };
-
-  const onGyro = async () => {
-    if (gyroPending) return;
-    if (gyroAttached) {
-      detachGyro();
-      gyroState = 'off';
-      labels();
-      schedule();
-      return;
-    }
-    const constructor = window.DeviceOrientationEvent as OrientationConstructor | undefined;
-    if (!window.isSecureContext || !constructor) {
-      gyroState = 'unavailable';
-      labels();
-      return;
-    }
-    gyroPending = true;
-    gyroBtn.disabled = true;
-    labels();
-    try {
-      if (constructor.requestPermission && await constructor.requestPermission() !== 'granted') {
-        throw new Error('Permission denied');
-      }
-      if (disposed) return;
-      gyroAttached = true;
-      gyroState = 'waiting';
-      window.addEventListener('deviceorientation', onOrientation, { passive: true });
-      gyroTimer = setTimeout(() => {
-        if (gyroState !== 'waiting' || disposed) return;
-        detachGyro();
-        gyroState = 'unavailable';
-        labels();
-      }, 5000);
-    } catch {
-      if (!disposed) gyroState = 'unavailable';
-    } finally {
-      gyroPending = false;
-      if (!disposed) {
-        gyroBtn.disabled = false;
-        labels();
-      }
-    }
   };
 
   const onHover = (event: PointerEvent) => {
@@ -437,9 +320,7 @@ export function mountCyberArtifact(root: HTMLElement): () => void {
     velocity = acceleration = emission = 0;
     particles.length = 0;
     pointerPresent = false;
-    baseline = null;
     previousScroll = root.scrollTop;
-    publishGyro(false);
     if (document.hidden) audio.suspend();
     else {
       audio.resume();
@@ -462,7 +343,6 @@ export function mountCyberArtifact(root: HTMLElement): () => void {
     ? new ResizeObserver(onResize) : null;
   resizeObserver?.observe(overlay);
   soundBtn.addEventListener('click', onSound);
-  gyroBtn.addEventListener('click', onGyro);
   root.addEventListener('scroll', onScroll, { passive: true });
   root.addEventListener('pointermove', onPointer, { passive: true });
   root.addEventListener('pointerleave', onLeave);
@@ -482,14 +362,12 @@ export function mountCyberArtifact(root: HTMLElement): () => void {
   return () => {
     disposed = true;
     cancelAnimationFrame(frame);
-    detachGyro();
     resizeObserver?.disconnect();
     unsubscribeSky();
     unsubscribeStore();
     audio.dispose();
     particles.length = 0;
     soundBtn.removeEventListener('click', onSound);
-    gyroBtn.removeEventListener('click', onGyro);
     root.removeEventListener('scroll', onScroll);
     root.removeEventListener('pointermove', onPointer);
     root.removeEventListener('pointerleave', onLeave);
