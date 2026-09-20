@@ -95,6 +95,7 @@
   content: '';
   position: absolute;
   inset: 0;
+  z-index: 0;
   border-radius: inherit;
   pointer-events: none;
   transform: translateZ(0);
@@ -114,7 +115,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  z-index: auto;
+  z-index: 1;
   border-radius: inherit;
   pointer-events: none;
   opacity: 1;
@@ -131,6 +132,7 @@
 
 .host [data-spatial-card] > * {
   position: relative;
+  z-index: 2;
   transform: translateZ(calc(6px * var(--layer-depth)));
 }
 
@@ -186,7 +188,7 @@
 
 .host [data-cinematic-name] > span {
   color: var(--text-primary);
-  text-shadow: 0 2px 0 rgba(var(--tod-glow-rgb), 0.4), 0 14px 40px rgba(var(--tod-glow-rgb), 0.35);
+  text-shadow: 0 2px 10px rgba(var(--tod-glow-rgb), 0.16);
 }
 
 @supports ((background-clip: text) or (-webkit-background-clip: text)) {
@@ -194,23 +196,20 @@
     background-image: linear-gradient(
       112deg,
       var(--text-primary) 0%,
-      var(--text-primary) 18%,
-      var(--tod-glow) 28%,
-      var(--text-primary) 34%,
-      var(--tod-sky-horizon) 40%,
-      var(--text-primary) 46%,
-      var(--text-primary) 65%,
-      var(--tod-glow) 78%,
-      var(--text-primary) 86%,
+      var(--text-primary) 36%,
+      color-mix(in srgb, var(--text-primary) 62%, var(--tod-glow) 38%) 45%,
+      color-mix(in srgb, var(--text-primary) 50%, var(--tod-sky-horizon) 50%) 50%,
+      color-mix(in srgb, var(--text-primary) 62%, var(--tod-glow) 38%) 55%,
+      var(--text-primary) 64%,
       var(--text-primary) 100%
     );
-    background-size: 300% 100%;
+    background-size: 250% 100%;
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
     -webkit-text-fill-color: transparent;
     text-shadow: none;
-    filter: drop-shadow(0 2px 0 rgba(var(--tod-glow-rgb), 0.35)) drop-shadow(0 12px 24px rgba(var(--tod-glow-rgb), 0.3));
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.12)) drop-shadow(0 3px 10px rgba(var(--tod-glow-rgb), 0.14));
   }
 }
 

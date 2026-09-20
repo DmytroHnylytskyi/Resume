@@ -24,10 +24,22 @@ interface Card {
 const clamp = (value: number, min: number, max: number) =>
   Math.max(min, Math.min(max, value));
 
-export default function useSpatialResume(scrollRoot: ScrollRoot): void {
+export default function useSpatialResume(
+  scrollRoot: ScrollRoot,
+  enabled: boolean = true
+): void {
   useEffect(() => {
+    if (!enabled) return;
     const root = scrollRoot.current;
     if (!root) return;
+
+    // Mobile runs the clean, rock-solid stable version without heavy spatial 3D/canvas/audio overhead
+    if (
+      typeof window !== 'undefined' &&
+      (window.innerWidth < 900 || ('ontouchstart' in window && window.innerWidth < 1024))
+    ) {
+      return;
+    }
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
     const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
@@ -353,5 +365,5 @@ export default function useSpatialResume(scrollRoot: ScrollRoot): void {
       root.classList.remove(spatial.host, details.host, quantum.host);
       atmosphere.remove();
     };
-  }, [scrollRoot]);
+  }, [scrollRoot, enabled]);
 }

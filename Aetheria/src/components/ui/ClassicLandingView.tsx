@@ -27,6 +27,7 @@ import { useGameStore } from '../../store/useGameStore';
 import { developerProfiles, translations } from '../../data/resumeData';
 import { dayNightState, subscribeToDayNight } from '../../store/dayNightState';
 import useSpatialResume from '../../hooks/useSpatialResume';
+import OrbitalArtifact from './OrbitalArtifact';
 import ResumePrintDocument from './ResumePrintDocument';
 import TimeOfDaySlider from './TimeOfDaySlider';
 import TypedBio from './TypedBio';
@@ -34,6 +35,12 @@ import RotatingRole from './RotatingRole';
 import ProjectsScrollScene from './ProjectsScrollScene';
 import { GithubIcon } from './icons';
 import styles from './ClassicLandingView.module.css';
+import dynamic from 'next/dynamic';
+
+const SingularityBackground = dynamic(
+  () => import('../singularity/SingularityBackground'),
+  { ssr: false }
+);
 
 const SECTION_IDS = [
   'projects',
@@ -160,6 +167,30 @@ export default function ClassicLandingView(): React.ReactElement {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [toast, setToast] = useState('');
+  const [warpActive, setWarpActive] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const checkDesktop = () => {
+      setIsDesktop(window.innerWidth >= 900);
+    };
+    checkDesktop();
+    window.addEventListener('resize', checkDesktop);
+    return () => window.removeEventListener('resize', checkDesktop);
+  }, []);
+
+  const handleNavigate3D = () => {
+    if (!isDesktop) {
+      setViewMode('3d');
+      return;
+    }
+    if (warpActive) return;
+    setWarpActive(true);
+  };
+
+  const handleWarpComplete = () => {
+    setViewMode('3d');
+  };
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLElement>(null);
@@ -175,7 +206,7 @@ export default function ClassicLandingView(): React.ReactElement {
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useSpatialResume(wrapperRef);
+  useSpatialResume(wrapperRef, isDesktop);
 
   const navItems = [
     { id: 'projects', label: isUk ? 'Проєкти' : 'Work' },
@@ -446,7 +477,20 @@ export default function ClassicLandingView(): React.ReactElement {
   };
 
   return (
-    <div className={`classic-landing-wrapper ${styles.root}`} ref={wrapperRef}>
+    <div
+      className={`classic-landing-wrapper ${styles.root}`}
+      ref={wrapperRef}
+      data-warp-active={isDesktop && warpActive ? 'true' : undefined}
+    >
+      {/* ── Live Spatial Engine: Gravitational Singularity / Quasar Background (Desktop Only) ── */}
+      {isDesktop && (
+        <SingularityBackground
+          scrollContainerRef={wrapperRef}
+          warpActive={warpActive}
+          onWarpComplete={handleWarpComplete}
+        />
+      )}
+
       <div className={`classic-sky-tint ${styles.sky}`} ref={skyRef} aria-hidden="true" />
       <div className={`hero-ambient-aura ${styles.aura}`} ref={auraRef} aria-hidden="true" />
 
@@ -517,7 +561,7 @@ export default function ClassicLandingView(): React.ReactElement {
             <button
               type="button"
               className={styles.worldButton}
-              onClick={() => setViewMode('3d')}
+              onClick={handleNavigate3D}
               title={navT.view3D}
               aria-label={navT.view3D}
             >
@@ -604,46 +648,7 @@ export default function ClassicLandingView(): React.ReactElement {
                 </div>
               </div>
 
-              <aside className={styles.lab} aria-label={isUk ? 'Напрями роботи' : 'Areas of focus'}>
-                <div className={styles.labHeader}>
-                  <span><span className={styles.statusDot} aria-hidden="true" />LIVE / PORTFOLIO</span>
-                  <Compass size={18} aria-hidden="true" />
-                </div>
-
-                <div className={styles.orbitScene} aria-hidden="true">
-                  <div className={styles.orbitHalo} />
-                  <div className={styles.orbitRing} />
-                  <div className={styles.orbitRingSecondary} />
-                  <div className={styles.orbitCore}>
-                    <span>DH</span>
-                    <small>DESIGN × CODE</small>
-                  </div>
-                  <span className={styles.orbitSatellite}><Code2 size={20} /></span>
-                  <span className={styles.orbitLabel}>WEB / 3D / SYSTEMS</span>
-                </div>
-
-                <div className={styles.labLinks}>
-                  <a href="#projects">
-                    <span className={styles.labNumber}>01</span>
-                    <span>{isUk ? 'Від ідеї до продукту' : 'From idea to product'}</span>
-                    <ArrowUpRight size={17} aria-hidden="true" />
-                  </a>
-                  <a href="#skills">
-                    <span className={styles.labNumber}>02</span>
-                    <span>{isUk ? 'Архітектура та технології' : 'Architecture & technology'}</span>
-                    <ArrowUpRight size={17} aria-hidden="true" />
-                  </a>
-                  <button type="button" onClick={() => setViewMode('3d')}>
-                    <span className={styles.labNumber}>03</span>
-                    <span>{isUk ? 'Дослідити 3D-світ' : 'Step into the 3D world'}</span>
-                    <ArrowUpRight size={17} aria-hidden="true" />
-                  </button>
-                </div>
-                <p className={styles.labNote}>
-                  <Sun size={13} aria-hidden="true" />
-                  {isUk ? 'Одне небо для портфоліо та 3D-світу' : 'One shared sky for the portfolio and 3D world'}
-                </p>
-              </aside>
+              <OrbitalArtifact isUk={isUk} onNavigate3D={handleNavigate3D} />
             </div>
 
             <div className={styles.stats}>
@@ -909,7 +914,7 @@ export default function ClassicLandingView(): React.ReactElement {
           <footer className={styles.footer}>
             <a href="#hero" className={styles.footerBrand}>DH<span>.</span></a>
             <p>&copy; {new Date().getFullYear()} {profile.name}. {t.rightsReserved}</p>
-            <button type="button" onClick={() => setViewMode('3d')}>
+            <button type="button" onClick={handleNavigate3D}>
               <Compass size={16} aria-hidden="true" />
               {isUk ? 'Зустрінемось у 3D' : 'See you in 3D'}
               <ArrowUpRight size={15} aria-hidden="true" />

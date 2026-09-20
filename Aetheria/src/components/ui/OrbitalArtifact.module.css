@@ -1,0 +1,599 @@
+.host {
+  position: relative;
+  min-width: 0;
+  width: 100%;
+  padding: clamp(20px, 2.2vw, 28px);
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  background: var(--bg-card);
+  box-shadow:
+    12px 12px 0 -1px var(--bg-app),
+    12px 12px 0 0 var(--border-subtle);
+  container-type: inline-size;
+  color: var(--text-primary);
+  box-sizing: border-box;
+}
+
+@media screen and (max-width: 600px) {
+  .host {
+    box-shadow:
+      6px 6px 0 -1px var(--bg-app),
+      6px 6px 0 0 var(--border-subtle);
+  }
+}
+
+.topline,
+.footer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  z-index: 1;
+}
+
+.topline {
+  padding: 0 0 18px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.serial,
+.material,
+.coordinate,
+.caption,
+.linkNumber {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.serial {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+}
+
+.material {
+  font-size: 11px;
+  text-align: right;
+  color: var(--text-secondary);
+}
+
+.viewport {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: clamp(280px, 90cqw, 420px);
+  perspective: 950px;
+}
+
+.grid {
+  position: absolute;
+  inset: 12% 0;
+  pointer-events: none;
+  background:
+    linear-gradient(var(--border-subtle) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px);
+  background-size: 36px 36px;
+  mask-image: radial-gradient(ellipse, #000, transparent 72%);
+  -webkit-mask-image: radial-gradient(ellipse, #000, transparent 72%);
+}
+
+.halo {
+  position: absolute;
+  width: 95%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle,
+      rgba(var(--tod-glow-rgb), 0.24),
+      rgba(var(--tod-glow-rgb), 0.08) 35%,
+      transparent 68%
+    );
+  pointer-events: none;
+}
+
+.reticle {
+  position: absolute;
+  width: 90%;
+  aspect-ratio: 1;
+  border: 1px dashed var(--border-subtle);
+  border-radius: 50%;
+  transform: rotate(-15deg) scaleY(0.94);
+  pointer-events: none;
+}
+
+.reticle::before,
+.reticle::after {
+  content: '';
+  position: absolute;
+  background: var(--border-strong);
+}
+
+.reticle::before {
+  top: 50%;
+  left: -8px;
+  right: -8px;
+  height: 1px;
+}
+
+.reticle::after {
+  left: 50%;
+  top: -8px;
+  bottom: -8px;
+  width: 1px;
+}
+
+.coordinate {
+  position: absolute;
+  color: var(--text-muted);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+}
+
+.north {
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.east {
+  right: 0;
+  top: 50%;
+  writing-mode: vertical-rl;
+}
+
+.south {
+  bottom: 20px;
+  left: 0;
+}
+
+.stage {
+  position: relative;
+  width: 72%;
+  max-width: 310px;
+  aspect-ratio: 1;
+  transform-style: preserve-3d;
+  transform:
+    rotateX(var(--look-x, 0deg))
+    rotateY(var(--look-y, 0deg));
+  transition: transform 350ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.precession,
+.orbitPlane,
+.orbit {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.precession {
+  transform: rotateX(-18deg) rotateY(22deg) rotateZ(-12deg);
+}
+
+.orbitPlane {
+  transform:
+    rotateZ(var(--azimuth))
+    rotateX(var(--inclination));
+}
+
+.orbit {
+  border: 1px solid var(--text-secondary);
+  border-radius: 50%;
+  box-shadow:
+    0 0 10px rgba(var(--tod-glow-rgb), 0.12),
+    inset 0 0 10px rgba(var(--tod-glow-rgb), 0.1);
+}
+
+.orbitPlane:nth-child(3n) .orbit {
+  border-width: 2px;
+  border-color: var(--text-primary);
+}
+
+.orbitPlane:nth-child(3n + 1) .orbit {
+  border-style: dashed;
+  border-color: var(--border-strong);
+}
+
+.orbit::after {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(var(--tod-glow-rgb), 0.4);
+  border-left-color: transparent;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+}
+
+.satellite {
+  position: absolute;
+  top: -4px;
+  left: calc(50% - 4px);
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--text-primary);
+  border-radius: 50%;
+  background: var(--tod-glow);
+  box-shadow: 0 0 16px rgba(var(--tod-glow-rgb), 0.65);
+}
+
+.corePosition {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 64px;
+  height: 64px;
+  margin: -32px 0 0 -32px;
+  transform-style: preserve-3d;
+}
+
+.core {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(-24deg) rotateY(35deg) rotateZ(12deg);
+}
+
+.face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--text-primary);
+  background:
+    linear-gradient(135deg, rgba(var(--tod-glow-rgb), 0.32), transparent 70%),
+    var(--bg-card-solid);
+  backface-visibility: hidden;
+}
+
+.face::after {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: 1px solid var(--border-subtle);
+}
+
+.face span {
+  font-family: var(--font-display);
+  font-size: 23px;
+  font-weight: 700;
+  letter-spacing: -0.08em;
+}
+
+.face[data-face='front'] {
+  transform: translateZ(32px);
+}
+
+.face[data-face='back'] {
+  transform: rotateY(180deg) translateZ(32px);
+}
+
+.face[data-face='left'] {
+  transform: rotateY(-90deg) translateZ(32px);
+}
+
+.face[data-face='right'] {
+  transform: rotateY(90deg) translateZ(32px);
+}
+
+.face[data-face='top'] {
+  transform: rotateX(90deg) translateZ(32px);
+}
+
+.face[data-face='bottom'] {
+  transform: rotateX(-90deg) translateZ(32px);
+}
+
+.shadow {
+  position: absolute;
+  left: 20%;
+  right: 20%;
+  bottom: 28px;
+  height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, var(--text-primary), transparent 70%);
+  opacity: 0.12;
+  pointer-events: none;
+}
+
+.footer {
+  padding: 18px 0 20px;
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.caption {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.caption strong {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+}
+
+.caption > span {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.motionButton {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  color: var(--text-primary);
+  background: var(--bg-card-solid);
+  cursor: pointer;
+  transition: background 200ms ease, color 200ms ease;
+}
+
+.motionButton:hover:not(:disabled) {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+}
+
+.motionButton:focus-visible {
+  outline: 2px solid var(--text-primary);
+  outline-offset: 4px;
+}
+
+.motionButton:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* Links inside the card */
+.links {
+  display: flex;
+  flex-direction: column;
+}
+
+.linkItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 52px;
+  padding: 16px 0;
+  border: 0;
+  border-bottom: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: color 200ms ease;
+  box-sizing: border-box;
+}
+
+.linkItem:last-child {
+  border-bottom: none;
+  padding-bottom: 4px;
+}
+
+.linkItem:hover {
+  color: var(--text-secondary);
+}
+
+.linkNumber {
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.linkLabel {
+  flex: 1;
+}
+
+.linkArrow {
+  flex-shrink: 0;
+  margin-left: auto;
+  color: var(--text-muted);
+  transition: transform 200ms ease, color 200ms ease;
+}
+
+.linkItem:hover .linkArrow {
+  color: var(--text-primary);
+  transform: translate(2px, -2px);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .host {
+    animation: cardEnter 1200ms 120ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .precession {
+    animation: precess 48s linear infinite;
+    animation-play-state: paused;
+  }
+
+  .orbit {
+    animation: revolve var(--duration) var(--delay) linear infinite;
+    animation-play-state: paused;
+  }
+
+  .orbitPlane:nth-child(even) .orbit {
+    animation-direction: reverse;
+  }
+
+  .core {
+    animation: tumble 24s linear infinite;
+    animation-play-state: paused;
+  }
+
+  .host[data-running='true'] .precession,
+  .host[data-running='true'] .orbit,
+  .host[data-running='true'] .core {
+    animation-play-state: running;
+  }
+}
+
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: perspective(1000px) translateY(28px) rotateY(-8deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes precess {
+  from {
+    transform: rotateX(-18deg) rotateY(22deg) rotateZ(-12deg);
+  }
+  to {
+    transform: rotateX(-18deg) rotateY(382deg) rotateZ(348deg);
+  }
+}
+
+@keyframes revolve {
+  from { transform: rotateZ(0deg); }
+  to { transform: rotateZ(360deg); }
+}
+
+@keyframes tumble {
+  from { transform: rotateX(-24deg) rotateY(35deg) rotateZ(12deg); }
+  to { transform: rotateX(336deg) rotateY(-325deg) rotateZ(372deg); }
+}
+
+@media (pointer: coarse) {
+  .stage {
+    transition: none;
+  }
+
+  .orbit,
+  .satellite {
+    box-shadow: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .host {
+    animation: none;
+  }
+
+  .stage {
+    transform: none;
+    transition: none;
+  }
+
+  .precession,
+  .orbit,
+  .core {
+    animation: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .host {
+    background: Canvas;
+    box-shadow: none;
+  }
+
+  .halo,
+  .grid,
+  .shadow {
+    display: none;
+  }
+
+  .orbit,
+  .face,
+  .motionButton {
+    border-color: CanvasText;
+    box-shadow: none;
+  }
+
+  .face,
+  .motionButton {
+    background: Canvas;
+    color: CanvasText;
+  }
+
+  .satellite {
+    background: Highlight;
+    box-shadow: none;
+  }
+}
+
+@media print {
+  .host {
+    display: none;
+  }
+}
+
+/* ── Gravitational Spaghettification (Warp Infall) ── */
+:global(.classic-landing-wrapper[data-warp-active='true']) .host {
+  animation: artifactSpaghettification 1.35s cubic-bezier(0.5, 0, 0.9, 0.5) forwards;
+  transform-origin: center center;
+  pointer-events: none !important;
+}
+
+:global(.classic-landing-wrapper[data-warp-active='true']) .cube {
+  animation: cubeHyperSpin 1.25s cubic-bezier(0.5, 0, 0.9, 0.5) forwards;
+}
+
+:global(.classic-landing-wrapper[data-warp-active='true']) .orbit {
+  animation: orbitDecay 1.10s ease-in forwards;
+}
+
+@keyframes artifactSpaghettification {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+    filter: blur(0px);
+    opacity: 1;
+  }
+  30% {
+    /* Elongation and rotation into the singularity stream */
+    transform: translate3d(10px, 10px, -50px) scale(0.9, 1.2) rotate(35deg);
+    filter: blur(2px);
+    opacity: 0.95;
+  }
+  65% {
+    /* Violent collapse into the core */
+    transform: translate3d(25px, 20px, -200px) scale(0.3, 0.15) rotate(360deg);
+    filter: blur(8px);
+    opacity: 0.5;
+  }
+  100% {
+    /* Disappears into the event horizon */
+    transform: translate3d(40px, 30px, -400px) scale(0.001) rotate(720deg);
+    filter: blur(20px);
+    opacity: 0;
+  }
+}
+
+@keyframes cubeHyperSpin {
+  0% {
+    transform: scale(1) rotateX(0deg) rotateY(0deg);
+  }
+  100% {
+    transform: scale(0.01) rotateX(720deg) rotateY(1080deg);
+    opacity: 0;
+  }
+}
+
+@keyframes orbitDecay {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.01);
+    opacity: 0;
+  }
+}

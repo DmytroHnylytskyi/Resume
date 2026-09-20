@@ -107,16 +107,12 @@ export const dayNightState = {
  */
 let lastCssSync = 0;
 
-function syncCssDynamicVariables(): void {
+function syncCssDynamicVariables(force = false): void {
   if (typeof document === 'undefined') return;
-  // ~30 Hz cap: these 6 properties live on :root, so every write invalidates
-  // style for the WHOLE document (all glass panels, glows, buttons). During a
-  // tween the engine ticks at 60 fps — 60 full-document recalcs blew the
-  // frame budget and stuttered everything, slider thumb included. The colors
-  // are soft washes; 30 repaints/s is indistinguishable. The trailing ticks
-  // of the oily displayT chase always land the final colors.
   const now = performance.now();
-  if (now - lastCssSync < 33) return;
+  const isMobileScreen = typeof window !== 'undefined' && (window.innerWidth < 820 || 'ontouchstart' in window);
+  const minInterval = isMobileScreen ? 120 : 33;
+  if (!force && now - lastCssSync < minInterval) return;
   lastCssSync = now;
   const { sky, sunElev } = dayNightState;
   const nf = Math.max(0, Math.min(1, (0.05 - sunElev) / 0.35));
@@ -235,7 +231,10 @@ function frameStep(now: number): void {
     const e = p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
     dayNightState.t = wrap01(tween.from + (tween.to - tween.from) * e);
     changed = true;
-    if (p >= 1) tween = null;
+    if (p >= 1) {
+      tween = null;
+      syncCssDynamicVariables(true);
+    }
   }
 
   // "Oily" follow: displayT chases t with exponential smoothing so fast
@@ -285,7 +284,7 @@ export function setTimeOfDay(t: number): void {
  * sunset, night→day passes the sunrise. Respects prefers-reduced-motion with
  * an instant snap.
  */
-export function flyToDayNight(target: number): void {
+export function flyToDayNight(target: number, customDur?: number): void {
   const from = dayNightState.t;
   let delta = (target - from + 1) % 1;
   if (delta < 0.02) delta += 1; // already at the pole — run a full lap rather than a no-op
@@ -303,24 +302,32 @@ export function flyToDayNight(target: number): void {
     dayNightState.displayT = dayNightState.t;
     applyDerived();
     syncThemeIfCrossed();
+    syncCssDynamicVariables(true);
     dayNightState.version++;
     listeners.forEach((fn) => fn());
     persistSoon();
     return;
   }
 
+  const isMobile = typeof window !== 'undefined' && (window.innerWidth < 820 || 'ontouchstart' in window);
+  const dur = customDur ?? (isMobile
+    ? Math.min(520, Math.max(360, delta * 750))
+    : Math.min(2800, Math.max(1100, delta * 4500)));
+
   tween = {
     from,
     to: from + delta,
     start: performance.now(),
-    dur: Math.min(4200, Math.max(1400, delta * 7000))
+    dur
   };
   ensureLoop();
 }
 
-/** Toggle button: cinematic forward-only flight to noon or midnight. */
+/** Toggle button: clean forward flight to noon or midnight. */
 export function toggleDayNight(): void {
-  flyToDayNight(lastTheme === 'dark' ? 0.5 : 1);
+  const target = lastTheme === 'dark' ? 0.5 : 1;
+  const isMobile = typeof window !== 'undefined' && (window.innerWidth < 820 || 'ontouchstart' in window);
+  flyToDayNight(target, isMobile ? 420 : 680);
 }
 
 export function subscribeToDayNight(fn: Listener): () => void {

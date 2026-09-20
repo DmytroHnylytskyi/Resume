@@ -29,6 +29,30 @@ const IslandCanvas = dynamic(() => import('../components/3d/IslandCanvas'), {
  * 
  * Reactively synchronizes `data-theme` and `document.title` on theme/locale switch.
  */
+function WormholeArrivalCurtain(): React.ReactElement | null {
+  const [visible, setVisible] = React.useState(true);
+  React.useEffect(() => {
+    const timer = setTimeout(() => setVisible(false), 900);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!visible) return null;
+
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        background: '#000000',
+        zIndex: 99998,
+        pointerEvents: 'none',
+        animation: 'wormholeReveal 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+      }}
+      aria-hidden="true"
+    />
+  );
+}
+
 export default function HomePage(): React.ReactElement {
   const { viewMode, theme, language, isSceneLoaded, setIntroPlaying } = useGameStore();
 
@@ -152,6 +176,9 @@ export default function HomePage(): React.ReactElement {
       {/* ── VIEW MODE B: Interactive 3D WebGL Island ── */}
       {viewMode === '3d' && (
         <>
+          {/* Smooth emergence curtain from black hole */}
+          <WormholeArrivalCurtain />
+
           {/* Preloader overlay while 3D assets load */}
           <LoadingScreen />
 

@@ -7592,3 +7592,8 @@ nextjs-portal,
 .rotating-role-text.fading {
   opacity: 0;
 }
+
+@keyframes wormholeReveal {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}

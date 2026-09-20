@@ -1531,8 +1531,16 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
+  .heroCopy {
+    position: relative;
+    padding: 20px 16px;
+    margin-inline: -16px;
+    border-radius: 24px;
+    background: radial-gradient(ellipse 95% 75% at 30% 30%, var(--bg-card), transparent 88%);
+  }
+
   .name {
-    font-size: clamp(48px, 10vw, 82px);
+    font-size: clamp(44px, 9.5vw, 76px);
   }
 
   .lab {
@@ -1655,9 +1663,12 @@
   }
 
   .heroTopline {
-    gap: 12px;
-    align-items: flex-start;
-    padding-bottom: 28px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px 16px;
+    padding-bottom: 24px;
   }
 
   .availability {
@@ -1669,7 +1680,7 @@
   }
 
   .name {
-    font-size: clamp(40px, 10.8vw, 64px);
+    font-size: clamp(38px, 10vw, 58px);
     letter-spacing: -0.06em;
   }
 
@@ -1678,7 +1689,7 @@
   }
 
   .heroActions > a {
-    flex: 1 1 160px;
+    flex: 1 1 140px;
   }
 
   .heroMeta {
@@ -1745,18 +1756,20 @@
 
   .stats {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 22px 12px;
-    margin-top: 36px;
-    padding-block: 24px;
+    gap: 16px 8px;
+    margin-top: 28px;
+    padding-block: 20px;
   }
 
   .stats strong {
-    font-size: 32px;
+    font-size: 28px;
   }
 
   .stats > div > span {
-    font-size: 12px;
-    line-height: 1.6;
+    font-size: 11.5px;
+    line-height: 1.4;
+    word-break: break-word;
+    hyphens: auto;
   }
 
   .scrollCue {
@@ -1823,8 +1836,9 @@
   }
 
   .aboutCard,
-  .skillCard {
-    padding: 24px;
+  .skillCard,
+  .certCard {
+    padding: 20px 18px;
     border-radius: 20px;
   }
 
@@ -1834,44 +1848,77 @@
 
   .aboutCard p {
     padding-right: 0;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .aboutCard:first-child p {
+    font-size: clamp(17px, 4.5vw, 22px);
+    line-height: 1.5;
   }
 
   .educationCard {
-    padding: 24px;
-    gap: 18px;
+    padding: 20px 18px;
+    gap: 16px;
     border-radius: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .educationCard .iconTile {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    flex-shrink: 0;
   }
 
   .educationBody {
-    flex-basis: 100%;
+    flex: 1 1 200px;
+    min-width: 0;
   }
 
   .educationBody h3 {
-    font-size: 18px;
+    font-size: 17px;
   }
 
   .educationMeta {
+    flex-basis: 100%;
     padding-left: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 12px;
+    margin-top: 2px;
+    max-width: 100%;
   }
 
   .contactBanner {
-    padding: 28px 22px;
+    padding: 24px 18px;
     border-radius: 20px;
   }
 
   .contactBanner h2 {
-    font-size: 38px;
+    font-size: clamp(26px, 7vw, 38px);
+    line-height: 1.15;
   }
 
   .contactActions {
+    display: flex;
     flex-direction: column;
     align-items: stretch;
+    gap: 10px;
   }
 
-  .contactActions .primaryButton {
-    padding-inline: 12px;
-    font-size: 12px;
-    gap: 7px;
+  .contactActions .primaryButton,
+  .contactActions .secondaryButton {
+    width: 100%;
+    justify-content: center;
+    padding-inline: 14px;
+    font-size: 12.5px;
+    min-height: 44px;
   }
 
   .footer {
@@ -2000,5 +2047,115 @@
   .backToTop,
   .skipLink {
     display: none !important;
+  }
+}
+
+/* ── Gravitational Infall (3D Warp Transition) ── */
+.root[data-warp-active='true'] {
+  overflow: hidden !important;
+  pointer-events: none !important;
+  user-select: none !important;
+}
+
+.root[data-warp-active='true'] .heroCopy {
+  animation: warpInfallHeroCopy 1.45s cubic-bezier(0.4, 0, 0.85, 0.4) forwards;
+}
+
+.root[data-warp-active='true'] .header {
+  animation: warpInfallHeader 1.30s cubic-bezier(0.4, 0, 0.85, 0.4) forwards;
+}
+
+.root[data-warp-active='true'] .stats {
+  animation: warpInfallStats 1.30s cubic-bezier(0.4, 0, 0.85, 0.4) forwards;
+}
+
+.root[data-warp-active='true'] .sky,
+.root[data-warp-active='true'] .aura {
+  animation: warpFadeOut 0.90s ease forwards;
+}
+
+.root[data-warp-active='true'] :global(#resume-main > section:not(#hero)),
+.root[data-warp-active='true'] :global(footer) {
+  animation: warpInfallGeneral 1.20s cubic-bezier(0.4, 0, 0.85, 0.4) forwards;
+}
+
+@keyframes warpInfallHeroCopy {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+    filter: blur(0px);
+    opacity: 1;
+  }
+  35% {
+    /* Initial tidal curve towards the singularity */
+    transform: translate3d(clamp(40px, 12vw, 160px), clamp(10px, 2vh, 30px), -80px) rotate(6deg) scale(0.88);
+    filter: blur(2px);
+    opacity: 0.92;
+  }
+  70% {
+    /* Violent vortex spiral into horizon */
+    transform: translate3d(clamp(160px, 32vw, 420px), clamp(20px, 4vh, 70px), -320px) rotate(26deg) scale(0.35);
+    filter: blur(8px);
+    opacity: 0.45;
+  }
+  100% {
+    /* Plunge into singularity void */
+    transform: translate3d(clamp(240px, 46vw, 640px), clamp(30px, 6vh, 100px), -600px) rotate(55deg) scale(0.01);
+    filter: blur(22px);
+    opacity: 0;
+  }
+}
+
+@keyframes warpInfallHeader {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0px);
+    opacity: 1;
+  }
+  45% {
+    transform: translate3d(clamp(30px, 8vw, 120px), clamp(40px, 12vh, 140px), -120px) rotate(-5deg) scale(0.75);
+    filter: blur(3px);
+    opacity: 0.75;
+  }
+  100% {
+    transform: translate3d(clamp(80px, 22vw, 300px), clamp(90px, 32vh, 380px), -500px) rotate(-20deg) scale(0.01);
+    filter: blur(18px);
+    opacity: 0;
+  }
+}
+
+@keyframes warpInfallStats {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0px);
+    opacity: 1;
+  }
+  45% {
+    transform: translate3d(clamp(30px, 8vw, 120px), clamp(-30px, -10vh, -120px), -120px) rotate(5deg) scale(0.75);
+    filter: blur(3px);
+    opacity: 0.75;
+  }
+  100% {
+    transform: translate3d(clamp(80px, 22vw, 320px), clamp(-70px, -26vh, -300px), -500px) rotate(22deg) scale(0.01);
+    filter: blur(18px);
+    opacity: 0;
+  }
+}
+
+@keyframes warpInfallGeneral {
+  0% {
+    transform: scale(1);
+    filter: blur(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.15) translate3d(18vw, -12vh, -350px) rotate(14deg);
+    filter: blur(16px);
+    opacity: 0;
+  }
+}
+
+@keyframes warpFadeOut {
+  to {
+    opacity: 0;
   }
 }
