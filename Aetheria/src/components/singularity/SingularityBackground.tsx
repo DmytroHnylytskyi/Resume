@@ -463,8 +463,22 @@ export default function SingularityBackground({
   const [isMobile, setIsMobile] = React.useState(false);
   const theme = useGameStore((s) => s.theme);
 
+  const isPrintingRef = useRef(false);
+
+  useEffect(() => {
+    const onBefore = () => { isPrintingRef.current = true; };
+    const onAfter = () => { isPrintingRef.current = false; };
+    window.addEventListener('beforeprint', onBefore);
+    window.addEventListener('afterprint', onAfter);
+    return () => {
+      window.removeEventListener('beforeprint', onBefore);
+      window.removeEventListener('afterprint', onAfter);
+    };
+  }, []);
+
   useEffect(() => {
     const checkMobile = () => {
+      if (isPrintingRef.current) return;
       setIsMobile(window.innerWidth < 820 || 'ontouchstart' in window);
     };
     checkMobile();
@@ -480,6 +494,7 @@ export default function SingularityBackground({
 
   return (
     <div
+      className="singularity-canvas-container"
       style={{
         position: 'fixed',
         inset: 0,

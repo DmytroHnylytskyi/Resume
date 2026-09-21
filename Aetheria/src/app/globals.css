@@ -6382,14 +6382,21 @@ nextjs-portal,
     print-color-adjust: exact !important;
   }
 
-  /* Hide the web view completely */
+  /* Hide the web view, canvas, and all interactive ambient layers completely */
   .classic-web-view,
   .classic-header,
   .classic-mobile-nav,
+  .classic-sky-tint,
+  .hero-ambient-aura,
+  .singularity-canvas-container,
+  canvas,
+  .intro-overlay,
+  .loading-screen-backdrop,
   .back-to-top-btn,
   .hero-action-buttons,
   .project-actions-toolbar-wrapper {
     display: none !important;
+    visibility: hidden !important;
   }
 
   /* Show dedicated Executive CV Document */

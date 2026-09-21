@@ -48,6 +48,7 @@ const SECTION_IDS = [
   'education',
   'skills',
   'certifications',
+  'interactive-3d',
   'contacts'
 ];
 
@@ -170,8 +171,22 @@ export default function ClassicLandingView(): React.ReactElement {
   const [warpActive, setWarpActive] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
 
+  const isPrintingRef = useRef(false);
+
+  useEffect(() => {
+    const onBefore = () => { isPrintingRef.current = true; };
+    const onAfter = () => { isPrintingRef.current = false; };
+    window.addEventListener('beforeprint', onBefore);
+    window.addEventListener('afterprint', onAfter);
+    return () => {
+      window.removeEventListener('beforeprint', onBefore);
+      window.removeEventListener('afterprint', onAfter);
+    };
+  }, []);
+
   useEffect(() => {
     const checkDesktop = () => {
+      if (isPrintingRef.current) return;
       setIsDesktop(window.innerWidth >= 900);
     };
     checkDesktop();
@@ -874,10 +889,68 @@ export default function ClassicLandingView(): React.ReactElement {
             </div>
           </section>
 
+          {/* ── 07. Interactive 3D World Showcase Banner ── */}
+          <section id="interactive-3d" className={styles.section} data-reveal>
+            <div className={`${styles.worldCtaBanner} ${styles.surface}`} onPointerMove={updateSpotlight}>
+              <div className={styles.worldCtaContent}>
+                <div className={styles.sectionEyebrow}>
+                  <span aria-hidden="true">07</span>
+                  <span>{isUk ? 'Інтерактивний досвід' : 'Interactive Experience'}</span>
+                </div>
+
+                <div className={styles.worldCtaBadges}>
+                  {['Three.js', 'React Three Fiber', 'Rapier Physics', 'Spatial Audio'].map((tech) => (
+                    <span key={tech} className={styles.worldCtaBadge}>
+                      <span className={styles.worldCtaBadgeDot} />
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+
+                <h2>
+                  {isUk
+                    ? 'Хочете побачити цей стек у дії?'
+                    : 'Want to experience this stack live?'}
+                </h2>
+
+                <p>
+                  {isUk
+                    ? 'Перейдіть в інтерактивний 3D-світ Aetheria: вільне переміщення персонажа, фізика в реальному часі, просторовий звук та WebGL-архітектура прямо у вашому браузері.'
+                    : 'Step into Aetheria 3D — control a character, explore the island, test physics and spatial WebGL interactions right in your browser.'}
+                </p>
+
+                <div className={styles.worldCtaActions}>
+                  <button
+                    type="button"
+                    className={styles.worldCtaButton}
+                    onClick={handleNavigate3D}
+                  >
+                    <span className={styles.worldCtaBeacon}>
+                      <span className={styles.worldCtaPing} />
+                      <span className={styles.worldCtaBeaconDot} />
+                    </span>
+                    <Compass size={20} aria-hidden="true" />
+                    <span>{isUk ? 'Зануритися в 3D світ' : 'Launch 3D Experience'}</span>
+                    <ArrowUpRight size={18} aria-hidden="true" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Ambient holographic compass / portal ring accent */}
+              <div className={styles.worldCtaGraphic} aria-hidden="true">
+                <div className={styles.worldCtaRingOuter} />
+                <div className={styles.worldCtaRingInner} />
+                <div className={styles.worldCtaCore} />
+                <Compass className={styles.worldCtaCompassBg} size={140} />
+              </div>
+            </div>
+          </section>
+
+          {/* ── 08. Contacts & Collaboration ── */}
           <section id="contacts" className={styles.section} data-reveal>
             <div className={`${styles.contactBanner} ${styles.surface}`} onPointerMove={updateSpotlight}>
               <div className={styles.sectionEyebrow}>
-                <span aria-hidden="true">07</span>
+                <span aria-hidden="true">08</span>
                 <span>{isUk ? 'Наступний крок' : 'The next chapter'}</span>
               </div>
               <span className={styles.availability}>
