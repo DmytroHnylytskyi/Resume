@@ -908,7 +908,7 @@ export default function ClassicLandingView(): React.ReactElement {
                 </div>
 
                 <div className={styles.worldCtaBadges}>
-                  {['Three.js', 'React Three Fiber', 'Rapier Physics', 'Spatial Audio'].map((tech) => (
+                  {['Three.js', 'React Three Fiber', 'Rapier Physics', 'GLSL Shaders'].map((tech) => (
                     <span key={tech} className={styles.worldCtaBadge}>
                       <span className={styles.worldCtaBadgeDot} />
                       {tech}
@@ -924,7 +924,7 @@ export default function ClassicLandingView(): React.ReactElement {
 
                 <p>
                   {isUk
-                    ? 'Перейдіть в інтерактивний 3D-світ Aetheria: вільне переміщення персонажа, фізика в реальному часі, просторовий звук та WebGL-архітектура прямо у вашому браузері.'
+                    ? 'Перейдіть в інтерактивний 3D-світ Aetheria: вільне переміщення персонажа, фізика в реальному часі, процедурні GLSL-шейдери та WebGL-архітектура прямо у вашому браузері.'
                     : 'Step into Aetheria 3D — control a character, explore the island, test physics and spatial WebGL interactions right in your browser.'}
                 </p>
 
