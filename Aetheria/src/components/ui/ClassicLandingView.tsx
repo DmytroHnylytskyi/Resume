@@ -19,6 +19,7 @@ import {
   Moon,
   Printer,
   Send,
+  Sparkles,
   Sun,
   Wrench,
   X
@@ -236,12 +237,12 @@ export default function ClassicLandingView(): React.ReactElement {
   useSpatialResume(wrapperRef, isDesktop);
 
   const navItems = [
-    { id: 'projects', label: isUk ? 'Проєкти' : 'Work' },
-    { id: 'about', label: isUk ? 'Про мене' : 'About' },
-    { id: 'education', label: isUk ? 'Освіта' : 'Education' },
-    { id: 'skills', label: isUk ? 'Навички' : 'Skills' },
-    { id: 'certifications', label: isUk ? 'Сертифікати' : 'Certificates' },
-    { id: 'contacts', label: isUk ? 'Контакти' : 'Contact' }
+    { id: 'projects', label: navT.projects },
+    { id: 'about', label: navT.about },
+    { id: 'education', label: navT.education },
+    { id: 'skills', label: navT.skills },
+    { id: 'certifications', label: navT.certifications },
+    { id: 'contacts', label: navT.contacts }
   ].filter((item) => item.id !== 'education' || profile.education.length > 0);
 
   const normalizedSkill = selectedSkill?.toLocaleLowerCase();
@@ -681,15 +682,15 @@ export default function ClassicLandingView(): React.ReactElement {
             <div className={styles.stats}>
               <div>
                 <strong>{String(allProjects.length).padStart(2, '0')}</strong>
-                <span>{isUk ? 'Проєкти в портфоліо' : 'Projects to explore'}</span>
+                <span>{t.statProjects}</span>
               </div>
               <div>
                 <strong>{String(profile.skills.length).padStart(2, '0')}</strong>
-                <span>{isUk ? 'Напрями технологій' : 'Technology disciplines'}</span>
+                <span>{t.statDisciplines}</span>
               </div>
               <div>
                 <strong>{String(profile.certifications.length).padStart(2, '0')}</strong>
-                <span>{isUk ? 'Сертифікати' : 'Certifications'}</span>
+                <span>{t.statCertifications}</span>
               </div>
               <a href="#projects" className={styles.scrollCue}>
                 <span>{isUk ? 'Більше нижче' : 'Scroll to discover'}</span>
@@ -762,17 +763,25 @@ export default function ClassicLandingView(): React.ReactElement {
               description={t.aboutSubtitle}
             />
             <div className={styles.aboutGrid}>
-              {profile.summary.map((item, index) => (
-                <div
-                  key={index}
-                  className={`${styles.aboutCard} ${styles.surface}`}
-                  onPointerMove={updateSpotlight}
-                >
-                  <span className={styles.cardNumber}>{String(index + 1).padStart(2, '0')}</span>
-                  <p>{item}</p>
-                  <ArrowUpRight className={styles.aboutArrow} size={24} aria-hidden="true" />
-                </div>
-              ))}
+              {profile.summary.map((item, index) => {
+                const icons = [
+                  <Layers key="layers" size={24} aria-hidden="true" />,
+                  <Sparkles key="sparkles" size={24} aria-hidden="true" />,
+                  <Cpu key="cpu" size={24} aria-hidden="true" />,
+                  <Code2 key="code2" size={24} aria-hidden="true" />
+                ];
+                return (
+                  <div
+                    key={index}
+                    className={`${styles.aboutCard} ${styles.surface}`}
+                    onPointerMove={updateSpotlight}
+                  >
+                    <span className={styles.cardNumber}>{String(index + 1).padStart(2, '0')}</span>
+                    <p>{item}</p>
+                    <span className={styles.aboutIcon}>{icons[index] || icons[0]}</span>
+                  </div>
+                );
+              })}
             </div>
           </section>
 

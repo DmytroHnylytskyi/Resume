@@ -66,9 +66,13 @@ export interface DeveloperProfile {
 export interface Translations {
   nav: {
     brandTag: string;
-    bio: string;
+    projects: string;
+    about: string;
+    education: string;
     skills: string;
+    certifications: string;
     contacts: string;
+    bio: string;
     view3D: string;
     viewClassic: string;
     resumeTitle: string;
@@ -91,30 +95,19 @@ export interface Translations {
     tip: string;
   };
   landing: {
-    heroGreeting: string;
-    availableForWork: string;
-    heroFocus: string;
-    heroNameOutline: string;
-    heroNameSolid: string;
-    contactMe: string;
-    viewIn3D: string;
     aboutTitle: string;
     aboutSubtitle: string;
     educationTitle: string;
     educationSubtitle: string;
-    educationYears: string;
     certificationsTitle: string;
     certificationsSubtitle: string;
     skillsTitle: string;
     skillsSubtitle: string;
     projectsTitle: string;
     projectsSubtitle: string;
-    projectsWatermark: string;
     keyFeatures: string;
     liveDemo: string;
     sourceCode: string;
-    realProjectBadge: string;
-    interactiveBadge: string;
     contactsTitle: string;
     contactsSubtitle: string;
     ctaHeadline: string;
@@ -122,12 +115,11 @@ export interface Translations {
     ctaButton: string;
     copyEmail: string;
     copied: string;
-    openLink: string;
     downloadPdf: string;
     backToTop: string;
-    statYears: string;
     statProjects: string;
-    statTechs: string;
+    statDisciplines: string;
+    statCertifications: string;
     rightsReserved: string;
   };
   modals: {

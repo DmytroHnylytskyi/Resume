@@ -983,11 +983,19 @@
   letter-spacing: -0.025em;
 }
 
-.aboutArrow {
+.aboutIcon {
   position: absolute;
   top: 24px;
   right: 24px;
   color: var(--text-muted);
+  opacity: 0.6;
+  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), color 0.3s ease;
+}
+
+.aboutCard:hover .aboutIcon {
+  opacity: 1;
+  color: var(--tod-glow, #38bdf8);
+  transform: translateY(-2px) scale(1.1);
 }
 
 .educationList {
