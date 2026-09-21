@@ -16,21 +16,23 @@ type IntroStage = 'intro' | 'hidden';
  */
 export default function IntroOverlay(): React.ReactElement | null {
   const isIntroPlaying = useGameStore((s) => s.isIntroPlaying);
+  const isSceneLoaded = useGameStore((s) => s.isSceneLoaded);
+  const viewMode = useGameStore((s) => s.viewMode);
   const language = useGameStore((s) => s.language);
   const [stage, setStage] = useState<IntroStage>('hidden');
   const [leaving, setLeaving] = useState(false);
 
-  // Flight started
+  // Flight started - strictly require isSceneLoaded AND viewMode === '3d'
   useEffect(() => {
-    if (isIntroPlaying) {
+    if (isIntroPlaying && isSceneLoaded && viewMode === '3d') {
       setLeaving(false);
       setStage('intro');
     }
-  }, [isIntroPlaying]);
+  }, [isIntroPlaying, isSceneLoaded, viewMode]);
 
-  // Flight ended (landed or skipped) → fade the titles, then return straight to gameplay
+  // Flight ended (landed, skipped, or left 3D mode)
   useEffect(() => {
-    if (stage === 'intro' && !isIntroPlaying) {
+    if (stage === 'intro' && (!isIntroPlaying || !isSceneLoaded || viewMode !== '3d')) {
       setLeaving(true);
       const t = window.setTimeout(() => {
         setLeaving(false);
@@ -39,9 +41,9 @@ export default function IntroOverlay(): React.ReactElement | null {
       return () => window.clearTimeout(t);
     }
     return undefined;
-  }, [isIntroPlaying, stage]);
+  }, [isIntroPlaying, isSceneLoaded, viewMode, stage]);
 
-  if (stage === 'hidden') return null;
+  if (stage === 'hidden' || !isSceneLoaded || viewMode !== '3d') return null;
 
   const profile = developerProfiles[language];
   const skipHint = language === 'uk'

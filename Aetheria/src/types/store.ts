@@ -65,6 +65,8 @@ export interface GameState {
   // Cinematic Intro Swoop
   isIntroPlaying: boolean;
   setIntroPlaying: (playing: boolean) => void;
+  pendingIntro: boolean;
+  setPendingIntro: (pending: boolean) => void;
   introTriggerCount: number;
   triggerIntroSwoop: () => void;
 

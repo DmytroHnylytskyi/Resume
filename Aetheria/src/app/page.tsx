@@ -159,7 +159,14 @@ export default function HomePage(): React.ReactElement {
     try {
       seen = localStorage.getItem('aetheria_intro_seen') === '1';
     } catch (_) {}
-    if (!seen && !reducedMotion) setIntroPlaying(true);
+
+    const pendingIntro = useGameStore.getState().pendingIntro;
+    if (pendingIntro) {
+      useGameStore.setState({ pendingIntro: false });
+      if (!reducedMotion) setIntroPlaying(true);
+    } else if (!seen && !reducedMotion) {
+      setIntroPlaying(true);
+    }
   }, [isSceneLoaded, setIntroPlaying]);
 
   return (

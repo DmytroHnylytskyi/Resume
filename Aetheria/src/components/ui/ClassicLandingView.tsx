@@ -181,7 +181,12 @@ export default function ClassicLandingView(): React.ReactElement {
 
   const handleNavigate3D = () => {
     if (!isDesktop) {
-      useGameStore.setState({ isIntroPlaying: true });
+      const isLoaded = useGameStore.getState().isSceneLoaded;
+      if (isLoaded) {
+        useGameStore.setState({ isIntroPlaying: true });
+      } else {
+        useGameStore.setState({ pendingIntro: true, isIntroPlaying: false });
+      }
       setViewMode('3d');
       return;
     }
@@ -190,7 +195,12 @@ export default function ClassicLandingView(): React.ReactElement {
   };
 
   const handleWarpComplete = () => {
-    useGameStore.setState({ isIntroPlaying: true });
+    const isLoaded = useGameStore.getState().isSceneLoaded;
+    if (isLoaded) {
+      useGameStore.setState({ isIntroPlaying: true });
+    } else {
+      useGameStore.setState({ pendingIntro: true, isIntroPlaying: false });
+    }
     setViewMode('3d');
   };
 

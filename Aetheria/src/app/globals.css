@@ -535,13 +535,13 @@ html, body {
 
 /* ── Loading Screen ── */
 .loading-screen-backdrop {
-  position: absolute;
+  position: fixed;
   inset: 0;
   background: var(--bg-app);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: var(--z-dropdown);
+  z-index: 1050;
   opacity: 1;
   transition: opacity 0.5s ease;
 }

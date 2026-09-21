@@ -69,6 +69,8 @@ export const useGameStore = create<GameState>((set) => ({
   // ── Cinematic Intro Swoop ──
   isIntroPlaying: false,
   setIntroPlaying: (playing) => set({ isIntroPlaying: playing }),
+  pendingIntro: false,
+  setPendingIntro: (pending) => set({ pendingIntro: pending }),
   introTriggerCount: 0,
   triggerIntroSwoop: () => set((s) => ({ introTriggerCount: s.introTriggerCount + 1, isIntroPlaying: true })),
 
