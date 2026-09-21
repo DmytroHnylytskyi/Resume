@@ -3,6 +3,7 @@ import { GameState, ViewMode, ThemeMode, CameraMode } from '../types/store';
 import { StatueKey } from '../types/scene';
 import { Locale } from '../types/portfolio';
 import { registerDayNightThemeSync, toggleDayNight } from './dayNightState';
+import { getGlobalCyberAudio } from '../hooks/cyberAudio';
 
 /**
  * useGameStore
@@ -58,8 +59,14 @@ export const useGameStore = create<GameState>((set) => ({
   setEasterEggToast: (toast) => set({ easterEggToast: toast }),
 
   // ── Audio & Camera Settings ──
-  isAudioMuted: false,
-  toggleAudio: () => set((s) => ({ isAudioMuted: !s.isAudioMuted })),
+  isAudioMuted: true,
+  toggleAudio: () => {
+    const currentlyMuted = useGameStore.getState().isAudioMuted;
+    const nextEnabled = currentlyMuted;
+    void getGlobalCyberAudio().setEnabled(nextEnabled).then((enabled) => {
+      useGameStore.setState({ isAudioMuted: !enabled });
+    });
+  },
 
   cameraMode: 'third_person',
   setCameraMode: (mode: CameraMode) => set({ cameraMode: mode }),

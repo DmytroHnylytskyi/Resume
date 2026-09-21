@@ -21,6 +21,8 @@ import {
   Send,
   Sparkles,
   Sun,
+  Volume2,
+  VolumeX,
   Wrench,
   X
 } from 'lucide-react';
@@ -28,6 +30,7 @@ import { useGameStore } from '../../store/useGameStore';
 import { developerProfiles, translations } from '../../data/resumeData';
 import { dayNightState, subscribeToDayNight } from '../../store/dayNightState';
 import useSpatialResume from '../../hooks/useSpatialResume';
+import { getGlobalCyberAudio } from '../../hooks/cyberAudio';
 import OrbitalArtifact from './OrbitalArtifact';
 import ResumePrintDocument from './ResumePrintDocument';
 import TimeOfDaySlider from './TimeOfDaySlider';
@@ -155,7 +158,9 @@ export default function ClassicLandingView(): React.ReactElement {
     setViewMode,
     setSelectedProject,
     theme,
-    toggleTheme
+    toggleTheme,
+    isAudioMuted,
+    toggleAudio
   } = useGameStore();
 
   const profile = developerProfiles[language];
@@ -575,6 +580,21 @@ export default function ClassicLandingView(): React.ReactElement {
                 : (isUk ? 'Увімкнути темну тему' : 'Use dark theme')}
             >
               {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+            </button>
+
+            <button
+              type="button"
+              className={`theme-toggle-btn audio-toggle-btn ${!isAudioMuted ? 'active' : ''}`}
+              onClick={() => {
+                getGlobalCyberAudio().play('click');
+                toggleAudio();
+              }}
+              title={!isAudioMuted
+                ? (isUk ? 'Вимкнути звук' : 'Mute sound')
+                : (isUk ? 'Увімкнути звук' : 'Enable sound')}
+              aria-label={!isAudioMuted ? 'Mute sound' : 'Enable sound'}
+            >
+              {!isAudioMuted ? <Volume2 size={16} /> : <VolumeX size={16} />}
             </button>
 
             <div className={styles.languageGroup} role="group" aria-label={isUk ? 'Мова' : 'Language'}>

@@ -8,6 +8,7 @@ import { useGameStore } from '../../store/useGameStore';
 import { characterAnimState } from '../../store/characterAnimState';
 import { radarState } from '../../store/radarState';
 import { mobileControls } from '../../store/mobileControlsState';
+import { getGlobalCyberAudio } from '../../hooks/cyberAudio';
 import AnimatedCharacter from './AnimatedCharacter';
 
 const WALK_SPEED = 2.6;
@@ -82,6 +83,8 @@ export default function CharacterController({
   const smoothCamPos = useRef(new THREE.Vector3(spawnPoint[0], spawnPoint[1] + 2.2, spawnPoint[2] + 4.0));
   const currentVelocity = useRef(new THREE.Vector3());
   const isGrounded = useRef(true);
+  const wasGrounded = useRef(true);
+  const footstepTimer = useRef(0);
   const lastJumpTime = useRef(0);
 
   // ── Reusable per-frame scratch vectors (ZERO allocations per frame) ──
@@ -457,8 +460,24 @@ export default function CharacterController({
       characterAnimState.isJumping = true;
       keys.current.jump = false;
       mobileControls.isJumping = false;
+      getGlobalCyberAudio().play('jump');
     } else if (!isGrounded.current && mobileControls.isJumping) {
       mobileControls.isJumping = false;
+    }
+
+    // Landing detection
+    if (!wasGrounded.current && isGrounded.current) {
+      getGlobalCyberAudio().play('land');
+    }
+    wasGrounded.current = isGrounded.current;
+
+    // Footsteps on locomotion
+    if (moving && isGrounded.current && !isIntroPlaying) {
+      const stepInterval = sprinting ? 260 : 360;
+      if (now - footstepTimer.current > stepInterval) {
+        footstepTimer.current = now;
+        getGlobalCyberAudio().play('footstep');
+      }
     }
 
     // ── 3rd-Person Camera & Cinematic Intro Swoop ──

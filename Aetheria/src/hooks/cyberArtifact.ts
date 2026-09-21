@@ -1,6 +1,6 @@
 import { dayNightState, subscribeToDayNight } from '../store/dayNightState';
 import { useGameStore } from '../store/useGameStore';
-import { createCyberAudio } from './cyberAudio';
+import { getGlobalCyberAudio } from './cyberAudio';
 import styles from '../components/ui/CyberArtifact.module.css';
 
 interface Particle {
@@ -25,7 +25,7 @@ const audioOff = icon(`${speaker}<path d="m16 9 6 6m0-6-6 6"/>`);
 export function mountCyberArtifact(root: HTMLElement): () => void {
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
-  const audio = createCyberAudio();
+  const audio = getGlobalCyberAudio();
   const particles: Particle[] = [];
   let disposed = false;
   let frame = 0;
@@ -44,7 +44,7 @@ export function mountCyberArtifact(root: HTMLElement): () => void {
   let emission = 0;
   let phase = 0;
   let dirty = true;
-  let soundEnabled = false;
+  let soundEnabled = audio.isEnabled();
   let language = useGameStore.getState().language;
 
   root.classList.add(styles.host);
@@ -281,9 +281,11 @@ export function mountCyberArtifact(root: HTMLElement): () => void {
 
   const onSound = async () => {
     soundBtn.disabled = true;
-    const enabled = await audio.setEnabled(!soundEnabled);
+    const next = !audio.isEnabled();
+    const enabled = await audio.setEnabled(next);
     if (disposed) return;
     soundEnabled = enabled;
+    useGameStore.setState({ isAudioMuted: !enabled });
     soundBtn.disabled = false;
     labels();
   };
@@ -334,9 +336,17 @@ export function mountCyberArtifact(root: HTMLElement): () => void {
     schedule();
   });
   const unsubscribeStore = useGameStore.subscribe((state) => {
-    if (state.language === language) return;
-    language = state.language;
-    labels();
+    let changed = false;
+    if (state.language !== language) {
+      language = state.language;
+      changed = true;
+    }
+    const storeSoundEnabled = !state.isAudioMuted;
+    if (storeSoundEnabled !== soundEnabled) {
+      soundEnabled = storeSoundEnabled;
+      changed = true;
+    }
+    if (changed) labels();
   });
 
   const resizeObserver = typeof ResizeObserver !== 'undefined'
@@ -365,7 +375,6 @@ export function mountCyberArtifact(root: HTMLElement): () => void {
     resizeObserver?.disconnect();
     unsubscribeSky();
     unsubscribeStore();
-    audio.dispose();
     particles.length = 0;
     soundBtn.removeEventListener('click', onSound);
     root.removeEventListener('scroll', onScroll);

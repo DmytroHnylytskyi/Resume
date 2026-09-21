@@ -9,6 +9,7 @@ import { useGameStore } from '../../store/useGameStore';
 import { dayNightState, getNightFactor } from '../../store/dayNightState';
 import WorldScene from './WorldScene';
 import CharacterController from './CharacterController';
+import { getGlobalCyberAudio } from '../../hooks/cyberAudio';
 
 /**
  * AdaptiveResolution
@@ -603,10 +604,24 @@ export default function IslandCanvas(): React.ReactElement {
   const playerPosRef = useRef<THREE.Vector3 | null>(null);
   const isSceneLoaded = useGameStore((s) => s.isSceneLoaded);
   const language = useGameStore((s) => s.language);
+  const isAudioMuted = useGameStore((s) => s.isAudioMuted);
   // The adaptive resolution value lives in the dpr PROP itself: fiber
   // reconciles viewport.dpr against this prop on re-renders, so driving it
   // from here is the only churn-free way to change resolution at runtime.
   const [dpr, setDpr] = React.useState(DPR_CAP);
+
+  // Synchronize 3D atmospheric ambient drone with global audio state
+  useEffect(() => {
+    const audio = getGlobalCyberAudio();
+    if (!isAudioMuted && isSceneLoaded) {
+      audio.startAmbient3D();
+    } else {
+      audio.stopAmbient3D();
+    }
+    return () => {
+      audio.stopAmbient3D();
+    };
+  }, [isAudioMuted, isSceneLoaded]);
 
   // Screen readers receive nothing from a WebGL canvas: this label is the
   // only description they can announce (WCAG canvas guidance).

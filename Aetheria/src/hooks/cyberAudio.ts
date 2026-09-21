@@ -1,4 +1,13 @@
-export type CyberTone = 'hover' | 'click' | 'sky' | 'scroll';
+export type CyberTone =
+  | 'hover'
+  | 'click'
+  | 'sky'
+  | 'scroll'
+  | 'footstep'
+  | 'jump'
+  | 'land'
+  | 'portal'
+  | 'interact';
 
 export function createCyberAudio() {
   let context: AudioContext | null = null;
@@ -10,8 +19,19 @@ export function createCyberAudio() {
   let version = 0;
   const voices = new Set<AudioScheduledSourceNode>();
   const lastPlayed: Record<CyberTone, number> = {
-    hover: -Infinity, click: -Infinity, sky: -Infinity, scroll: -Infinity
+    hover: -Infinity,
+    click: -Infinity,
+    sky: -Infinity,
+    scroll: -Infinity,
+    footstep: -Infinity,
+    jump: -Infinity,
+    land: -Infinity,
+    portal: -Infinity,
+    interact: -Infinity
   };
+
+  let ambientDroneGain: GainNode | null = null;
+  let ambientDroneOscs: OscillatorNode[] = [];
 
   const silence = () => {
     voices.forEach((voice) => {
@@ -23,6 +43,63 @@ export function createCyberAudio() {
     });
   };
 
+  const stopAmbient3D = () => {
+    if (!ambientDroneGain || !context) return;
+    try {
+      const ctx = context;
+      const gain = ambientDroneGain;
+      const oscs = ambientDroneOscs;
+      ambientDroneGain = null;
+      ambientDroneOscs = [];
+      gain.gain.setValueAtTime(gain.gain.value, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.2);
+      setTimeout(() => {
+        oscs.forEach((osc) => {
+          try {
+            osc.stop();
+            osc.disconnect();
+          } catch (_) {}
+        });
+        try {
+          gain.disconnect();
+        } catch (_) {}
+      }, 1300);
+    } catch (_) {}
+  };
+
+  const startAmbient3D = () => {
+    if (!context || !master || !enabled || disposed || ambientDroneGain) return;
+    try {
+      const ctx = context;
+      const droneGain = ctx.createGain();
+      droneGain.gain.setValueAtTime(0.0001, ctx.currentTime);
+      droneGain.gain.exponentialRampToValueAtTime(0.032, ctx.currentTime + 2.5);
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(180, ctx.currentTime);
+
+      const osc1 = ctx.createOscillator();
+      osc1.type = 'sine';
+      osc1.frequency.setValueAtTime(55, ctx.currentTime); // A1 note (55 Hz)
+
+      const osc2 = ctx.createOscillator();
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(82.41, ctx.currentTime); // E2 fifth (82.4 Hz)
+
+      osc1.connect(filter);
+      osc2.connect(filter);
+      filter.connect(droneGain);
+      droneGain.connect(master);
+
+      osc1.start();
+      osc2.start();
+
+      ambientDroneGain = droneGain;
+      ambientDroneOscs = [osc1, osc2];
+    } catch (_) {}
+  };
+
   const play = (kind: CyberTone, value = 0.5) => {
     const ctx = context;
     const output = master;
@@ -30,8 +107,19 @@ export function createCyberAudio() {
 
     const now = ctx.currentTime;
     const intensity = Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 0.5;
-    const interval = { hover: 0.22, click: 0.065, sky: 0.24, scroll: 0.14 }[kind];
-    if (now - lastPlayed[kind] < interval || voices.size > 15) return;
+    const interval: Record<CyberTone, number> = {
+      hover: 0.22,
+      click: 0.065,
+      sky: 0.24,
+      scroll: 0.14,
+      footstep: 0.3,
+      jump: 0.25,
+      land: 0.25,
+      portal: 0.75,
+      interact: 0.3
+    };
+
+    if (now - lastPlayed[kind] < interval[kind] || voices.size > 18) return;
     if (kind === 'scroll' && intensity < 0.12) return;
     lastPlayed[kind] = now;
 
@@ -92,6 +180,54 @@ export function createCyberAudio() {
       return;
     }
 
+    if (kind === 'footstep') {
+      const source = ctx.createOscillator();
+      source.type = 'sine';
+      const pitch = 95 + Math.random() * 25;
+      source.frequency.setValueAtTime(pitch, now);
+      source.frequency.exponentialRampToValueAtTime(32, now + 0.055);
+      spawn(source, 0.06, 0.03, 420);
+      return;
+    }
+
+    if (kind === 'jump') {
+      const source = ctx.createOscillator();
+      source.type = 'sine';
+      source.frequency.setValueAtTime(170, now);
+      source.frequency.exponentialRampToValueAtTime(460, now + 0.14);
+      spawn(source, 0.16, 0.055, 1100);
+      return;
+    }
+
+    if (kind === 'land') {
+      const source = ctx.createOscillator();
+      source.type = 'sine';
+      source.frequency.setValueAtTime(125, now);
+      source.frequency.exponentialRampToValueAtTime(30, now + 0.08);
+      spawn(source, 0.1, 0.045, 450);
+      return;
+    }
+
+    if (kind === 'interact') {
+      [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + idx * 0.032);
+        spawn(osc, 0.32, 0.035, 2800, idx * 0.032);
+      });
+      return;
+    }
+
+    if (kind === 'portal') {
+      [220, 329.63, 440].forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + idx * 0.04);
+        spawn(osc, 0.65, 0.025, 1600, idx * 0.04);
+      });
+      return;
+    }
+
     const root = kind === 'sky' ? 98 + intensity * 98 : 392;
     const ratios = kind === 'sky' ? [1, 1.5, 2] : [1, 1.25, 1.5];
     ratios.forEach((ratio, index) => {
@@ -112,11 +248,17 @@ export function createCyberAudio() {
 
   return {
     play,
+    startAmbient3D,
+    stopAmbient3D,
+    isEnabled(): boolean {
+      return enabled;
+    },
     async setEnabled(next: boolean): Promise<boolean> {
       const request = ++version;
       enabled = false;
       silence();
       if (!next || disposed) {
+        stopAmbient3D();
         if (context?.state === 'running') await context.suspend().catch(() => {});
         return false;
       }
@@ -147,6 +289,7 @@ export function createCyberAudio() {
     },
     suspend() {
       silence();
+      stopAmbient3D();
       if (context?.state === 'running') void context.suspend().catch(() => {});
     },
     resume() {
@@ -159,6 +302,7 @@ export function createCyberAudio() {
       enabled = false;
       version += 1;
       silence();
+      stopAmbient3D();
       voices.clear();
       if (context && context.state !== 'closed') void context.close().catch(() => {});
       master?.disconnect();
@@ -169,4 +313,13 @@ export function createCyberAudio() {
       noise = null;
     }
   };
+}
+
+let globalCyberAudio: ReturnType<typeof createCyberAudio> | null = null;
+
+export function getGlobalCyberAudio() {
+  if (!globalCyberAudio) {
+    globalCyberAudio = createCyberAudio();
+  }
+  return globalCyberAudio;
 }

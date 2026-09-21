@@ -256,6 +256,36 @@ html, body {
   border-radius: 10px !important;
 }
 
+.audio-toggle-btn {
+  width: 34px;
+  height: 34px;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px !important;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  background: var(--badge-bg);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.audio-toggle-btn:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+.audio-toggle-btn.active {
+  color: var(--tod-glow, #38bdf8) !important;
+  border-color: rgba(var(--tod-glow-rgb, 56, 189, 248), 0.5) !important;
+  box-shadow: 0 0 14px -2px rgba(var(--tod-glow-rgb, 56, 189, 248), 0.4);
+}
+
 /* ── Top Navigation Bar (3D Mode) ── */
 .island-top-bar {
   position: absolute;
@@ -393,6 +423,46 @@ html, body {
 .mode-switch-btn:hover {
   background: var(--bg-card-hover);
   border-color: var(--border-accent);
+}
+
+/* ── Controls Quick Onboarding Helper Pill ── */
+.controls-onboarding-pill-wrapper {
+  position: absolute;
+  bottom: 36px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  z-index: var(--z-top-bar);
+  animation: slide-up-fade 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.controls-onboarding-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  background: var(--bg-card-solid);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.5), 0 0 16px -4px rgba(var(--tod-glow-rgb, 56, 189, 248), 0.2);
+  color: var(--text-primary);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12.5px;
+  letter-spacing: 0.02em;
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .controls-onboarding-pill {
+    background: color-mix(in srgb, var(--bg-card-solid) 82%, transparent);
+    backdrop-filter: blur(18px) saturate(180%);
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
+  }
+}
+
+.controls-pill-icon {
+  font-size: 14px;
 }
 
 /* ── Minimalist Clean Floating Interaction Pill ── */

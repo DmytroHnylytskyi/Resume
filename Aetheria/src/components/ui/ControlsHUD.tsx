@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { useGameStore } from '../../store/useGameStore';
 import { developerProfiles, translations } from '../../data/resumeData';
-import { User, Share2, Award, FileText, Sun, Moon, Sparkles } from 'lucide-react';
+import { User, Share2, Award, FileText, Sun, Moon, Sparkles, Volume2, VolumeX } from 'lucide-react';
+import { getGlobalCyberAudio } from '../../hooks/cyberAudio';
 import ControlsGuideDropdown from './ControlsGuideDropdown';
 import TimeOfDaySlider from './TimeOfDaySlider';
 
@@ -26,12 +27,28 @@ export default function ControlsHUD(): React.ReactElement {
     viewMode,
     theme,
     toggleTheme,
+    isAudioMuted,
+    toggleAudio,
     isIntroPlaying,
     triggerIntroSwoop
   } = useGameStore();
 
   const profile = developerProfiles[language];
   const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [showControlsHint, setShowControlsHint] = useState(true);
+
+  useEffect(() => {
+    if (isIntroPlaying) return;
+    const timer = setTimeout(() => setShowControlsHint(false), 7000);
+    const onActivity = () => setShowControlsHint(false);
+    window.addEventListener('keydown', onActivity, { once: true });
+    window.addEventListener('pointerdown', onActivity, { once: true });
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('keydown', onActivity);
+      window.removeEventListener('pointerdown', onActivity);
+    };
+  }, [isIntroPlaying]);
 
   useEffect(() => {
     const checkTouch = () => {
@@ -105,6 +122,22 @@ export default function ControlsHUD(): React.ReactElement {
               {theme === 'dark' ? <Sun size={15} aria-hidden="true" /> : <Moon size={15} aria-hidden="true" />}
             </button>
 
+            {/* Audio sound toggle */}
+            <button
+              type="button"
+              className={`nav-shortcut-btn audio-toggle-btn ${!isAudioMuted ? 'active' : ''}`}
+              onClick={() => {
+                getGlobalCyberAudio().play('click');
+                toggleAudio();
+              }}
+              title={!isAudioMuted
+                ? (language === 'uk' ? 'Вимкнути звук' : 'Mute sound')
+                : (language === 'uk' ? 'Увімкнути звук' : 'Enable sound')}
+              aria-label={!isAudioMuted ? 'Mute sound' : 'Enable sound'}
+            >
+              {!isAudioMuted ? <Volume2 size={15} aria-hidden="true" /> : <VolumeX size={15} aria-hidden="true" />}
+            </button>
+
             <div className="lang-toggle-group mini">
               <button
                 className={`lang-btn ${language === 'uk' ? 'active' : ''}`}
@@ -125,12 +158,33 @@ export default function ControlsHUD(): React.ReactElement {
         </div>
       </header>
 
+      {/* ── Controls Quick Onboarding Helper Pill ── */}
+      {showControlsHint && !isIntroPlaying && !interactionPrompt && (
+        <div className="controls-onboarding-pill-wrapper" role="status" aria-live="polite">
+          <div className="controls-onboarding-pill glass-panel">
+            <span className="controls-pill-icon" aria-hidden="true">⌨️</span>
+            <span>
+              {isTouchDevice
+                ? (language === 'uk'
+                  ? 'Джойстик ліворуч для руху • Огляд праворуч • [E] дія'
+                  : 'Left stick to move • Drag right to look • [E] interact')
+                : (language === 'uk'
+                  ? '[W, A, S, D] для руху • [Пробіл] стрибок • [E] дія • [H] гід'
+                  : '[W, A, S, D] to move • [Space] jump • [E] interact • [H] guide')}
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* ── Minimalist Clean Floating Interaction Pill ── */}
       {interactionPrompt && (
         <div className="minimal-interaction-pill-wrapper">
           <button
             className="minimal-interaction-pill glass-panel touch-friendly"
-            onClick={interactionPrompt.action}
+            onClick={() => {
+              getGlobalCyberAudio().play('interact');
+              interactionPrompt.action();
+            }}
           >
             {isTouchDevice ? (
               <span className="interaction-touch-badge">
