@@ -95,6 +95,35 @@ function updateSpotlight(event: React.PointerEvent<HTMLElement>): void {
   element.style.setProperty('--pointer-y', `${event.clientY - rect.top}px`);
 }
 
+/** Interactive 3D micro-tilt and dynamic specular lighting for showpiece cards. */
+function updateCardTilt(event: React.PointerEvent<HTMLElement>): void {
+  if (
+    event.pointerType !== 'mouse'
+    || prefersReducedMotion()
+    || !window.matchMedia('(pointer: fine)').matches
+  ) return;
+
+  const element = event.currentTarget;
+  const rect = element.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
+  const normX = (x / rect.width - 0.5) * 2;
+  const normY = (y / rect.height - 0.5) * 2;
+
+  element.style.setProperty('--pointer-x', `${x}px`);
+  element.style.setProperty('--pointer-y', `${y}px`);
+  element.style.setProperty('--tilt-x', `${normY * -4.5}deg`);
+  element.style.setProperty('--tilt-y', `${normX * 5.5}deg`);
+  element.style.setProperty('--glare-opacity', '0.28');
+}
+
+function resetCardTilt(event: React.PointerEvent<HTMLElement>): void {
+  const element = event.currentTarget;
+  element.style.setProperty('--tilt-x', '0deg');
+  element.style.setProperty('--tilt-y', '0deg');
+  element.style.setProperty('--glare-opacity', '0');
+}
+
 /** Keep the one-second clock updates out of the main page component. */
 function KyivClock(): React.ReactElement | null {
   const [time, setTime] = useState('');
@@ -934,7 +963,16 @@ export default function ClassicLandingView(): React.ReactElement {
 
           {/* ── 07. Interactive 3D World Showcase Banner ── */}
           <section id="interactive-3d" className={styles.section} data-reveal>
-            <div className={`${styles.worldCtaBanner} ${styles.surface}`} onPointerMove={updateSpotlight}>
+            <div
+              className={`${styles.worldCtaBanner} ${styles.surface}`}
+              onPointerMove={updateCardTilt}
+              onPointerLeave={resetCardTilt}
+            >
+              {/* Dynamic perspective cyber-grid lines on card floor */}
+              <div className={styles.worldCtaGridBackground} aria-hidden="true" />
+              {/* Dynamic interactive glare sheen */}
+              <div className={styles.worldCtaGlare} aria-hidden="true" />
+
               <div className={styles.worldCtaContent}>
                 <div className={styles.sectionEyebrow}>
                   <span aria-hidden="true">07</span>
@@ -967,6 +1005,7 @@ export default function ClassicLandingView(): React.ReactElement {
                     type="button"
                     className={styles.worldCtaButton}
                     onClick={handleNavigate3D}
+                    onPointerEnter={() => getGlobalCyberAudio().play('hover')}
                   >
                     <span className={styles.worldCtaBeacon}>
                       <span className={styles.worldCtaPing} />
@@ -979,62 +1018,213 @@ export default function ClassicLandingView(): React.ReactElement {
                 </div>
               </div>
 
-              {/* Ambient holographic compass / portal ring accent */}
+              {/* Holographic 3D Portal Chamber */}
               <div className={styles.worldCtaGraphic} aria-hidden="true">
-                <div className={styles.worldCtaRingOuter} />
+                {/* Floating Telemetry HUD Badges */}
+                <div className={`${styles.worldCtaHudPill} ${styles.worldCtaHudTop}`}>
+                  <span className={styles.hudPillDot} />
+                  <span>60 FPS WEBGL</span>
+                </div>
+                <div className={`${styles.worldCtaHudPill} ${styles.worldCtaHudRight}`}>
+                  <span>RAPIER 3D</span>
+                </div>
+                <div className={`${styles.worldCtaHudPill} ${styles.worldCtaHudBottom}`}>
+                  <span>GLSL SHADERS</span>
+                </div>
+
+                {/* Radar sweep beam */}
+                <div className={styles.worldCtaRadarBeam} />
+
+                {/* Rotating Gyro Rings with Cardinal Coordinates */}
+                <div className={styles.worldCtaRingOuter}>
+                  <span className={styles.ringDegreeTop}>000°</span>
+                  <span className={styles.ringDegreeRight}>090°</span>
+                  <span className={styles.ringDegreeBottom}>180°</span>
+                  <span className={styles.ringDegreeLeft}>270°</span>
+                </div>
+                <div className={styles.worldCtaRingMiddle} />
                 <div className={styles.worldCtaRingInner} />
-                <div className={styles.worldCtaCore} />
-                <Compass className={styles.worldCtaCompassBg} size={140} />
+
+                {/* Orbiting Tech Nodes */}
+                <div className={styles.worldCtaOrbitNodeA} />
+                <div className={styles.worldCtaOrbitNodeB} />
+
+                {/* Singularity Event Horizon Core */}
+                <div className={styles.worldCtaCoreGlow} />
+                <div className={styles.worldCtaSingularity} />
+
+                {/* 3D Wireframe Floating Island Graphic */}
+                <svg
+                  className={styles.worldCtaWireframeIsland}
+                  viewBox="0 0 200 200"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <polygon
+                    points="100,58 156,86 142,138 100,168 58,138 44,86"
+                    stroke="currentColor"
+                    strokeWidth="1.2"
+                    strokeDasharray="4 3"
+                    className={styles.wireframeBase}
+                  />
+                  <polygon
+                    points="100,78 140,98 128,136 100,152 72,136 60,98"
+                    stroke="currentColor"
+                    strokeWidth="1.4"
+                    className={styles.wireframeInner}
+                  />
+                  <line x1="100" y1="78" x2="100" y2="152" stroke="currentColor" strokeWidth="1.2" />
+                  <line x1="140" y1="98" x2="100" y2="152" stroke="currentColor" strokeWidth="1" strokeDasharray="3 2" />
+                  <line x1="60" y1="98" x2="100" y2="152" stroke="currentColor" strokeWidth="1" strokeDasharray="3 2" />
+                  <line x1="100" y1="58" x2="100" y2="78" stroke="currentColor" strokeWidth="1.5" />
+                  {/* Central Floating Obelisk Spire */}
+                  <polygon
+                    points="100,28 108,66 100,72 92,66"
+                    fill="currentColor"
+                    fillOpacity="0.4"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    className={styles.wireframeObelisk}
+                  />
+                  <line x1="100" y1="28" x2="100" y2="72" stroke="currentColor" strokeWidth="1.2" />
+                </svg>
+
+                <Compass className={styles.worldCtaCompassBg} size={110} />
               </div>
             </div>
           </section>
 
           {/* ── 08. Contacts & Collaboration ── */}
           <section id="contacts" className={styles.section} data-reveal>
-            <div className={`${styles.contactBanner} ${styles.surface}`} onPointerMove={updateSpotlight}>
-              <div className={styles.sectionEyebrow}>
-                <span aria-hidden="true">08</span>
-                <span>{isUk ? 'Наступний крок' : 'The next chapter'}</span>
+            <div
+              className={`${styles.contactBanner} ${styles.surface}`}
+              onPointerMove={updateCardTilt}
+              onPointerLeave={resetCardTilt}
+            >
+              {/* Dynamic interactive glare sheen */}
+              <div className={styles.contactGlare} aria-hidden="true" />
+
+              <div className={styles.contactBannerHeader}>
+                <div className={styles.sectionEyebrow}>
+                  <span aria-hidden="true">08</span>
+                  <span>{isUk ? 'Наступний крок' : 'The next chapter'}</span>
+                </div>
+                <div className={styles.contactLiveTelemetry}>
+                  <span className={styles.telemetryPulse} />
+                  <span className={styles.telemetryText}>
+                    {isUk
+                      ? 'ВІДКРИТИЙ ДО ПРОПОЗИЦІЙ • KYIV (UTC+2) • ВІДПОВІДЬ < 24 ГОД'
+                      : 'AVAILABLE FOR HIRE • KYIV (UTC+2) • FAST RESPONSE < 24H'}
+                  </span>
+                </div>
               </div>
-              <span className={styles.availability}>
-                <span className={styles.statusDot} aria-hidden="true" />{profile.status}
-              </span>
+
               <h2>{t.ctaHeadline}</h2>
               <p>{t.ctaText}</p>
+
               <div className={styles.contactActions}>
-                <a className={styles.primaryButton} href={`mailto:${profile.contacts.email}`}>
+                <a
+                  className={styles.primaryButton}
+                  href={`mailto:${profile.contacts.email}`}
+                  onPointerEnter={() => getGlobalCyberAudio().play('hover')}
+                >
                   <Mail size={18} aria-hidden="true" />
                   <span>{profile.contacts.email}</span>
                   <ArrowUpRight size={18} aria-hidden="true" />
                 </a>
-                <button type="button" className={styles.secondaryButton} onClick={handleCopyEmail}>
+                <button
+                  type="button"
+                  className={styles.secondaryButton}
+                  onClick={handleCopyEmail}
+                  onPointerEnter={() => getGlobalCyberAudio().play('hover')}
+                >
                   {copiedEmail ? <Check size={16} aria-hidden="true" /> : <Copy size={16} aria-hidden="true" />}
                   {copiedEmail ? t.copied : t.copyEmail}
                 </button>
               </div>
             </div>
 
+            {/* 3 Interactive Cyber Contact Pods */}
             <div className={styles.contactGrid}>
-              <a href={`mailto:${profile.contacts.email}`} className={styles.contactLink}>
-                <Mail size={21} aria-hidden="true" />
-                <span><small>Email</small><strong>{profile.contacts.email}</strong></span>
-                <ArrowUpRight size={20} aria-hidden="true" />
-              </a>
-              <a href={profile.contacts.telegram} target="_blank" rel="noopener noreferrer" className={styles.contactLink}>
-                <Send size={21} aria-hidden="true" />
-                <span>
-                  <small>Telegram</small>
-                  <strong>{isUk ? 'Написати напряму' : 'Start a conversation'}</strong>
+              <a
+                href={`mailto:${profile.contacts.email}`}
+                className={`${styles.contactPod} ${styles.contactPodEmail}`}
+                onPointerMove={updateSpotlight}
+                onPointerEnter={() => getGlobalCyberAudio().play('hover')}
+              >
+                <div className={styles.contactPodLaser} />
+                <div className={styles.contactPodIconWrap}>
+                  <Mail size={22} aria-hidden="true" />
+                </div>
+                <div className={styles.contactPodBody}>
+                  <div className={styles.contactPodCategory}>
+                    <span>{isUk ? 'Прямий контакт' : 'Direct Channel'}</span>
+                    <span className={styles.contactPodBadge}>{isUk ? '< 24 год' : '< 24h'}</span>
+                  </div>
+                  <strong>{profile.contacts.email}</strong>
+                  <span className={styles.contactPodHint}>
+                    {isUk ? 'Надіслати листа в один клік' : 'Send an email directly'}
+                  </span>
+                </div>
+                <span className={styles.contactPodArrow} aria-hidden="true">
+                  <ArrowUpRight size={20} />
                 </span>
-                <ArrowUpRight size={20} aria-hidden="true" />
               </a>
-              <a href={profile.contacts.github} target="_blank" rel="noopener noreferrer" className={styles.contactLink}>
-                <GithubIcon size={21} />
-                <span>
-                  <small>GitHub</small>
-                  <strong>{isUk ? 'Переглянути код' : 'Explore the code'}</strong>
+
+              <a
+                href={profile.contacts.telegram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`${styles.contactPod} ${styles.contactPodTelegram}`}
+                onPointerMove={updateSpotlight}
+                onPointerEnter={() => getGlobalCyberAudio().play('hover')}
+              >
+                <div className={styles.contactPodLaser} />
+                <div className={styles.contactPodIconWrap}>
+                  <Send size={22} aria-hidden="true" />
+                </div>
+                <div className={styles.contactPodBody}>
+                  <div className={styles.contactPodCategory}>
+                    <span>{isUk ? 'Швидкий зв\'язок' : 'Fastest Dialogue'}</span>
+                    <span className={`${styles.contactPodBadge} ${styles.contactPodBadgeActive}`}>
+                      {isUk ? 'Онлайн' : 'Online'}
+                    </span>
+                  </div>
+                  <strong>{profile.contacts.telegramHandle || '@mokydjin'}</strong>
+                  <span className={styles.contactPodHint}>
+                    {isUk ? 'Миттєвий діалог у Telegram' : 'Instant chat on Telegram'}
+                  </span>
+                </div>
+                <span className={styles.contactPodArrow} aria-hidden="true">
+                  <ArrowUpRight size={20} />
                 </span>
-                <ArrowUpRight size={20} aria-hidden="true" />
+              </a>
+
+              <a
+                href={profile.contacts.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`${styles.contactPod} ${styles.contactPodGithub}`}
+                onPointerMove={updateSpotlight}
+                onPointerEnter={() => getGlobalCyberAudio().play('hover')}
+              >
+                <div className={styles.contactPodLaser} />
+                <div className={styles.contactPodIconWrap}>
+                  <GithubIcon size={22} />
+                </div>
+                <div className={styles.contactPodBody}>
+                  <div className={styles.contactPodCategory}>
+                    <span>{isUk ? 'Репозиторії та OSS' : 'Code & Architecture'}</span>
+                    <span className={styles.contactPodBadge}>40+ Repos</span>
+                  </div>
+                  <strong>github.com/DmytroHnylytskyi</strong>
+                  <span className={styles.contactPodHint}>
+                    {isUk ? 'Дослідити код та архітектуру' : 'Explore production code'}
+                  </span>
+                </div>
+                <span className={styles.contactPodArrow} aria-hidden="true">
+                  <ArrowUpRight size={20} />
+                </span>
               </a>
             </div>
           </section>
