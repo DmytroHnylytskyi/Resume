@@ -234,6 +234,7 @@ export default function CharacterController({
         // Read via getState(): subscribing to interactionPrompt would re-render on every proximity edge
         const prompt = useGameStore.getState().interactionPrompt;
         if (prompt && prompt.action) {
+          getGlobalCyberAudio().play('interact');
           prompt.action();
         }
       }

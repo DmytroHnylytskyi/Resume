@@ -610,16 +610,16 @@ export default function IslandCanvas(): React.ReactElement {
   // from here is the only churn-free way to change resolution at runtime.
   const [dpr, setDpr] = React.useState(DPR_CAP);
 
-  // Synchronize 3D atmospheric ambient drone with global audio state
+  // Synchronize 3D atmospheric background music & ambient with global audio state
   useEffect(() => {
     const audio = getGlobalCyberAudio();
     if (!isAudioMuted && isSceneLoaded) {
-      audio.startAmbient3D();
+      audio.startBGM();
     } else {
-      audio.stopAmbient3D();
+      audio.stopBGM();
     }
     return () => {
-      audio.stopAmbient3D();
+      audio.stopBGM();
     };
   }, [isAudioMuted, isSceneLoaded]);
 
