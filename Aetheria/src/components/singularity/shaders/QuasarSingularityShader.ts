@@ -149,15 +149,12 @@ export const QuasarAccretionShader = {
       vec3 finalColor = mix(colorNight, colorDay * 0.82, uDayNightFactor);
       finalColor *= dopplerLuminance + scrollExcitation;
 
-      // Relativistic Doppler beaming & thermodynamic plasma excitation (never flat white blowout)
-      float warpDoppler = 1.0 + (1.0 - sin(theta)) * uWarpProgress * 0.75;
-      vec3 warpExcitationColor = mix(vec3(0.25, 0.85, 1.0), vec3(1.0, 0.65, 0.15), uDayNightFactor);
-      finalColor += warpExcitationColor * pow(1.0 - diskT, 2.5) * uWarpProgress * 0.75;
-      finalColor *= warpDoppler;
+      // Warp flare
+      finalColor += vec3(uWarpProgress * 1.5);
 
       // In day mode, softly adjust alpha so the quasar stays translucent and luminous
       float dayAlphaMod = mix(1.0, 0.75, uDayNightFactor);
-      float alpha = clamp(density * (1.1 + uWarpProgress * 0.35) * dayAlphaMod, 0.0, 0.92);
+      float alpha = clamp(density * (1.1 + uWarpProgress * 0.8) * dayAlphaMod, 0.0, 0.95);
 
       float colorScale = mix(1.35, 0.96, uDayNightFactor);
       gl_FragColor = vec4(finalColor * colorScale, alpha);
@@ -201,13 +198,13 @@ export const QuasarHorizonShader = {
       vec3 viewDir = normalize(vViewPosition);
 
       float rim = 1.0 - max(0.0, dot(viewDir, normal));
-      float photonRing = pow(rim, uRimPower) * (1.8 + uWarpProgress * 1.4);
+      float photonRing = pow(rim, uRimPower) * (1.8 + uWarpProgress * 2.5);
 
       vec3 glowColor = mix(uColorNightGlow, uColorDayGlow, uDayNightFactor);
       vec3 finalColor = glowColor * photonRing;
-      float alpha = clamp(photonRing * 0.85, 0.0, 0.95);
+      float alpha = clamp(photonRing, 0.0, 1.0);
 
-      gl_FragColor = vec4(finalColor, alpha);
+      gl_FragColor = vec4(finalColor, max(1.0, alpha));
     }
   `
 };
