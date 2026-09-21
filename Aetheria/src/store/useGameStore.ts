@@ -27,7 +27,7 @@ export const useGameStore = create<GameState>((set) => ({
   toggleTheme: () => toggleDayNight(),
 
   // ── View Mode: 3D WebGL vs Classic Document Resume ──
-  viewMode: '3d',
+  viewMode: 'classic',
   setViewMode: (mode: ViewMode) => set({ viewMode: mode }),
 
   // ── Initial Welcome Mode Selection Modal ──

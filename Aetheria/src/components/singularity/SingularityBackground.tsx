@@ -142,6 +142,7 @@ function GravitationalCoreMesh({
   const groupRef = useRef<THREE.Group>(null);
   const diskMatRef = useRef<THREE.ShaderMaterial>(null);
   const warpedDiskMatRef = useRef<THREE.ShaderMaterial>(null);
+  const volumetricShellMatRef = useRef<THREE.ShaderMaterial>(null);
   const horizonMatRef = useRef<THREE.ShaderMaterial>(null);
   const rotationAngleRef = useRef(0);
 
@@ -156,6 +157,16 @@ function GravitationalCoreMesh({
   }, []);
 
   const warpedDiskMaterial = useMemo(() => {
+    return new THREE.ShaderMaterial({
+      ...QuasarAccretionShader,
+      side: THREE.DoubleSide,
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+  }, []);
+
+  const volumetricShellMaterial = useMemo(() => {
     return new THREE.ShaderMaterial({
       ...QuasarAccretionShader,
       side: THREE.DoubleSide,
@@ -202,9 +213,16 @@ function GravitationalCoreMesh({
       diskMatRef.current.uniforms.uDayNightFactor.value = dayNightFactor;
       diskMatRef.current.uniforms.uWarpProgress.value = warpProgress;
     }
+    if (volumetricShellMatRef.current) {
+      volumetricShellMatRef.current.uniforms.uTime.value = t;
+      volumetricShellMatRef.current.uniforms.uRotationAngle.value = rotationAngleRef.current * 1.15;
+      volumetricShellMatRef.current.uniforms.uScrollVelocity.value = scrollVelocity;
+      volumetricShellMatRef.current.uniforms.uDayNightFactor.value = dayNightFactor;
+      volumetricShellMatRef.current.uniforms.uWarpProgress.value = warpProgress;
+    }
     if (warpedDiskMatRef.current) {
       warpedDiskMatRef.current.uniforms.uTime.value = t;
-      warpedDiskMatRef.current.uniforms.uRotationAngle.value = rotationAngleRef.current * 0.85;
+      warpedDiskMatRef.current.uniforms.uRotationAngle.value = rotationAngleRef.current * 0.75;
       warpedDiskMatRef.current.uniforms.uScrollVelocity.value = scrollVelocity;
       warpedDiskMatRef.current.uniforms.uDayNightFactor.value = dayNightFactor;
       warpedDiskMatRef.current.uniforms.uWarpProgress.value = warpProgress;
@@ -238,28 +256,34 @@ function GravitationalCoreMesh({
 
   return (
     <group ref={groupRef} position={[2.2, 0.2, -2.2]}>
-      {/* ── 1. The Event Horizon Core ── */}
-      <mesh>
+      {/* ── 1. The Event Horizon Core (Abyssal Void) ── */}
+      <mesh renderOrder={1}>
         <sphereGeometry args={[1.25, 48, 48]} />
         <meshBasicMaterial color="#000000" side={THREE.DoubleSide} />
       </mesh>
 
-      {/* ── 2. Photon Sphere Fresnel Rim ── */}
-      <mesh>
-        <sphereGeometry args={[1.32, 48, 48]} />
+      {/* ── 2. Photon Sphere Fresnel Rim & Enveloping Aura ── */}
+      <mesh renderOrder={2}>
+        <sphereGeometry args={[1.28, 48, 48]} />
         <primitive object={horizonMaterial} ref={horizonMatRef} attach="material" />
       </mesh>
 
-      {/* ── 3. Primary Equatorial Accretion Disk ── */}
-      <mesh rotation={[-Math.PI / 2 + 0.18, 0, 0]}>
-        <ringGeometry args={[1.34, 5.8, 80, 1]} />
+      {/* ── 3. Gravitational Lensed Einstein Halo (Back-Curving Upper & Lower Arches) ── */}
+      <mesh rotation={[-0.06, 0, 0]} renderOrder={3}>
+        <ringGeometry args={[1.22, 4.8, 96, 32]} />
+        <primitive object={warpedDiskMaterial} ref={warpedDiskMatRef} attach="material" />
+      </mesh>
+
+      {/* ── 4. Primary Equatorial Accretion Disk (Drapes Across Front & Behind) ── */}
+      <mesh rotation={[-Math.PI / 2 + 0.38, 0, 0.04]} renderOrder={4}>
+        <ringGeometry args={[1.22, 6.2, 96, 48]} />
         <primitive object={diskMaterial} ref={diskMatRef} attach="material" />
       </mesh>
 
-      {/* ── 4. Gravitational Lensed Vertical Halo ── */}
-      <mesh rotation={[0, 0, Math.PI * 0.48]}>
-        <ringGeometry args={[1.32, 4.4, 80, 1]} />
-        <primitive object={warpedDiskMaterial} ref={warpedDiskMatRef} attach="material" />
+      {/* ── 5. Secondary Volumetric Accretion Layer (Enveloping Plasma Thickness) ── */}
+      <mesh rotation={[-Math.PI / 2 + 0.28, 0, -0.06]} renderOrder={5}>
+        <ringGeometry args={[1.23, 5.4, 80, 24]} />
+        <primitive object={volumetricShellMaterial} ref={volumetricShellMatRef} attach="material" />
       </mesh>
 
       {/* ── Orbiting Particles ── */}
