@@ -1169,83 +1169,21 @@
 }
 
 .contactBanner {
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   padding: clamp(28px, 5vw, 64px);
   overflow: hidden;
-  border-radius: var(--resume-radius, 24px);
-  background:
-    radial-gradient(ellipse at 100% 0%, rgba(var(--tod-glow-rgb), 0.18), transparent 65%),
-    var(--bg-card);
-  border: 1px solid rgba(var(--tod-glow-rgb), 0.25);
-  box-shadow:
-    0 24px 60px -16px rgba(0, 0, 0, 0.7),
-    0 0 35px -15px rgba(var(--tod-glow-rgb), 0.15);
-  transform-style: preserve-3d;
-  transform: perspective(1200px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
-  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s ease, border-color 0.28s ease;
+  background: radial-gradient(ellipse at 100% 0%, rgba(var(--tod-glow-rgb), 0.16), transparent 65%), var(--bg-card);
 }
 
-.contactGlare {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  border-radius: inherit;
-  background: radial-gradient(
-    circle 450px at var(--pointer-x, 50%) var(--pointer-y, 50%),
-    rgba(255, 255, 255, var(--glare-opacity, 0)),
-    transparent 70%
-  );
-  transition: opacity 0.2s ease;
-  mix-blend-mode: overlay;
-}
-
-.contactBannerHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.contactLiveTelemetry {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 4px 12px;
-  border-radius: 999px;
-  background: rgba(16, 185, 129, 0.08);
-  border: 1px solid rgba(16, 185, 129, 0.28);
-}
-
-.telemetryPulse {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #10b981;
-  box-shadow: 0 0 8px #10b981;
-  animation: telemetryBlink 2s ease-in-out infinite;
-}
-
-.telemetryText {
-  font-family: ui-monospace, SFMono-Regular, monospace;
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  color: #10b981;
-  font-weight: 500;
-}
-
-@keyframes telemetryBlink {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.85); }
+.contactBanner .availability {
+  margin-top: 14px;
 }
 
 .contactBanner h2 {
   max-width: 850px;
-  margin-top: 22px;
+  margin-top: 26px;
   font-family: var(--font-display);
   font-size: clamp(34px, 5.6vw, 72px);
   font-weight: 550;
@@ -1256,18 +1194,14 @@
 
 .contactBanner > p {
   max-width: 620px;
-  margin-top: 20px;
-  font-size: 14.5px;
+  margin-top: 24px;
+  font-size: 14px;
   line-height: 1.8;
   color: var(--text-secondary);
 }
 
 .contactActions {
   width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 28px;
 }
 
 .contactActions .primaryButton {
@@ -1279,7 +1213,6 @@
   overflow-wrap: anywhere;
 }
 
-/* ── 08. Cyber Contact Pods ── */
 .contactGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1287,142 +1220,39 @@
   margin-top: 20px;
 }
 
-.contactPod {
-  position: relative;
+.contactLink {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   min-width: 0;
-  padding: 22px 20px;
-  border-radius: 18px;
-  background: var(--bg-card);
-  border: 1px solid rgba(var(--tod-glow-rgb), 0.18);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  padding: 24px 16px;
+  border-bottom: 1px solid var(--border-strong);
   color: var(--text-primary);
   text-decoration: none;
-  overflow: hidden;
-  transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.24s ease, border-color 0.24s ease;
+  transition: background 180ms ease;
 }
 
-.contactPod:hover {
-  transform: translateY(-4px) scale(1.015);
-  border-color: rgba(var(--tod-glow-rgb), 0.45);
-  box-shadow:
-    0 18px 45px -12px rgba(0, 0, 0, 0.7),
-    0 0 35px -8px rgba(var(--tod-glow-rgb), 0.25);
-}
-
-.contactPodLaser {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  opacity: 0;
-  background: linear-gradient(90deg, transparent, var(--tod-glow), transparent);
-  transition: opacity 0.24s ease;
-}
-
-.contactPod:hover .contactPodLaser {
-  opacity: 1;
-}
-
-.contactPodIconWrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 46px;
-  height: 46px;
-  flex-shrink: 0;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(var(--tod-glow-rgb), 0.25);
-  color: var(--tod-glow);
-  transition: transform 0.24s ease, background 0.24s ease, box-shadow 0.24s ease;
-}
-
-.contactPod:hover .contactPodIconWrap {
-  transform: scale(1.08) rotate(-4deg);
-  background: rgba(var(--tod-glow-rgb), 0.12);
-  box-shadow: 0 0 16px rgba(var(--tod-glow-rgb), 0.3);
-}
-
-.contactPodTelegram:hover .contactPodIconWrap {
-  color: #38bdf8;
-  border-color: rgba(56, 189, 248, 0.5);
-  box-shadow: 0 0 16px rgba(56, 189, 248, 0.35);
-}
-
-.contactPodGithub:hover .contactPodIconWrap {
-  color: #c084fc;
-  border-color: rgba(192, 132, 252, 0.5);
-  box-shadow: 0 0 16px rgba(192, 132, 252, 0.35);
-}
-
-.contactPodBody {
+.contactLink > span {
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
   min-width: 0;
 }
 
-.contactPodCategory {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-}
-
-.contactPodCategory > span:first-child {
-  font-family: ui-monospace, SFMono-Regular, monospace;
-  font-size: 11px;
-  letter-spacing: 0.04em;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-}
-
-.contactPodBadge {
-  font-family: ui-monospace, SFMono-Regular, monospace;
-  font-size: 10px;
-  padding: 2px 7px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+.contactLink small {
+  font-size: 12px;
   color: var(--text-secondary);
 }
 
-.contactPodBadgeActive {
-  background: rgba(56, 189, 248, 0.1);
-  border-color: rgba(56, 189, 248, 0.3);
-  color: #38bdf8;
-}
-
-.contactPodBody strong {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-primary);
+.contactLink strong {
+  font-size: 13.5px;
+  font-weight: 550;
   overflow-wrap: anywhere;
 }
 
-.contactPodHint {
-  font-size: 11.5px;
-  color: var(--text-secondary);
-  opacity: 0.8;
-}
-
-.contactPodArrow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-secondary);
-  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), color 0.22s ease;
-  flex-shrink: 0;
-}
-
-.contactPod:hover .contactPodArrow {
-  transform: translate(3px, -3px);
-  color: var(--tod-glow);
+.contactLink:hover {
+  background: var(--badge-bg);
 }
 
 .footer {
@@ -2256,63 +2086,19 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 36px;
+  gap: 32px;
   padding: clamp(32px, 5.5vw, 64px);
   overflow: hidden;
   border-radius: var(--resume-radius, 24px);
   background:
-    radial-gradient(ellipse at 95% 45%, rgba(var(--tod-glow-rgb), 0.18), transparent 60%),
-    radial-gradient(ellipse at 5% 15%, rgba(56, 189, 248, 0.14), transparent 50%),
+    radial-gradient(ellipse at 95% 45%, rgba(var(--tod-glow-rgb), 0.16), transparent 60%),
+    radial-gradient(ellipse at 5% 15%, rgba(56, 189, 248, 0.12), transparent 50%),
     var(--bg-card);
   border: 1px solid rgba(var(--tod-glow-rgb), 0.35);
   box-shadow:
-    0 24px 60px -16px rgba(0, 0, 0, 0.75),
-    0 0 45px -15px rgba(var(--tod-glow-rgb), 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18);
-  transform-style: preserve-3d;
-  transform: perspective(1200px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
-  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s ease, border-color 0.28s ease;
-}
-
-.worldCtaBanner:hover {
-  border-color: rgba(var(--tod-glow-rgb), 0.6);
-  box-shadow:
-    0 28px 70px -16px rgba(0, 0, 0, 0.85),
-    0 0 60px -10px rgba(var(--tod-glow-rgb), 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.25);
-}
-
-.worldCtaGridBackground {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    linear-gradient(to right, rgba(var(--tod-glow-rgb), 0.08) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(var(--tod-glow-rgb), 0.08) 1px, transparent 1px);
-  background-size: 32px 32px;
-  mask-image: radial-gradient(ellipse at 85% 50%, black 20%, transparent 75%);
-  -webkit-mask-image: radial-gradient(ellipse at 85% 50%, black 20%, transparent 75%);
-  opacity: 0.65;
-  animation: worldCtaGridDrift 40s linear infinite;
-}
-
-@keyframes worldCtaGridDrift {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(32px); }
-}
-
-.worldCtaGlare {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  border-radius: inherit;
-  background: radial-gradient(
-    circle 500px at var(--pointer-x, 50%) var(--pointer-y, 50%),
-    rgba(255, 255, 255, var(--glare-opacity, 0)),
-    transparent 70%
-  );
-  transition: opacity 0.2s ease;
-  mix-blend-mode: overlay;
+    0 24px 60px -16px rgba(0, 0, 0, 0.7),
+    0 0 40px -16px rgba(var(--tod-glow-rgb), 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .worldCtaContent {
@@ -2321,7 +2107,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  max-width: 660px;
+  max-width: 680px;
 }
 
 .worldCtaBadges {
@@ -2344,13 +2130,6 @@
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(var(--tod-glow-rgb), 0.25);
   color: var(--text-secondary);
-  transition: background 0.2s ease, border-color 0.2s ease;
-}
-
-.worldCtaBadge:hover {
-  background: rgba(var(--tod-glow-rgb), 0.1);
-  border-color: var(--tod-glow);
-  color: var(--text-primary);
 }
 
 .worldCtaBadgeDot {
@@ -2389,14 +2168,14 @@
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  padding: 15px 28px;
+  padding: 14px 26px;
   border-radius: 14px;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   background: var(--btn-primary-bg);
   color: var(--btn-primary-text);
-  border: 1px solid rgba(var(--tod-glow-rgb), 0.6);
+  border: 1px solid rgba(var(--tod-glow-rgb), 0.5);
   box-shadow:
     0 12px 32px -8px var(--tod-glow),
     0 4px 16px rgba(0, 0, 0, 0.4);
@@ -2404,11 +2183,11 @@
 }
 
 .worldCtaButton:hover {
-  transform: translateY(-3px) scale(1.03);
+  transform: translateY(-2px) scale(1.02);
   background: var(--btn-primary-hover);
   box-shadow:
-    0 18px 45px -6px var(--tod-glow),
-    0 8px 24px rgba(0, 0, 0, 0.55);
+    0 16px 40px -6px var(--tod-glow),
+    0 6px 20px rgba(0, 0, 0, 0.5);
 }
 
 .worldCtaBeacon {
@@ -2440,82 +2219,30 @@
 }
 
 @keyframes worldCtaPulse {
-  0% { transform: scale(0.6); opacity: 0.9; }
-  70% { transform: scale(2.2); opacity: 0; }
-  100% { transform: scale(2.2); opacity: 0; }
+  0% {
+    transform: scale(0.6);
+    opacity: 0.9;
+  }
+  70% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
 }
 
-/* ── Holographic 3D Portal Chamber ── */
 .worldCtaGraphic {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 250px;
-  height: 250px;
+  width: 200px;
+  height: 200px;
   flex-shrink: 0;
   pointer-events: none;
-}
-
-.worldCtaHudPill {
-  position: absolute;
-  z-index: 5;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 3px 10px;
-  border-radius: 999px;
-  font-family: ui-monospace, SFMono-Regular, monospace;
-  font-size: 10px;
-  letter-spacing: 0.05em;
-  background: rgba(10, 15, 28, 0.8);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(var(--tod-glow-rgb), 0.35);
-  color: var(--text-primary);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  white-space: nowrap;
-}
-
-.hudPillDot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #10b981;
-  box-shadow: 0 0 6px #10b981;
-}
-
-.worldCtaHudTop {
-  top: -6px;
-  left: 50%;
-  transform: translateX(-50%);
-  animation: worldCtaHudFloat 4s ease-in-out infinite;
-}
-
-.worldCtaHudRight {
-  bottom: 24px;
-  right: -14px;
-  animation: worldCtaHudFloat 4.5s ease-in-out 1s infinite;
-}
-
-.worldCtaHudBottom {
-  bottom: -6px;
-  left: 12px;
-  animation: worldCtaHudFloat 5s ease-in-out 2s infinite;
-}
-
-@keyframes worldCtaHudFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
-}
-
-.worldCtaRadarBeam {
-  position: absolute;
-  inset: 16px;
-  border-radius: 50%;
-  background: conic-gradient(from 0deg, transparent 70%, rgba(var(--tod-glow-rgb), 0.25) 100%);
-  animation: worldCtaSpin 4s linear infinite;
-  opacity: 0.7;
+  opacity: 0.85;
 }
 
 .worldCtaRingOuter {
@@ -2523,155 +2250,37 @@
   inset: 0;
   border-radius: 50%;
   border: 1px dashed rgba(var(--tod-glow-rgb), 0.35);
-  animation: worldCtaSpin 45s linear infinite;
-}
-
-.worldCtaBanner:hover .worldCtaRingOuter {
-  animation-duration: 20s;
-  border-color: rgba(var(--tod-glow-rgb), 0.55);
-}
-
-.ringDegreeTop, .ringDegreeRight, .ringDegreeBottom, .ringDegreeLeft {
-  position: absolute;
-  font-family: ui-monospace, SFMono-Regular, monospace;
-  font-size: 8.5px;
-  color: var(--tod-glow);
-  opacity: 0.6;
-}
-
-.ringDegreeTop { top: 2px; left: 50%; transform: translateX(-50%); }
-.ringDegreeRight { right: 2px; top: 50%; transform: translateY(-50%); }
-.ringDegreeBottom { bottom: 2px; left: 50%; transform: translateX(-50%); }
-.ringDegreeLeft { left: 2px; top: 50%; transform: translateY(-50%); }
-
-.worldCtaRingMiddle {
-  position: absolute;
-  inset: 22px;
-  border-radius: 50%;
-  border: 1px dotted rgba(var(--tod-glow-rgb), 0.3);
-  animation: worldCtaSpinReverse 30s linear infinite;
+  animation: worldCtaSpin 30s linear infinite;
 }
 
 .worldCtaRingInner {
   position: absolute;
-  inset: 44px;
+  inset: 24px;
   border-radius: 50%;
-  border: 1px solid rgba(var(--tod-glow-rgb), 0.25);
-  box-shadow: inset 0 0 25px rgba(var(--tod-glow-rgb), 0.15);
+  border: 1px solid rgba(var(--tod-glow-rgb), 0.2);
+  box-shadow: inset 0 0 20px rgba(var(--tod-glow-rgb), 0.1);
 }
 
-.worldCtaOrbitNodeA {
+.worldCtaCore {
   position: absolute;
-  inset: 12px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
-  animation: worldCtaSpin 14s linear infinite;
-}
-
-.worldCtaOrbitNodeA::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #38bdf8;
-  box-shadow: 0 0 10px #38bdf8;
-}
-
-.worldCtaOrbitNodeB {
-  position: absolute;
-  inset: 34px;
-  border-radius: 50%;
-  animation: worldCtaSpinReverse 18s linear infinite;
-}
-
-.worldCtaOrbitNodeB::before {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--tod-glow);
-  box-shadow: 0 0 8px var(--tod-glow);
-}
-
-.worldCtaCoreGlow {
-  position: absolute;
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(var(--tod-glow-rgb), 0.5), transparent 70%);
-  filter: blur(10px);
-  animation: worldCtaCorePulse 3s ease-in-out infinite;
-}
-
-.worldCtaSingularity {
-  position: absolute;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #000000 60%, rgba(var(--tod-glow-rgb), 0.8) 90%, transparent 100%);
-  box-shadow: 0 0 20px rgba(var(--tod-glow-rgb), 0.45);
-}
-
-@keyframes worldCtaCorePulse {
-  0%, 100% { transform: scale(0.9); opacity: 0.6; }
-  50% { transform: scale(1.15); opacity: 0.9; }
-}
-
-.worldCtaWireframeIsland {
-  position: absolute;
-  width: 140px;
-  height: 140px;
-  color: var(--tod-glow);
-  z-index: 3;
-  animation: worldCtaIslandHover 5s ease-in-out infinite;
-  filter: drop-shadow(0 0 8px rgba(var(--tod-glow-rgb), 0.4));
-  transition: transform 0.3s ease, filter 0.3s ease;
-}
-
-.worldCtaBanner:hover .worldCtaWireframeIsland {
-  transform: translateY(-6px) scale(1.08);
-  filter: drop-shadow(0 0 14px var(--tod-glow));
-}
-
-.wireframeBase {
-  opacity: 0.75;
-}
-
-.wireframeInner {
-  opacity: 0.95;
-}
-
-.wireframeObelisk {
-  color: #38bdf8;
-  animation: worldCtaObeliskPulse 2.5s ease-in-out infinite;
-}
-
-@keyframes worldCtaObeliskPulse {
-  0%, 100% { fill-opacity: 0.3; }
-  50% { fill-opacity: 0.8; }
-}
-
-@keyframes worldCtaIslandHover {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-5px) rotate(1.5deg); }
+  background: radial-gradient(circle, rgba(var(--tod-glow-rgb), 0.4), transparent 70%);
+  filter: blur(8px);
 }
 
 .worldCtaCompassBg {
   position: relative;
   z-index: 1;
   color: var(--tod-glow);
-  opacity: 0.16;
-  transition: transform 0.4s ease, opacity 0.4s ease;
+  opacity: 0.35;
+  transition: transform 0.4s ease;
 }
 
 .worldCtaBanner:hover .worldCtaCompassBg {
-  transform: rotate(45deg) scale(1.1);
-  opacity: 0.35;
+  transform: rotate(45deg) scale(1.06);
+  opacity: 0.55;
 }
 
 @keyframes worldCtaSpin {
@@ -2679,27 +2288,13 @@
   to { transform: rotate(360deg); }
 }
 
-@keyframes worldCtaSpinReverse {
-  from { transform: rotate(360deg); }
-  to { transform: rotate(0deg); }
-}
-
-@media (max-width: 900px) {
+@media (max-width: 820px) {
   .worldCtaBanner {
     flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-  .worldCtaContent {
-    align-items: center;
+    align-items: flex-start;
   }
   .worldCtaGraphic {
-    margin-top: 20px;
-    width: 220px;
-    height: 220px;
-  }
-  .contactGrid {
-    grid-template-columns: 1fr;
+    display: none;
   }
 }
 
