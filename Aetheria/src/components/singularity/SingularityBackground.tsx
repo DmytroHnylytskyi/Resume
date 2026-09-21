@@ -4,6 +4,7 @@ import React, { useRef, useMemo, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { QuasarAccretionShader, QuasarHorizonShader } from './shaders/QuasarSingularityShader';
+import { WormholeTunnelShader } from './shaders/WormholeTunnelShader';
 import { getNightFactor } from '../../store/dayNightState';
 import { useGameStore } from '../../store/useGameStore';
 
@@ -18,6 +19,7 @@ interface SharedPhysics {
   scrollVelocity: number;
   scrollProgress: number;
   warpProgress: number;
+  tunnelProgress: number;
 }
 
 // Background GPU Particle Vortex
@@ -232,25 +234,48 @@ function GravitationalCoreMesh({
       horizonMatRef.current.uniforms.uWarpProgress.value = warpProgress;
     }
 
-    // Spatial positioning responding to scroll progress
+    // Spatial positioning responding to scroll progress (overridden during warp)
     if (groupRef.current) {
       const isMobile = state.size.width < 820;
-      const targetX = isMobile ? 0 : THREE.MathUtils.lerp(2.2, 1.4, scrollProgress);
-      const targetY = isMobile ? -0.7 : THREE.MathUtils.lerp(0.2, -0.3, scrollProgress);
-      const targetZ = isMobile
-        ? THREE.MathUtils.lerp(-4.6, -8.8, scrollProgress)
-        : THREE.MathUtils.lerp(-2.2, -7.8, scrollProgress);
 
-      const targetScale = isMobile ? 0.72 : 1.0;
+      if (warpProgress > 0.01) {
+        // ── WARP ACTIVE: Center and scale up the singularity to fill the viewport ──
+        const portalT = Math.min(warpProgress / 0.4, 1.0); // Phase 1 completes at 40%
+        const portalEase = 1.0 - Math.pow(1.0 - portalT, 3.0); // ease-out cubic
 
-      groupRef.current.position.x = THREE.MathUtils.damp(groupRef.current.position.x, targetX, 3.5, delta);
-      groupRef.current.position.y = THREE.MathUtils.damp(groupRef.current.position.y, targetY, 3.5, delta);
-      groupRef.current.position.z = THREE.MathUtils.damp(groupRef.current.position.z, targetZ, 3.5, delta);
+        // Smoothly move to center (0, 0, z)
+        const currentX = groupRef.current.position.x;
+        const currentY = groupRef.current.position.y;
+        groupRef.current.position.x = THREE.MathUtils.lerp(currentX, 0, portalEase);
+        groupRef.current.position.y = THREE.MathUtils.lerp(currentY, 0, portalEase);
+        groupRef.current.position.z = THREE.MathUtils.lerp(-2.2, -1.0, portalEase);
 
-      groupRef.current.scale.setScalar(THREE.MathUtils.damp(groupRef.current.scale.x, targetScale, 3.5, delta));
+        // Scale up: the black hole grows to fill the screen
+        const warpScale = THREE.MathUtils.lerp(1.0, 2.8, portalEase);
+        groupRef.current.scale.setScalar(warpScale);
 
-      groupRef.current.rotation.y = THREE.MathUtils.lerp(0.15, -0.25, scrollProgress);
-      groupRef.current.rotation.x = THREE.MathUtils.lerp(-0.1, 0.15, scrollProgress);
+        // Straighten rotation
+        groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, 0, portalEase);
+        groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, 0, portalEase);
+      } else {
+        // ── IDLE: Scroll-driven positioning ──
+        const targetX = isMobile ? 0 : THREE.MathUtils.lerp(2.2, 1.4, scrollProgress);
+        const targetY = isMobile ? -0.7 : THREE.MathUtils.lerp(0.2, -0.3, scrollProgress);
+        const targetZ = isMobile
+          ? THREE.MathUtils.lerp(-4.6, -8.8, scrollProgress)
+          : THREE.MathUtils.lerp(-2.2, -7.8, scrollProgress);
+
+        const targetScale = isMobile ? 0.72 : 1.0;
+
+        groupRef.current.position.x = THREE.MathUtils.damp(groupRef.current.position.x, targetX, 3.5, delta);
+        groupRef.current.position.y = THREE.MathUtils.damp(groupRef.current.position.y, targetY, 3.5, delta);
+        groupRef.current.position.z = THREE.MathUtils.damp(groupRef.current.position.z, targetZ, 3.5, delta);
+
+        groupRef.current.scale.setScalar(THREE.MathUtils.damp(groupRef.current.scale.x, targetScale, 3.5, delta));
+
+        groupRef.current.rotation.y = THREE.MathUtils.lerp(0.15, -0.25, scrollProgress);
+        groupRef.current.rotation.x = THREE.MathUtils.lerp(-0.1, 0.15, scrollProgress);
+      }
     }
   });
 
@@ -292,7 +317,51 @@ function GravitationalCoreMesh({
   );
 }
 
-// Camera Rig managing idle parallax and 3D warp jump
+// Fullscreen Wormhole Tunnel Overlay (renders inside Canvas)
+function WormholeTunnel({
+  physicsRef
+}: {
+  physicsRef: React.RefObject<SharedPhysics>;
+}) {
+  const matRef = useRef<THREE.ShaderMaterial>(null);
+
+  const tunnelMaterial = useMemo(() => {
+    return new THREE.ShaderMaterial({
+      ...WormholeTunnelShader,
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      depthTest: false,
+      depthWrite: false,
+    });
+  }, []);
+
+  // Fullscreen quad geometry
+  const geometry = useMemo(() => {
+    const geo = new THREE.PlaneGeometry(2, 2);
+    return geo;
+  }, []);
+
+  useFrame((state) => {
+    if (!matRef.current || !physicsRef.current) return;
+    const tunnelProg = physicsRef.current.tunnelProgress;
+    const dayNightFactor = 1.0 - getNightFactor();
+
+    matRef.current.uniforms.uTime.value = state.clock.getElapsedTime();
+    matRef.current.uniforms.uTunnelProgress.value = tunnelProg;
+    matRef.current.uniforms.uDayNightFactor.value = dayNightFactor;
+
+    // Only visible when tunnel is active
+    matRef.current.visible = tunnelProg > 0.01;
+  });
+
+  return (
+    <mesh geometry={geometry} frustumCulled={false} renderOrder={999}>
+      <primitive object={tunnelMaterial} ref={matRef} attach="material" />
+    </mesh>
+  );
+}
+
+// Camera Rig: 3-phase warp transition (Portal Open → Tunnel Transit → Emergence)
 function BackgroundCameraRig({
   warpActive,
   onWarpComplete,
@@ -307,34 +376,48 @@ function BackgroundCameraRig({
 
   useFrame((state, delta) => {
     if (warpActive) {
-      // ~2.4 seconds total majestic transition timing
-      progressRef.current = Math.min(1.0, progressRef.current + delta * 0.42);
+      // ~3.0 seconds total transition (1 / 0.34 ≈ 2.94s)
+      progressRef.current = Math.min(1.0, progressRef.current + delta * 0.34);
       const prog = progressRef.current;
       if (physicsRef.current) {
         physicsRef.current.warpProgress = prog;
+
+        // Tunnel activates in phase 2 (prog 0.35 → 0.88), remapped to 0→1
+        if (prog > 0.35 && prog < 0.88) {
+          physicsRef.current.tunnelProgress = (prog - 0.35) / 0.53;
+        } else if (prog >= 0.88) {
+          // Phase 3: tunnel holds at max then fades via shader
+          physicsRef.current.tunnelProgress = 1.0;
+        } else {
+          physicsRef.current.tunnelProgress = 0;
+        }
       }
 
-      const isMobile = state.size.width < 820;
-      const targetCoreX = isMobile ? 0 : 2.2;
-      const targetCoreY = isMobile ? -0.7 : 0.2;
-
-      // Two-phase camera plunge:
-      // Phase 1 (0 to 0.55, ~1.3s): Hold position so user can clearly see elements swirl into the singularity
-      // Phase 2 (0.55 to 1.0, ~1.1s): Exponential dive through the photon ring into the horizon core
-      if (prog < 0.55) {
-        const prepT = prog / 0.55;
-        state.camera.position.z = THREE.MathUtils.lerp(7.5, 6.7, prepT);
-        state.camera.position.x = THREE.MathUtils.lerp(state.camera.position.x, targetCoreX, prepT * 0.4);
-        state.camera.position.y = THREE.MathUtils.lerp(state.camera.position.y, targetCoreY, prepT * 0.4);
-      } else {
-        const diveT = (prog - 0.55) / 0.45;
-        const diveEase = Math.pow(diveT, 2.5);
-        state.camera.position.z = THREE.MathUtils.lerp(6.7, -2.5, diveEase);
-        state.camera.position.x = THREE.MathUtils.lerp(state.camera.position.x, targetCoreX, diveT);
-        state.camera.position.y = THREE.MathUtils.lerp(state.camera.position.y, targetCoreY, diveT);
+      // ── Phase 1 (0 → 0.4, ~1.2s): Portal Opens ──
+      // Camera gently approaches the centered black hole
+      if (prog < 0.4) {
+        const portalT = prog / 0.4;
+        const ease = 1.0 - Math.pow(1.0 - portalT, 2.0);
+        state.camera.position.z = THREE.MathUtils.lerp(7.5, 4.5, ease);
+        state.camera.position.x = THREE.MathUtils.lerp(state.camera.position.x, 0, ease * 0.6);
+        state.camera.position.y = THREE.MathUtils.lerp(state.camera.position.y, 0, ease * 0.6);
+      }
+      // ── Phase 2 (0.4 → 0.85, ~1.3s): Dive Through Horizon + Tunnel ──
+      else if (prog < 0.85) {
+        const diveT = (prog - 0.4) / 0.45;
+        const diveEase = Math.pow(diveT, 2.2);
+        state.camera.position.z = THREE.MathUtils.lerp(4.5, -3.0, diveEase);
+        state.camera.position.x = THREE.MathUtils.damp(state.camera.position.x, 0, 8, delta);
+        state.camera.position.y = THREE.MathUtils.damp(state.camera.position.y, 0, 8, delta);
+      }
+      // ── Phase 3 (0.85 → 1.0, ~0.45s): Emergence ──
+      else {
+        state.camera.position.z = -3.0;
+        state.camera.position.x = 0;
+        state.camera.position.y = 0;
       }
 
-      if (prog >= 0.98 && !completedRef.current) {
+      if (prog >= 0.96 && !completedRef.current) {
         completedRef.current = true;
         onWarpComplete?.();
       }
@@ -343,6 +426,7 @@ function BackgroundCameraRig({
       completedRef.current = false;
       if (physicsRef.current) {
         physicsRef.current.warpProgress = 0;
+        physicsRef.current.tunnelProgress = 0;
       }
       state.camera.position.set(0, 0.5, 7.5);
     }
@@ -360,7 +444,8 @@ export default function SingularityBackground({
   const physicsRef = useRef<SharedPhysics>({
     scrollVelocity: 0,
     scrollProgress: 0,
-    warpProgress: 0
+    warpProgress: 0,
+    tunnelProgress: 0,
   });
 
   const lastScrollTop = useRef(0);
@@ -450,6 +535,9 @@ export default function SingularityBackground({
         <GravitationalCoreMesh
           physicsRef={physicsRef}
         />
+
+        {/* ── Wormhole Tunnel Overlay (Fullscreen in Canvas) ── */}
+        <WormholeTunnel physicsRef={physicsRef} />
       </Canvas>
 
       {/* ── Event Horizon Blackout Veil (Smooth Hand-off to 3D) ── */}
@@ -460,7 +548,7 @@ export default function SingularityBackground({
           background: '#000000',
           pointerEvents: 'none',
           opacity: warpActive ? 1 : 0,
-          transition: warpActive ? 'opacity 0.48s cubic-bezier(0.7, 0, 1, 0.3) 1.95s' : 'none'
+          transition: warpActive ? 'opacity 0.45s cubic-bezier(0.7, 0, 1, 0.3) 2.5s' : 'none'
         }}
       />
     </div>

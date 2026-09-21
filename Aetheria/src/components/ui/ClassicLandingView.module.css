@@ -2051,111 +2051,20 @@
 }
 
 /* ── Gravitational Infall (3D Warp Transition) ── */
+/* DOM simply fades out fast — all visual spectacle is in the Three.js Canvas */
 .root[data-warp-active='true'] {
   overflow: hidden !important;
   pointer-events: none !important;
   user-select: none !important;
+  animation: warpDOMFadeOut 0.65s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-.root[data-warp-active='true'] .heroCopy {
-  animation: warpInfallHeroCopy 1.45s cubic-bezier(0.4, 0, 0.85, 0.4) forwards;
-}
-
-.root[data-warp-active='true'] .header {
-  animation: warpInfallHeader 1.30s cubic-bezier(0.4, 0, 0.85, 0.4) forwards;
-}
-
-.root[data-warp-active='true'] .stats {
-  animation: warpInfallStats 1.30s cubic-bezier(0.4, 0, 0.85, 0.4) forwards;
-}
-
-.root[data-warp-active='true'] .sky,
-.root[data-warp-active='true'] .aura {
-  animation: warpFadeOut 0.90s ease forwards;
-}
-
-.root[data-warp-active='true'] :global(#resume-main > section:not(#hero)),
-.root[data-warp-active='true'] :global(footer) {
-  animation: warpInfallGeneral 1.20s cubic-bezier(0.4, 0, 0.85, 0.4) forwards;
-}
-
-@keyframes warpInfallHeroCopy {
+@keyframes warpDOMFadeOut {
   0% {
-    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
-    filter: blur(0px);
-    opacity: 1;
-  }
-  35% {
-    /* Initial tidal curve towards the singularity */
-    transform: translate3d(clamp(40px, 12vw, 160px), clamp(10px, 2vh, 30px), -80px) rotate(6deg) scale(0.88);
-    filter: blur(2px);
-    opacity: 0.92;
-  }
-  70% {
-    /* Violent vortex spiral into horizon */
-    transform: translate3d(clamp(160px, 32vw, 420px), clamp(20px, 4vh, 70px), -320px) rotate(26deg) scale(0.35);
-    filter: blur(8px);
-    opacity: 0.45;
-  }
-  100% {
-    /* Plunge into singularity void */
-    transform: translate3d(clamp(240px, 46vw, 640px), clamp(30px, 6vh, 100px), -600px) rotate(55deg) scale(0.01);
-    filter: blur(22px);
-    opacity: 0;
-  }
-}
-
-@keyframes warpInfallHeader {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1);
-    filter: blur(0px);
-    opacity: 1;
-  }
-  45% {
-    transform: translate3d(clamp(30px, 8vw, 120px), clamp(40px, 12vh, 140px), -120px) rotate(-5deg) scale(0.75);
-    filter: blur(3px);
-    opacity: 0.75;
-  }
-  100% {
-    transform: translate3d(clamp(80px, 22vw, 300px), clamp(90px, 32vh, 380px), -500px) rotate(-20deg) scale(0.01);
-    filter: blur(18px);
-    opacity: 0;
-  }
-}
-
-@keyframes warpInfallStats {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1);
-    filter: blur(0px);
-    opacity: 1;
-  }
-  45% {
-    transform: translate3d(clamp(30px, 8vw, 120px), clamp(-30px, -10vh, -120px), -120px) rotate(5deg) scale(0.75);
-    filter: blur(3px);
-    opacity: 0.75;
-  }
-  100% {
-    transform: translate3d(clamp(80px, 22vw, 320px), clamp(-70px, -26vh, -300px), -500px) rotate(22deg) scale(0.01);
-    filter: blur(18px);
-    opacity: 0;
-  }
-}
-
-@keyframes warpInfallGeneral {
-  0% {
-    transform: scale(1);
-    filter: blur(0);
     opacity: 1;
   }
   100% {
-    transform: scale(0.15) translate3d(18vw, -12vh, -350px) rotate(14deg);
-    filter: blur(16px);
     opacity: 0;
   }
 }
 
-@keyframes warpFadeOut {
-  to {
-    opacity: 0;
-  }
-}
