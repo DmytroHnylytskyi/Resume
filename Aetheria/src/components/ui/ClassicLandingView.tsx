@@ -201,17 +201,9 @@ export default function ClassicLandingView(): React.ReactElement {
   }, []);
 
   const handleNavigate3D = () => {
-    const audio = getGlobalCyberAudio();
-    // Entering 3D is an explicit user gesture: ensure audio engine is unlocked and unmuted
-    if (useGameStore.getState().isAudioMuted) {
-      void audio.setEnabled(true).then((enabled) => {
-        useGameStore.setState({ isAudioMuted: !enabled });
-        if (enabled) {
-          audio.play('warp');
-        }
-      });
-    } else {
-      audio.play('warp');
+    const isMuted = useGameStore.getState().isAudioMuted;
+    if (!isMuted) {
+      getGlobalCyberAudio().play('warp');
     }
 
     if (!isDesktop) {
@@ -229,7 +221,10 @@ export default function ClassicLandingView(): React.ReactElement {
   };
 
   const handleWarpComplete = () => {
-    getGlobalCyberAudio().play('portal');
+    const isMuted = useGameStore.getState().isAudioMuted;
+    if (!isMuted) {
+      getGlobalCyberAudio().play('portal');
+    }
     const isLoaded = useGameStore.getState().isSceneLoaded;
     if (isLoaded) {
       useGameStore.setState({ isIntroPlaying: true });

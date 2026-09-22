@@ -368,7 +368,6 @@
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 28px;
-  perspective: 800px;
 }
 
 .tags button {
@@ -555,17 +554,9 @@
     transition: transform 180ms ease-out;
   }
 
-  .tags button:nth-child(3n + 2) {
-    transform: translateY(4px) rotate(-2deg);
-  }
-
-  .tags button:nth-child(3n) {
-    transform: translateY(-3px) rotate(2deg);
-  }
-
   .tags button:hover,
   .tags button:focus-visible {
-    transform: translateY(-6px) translateZ(16px) rotate(0deg);
+    transform: translateY(-2px);
   }
 
   .actions a:hover,
