@@ -50,8 +50,8 @@ export const NPC_DIALOGUES: Record<NPCId, NPCDialogueDef> = {
     sector: 'gold',
     hexColor: '#fbbf24',
     rgbColor: '251, 191, 36',
-    position: [-3.5, 0.5, 11.0],
-    rotation: [0, 0.4, 0],
+    position: [1.5, 1.0, 5.0],
+    rotation: [0, -0.7, 0],
     gesture: 'Waving',
     dialogueText: {
       en: "Welcome to Aetheria Research Outpost, Traveler! I'm Commander Valeria. If you're looking for the chief architect behind this orbital station — Dmytro engineered it from database schemas up to WebGL shaders. No AI hallucinations or spaghetti code: 4 years of rigorous KPI software engineering and battle-tested full-stack product leadership. Ready to inspect the Commander's service record?",
@@ -86,8 +86,8 @@ export const NPC_DIALOGUES: Record<NPCId, NPCDialogueDef> = {
     sector: 'violet',
     hexColor: '#c084fc',
     rgbColor: '192, 132, 252',
-    position: [4.5, 2.0, 3.5],
-    rotation: [0, -0.6, 0],
+    position: [-2.2, 1.0, 3.8],
+    rotation: [0, 1.0, 0],
     gesture: 'Work_A',
     dialogueText: {
       en: "Watch your step near the plasma injectors! We're locking a rock-solid 60 FPS on deterministic Rapier 3D physics. Zero garbage collection spikes: zero per-frame allocations, strict TypeScript boundaries, React 19, and Next.js 15 humming under the hood. This rig runs buttery-smooth even on mobile thermals. Want to review the reactor's full technical specs?",
@@ -122,7 +122,7 @@ export const NPC_DIALOGUES: Record<NPCId, NPCDialogueDef> = {
     sector: 'cyan',
     hexColor: '#38bdf8',
     rgbColor: '56, 189, 248',
-    position: [-5.0, 2.0, 3.5],
+    position: [-1.0, 1.0, -4.5],
     rotation: [0, 0.5, 0],
     gesture: 'Interact',
     dialogueText: {
@@ -158,8 +158,8 @@ export const NPC_DIALOGUES: Record<NPCId, NPCDialogueDef> = {
     sector: 'emerald',
     hexColor: '#34d399',
     rgbColor: '52, 211, 153',
-    position: [9.5, 2.0, -3.5],
-    rotation: [0, -1.2, 0],
+    position: [1.2, 1.0, -0.5],
+    rotation: [0, -2.4, 0],
     gesture: 'Interact',
     dialogueText: {
       en: "Welcome to the Procedural Geometry deck! Here we operate Forma-3D — our generative CAD and spatial shape modeling workstation. We fused parametric spline mathematics, real-time CSG meshes, and instant glTF pipelines right in the browser. The interface adapts faster than liquid chrome! Ready to fire up the interactive 3D modeling demo?",
@@ -194,8 +194,8 @@ export const NPC_DIALOGUES: Record<NPCId, NPCDialogueDef> = {
     sector: 'sapphire',
     hexColor: '#60a5fa',
     rgbColor: '96, 165, 250',
-    position: [-9.5, 2.0, -3.5],
-    rotation: [0, 1.2, 0],
+    position: [2.2, 1.0, 3.0],
+    rotation: [0, -1.2, 0],
     gesture: 'Work_A',
     dialogueText: {
       en: "Orbital constellation telemetry synced and streaming! TerraScope processes multispectral imagery and renders live geospatial intelligence layer-by-layer in real-time. Millions of spatial coordinates, tile pyramids, and vector data streams compiled faster than an orbital burn. Ready to inspect the live GIS analytics platform?",
@@ -230,8 +230,8 @@ export const NPC_DIALOGUES: Record<NPCId, NPCDialogueDef> = {
     sector: 'rose_coral',
     hexColor: '#fb7185',
     rgbColor: '251, 113, 133',
-    position: [0.0, 4.0, -12.5],
-    rotation: [0, 0, 0],
+    position: [-5.5, 1.0, -7.0],
+    rotation: [0, 0.8, 0],
     gesture: 'Cheering',
     dialogueText: {
       en: "Caution: High laser luminance in this sector! The Lumina lab pioneers photon-speed educational workflows. It's not just another LMS, but an optical knowledge accelerator: interactive media players, automated code validation pipelines, and real-time student analytics. Ready to witness the Lumina educational platform demo?",

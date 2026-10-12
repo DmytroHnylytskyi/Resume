@@ -46,7 +46,7 @@ interface CharacterControllerProps {
  */
 export default function CharacterController({
   playerPosRef,
-  spawnPoint = [0.0, 1.2, 14.0]
+  spawnPoint = [0.0, 1.4, 6.0]
 }: CharacterControllerProps): React.ReactElement {
   const rigidBodyRef = useRef<RapierRigidBody>(null);
   const avatarGroupRef = useRef<THREE.Group>(null);

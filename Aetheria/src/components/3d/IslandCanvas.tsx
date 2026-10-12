@@ -650,16 +650,16 @@ export default function IslandCanvas(): React.ReactElement {
       {/* ── High-Speed Rapier 3D Physics Simulation with Fixed 60Hz Timestep ── */}
       <Suspense fallback={null}>
         <Physics gravity={[0, -19.6, 0]} timeStep={1 / 60} interpolate={true}>
-          {/* Seamless Solid Ground Foundation aligned with surface plane (Y=0.55) */}
-          <RigidBody type="fixed" colliders={false} position={[0, -4.45, 0]}>
+          {/* Seamless Solid Ground Foundation aligned with surface plane (Y=1.0) */}
+          <RigidBody type="fixed" colliders={false} position={[0, -4.0, 0]}>
             <CuboidCollider args={[45, 5.0, 45]} friction={0.8} />
           </RigidBody>
 
-          {/* 379 Optimized Modular Map Objects */}
+          {/* Optimized Modular Space Outpost Objects */}
           <WorldScene playerPosRef={playerPosRef} />
 
           {/* 3rd-Person Playable Animated Character */}
-          <CharacterController playerPosRef={playerPosRef} spawnPoint={[0.0, 1.4, 14.0]} />
+          <CharacterController playerPosRef={playerPosRef} spawnPoint={[0.0, 1.4, 6.0]} />
         </Physics>
       </Suspense>
 

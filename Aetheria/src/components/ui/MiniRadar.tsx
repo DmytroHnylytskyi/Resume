@@ -32,8 +32,8 @@ const LANDMARKS: LandmarkDef[] = [
     shortEn: 'Commander',
     type: 'statue',
     modalKey: 'bio',
-    x: -3.5,
-    z: 11.0,
+    x: 1.5,
+    z: 5.0,
     color: '#fbbf24'
   },
   {
@@ -44,8 +44,8 @@ const LANDMARKS: LandmarkDef[] = [
     shortEn: 'Engineer',
     type: 'statue',
     modalKey: 'skills',
-    x: 4.5,
-    z: 3.5,
+    x: -2.2,
+    z: 3.8,
     color: '#c084fc'
   },
   {
@@ -56,8 +56,8 @@ const LANDMARKS: LandmarkDef[] = [
     shortEn: 'Comms',
     type: 'statue',
     modalKey: 'contacts',
-    x: -5.0,
-    z: 3.5,
+    x: -1.0,
+    z: -4.5,
     color: '#38bdf8'
   },
   {
@@ -68,8 +68,8 @@ const LANDMARKS: LandmarkDef[] = [
     shortEn: 'Forma-3D',
     type: 'project',
     projectId: 'forma',
-    x: 9.5,
-    z: -3.5,
+    x: 1.2,
+    z: -0.5,
     color: '#34d399'
   },
   {
@@ -80,8 +80,8 @@ const LANDMARKS: LandmarkDef[] = [
     shortEn: 'TerraScope',
     type: 'project',
     projectId: 'terrascope',
-    x: -9.5,
-    z: -3.5,
+    x: 2.2,
+    z: 3.0,
     color: '#60a5fa'
   },
   {
@@ -92,37 +92,37 @@ const LANDMARKS: LandmarkDef[] = [
     shortEn: 'Lumina',
     type: 'project',
     projectId: 'lumina',
-    x: 0.0,
-    z: -12.5,
+    x: -5.5,
+    z: -7.0,
     color: '#fb7185'
   },
   {
     id: 'shuttle',
-    nameUk: 'Шатл Lander-A (Майданчик прибуття)',
-    nameEn: 'Shuttle Lander-A (Arrival Pad)',
+    nameUk: 'Шатл Lander-A (Ангар)',
+    nameEn: 'Shuttle Lander-A (Hangar)',
     shortUk: 'Шатл',
     shortEn: 'Shuttle',
     type: 'secret',
-    x: 0.0,
-    z: 14.0,
+    x: 0.98,
+    z: -7.13,
     color: '#f59e0b'
   },
   {
     id: 'drill',
-    nameUk: 'Глибинний бур (Пасхалка обриву)',
+    nameUk: 'Глибинний бур (Пасхалка)',
     nameEn: 'Deep Core Mining Drill (Easter Egg)',
     shortUk: 'Бур',
     shortEn: 'Mining Drill',
     type: 'secret',
-    x: 14.0,
-    z: -12.0,
+    x: 0.0,
+    z: 0.0,
     color: '#a855f7'
   }
 ];
 
 const RADAR_RADIUS_PX = 62;
 const RADAR_USABLE_RADIUS = 44;
-const ISLAND_SPAN = 28; // World coordinate extent [-28, 28]
+const ISLAND_SPAN = 13; // World coordinate extent matching space outpost geometry
 const TACTICAL_MAP_SPREAD_PERCENT = 44;
 
 export default function MiniRadar(): React.ReactElement | null {

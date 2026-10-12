@@ -1,1278 +1,404 @@
 {
   "version": "1.0",
-  "timestamp": "2026-10-12T15:35:26.705Z",
+  "timestamp": "2026-10-12T21:39:35.125Z",
   "projectName": "Aetheria Space Outpost",
   "spawnPoint": [
     0,
-    1.2,
-    14
+    1.4,
+    6
   ],
   "placedObjects": [
     {
-      "id": "8715eea9-a302-4393-9993-8b610100c55b",
-      "modelPath": "/model/kaykit_space/landingpad_large.gltf",
+      "id": "11f270f3-6075-4ce2-a8dd-54695554f45e",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
       "position": [
+        -7,
         0,
-        0.4,
-        14
+        -1
       ],
       "rotation": [
         0,
         0,
         0
       ],
-      "scale": 3,
+      "scale": 1,
       "hiddenParts": [],
       "colors": {}
     },
     {
-      "id": "e5eff271-eab2-48ae-afe4-66a4c2c185ec",
+      "id": "32003191-1793-4b19-9afd-d64944153cb6",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        -5,
+        0,
+        -1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "bffe4934-94e2-4bc3-8530-8130ec1ba600",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        1,
+        0,
+        -3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "8779d218-17da-449c-9a23-0c989c9085c2",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        -1,
+        0,
+        -3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "8df7d880-28b0-4091-a537-d8e3c11a94f7",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        -3,
+        0,
+        -3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "e51f5a82-3336-4056-95cd-a5588d4306ab",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        -5,
+        0,
+        -3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "fece1397-b9d2-46bc-a9d3-432e38b3dce1",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        -7,
+        0,
+        -3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "fd254076-13b4-484f-b23c-2d43dc5249fc",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        -7,
+        0,
+        -5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "bfc26fa1-37ee-4380-b4d3-7776d111a01b",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        -5,
+        0,
+        -5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "60fe0afe-b715-423b-aef3-e9067a5b27af",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        -3,
+        0,
+        -5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "f6f078bf-08bb-4f82-96e1-5ada0fa0a0ff",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        -1,
+        0,
+        -5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "122d99be-4d93-4209-8733-a28f92182101",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        1,
+        0,
+        -5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "d7da4212-c643-42ee-b082-8245fee5ef4c",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        -7,
+        0,
+        -7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "01527c16-578b-4318-94ea-3f628647d5a8",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        -5,
+        0,
+        -7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "ac479654-2517-4670-ba6f-e7cb5a36e84e",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        -3,
+        0,
+        -7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "e3037ba3-5b82-4431-b777-cae2bd574fb9",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        -1,
+        0,
+        -7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "1729d18b-c26c-4fa1-9132-2368a9f049cd",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        1,
+        0,
+        -7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "297966c5-4369-42de-a02c-e279547a0f08",
+      "modelPath": "/model/kaykit_space/basemodule_garage.gltf",
+      "position": [
+        1,
+        1,
+        -7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {
+        "basemodule": "#876363"
+      }
+    },
+    {
+      "id": "a4d5baa8-3f6f-4afe-b8de-a12fe19f4340",
       "modelPath": "/model/kaykit_space/lander_A.gltf",
       "position": [
-        4.5,
-        0.5,
-        14.5
-      ],
-      "rotation": [
-        0,
-        -0.4,
-        0
-      ],
-      "scale": 2.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "a9c1093d-b5ed-4a12-a483-5d6f8ea0a166",
-      "modelPath": "/model/kaykit_space/lander_base.gltf",
-      "position": [
-        4.5,
-        0.4,
-        14.5
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "7d9562e2-dcec-4ee5-869a-d19cdc92b733",
-      "modelPath": "/model/kaykit_space/spacetruck.gltf",
-      "position": [
-        -5.5,
-        0.5,
-        13.5
-      ],
-      "rotation": [
-        0,
-        0.8,
-        0
-      ],
-      "scale": 1.5,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "b401253d-206a-48d4-967f-046157ff4b37",
-      "modelPath": "/model/kaykit_space/spacetruck_large.gltf",
-      "position": [
-        -6,
-        0.5,
-        16.5
-      ],
-      "rotation": [
-        0,
-        0.2,
-        0
-      ],
-      "scale": 1.5,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "a8b8d9e5-0309-4418-a572-a6c5ba7c2c02",
-      "modelPath": "/model/kaykit_space/spacetruck_trailer.gltf",
-      "position": [
-        -6,
-        0.5,
-        19
-      ],
-      "rotation": [
-        0,
-        0.2,
-        0
-      ],
-      "scale": 1.5,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "7a85fa67-7948-4e8a-8bce-0ed6ab3ecfc9",
-      "modelPath": "/model/kaykit_space/cargodepot_A.gltf",
-      "position": [
-        -5.5,
-        0.5,
-        10
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.8,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "02ed87d0-7f49-4687-ac9f-ce82606abc70",
-      "modelPath": "/model/kaykit_space/cargo_B_stacked.gltf",
-      "position": [
-        -7.5,
-        0.5,
-        11.5
-      ],
-      "rotation": [
-        0,
-        0.3,
-        0
-      ],
-      "scale": 1.5,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "d700e884-5500-49b7-b133-6483a39b7c68",
-      "modelPath": "/model/kaykit_space/cargo_A_packed.gltf",
-      "position": [
-        -7.5,
-        0.5,
-        9.5
-      ],
-      "rotation": [
-        0,
-        -0.2,
-        0
-      ],
-      "scale": 1.5,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "0341741b-2b87-476c-ad3b-68d7b36a7207",
-      "modelPath": "/model/kaykit_space/containers_A.gltf",
-      "position": [
-        6,
-        0.5,
-        11.5
-      ],
-      "rotation": [
-        0,
-        -0.5,
-        0
-      ],
-      "scale": 1.5,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "23b20992-7c6a-46f9-b548-746e00cbf488",
-      "modelPath": "/model/kaykit_space/containers_B.gltf",
-      "position": [
-        6,
-        0.5,
-        17
-      ],
-      "rotation": [
-        0,
-        0.1,
-        0
-      ],
-      "scale": 1.5,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "8f9e69bc-1fb6-4ef1-bb7f-378f6412efad",
-      "modelPath": "/model/kaykit_space/containers_C.gltf",
-      "position": [
-        7.5,
-        0.5,
-        14
-      ],
-      "rotation": [
-        0,
-        -0.2,
-        0
-      ],
-      "scale": 1.5,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "799ae675-627f-4298-9ef9-5166b97aa60b",
-      "modelPath": "/model/kaykit_space/containers_D.gltf",
-      "position": [
-        7.5,
-        0.5,
-        16.5
-      ],
-      "rotation": [
-        0,
-        0.4,
-        0
-      ],
-      "scale": 1.5,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "53b8d056-ca4b-4b3a-a9bb-a07abfc0fa6e",
-      "modelPath": "/model/kaykit_space/lights.gltf",
-      "position": [
-        -4.5,
-        0.5,
-        17.5
-      ],
-      "rotation": [
-        0,
-        0.5,
-        0
-      ],
-      "scale": 1.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "baca5177-7f04-49ed-a3c7-522f71a1a7ff",
-      "modelPath": "/model/kaykit_space/lights.gltf",
-      "position": [
-        4.5,
-        0.5,
-        17.5
-      ],
-      "rotation": [
-        0,
-        -0.5,
-        0
-      ],
-      "scale": 1.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "94c8dca7-c767-4edc-8aa0-dda09809b4ae",
-      "modelPath": "/model/kaykit_space/lights.gltf",
-      "position": [
-        -4.5,
-        0.5,
-        10.5
-      ],
-      "rotation": [
-        0,
-        0.8,
-        0
-      ],
-      "scale": 1.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "1dab92a7-96ec-4cb5-b2f1-ba29d14bdbbf",
-      "modelPath": "/model/kaykit_space/lights.gltf",
-      "position": [
-        4.5,
-        0.5,
-        10.5
-      ],
-      "rotation": [
-        0,
-        -0.8,
-        0
-      ],
-      "scale": 1.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "8f6bd768-a4da-4a42-bbfb-2dab4ec8dc9d",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        -10,
-        0,
-        10
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "e01adcb4-f674-4e11-a814-b5ea5d6ecf23",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        -10,
-        0,
-        12
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "781e82ba-08c6-4353-91e1-21b9a3c358ec",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        -10,
-        0,
-        14
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "c2654075-03fa-4107-9629-7adcaf2488aa",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        -10,
-        0,
-        16
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "72fc6ba4-564c-47c9-abe6-d6257c083633",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        -10,
-        0,
-        18
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "5c454a30-5dec-4c30-b4ba-080d3b7d4763",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        -10,
-        0,
-        20
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "e74a04fd-604c-4dcf-8513-7816b9b531e5",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        -8,
-        0,
-        10
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "9839a2e3-726c-4cae-a9dd-cb62cbaa2df9",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        -8,
-        0,
-        12
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "242d7ce6-805c-4120-b8c9-bebf1a1db215",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        -8,
-        0,
-        14
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "a1dea406-1274-4c4f-8bd4-05aa89829fd4",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        -8,
-        0,
-        16
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "ca189fd0-83c1-4cbb-b2c0-cfa59722f0ee",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        -8,
-        0,
-        18
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "2c4cf204-d024-4568-8f9b-1e16fd07553a",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        -8,
-        0,
-        20
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "31db53b3-6a92-4490-a0cc-bcb22b9675bf",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        -6,
-        0,
-        10
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "4dae8048-b85e-4ba6-b180-d6c17291fd4c",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        -6,
-        0,
-        12
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "01a97e36-d004-49ed-a518-a93fe6433b22",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        -6,
-        0,
-        14
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "c2099c8a-7259-481f-8a4f-19089220e8f0",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        -6,
-        0,
-        16
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "9a93d0b6-695d-4e42-a9d8-6956d1024569",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        -6,
-        0,
-        18
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "c3007d32-a190-4539-b77f-295920445eb3",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        -6,
-        0,
-        20
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "eb87b389-3543-4c92-85d4-1dcd4d46b42d",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        -4,
-        0,
-        10
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "203bd87c-bffd-44a5-8227-c536ff276803",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        -4,
-        0,
-        12
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "8815c2aa-0e73-4928-8f28-ec02653d0062",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        -4,
-        0,
-        14
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "bb72ebff-9087-4772-a337-ecc74cd285df",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        -4,
-        0,
-        16
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "c80e8fed-217b-4bbd-a296-be7589235136",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        -4,
-        0,
-        18
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "d87d71b0-5a8d-4fd5-8558-9c127c9a7fa0",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        -4,
-        0,
-        20
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "9d16bea5-a3eb-4330-8e3e-384f538cfc7b",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        -2,
-        0,
-        10
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "3a29e18e-8875-4577-b478-3fccb2e931f6",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        -2,
-        0,
-        18
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "4d03aa95-edff-4652-b257-539f636163bc",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        -2,
-        0,
-        20
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "e5882944-9e46-4603-893e-4b35b8a5a9c5",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        0,
-        0,
-        10
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "4193894c-f689-45d5-9ea1-a3e2256744e2",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        0,
-        0,
-        18
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "35701e9e-ff13-4cfd-83eb-95b17c19fdaf",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        0,
-        0,
-        20
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "c823ca64-48e7-47a5-b45b-231bf908a568",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
+        0.9792707362471729,
         2,
-        0,
-        10
+        -7.1292647462967675
       ],
       "rotation": [
         0,
-        0,
+        4.71238898038469,
         0
       ],
       "scale": 1,
       "hiddenParts": [],
-      "colors": {}
+      "colors": {
+        "lander": "#876363"
+      }
     },
     {
-      "id": "317fce96-f3e2-45b0-b5f5-a6b3b6b4592e",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "id": "843b256b-5be5-4bae-a302-183e61fb4982",
+      "modelPath": "/model/kaykit_space/structure_tall.gltf",
       "position": [
-        2,
-        0,
-        18
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "bec2c0c7-7cb6-4c55-b21a-5bfe494ac7b6",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        2,
-        0,
-        20
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "1437b27a-356d-4358-a159-53fcdcf3796e",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        4,
-        0,
-        10
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "fdeca50f-c8a8-40b0-adcb-d12f03c2574b",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        4,
-        0,
-        12
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "deab7ecb-d641-4cbb-b3ac-8ea191eb698a",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        4,
-        0,
-        14
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "448a674c-c2d2-4b18-a0ea-874e82f73d38",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        4,
-        0,
-        16
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "cc5ede83-bb45-4476-b1ce-0e2728d65efa",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        4,
-        0,
-        18
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "120972b7-01b4-4370-8e4a-117cc47abbaf",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        4,
-        0,
-        20
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "38906ea3-9a98-472f-8dcc-0531249b1e5b",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        6,
-        0,
-        10
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "8c77cfbc-8bfb-4239-afa5-50f7457636b0",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        6,
-        0,
-        12
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "d115b5c2-8d5f-4985-b7b0-41af9b714385",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        6,
-        0,
-        14
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "52ead462-7075-4c0e-b4ef-0bc4e53650de",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        6,
-        0,
-        16
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "6e72e24b-7cf5-42a9-8027-d18d5032d53f",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        6,
-        0,
-        18
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "e0597d7f-0f1a-4f5f-acaf-8a5e42f2fa56",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        6,
-        0,
-        20
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "b5a8ac09-7a2b-4e34-9c92-acfb752e24fb",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        8,
-        0,
-        10
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "bc33c983-1b06-4a7b-ac08-5a6837100273",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        8,
-        0,
-        12
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "d1921b40-0441-4443-bc53-ac1d9feac673",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        8,
-        0,
-        14
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "ec22ba5f-73ce-4b82-8f9f-abf63bf9091f",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        8,
-        0,
-        16
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "21fce0f1-a3bd-482e-a1ba-594431f6a80a",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        8,
-        0,
-        18
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "f69c3b4e-56fa-4d29-81f9-59ce3dcd3723",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        8,
-        0,
-        20
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "0cede8a0-ed2c-4582-ba59-144b3a06fd60",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        10,
-        0,
-        10
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "f922c71a-8f39-4fe6-bf12-56051f7b0293",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        10,
-        0,
-        12
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "5d81a5f1-c32f-4e14-bf62-8bc006e9133e",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        10,
-        0,
-        14
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "b9b7f2bc-944c-4ffc-accd-037ddd801248",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        10,
-        0,
-        16
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "1a2d46e2-ed20-4858-9c1d-9b656271be9f",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        10,
-        0,
-        18
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "27c503b8-f7cc-4305-9c21-9cbf823e633b",
-      "modelPath": "/model/kaykit_space/terrain_low.gltf",
-      "position": [
-        10,
-        0,
-        20
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "fd021f4c-de7f-4fe3-887f-5725bd3ef109",
-      "modelPath": "/model/kaykit_space/terrain_slope.gltf",
-      "position": [
-        -2,
+        -7,
         1,
-        7.5
+        -6.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {
+        "structure": "#0d3977"
+      }
+    },
+    {
+      "id": "d461dca9-a29b-4011-84fc-1b6b04dc6a7a",
+      "modelPath": "/model/kaykit_space/basemodule_D.gltf",
+      "position": [
+        -7.02509625731307,
+        3,
+        -6.534079304003434
+      ],
+      "rotation": [
+        0,
+        4.71238898038469,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {
+        "basemodule": "#0d3977"
+      }
+    },
+    {
+      "id": "1a22fbb6-6377-47c8-97eb-9c4024a575fa",
+      "modelPath": "/model/kaykit_space/basemodule_E.gltf",
+      "position": [
+        -7.078446132078576,
+        4.00956004718517,
+        -6.496895307032926
+      ],
+      "rotation": [
+        0,
+        -0.7853981633974483,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {
+        "basemodule": "#0d3977"
+      }
+    },
+    {
+      "id": "c0e1b2bb-f49a-4a4b-98c5-ca26bc7c7573",
+      "modelPath": "/model/kaykit_space/basemodule_C.gltf",
+      "position": [
+        -6.999439306064038,
+        3.104133410491147,
+        -2.5658866701698124
       ],
       "rotation": [
         0,
@@ -1281,1711 +407,1083 @@
       ],
       "scale": 1,
       "hiddenParts": [],
-      "colors": {}
+      "colors": {
+        "basemodule": "#0d3977"
+      }
     },
     {
-      "id": "379bd054-3dba-4f34-9dcd-8e35d669a4e8",
-      "modelPath": "/model/kaykit_space/terrain_slope.gltf",
-      "position": [
-        2,
-        1,
-        7.5
-      ],
-      "rotation": [
-        0,
-        3.141592653589793,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "6219b61b-cf7e-4503-9fd5-3681f43bfc12",
+      "id": "84c0e54b-91db-442b-b1c3-697365288187",
       "modelPath": "/model/kaykit_space/tunnel_straight_A.gltf",
       "position": [
-        -2,
-        1.5,
-        5.5
-      ],
-      "rotation": [
-        0,
-        3.141592653589793,
-        0
-      ],
-      "scale": 1.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "59e24c81-254d-4258-8266-bb14d0f11296",
-      "modelPath": "/model/kaykit_space/tunnel_straight_A.gltf",
-      "position": [
-        2,
-        1.5,
-        5.5
-      ],
-      "rotation": [
-        0,
-        3.141592653589793,
-        0
-      ],
-      "scale": 1.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "d9ac209a-2894-4751-864d-c8f0e0bf3a76",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -14,
-        0,
-        -6
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "cc5b29b0-4ae1-49f4-8204-bd9f78904c8a",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -14,
-        0,
-        -4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "ba9460ae-94ed-4964-9d13-45cd25f2911c",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -14,
-        0,
-        -2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "14fc6335-8eac-47e3-a7fa-53db4780d003",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -14,
-        0,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "42f5a42d-69c3-433f-99a9-3c42884b38a7",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -14,
-        0,
-        2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "b40f8003-6a6f-4495-9f4a-e01c43b3b5b8",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -14,
-        0,
-        4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "190fb1c0-e476-491d-bceb-539c6b607d12",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -12,
-        0,
-        -6
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "ef0a7aa6-e7d5-41c0-ab6c-f8871d604ba5",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -12,
-        0,
-        -4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "98e09a6b-c8bd-44f4-9550-f77c35d267cb",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -12,
-        0,
-        -2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "89e4b241-ba37-4a00-9fd6-2967e4279936",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -12,
-        0,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "a54c46cd-d4d2-4314-832e-76a541b25c20",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -12,
-        0,
-        2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "169b12ca-f40a-4827-861e-41ed0b30c637",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -12,
-        0,
-        4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "f7eb4103-7dc9-4076-bbe3-7d9a3a315de0",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -10,
-        0,
-        -6
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "d20d2259-4a20-40d6-a5d6-cecba20102f3",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -10,
-        0,
-        -4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "c1809f58-fb64-4089-8df9-c5480224fbc9",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -10,
-        0,
-        -2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "7f7259eb-df27-4950-b245-94d3ec945ebb",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -10,
-        0,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "1063aa38-da80-44f9-9cfa-3185ad78dfe7",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -10,
-        0,
-        2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "caa8225b-2246-49f6-8e77-dee6a8c0820a",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -10,
-        0,
-        4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "4a930b5f-eba1-428e-9ee6-de0d4fd7691d",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -8,
-        0,
-        -6
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "9101f553-6ee6-46fa-ab50-4432af9a72a7",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -8,
-        0,
-        -4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "b96b3974-b1dd-4151-bf87-30b0e7d8c2a9",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -8,
-        0,
-        -2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "a38229e7-f1c3-465f-9fc1-afc9b6ac7ca0",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -8,
-        0,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "a6edfe3f-ca0f-4552-b678-bc3b64a28abc",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -8,
-        0,
-        2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "03c4153d-3b8c-42dd-9d2a-60ee8dcf889e",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -8,
-        0,
-        4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "2aeaf1d6-ef5a-4269-8343-3afd62ff0f43",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -6,
-        0,
-        -6
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "b2b32ba7-3433-4744-8ec7-79b29f1dabfb",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -6,
-        0,
-        -4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "55adfdb9-b729-4d49-95bf-590b27222a8d",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -6,
-        0,
-        -2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "a826fa62-f419-4e12-a01b-37c4fccdc774",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -6,
-        0,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "37e1e81e-0aa0-4659-8644-6117c0dde1b0",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -6,
-        0,
-        2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "53ed25e9-ed18-4b78-abe1-9e6a3fc54c17",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -6,
-        0,
-        4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "130b01fd-937a-4cb2-8a14-5bc4e2dd9a85",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -4,
-        0,
-        -6
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "2b94af56-8ebf-4284-8b15-2fa041d9e2b7",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -4,
-        0,
-        -4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "10b82455-d80c-42d4-bc66-3322c0a2bb63",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -4,
-        0,
-        -2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "5e966b3c-a5f5-4bdb-aeee-77a85fb4ca1f",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -4,
-        0,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "8d7610b3-c4ac-4dc8-99f1-09d6162ee12c",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -4,
-        0,
-        2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "1e3a9a8c-719b-443f-84e1-74de6bba1394",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -4,
-        0,
-        4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "b6ac5464-e9a8-4879-9c43-f2c15dd51bf1",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -2,
-        0,
-        -6
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "7b5045da-e372-417a-a628-9f647329de18",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -2,
-        0,
-        -4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "74bcb737-b6d0-44fd-9abd-a410f3784997",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -2,
-        0,
-        -2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "2952a2e8-555a-400c-8dce-898a8c1e53d2",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -2,
-        0,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "ce9b5434-b921-42ef-82a5-c751b68dbd64",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -2,
-        0,
-        2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "d3081f1b-28f0-4429-99ae-edf5c16c90ad",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -2,
-        0,
-        4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "2919f91f-6f7c-4816-85cc-d5869d294dbd",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        0,
-        0,
-        -6
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "cb9996fa-24ac-454b-8f4f-82e06a340a11",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        0,
-        0,
-        -4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "dcc2fbde-cd18-45fd-a8a8-b830debe8db3",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        0,
-        0,
-        -2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "966df2b4-f0b4-499f-b2a9-c3fe8e22a7b9",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        0,
-        0,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "d5f052ae-9c83-4cc3-aef4-96c6f43159ca",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        0,
-        0,
-        2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "cee33f1e-3698-43f9-a812-ac9795f50df0",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        0,
-        0,
-        4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "0429dc1e-d648-4672-b09e-d7fe7429ebfc",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        2,
-        0,
-        -6
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "6c62da19-053a-4f4a-b8ad-b40fbc01a0b3",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        2,
-        0,
-        -4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "507b0abd-cc69-4a9d-aa65-d5a8fba49a91",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        2,
-        0,
-        -2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "786980c2-27aa-4b14-8df8-a1ed1cf14c17",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        2,
-        0,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "aa623723-d428-4b76-a628-530740df16a6",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        2,
-        0,
-        2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "128b0e31-900e-4b92-bb57-b4be103aedd7",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        2,
-        0,
-        4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "22abb1f6-d3eb-4a37-9440-76d68fe89b71",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        4,
-        0,
-        -6
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "2b86b098-a58c-4dfe-83c9-6f97eead8e49",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        4,
-        0,
-        -4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "a140d220-4c60-4b2d-ac30-a975c1f62f97",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        4,
-        0,
-        -2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "3c5a1295-b5f7-4827-b317-492dcc79b496",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        4,
-        0,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "79b5a7eb-54df-4b5c-9532-b9aaac784271",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        4,
-        0,
-        2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "c04d3aa3-12be-4c85-b3b9-dc102ce80a0c",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        4,
-        0,
-        4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "6ae04343-cfbc-4a4c-b6ce-e319f2a506d0",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        6,
-        0,
-        -6
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "b3ce51ac-acb6-4301-bbbd-5d927935edad",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        6,
-        0,
-        -4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "c3461f2f-adc7-483f-8dfb-03e5065ab18f",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        6,
-        0,
-        -2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "eb853d8c-3064-42ce-9947-102c62f37b57",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        6,
-        0,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "17f51236-1940-4808-aae8-2f96ba712313",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        6,
-        0,
-        2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "ec34c1d3-b119-4bb9-ad81-b17b6fbe5f4f",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        6,
-        0,
-        4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "a0b5344d-2bff-4133-a04c-b1e6091672d5",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        8,
-        0,
-        -6
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "085c2349-c37c-4420-bf64-5d35eab80101",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        8,
-        0,
-        -4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "2974b87e-9b8a-4547-a639-a6248566e469",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        8,
-        0,
-        -2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "403e29fd-4172-4c98-ba73-3dac69236db0",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        8,
-        0,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "2c3a3174-cab8-4a27-a933-af0b0ad6024e",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        8,
-        0,
-        2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "be75a94a-476c-43b3-a97a-49b6967fcf16",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        8,
-        0,
-        4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "dac64b5c-0b05-48ee-a3e9-0884b745612a",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        10,
-        0,
-        -6
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "e03187e6-f40a-466e-b1dc-b8c692c641be",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        10,
-        0,
-        -4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "41b24d5d-610b-4bc4-890c-2a4213352f41",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        10,
-        0,
-        -2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "86f57df0-9129-4f1b-8836-71aef1329fdf",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        10,
-        0,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "bafc0f45-ff33-4d3c-94af-a1379a4c4c67",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        10,
-        0,
-        2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "c4fac60f-1b24-42ba-a877-b98ae5be2a6b",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        10,
-        0,
-        4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "dd75f2b2-8c0d-441b-a9c9-c4b8be7119a4",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        12,
-        0,
-        -6
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "df43e6a5-23dd-44dd-a336-c815aaad326a",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        12,
-        0,
-        -4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "150b576c-94da-4d53-918f-cf2c3f67be8e",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        12,
-        0,
-        -2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "00d5b184-94ae-485e-81f8-5d469536b567",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        12,
-        0,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "d79085a9-f3d9-446a-bbe8-ac53593e983d",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        12,
-        0,
-        2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "6046f763-8f67-4a91-932f-b03ae1ebf662",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        12,
-        0,
-        4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "736bba69-1c49-4b8d-9e51-8a274552571d",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        14,
-        0,
-        -6
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "6cdada49-6a8c-4fe2-ac86-e68b04ecebd6",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        14,
-        0,
-        -4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "4da76908-f014-4769-88a4-f599b4d9b58d",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        14,
-        0,
-        -2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "77e7440c-b23e-4e94-876c-2b7903fcc9b9",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        14,
-        0,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "fff0442d-cb48-4208-a5c8-6960cb783116",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        14,
-        0,
-        2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "2b74abdb-d072-4b37-8854-6c7eb57541d4",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        14,
-        0,
-        4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "d75a53b2-aaf9-4f08-9b68-57c5f768486c",
-      "modelPath": "/model/kaykit_space/basemodule_A.gltf",
-      "position": [
-        0,
-        2,
-        2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.4,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "070fe4d7-b3b9-4976-af54-1fde8aeb81d4",
-      "modelPath": "/model/kaykit_space/roofmodule_base.gltf",
-      "position": [
-        0,
-        3.4,
-        2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.4,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "6c64aa97-b2d2-458d-a4f9-c564f479e227",
-      "modelPath": "/model/kaykit_space/basemodule_B.gltf",
-      "position": [
-        4.5,
-        2,
-        2
-      ],
-      "rotation": [
-        0,
-        -1.5707963267948966,
-        0
-      ],
-      "scale": 1.3,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "0e1a1f12-8218-4d9d-952f-f0bb317a77ee",
-      "modelPath": "/model/kaykit_space/roofmodule_cargo_A.gltf",
-      "position": [
-        4.5,
-        3.3,
-        2
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.3,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "13cb2248-6303-4598-98be-a89c8ce460e2",
-      "modelPath": "/model/kaykit_space/lights.gltf",
-      "position": [
-        6.5,
-        2,
-        3.5
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "f657c270-ad1a-44f6-81ee-a011e01aa8d4",
-      "modelPath": "/model/kaykit_space/basemodule_B.gltf",
-      "position": [
-        -4.5,
-        2,
-        2
+        -7.023910456373331,
+        3.2029020829913475,
+        -4.558736313227707
       ],
       "rotation": [
         0,
         1.5707963267948966,
         0
       ],
-      "scale": 1.3,
+      "scale": 1,
       "hiddenParts": [],
-      "colors": {}
+      "colors": {
+        "tunnel": "#0d3977"
+      }
     },
     {
-      "id": "30d37de3-0f6e-4ea8-978a-cc87af2dde80",
-      "modelPath": "/model/kaykit_space/roofmodule_solarpanels.gltf",
+      "id": "5eda3f84-2b23-4d4b-bb92-d66c8cd824a7",
+      "modelPath": "/model/kaykit_space/tunnel_diagonal_short_A.gltf",
       "position": [
-        -4.5,
-        3.3,
-        2
+        -6.043763976731235,
+        3.1550528127377304,
+        -1.4887739793622872
+      ],
+      "rotation": [
+        0.14887348853532573,
+        -0.0012885336334811598,
+        -0.08472540828848854
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {
+        "tunnel": "#0d3977"
+      }
+    },
+    {
+      "id": "afa5cdfa-a8f8-45d3-b9f3-5791cea826bb",
+      "modelPath": "/model/kaykit_space/basemodule_C.gltf",
+      "position": [
+        -5.030164175140563,
+        2.955385584010939,
+        -0.3588864204015514
       ],
       "rotation": [
         0,
         0,
         0
       ],
-      "scale": 1.3,
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {
+        "basemodule": "#0d3977"
+      }
+    },
+    {
+      "id": "ccff2ba6-ffb1-491a-a624-554ab94e2b5b",
+      "modelPath": "/model/kaykit_space/structure_tall.gltf",
+      "position": [
+        -5.00738052413501,
+        0.99560504815334,
+        -0.45167435368011666
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {
+        "structure": "#0d3977"
+      }
+    },
+    {
+      "id": "c21a4127-eb3d-4635-bf13-eed84386db3a",
+      "modelPath": "/model/kaykit_space/roofmodule_cargo_A.gltf",
+      "position": [
+        -5.026908448912586,
+        3.9053855087600744,
+        -0.45497281455687366
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {
+        "roofmodule": "#a8b4c5"
+      }
+    },
+    {
+      "id": "61127b81-c3a9-432f-97fb-f5618a31c441",
+      "modelPath": "/model/kaykit_space/roofmodule_cargo_C.gltf",
+      "position": [
+        -7.017785582046831,
+        4.054133335240283,
+        -2.444084262116412
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {
+        "roofmodule": "#ce9191"
+      }
+    },
+    {
+      "id": "dbe6b327-da11-4ff1-8281-9b947babeb38",
+      "modelPath": "/model/kaykit_space/spacetruck.gltf",
+      "position": [
+        1.051739572764415,
+        1,
+        -3.6277478216941015
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {
+        "spacetruck": "#686868"
+      }
+    },
+    {
+      "id": "d84f482e-4dfb-4db9-9e59-5063c2fddd02",
+      "modelPath": "/model/kaykit_space/spacetruck_trailer.gltf",
+      "position": [
+        1.0475714468127564,
+        1,
+        -4.584168166445416
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {
+        "spacetruck": "#686868"
+      }
+    },
+    {
+      "id": "575b7ede-aea2-49f7-9fcb-818ffc08e2b5",
+      "modelPath": "/model/kaykit_space/terrain_slope_outer_corner.gltf",
+      "position": [
+        1,
+        -0.000018141709989927257,
+        3
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
       "hiddenParts": [],
       "colors": {}
     },
     {
-      "id": "51976301-7b55-431f-9cb7-ba8b7a716742",
-      "modelPath": "/model/kaykit_space/lights.gltf",
+      "id": "a6d3ec54-1dbc-43eb-a4d4-abcf38b3a226",
+      "modelPath": "/model/kaykit_space/terrain_slope_outer_corner.gltf",
+      "position": [
+        -3,
+        0,
+        -1
+      ],
+      "rotation": [
+        0,
+        4.71238898038469,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "732f2b49-6f58-4b1c-a3cb-373050fd6f7f",
+      "modelPath": "/model/kaykit_space/terrain_slope_outer_corner.gltf",
+      "position": [
+        1,
+        0,
+        -1
+      ],
+      "rotation": [
+        0,
+        3.141592653589793,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "09f1b969-a9e7-42d3-8eb8-14a9148eac3b",
+      "modelPath": "/model/kaykit_space/drill_structure.gltf",
+      "position": [
+        0,
+        2,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "ee28bb03-cd6e-4c5a-a777-de8b7def564c",
+      "modelPath": "/model/kaykit_space/landingpad_small.gltf",
+      "position": [
+        -2.5,
+        1,
+        -6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "be731f26-71af-4e26-83e8-201bf60b87d8",
+      "modelPath": "/model/kaykit_space/terrain_slope.gltf",
+      "position": [
+        -5,
+        0,
+        5
+      ],
+      "rotation": [
+        0,
+        3.141592653589793,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "708f9f2d-8ed7-4eda-aa3e-dad695884e60",
+      "modelPath": "/model/kaykit_space/terrain_slope.gltf",
+      "position": [
+        -7,
+        0,
+        5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "0a8ec6f1-e915-49e7-9fb1-9d599f2502f7",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        -5,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "69c47141-7e22-406d-ac26-261d6f7823ad",
+      "modelPath": "/model/kaykit_space/terrain_slope_outer_corner.gltf",
+      "position": [
+        -7,
+        0,
+        3
+      ],
+      "rotation": [
+        0,
+        4.71238898038469,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "43fda2d3-e76d-425d-add2-c030a2474196",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        -7,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "ec97a4e5-e8f3-46a0-a125-683ca002d016",
+      "modelPath": "/model/kaykit_space/terrain_slope_outer_corner.gltf",
+      "position": [
+        -5,
+        0,
+        3
+      ],
+      "rotation": [
+        0,
+        3.141592653589793,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "a254ecf8-373e-46f0-aff3-772f52965b63",
+      "modelPath": "/model/kaykit_space/terrain_slope_inner_corner.gltf",
+      "position": [
+        -1,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "f4ea4b92-297c-4b02-8e23-5eaa265dd447",
+      "modelPath": "/model/kaykit_space/terrain_slope_outer_corner.gltf",
+      "position": [
+        -1,
+        0,
+        3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "5297593f-d962-4379-aef0-d97acb2f4427",
+      "modelPath": "/model/kaykit_space/terrain_slope_outer_corner.gltf",
+      "position": [
+        -3,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "8800b600-394b-44e7-a824-483deda50ded",
+      "modelPath": "/model/kaykit_space/terrain_slope.gltf",
+      "position": [
+        -1,
+        0,
+        -1
+      ],
+      "rotation": [
+        0,
+        4.71238898038469,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "ccd84682-3c16-4d22-83f7-cf3ebc759f07",
+      "modelPath": "/model/kaykit_space/terrain_slope.gltf",
+      "position": [
+        1,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        3.141592653589793,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "09a21394-3fea-47f7-9db6-33e11eee8287",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        1,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "4a273a89-630d-41af-8c96-4a66dcf3af00",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        -3,
+        0,
+        3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "84d494e9-e638-49d2-9e43-1512d1e45d46",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        -3,
+        0,
+        5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "6478e0e9-da68-4713-84c0-b14d52188911",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        -1,
+        0,
+        5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "df50a5e1-f5bb-47f2-bd19-2d373f93a28d",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        1,
+        0,
+        5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "950bbf07-5181-4c62-b08d-43b0c09a9e48",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        1,
+        0,
+        7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "d87a2779-8df2-41ae-82c0-9b244fb8284b",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        3,
+        0,
+        5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "2ab85318-4da4-4803-8964-a9af687f6316",
+      "modelPath": "/model/kaykit_space/terrain_low_curved.gltf",
+      "position": [
+        3,
+        0,
+        7
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "47f3ed7f-b8cb-438f-acdb-91d9f48fbe0f",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        3,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "eedb8bfe-99c7-4932-bc3b-7f09d787801b",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        3,
+        0,
+        -1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "68916757-12c6-4808-87bf-05fe35654d6b",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        3,
+        0,
+        -3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "32a28f8e-4a88-436e-8e33-3d25089effb5",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        3,
+        0,
+        -5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "eaf909f0-5a45-485a-b37f-4c984f614343",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        3,
+        0,
+        -7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "0abea2ef-ccd2-4827-aa93-5ef5c16c3b68",
+      "modelPath": "/model/kaykit_space/terrain_low_curved.gltf",
+      "position": [
+        3,
+        0,
+        -9
+      ],
+      "rotation": [
+        0,
+        3.141592653589793,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "75ee82dc-37ad-486a-959d-37d278da856e",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        1,
+        0,
+        -9
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "923d5c2f-9d11-4818-a1b6-751ee1d5a8e9",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        -1,
+        0,
+        -9
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "949de434-9c5e-4c78-adec-1e6f89c03351",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        -3,
+        0,
+        -9
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "dbc75b66-ec6a-4940-b595-5cf13af70b19",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        -5,
+        0,
+        -9
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "a5a399f9-d914-4e83-831a-ac6d5b9478c4",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        -7,
+        0,
+        -9
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "ccd617b8-0a21-4219-8a11-2461732eeb68",
+      "modelPath": "/model/kaykit_space/terrain_low_curved.gltf",
+      "position": [
+        -9,
+        0,
+        -9
+      ],
+      "rotation": [
+        0,
+        4.71238898038469,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "31fd4d44-cc9a-4534-83a7-39d10afe0048",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        -9,
+        0,
+        -7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "25bbb41a-57e2-4f18-820b-04674ee445a0",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        -9,
+        0,
+        -5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "804fd504-aec6-4e8f-b7b4-302a46582614",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        -9,
+        0,
+        -3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "fd8310c6-0b38-4bab-9a82-9c7e6d0b96ef",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        -9,
+        0,
+        -1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "af62216a-aaff-4273-a05f-fa581de0219c",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        -9,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "1df657dd-9f53-4666-9b1d-1b19cd0a5277",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        -9,
+        0,
+        3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "f886a270-a745-421d-bafd-aa2ac7f40c26",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        -1,
+        0,
+        7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "654d3f9e-29d2-428a-8ab8-5f5bc859e3b1",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        -3,
+        0,
+        7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "409c235a-6db8-4e00-93f3-3bd3a4ed489f",
+      "modelPath": "/model/kaykit_space/terrain_low.gltf",
+      "position": [
+        -9,
+        0,
+        5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "5c0f377e-cfb3-43f0-8db4-440d79051579",
+      "modelPath": "/model/kaykit_space/terrain_slope_outer_corner.gltf",
+      "position": [
+        -5,
+        0,
+        7
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "7252473e-83c7-40fe-a3c5-a1af4498f877",
+      "modelPath": "/model/kaykit_space/terrain_slope_outer_corner.gltf",
+      "position": [
+        -7,
+        0,
+        7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "2f2d3da1-a5cb-4c52-ab43-5d2a7aae3389",
+      "modelPath": "/model/kaykit_space/terrain_low_curved.gltf",
+      "position": [
+        -9,
+        0,
+        7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "6983d1b4-421c-4476-92fc-e115f12cc0e2",
+      "modelPath": "/model/kaykit_space/terrain_mining.gltf",
+      "position": [
+        3,
+        -1.0010385879127317,
+        3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "67cd80ae-4f80-4787-9ec8-a566e031570c",
+      "modelPath": "/model/kaykit_space/rocks_B.gltf",
+      "position": [
+        -3.006166222794219,
+        1,
+        6.985113055004804
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "095fa70d-f48f-4186-8749-4b41fee304d7",
+      "modelPath": "/model/kaykit_space/rocks_B.gltf",
+      "position": [
+        0.07304380617665351,
+        2,
+        1.9839052788572218
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "ec923836-b468-492e-a50b-f78ac51abbfc",
+      "modelPath": "/model/kaykit_space/rocks_A.gltf",
+      "position": [
+        -9,
+        1,
+        7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "55ae0691-f125-49e5-a0e2-667d3e9aa140",
+      "modelPath": "/model/kaykit_space/rocks_A.gltf",
+      "position": [
+        -3,
+        1,
+        -3.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "72cdc95e-e7ee-4f69-bc14-aacbf9186f26",
+      "modelPath": "/model/kaykit_space/rock_B.gltf",
+      "position": [
+        -2.5,
+        2,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "3be9c34e-a2bd-4f1f-bc89-ed0cd41893fd",
+      "modelPath": "/model/kaykit_space/rock_B.gltf",
       "position": [
         -6.5,
         2,
@@ -2996,2421 +1494,489 @@
         0,
         0
       ],
-      "scale": 1.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "62887576-1e64-4dda-9731-fc4717887fd1",
-      "modelPath": "/model/kaykit_space/tunnel_diagonal_long_A.gltf",
-      "position": [
-        6,
-        2,
-        -1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "53e97b54-1dd6-447a-b41d-1750a9496684",
-      "modelPath": "/model/kaykit_space/basemodule_garage.gltf",
-      "position": [
-        10,
-        2,
-        -4
-      ],
-      "rotation": [
-        0,
-        -1.5707963267948966,
-        0
-      ],
-      "scale": 1.5,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "39124859-8999-4c8f-a71b-080ca42f7bdc",
-      "modelPath": "/model/kaykit_space/roofmodule_cargo_B.gltf",
-      "position": [
-        10,
-        3.5,
-        -4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.5,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "2bee61eb-4bfb-49c6-b3f7-af050c9365c2",
-      "modelPath": "/model/kaykit_space/containers_C.gltf",
-      "position": [
-        12.5,
-        2,
-        -2.5
-      ],
-      "rotation": [
-        0,
-        0.3,
-        0
-      ],
-      "scale": 1.3,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "4214dfe1-8742-4c18-baf2-08542cedb8d2",
-      "modelPath": "/model/kaykit_space/lights.gltf",
-      "position": [
-        8,
-        2,
-        -4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "e95bb3ce-e615-4006-8bd4-a4c1fab0b86f",
-      "modelPath": "/model/kaykit_space/tunnel_diagonal_long_B.gltf",
-      "position": [
-        -6,
-        2,
-        -1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "f94fba81-8442-48bb-a35d-45eb5f533a42",
-      "modelPath": "/model/kaykit_space/basemodule_C.gltf",
-      "position": [
-        -10,
-        2,
-        -4
-      ],
-      "rotation": [
-        0,
-        1.5707963267948966,
-        0
-      ],
-      "scale": 1.5,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "f2ecf749-595c-4727-87b2-d318c37d1ba0",
-      "modelPath": "/model/kaykit_space/roofmodule_cargo_C.gltf",
-      "position": [
-        -10,
-        3.5,
-        -4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.5,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "1fc6ac48-5d43-4129-9e89-e31425626c6f",
-      "modelPath": "/model/kaykit_space/cargodepot_B.gltf",
-      "position": [
-        -12.5,
-        2,
-        -2.5
-      ],
-      "rotation": [
-        0,
-        -0.3,
-        0
-      ],
-      "scale": 1.3,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "2d4d351b-68a9-470c-9e33-418d7cacc502",
-      "modelPath": "/model/kaykit_space/lights.gltf",
-      "position": [
-        -8,
-        2,
-        -4
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "f52506e9-2e39-4aec-87ea-a2c160a4ecad",
-      "modelPath": "/model/kaykit_space/lights.gltf",
-      "position": [
-        0,
-        2,
-        -1.5
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "71840db4-042b-49bf-a6b5-d5c824af8943",
-      "modelPath": "/model/kaykit_space/terrain_slope.gltf",
-      "position": [
-        -2,
-        3,
-        -8
-      ],
-      "rotation": [
-        0,
-        3.141592653589793,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "3b1df1f2-2973-4e1a-9505-8503d5990acc",
-      "modelPath": "/model/kaykit_space/terrain_slope.gltf",
-      "position": [
-        2,
-        3,
-        -8
-      ],
-      "rotation": [
-        0,
-        3.141592653589793,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "5215116a-b657-4c4d-bad1-09cf669ef8fd",
-      "modelPath": "/model/kaykit_space/tunnel_straight_B.gltf",
-      "position": [
-        0,
-        3.2,
-        -8
-      ],
-      "rotation": [
-        0,
-        3.141592653589793,
-        0
-      ],
-      "scale": 1.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "d869dc52-477f-4e10-bbca-d3546f059306",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -12,
-        2,
-        -18
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "6d65cf5e-d62a-40ac-8db2-be8f432a9f94",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -12,
-        2,
-        -16
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "3f20edc4-ead7-42e1-b69b-61b90b013554",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -12,
-        2,
-        -14
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "f5ab0279-72ef-4184-9f99-aea5f38e0dfc",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -12,
-        2,
-        -12
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "47b5a101-cf99-4216-a1d7-e852ec4df9ce",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -12,
-        2,
-        -10
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "775b414c-5bad-47bd-89e4-23068862280a",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -10,
-        2,
-        -18
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "42eb313d-8865-4dfe-b23a-4a5cdc6cfe27",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -10,
-        2,
-        -16
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "9edec62d-b495-4f95-b09f-a4aa9075a507",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -10,
-        2,
-        -14
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "072f956b-8e10-46c2-92be-90e6956ab751",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -10,
-        2,
-        -12
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "94dd7811-fdce-4649-8f6a-711aee4d1490",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -10,
-        2,
-        -10
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "3e770114-3207-425c-aff2-8cfb1a5566bd",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -8,
-        2,
-        -18
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "0bbbd0f8-6531-4ab8-9b11-97223685f69c",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -8,
-        2,
-        -16
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "20e2ffa3-5f78-4d08-bf30-352259c49439",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -8,
-        2,
-        -14
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "6de7064a-82c6-439e-b2a2-107108374ed8",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -8,
-        2,
-        -12
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "414916bb-6cd2-4926-a915-7ee108dbe769",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -8,
-        2,
-        -10
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "cf061562-e976-4947-b43a-7157c8dbb67b",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -6,
-        2,
-        -18
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "20ae8f63-9763-4ea8-9f8c-1643d0eccc4d",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -6,
-        2,
-        -16
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "6856bcb9-e8ca-47a7-85be-948e630f0cff",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -6,
-        2,
-        -14
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "8398e8d0-833b-476c-8870-f8249da9e463",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -6,
-        2,
-        -12
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "bd1e61c5-b3b9-4cec-937e-e0250f79042e",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -6,
-        2,
-        -10
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "e618be45-69b8-4a9e-97b9-6ddcbf341874",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -4,
-        2,
-        -18
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "ec53abaa-9727-4dfc-94a5-3991844a6bb1",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -4,
-        2,
-        -16
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "b36caf83-aed7-4a6a-9980-ea032dddd1c1",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -4,
-        2,
-        -14
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "1f55a75e-625d-44cb-afe6-7f2ef531b9d8",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -4,
-        2,
-        -12
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "b4095719-ee86-4a7d-b5dc-9e5377a96a6b",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -4,
-        2,
-        -10
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "a40653cc-e72f-4f04-8c97-4defbe1dda61",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -2,
-        2,
-        -18
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "0241c79c-790c-4d43-a58a-00ecefa5e975",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -2,
-        2,
-        -16
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "ed14d86e-c981-4e93-8b38-d1728bf69b13",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -2,
-        2,
-        -14
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "63eb99e2-5fc8-4a2a-bf15-74f169c411bb",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -2,
-        2,
-        -12
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "c2f43c96-c32d-434e-8196-7918a4ccd529",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        -2,
-        2,
-        -10
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "6bb2b47c-b024-4f31-abb7-9878138891fe",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        0,
-        2,
-        -18
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "9c1c159b-3578-46b5-9ae1-a544f9809d0e",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        0,
-        2,
-        -16
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "a4f1a7c6-554b-48dd-ab24-fa6e8e8c1130",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        0,
-        2,
-        -14
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "39c31d11-7173-4566-9b68-b9bd2fed8470",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        0,
-        2,
-        -12
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "e6974901-dc6d-4b05-92e1-d90cac7dea00",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        0,
-        2,
-        -10
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "f68d3686-e429-4ab9-b6d6-6a2a60390f2c",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        2,
-        2,
-        -18
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "517c2498-622c-436c-9a9c-9e5689976ee6",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        2,
-        2,
-        -16
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "d4cc87bb-5a33-482f-8ff0-8d7b092d07bd",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        2,
-        2,
-        -14
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "d3dde0a5-48b1-418c-a5bc-20f103d4ea8e",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        2,
-        2,
-        -12
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "c411328c-a6ff-48d3-a726-1178dcbf86fa",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        2,
-        2,
-        -10
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "63203c9e-1812-415a-87ee-c76aee949b64",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        4,
-        2,
-        -18
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "76fe528d-d80e-4e32-b8fb-481a8c0d373e",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        4,
-        2,
-        -16
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "5527044f-24cc-4312-8946-c61ef4c571b7",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        4,
-        2,
-        -14
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "48d90eca-35c3-452c-bfef-9e3488778875",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        4,
-        2,
-        -12
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "2cb2754b-98f0-4dd5-8f59-b371e1283621",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        4,
-        2,
-        -10
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "8ba962ee-1b34-4278-8513-5d932939fae8",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        6,
-        2,
-        -18
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "dc6126e7-5c70-4e95-be98-ef1618ea4bbc",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        6,
-        2,
-        -16
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "d1450741-582f-42ed-ac71-d300ee96ac5d",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        6,
-        2,
-        -14
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "130fc34d-6ad3-43b3-8727-b318e51ef735",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        6,
-        2,
-        -12
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "18151a03-46f7-471b-8fb3-292ebce098ad",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        6,
-        2,
-        -10
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "c3ee83e8-bf2e-4ac8-9636-a5616678e5a5",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        8,
-        2,
-        -18
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "09d3e94b-d09e-4b6a-924a-38975558ffc3",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        8,
-        2,
-        -16
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "2dda0fde-79df-46df-b773-d76213a7588d",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        8,
-        2,
-        -14
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "177cf758-2c08-4ce2-bf0b-da523b107599",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        8,
-        2,
-        -12
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "9705fd07-af94-4658-9658-c52e09db6766",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        8,
-        2,
-        -10
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "8c70b486-669f-4546-b66d-4033fa62f3b5",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        10,
-        2,
-        -18
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "6514d970-c409-4796-a5c0-a03cd3a2c5ca",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        10,
-        2,
-        -16
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "c85c3468-ad9e-4794-a2d5-c5255a11170c",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        10,
-        2,
-        -14
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "57f1e2fe-1977-47ee-8d9d-4ba42a799aba",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        10,
-        2,
-        -12
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "0695bc08-c13e-4102-8d28-52c85c6d0d6c",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        10,
-        2,
-        -10
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "06fb0efb-6815-4adb-8621-e81eb3d663d2",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        12,
-        2,
-        -18
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "6d1686a4-a0a3-48fb-85aa-309cd69db5e5",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        12,
-        2,
-        -16
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "acfd35f0-f0a9-4e03-afb4-1b22dab1c9cb",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        12,
-        2,
-        -14
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "6393ddd5-37d1-4eae-8318-13f59a16e457",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        12,
-        2,
-        -12
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "c494a7d5-301f-4ba3-862a-a1a24b19da94",
-      "modelPath": "/model/kaykit_space/terrain_tall.gltf",
-      "position": [
-        12,
-        2,
-        -10
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
       "scale": 1,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "dbf5d416-fe78-4bdd-94fa-ee92779fc918",
-      "modelPath": "/model/kaykit_space/structure_tall.gltf",
-      "position": [
-        0,
-        4,
-        -14
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.5,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "76808769-eb0e-4007-988d-7ac6dd9897bd",
-      "modelPath": "/model/kaykit_space/structure_low.gltf",
-      "position": [
-        0,
-        4,
-        -11.5
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.5,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "467f6bd0-588e-4a1a-abb2-d7526697066e",
-      "modelPath": "/model/kaykit_space/solarpanel.gltf",
-      "position": [
-        -9.5,
-        4,
-        -13
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.4,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "e9e3b496-3f34-45d8-b35c-fb49494682a8",
-      "modelPath": "/model/kaykit_space/solarpanel.gltf",
-      "position": [
-        -9.5,
-        4,
-        -15.5
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.4,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "b66825d0-0ceb-4843-abc6-2c0a2777ce8e",
-      "modelPath": "/model/kaykit_space/solarpanel.gltf",
-      "position": [
-        -7.5,
-        4,
-        -13
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.4,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "3f8fd0d2-8a59-47af-9b3e-099c48928057",
-      "modelPath": "/model/kaykit_space/solarpanel.gltf",
-      "position": [
-        -7.5,
-        4,
-        -15.5
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.4,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "04f9721a-526c-41af-bfe7-00552b13baa5",
-      "modelPath": "/model/kaykit_space/solarpanel.gltf",
-      "position": [
-        -5.5,
-        4,
-        -13
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.4,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "718739eb-c7a5-4e2b-989d-43b4ac7e8e96",
-      "modelPath": "/model/kaykit_space/solarpanel.gltf",
-      "position": [
-        -5.5,
-        4,
-        -15.5
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.4,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "187d1549-1218-4d3c-b9b4-22c7c99c71c3",
-      "modelPath": "/model/kaykit_space/solarpanel.gltf",
-      "position": [
-        5.5,
-        4,
-        -13
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.4,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "9f2ee62d-7f9a-44bc-a122-8ad38c47ee31",
-      "modelPath": "/model/kaykit_space/solarpanel.gltf",
-      "position": [
-        5.5,
-        4,
-        -15.5
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.4,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "8b788537-5efc-44dd-8fa1-223f8163552d",
-      "modelPath": "/model/kaykit_space/solarpanel.gltf",
-      "position": [
-        7.5,
-        4,
-        -13
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.4,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "71719ac3-1cd2-4273-981b-8e1173e0f4ef",
-      "modelPath": "/model/kaykit_space/solarpanel.gltf",
-      "position": [
-        7.5,
-        4,
-        -15.5
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.4,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "e8995f6d-a77a-4cd1-9463-05fa279ce178",
-      "modelPath": "/model/kaykit_space/solarpanel.gltf",
-      "position": [
-        9.5,
-        4,
-        -13
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.4,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "38c5a513-4386-4d96-a6bc-c1e9a714f142",
-      "modelPath": "/model/kaykit_space/solarpanel.gltf",
-      "position": [
-        9.5,
-        4,
-        -15.5
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.4,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "e443fc5c-067b-4243-8b4f-3ca54971168a",
-      "modelPath": "/model/kaykit_space/windturbine_tall.gltf",
-      "position": [
-        -12,
-        4,
-        -14
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.5,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "ee1747d1-aa99-491f-980c-81ed28eb9764",
-      "modelPath": "/model/kaykit_space/windturbine_tall.gltf",
-      "position": [
-        12,
-        4,
-        -14
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.5,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "9238d8c8-18f9-4b63-9ed1-460670ec8646",
-      "modelPath": "/model/kaykit_space/windturbine_low.gltf",
-      "position": [
-        -3,
-        4,
-        -16
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.4,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "86ac569a-7937-45a1-b909-909c62801138",
-      "modelPath": "/model/kaykit_space/windturbine_low.gltf",
-      "position": [
-        3,
-        4,
-        -16
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.4,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "8f937bfb-0e45-4fab-854d-1a63c5f853b5",
-      "modelPath": "/model/kaykit_space/lights.gltf",
-      "position": [
-        -3.5,
-        4,
-        -12.5
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "72bb8c3b-002f-4802-9a95-ad531003e87c",
-      "modelPath": "/model/kaykit_space/lights.gltf",
-      "position": [
-        3.5,
-        4,
-        -12.5
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "dd61883c-cdfc-4c09-b44b-4e793df244cd",
-      "modelPath": "/model/kaykit_space/lights.gltf",
-      "position": [
-        0,
-        4,
-        -16.5
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "6416d409-0357-4c10-af0e-f4908a9a2aaa",
-      "modelPath": "/model/kaykit_space/terrain_mining.gltf",
-      "position": [
-        14,
-        2.5,
-        -12
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.5,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "4af0e4c0-1a9d-4e5b-96dc-e37b4f6bb26b",
-      "modelPath": "/model/kaykit_space/drill_structure.gltf",
-      "position": [
-        14,
-        3.5,
-        -12
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.6,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "5d5c1aad-00cf-4b75-ab12-5675beeb4741",
-      "modelPath": "/model/kaykit_space/lights.gltf",
-      "position": [
-        12.5,
-        3.5,
-        -10.5
-      ],
-      "rotation": [
-        0,
-        0.4,
-        0
-      ],
-      "scale": 1.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "c13f6dcb-8f45-4f23-9a52-ee38a4c9ce2e",
-      "modelPath": "/model/kaykit_space/containers_D.gltf",
-      "position": [
-        15.5,
-        3.5,
-        -10
-      ],
-      "rotation": [
-        0,
-        -0.3,
-        0
-      ],
-      "scale": 1.3,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "ec5739d2-0466-4f0e-98c6-6f996e89bbcd",
-      "modelPath": "/model/kaykit_space/rocks_A.gltf",
-      "position": [
-        -12,
-        0.2,
-        22
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.6,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "4c141f6e-90ec-49b3-a59d-cf275a351f0c",
-      "modelPath": "/model/kaykit_space/rocks_B.gltf",
-      "position": [
-        -8,
-        0.2,
-        22.5
-      ],
-      "rotation": [
-        0,
-        0.7,
-        0
-      ],
-      "scale": 1.9000000000000001,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "6e877300-f152-4fa1-9d15-dc58726a7246",
-      "modelPath": "/model/kaykit_space/rocks_A.gltf",
-      "position": [
-        -4,
-        0.2,
-        23
-      ],
-      "rotation": [
-        0,
-        1.4,
-        0
-      ],
-      "scale": 2.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "2a9defed-855a-4c01-958d-2f7acb104500",
-      "modelPath": "/model/kaykit_space/rocks_B.gltf",
-      "position": [
-        0,
-        0.2,
-        23
-      ],
-      "rotation": [
-        0,
-        2.0999999999999996,
-        0
-      ],
-      "scale": 1.6,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "7e5b31ec-c9d2-423e-a3f7-3bcf3a9ae0b0",
-      "modelPath": "/model/kaykit_space/rocks_A.gltf",
-      "position": [
-        4,
-        0.2,
-        23
-      ],
-      "rotation": [
-        0,
-        2.8,
-        0
-      ],
-      "scale": 1.9000000000000001,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "da323860-a6d8-469a-b44f-ca796d2b65bc",
-      "modelPath": "/model/kaykit_space/rocks_B.gltf",
-      "position": [
-        8,
-        0.2,
-        22.5
-      ],
-      "rotation": [
-        0,
-        3.5,
-        0
-      ],
-      "scale": 2.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "36d442ae-bbb1-4d9d-91e5-e3cb6479a929",
-      "modelPath": "/model/kaykit_space/rocks_A.gltf",
-      "position": [
-        12,
-        0.2,
-        22
-      ],
-      "rotation": [
-        0,
-        4.199999999999999,
-        0
-      ],
-      "scale": 1.6,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "91c92226-c5bb-4e7a-bbdd-a7a5ca588f89",
-      "modelPath": "/model/kaykit_space/rocks_B.gltf",
-      "position": [
-        14,
-        0.4,
-        18
-      ],
-      "rotation": [
-        0,
-        4.8999999999999995,
-        0
-      ],
-      "scale": 1.9000000000000001,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "6d020b89-47c2-452e-acbe-5e28b1c98123",
-      "modelPath": "/model/kaykit_space/rocks_A.gltf",
-      "position": [
-        15,
-        0.5,
-        12
-      ],
-      "rotation": [
-        0,
-        5.6,
-        0
-      ],
-      "scale": 2.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "045aa218-ba69-4107-8cf3-2c29db1be013",
-      "modelPath": "/model/kaykit_space/rocks_B.gltf",
-      "position": [
-        16,
-        1.8,
-        6
-      ],
-      "rotation": [
-        0,
-        0.01681469282041359,
-        0
-      ],
-      "scale": 1.6,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "638ae975-e2b7-44a8-bada-bbc066dfbe0a",
-      "modelPath": "/model/kaykit_space/rocks_A.gltf",
-      "position": [
-        17,
-        1.8,
-        0
-      ],
-      "rotation": [
-        0,
-        0.7168146928204138,
-        0
-      ],
-      "scale": 1.9000000000000001,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "d5cb81a9-2fd1-4e16-a994-63657aba689c",
-      "modelPath": "/model/kaykit_space/rocks_B.gltf",
-      "position": [
-        17,
-        2,
-        -6
-      ],
-      "rotation": [
-        0,
-        1.416814692820413,
-        0
-      ],
-      "scale": 2.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "9c73374a-6a23-4955-904b-bd8229c3f5be",
-      "modelPath": "/model/kaykit_space/rocks_A.gltf",
-      "position": [
-        16,
-        3.5,
-        -16
-      ],
-      "rotation": [
-        0,
-        2.1168146928204123,
-        0
-      ],
-      "scale": 1.6,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "98f63aad-df6e-4168-a1e7-2b2c9d123b25",
-      "modelPath": "/model/kaykit_space/rocks_B.gltf",
-      "position": [
-        -14,
-        0.4,
-        18
-      ],
-      "rotation": [
-        0,
-        2.8168146928204134,
-        0
-      ],
-      "scale": 1.9000000000000001,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "2620011f-ec31-4021-bc2b-4fc87be2fc73",
-      "modelPath": "/model/kaykit_space/rocks_A.gltf",
-      "position": [
-        -15,
-        0.5,
-        12
-      ],
-      "rotation": [
-        0,
-        3.5168146928204127,
-        0
-      ],
-      "scale": 2.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "a6e02c03-2e28-4a72-aff4-00ff1593bf2d",
-      "modelPath": "/model/kaykit_space/rocks_B.gltf",
-      "position": [
-        -16,
-        1.8,
-        6
-      ],
-      "rotation": [
-        0,
-        4.216814692820414,
-        0
-      ],
-      "scale": 1.6,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "860fb53e-a9a4-4139-a876-6599f942dfd8",
-      "modelPath": "/model/kaykit_space/rocks_A.gltf",
-      "position": [
-        -17,
-        1.8,
-        0
-      ],
-      "rotation": [
-        0,
-        4.916814692820413,
-        0
-      ],
-      "scale": 1.9000000000000001,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "e982243b-1a19-4051-890e-8ec2a0c49037",
-      "modelPath": "/model/kaykit_space/rocks_B.gltf",
-      "position": [
-        -17,
-        2,
-        -6
-      ],
-      "rotation": [
-        0,
-        5.616814692820412,
-        0
-      ],
-      "scale": 2.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "fed29264-16f6-4d40-9082-c5f8de84a1c1",
-      "modelPath": "/model/kaykit_space/rocks_A.gltf",
-      "position": [
-        -16,
-        3.5,
-        -16
-      ],
-      "rotation": [
-        0,
-        0.03362938564082718,
-        0
-      ],
-      "scale": 1.6,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "c1826e80-1a67-43d3-9b71-03467455635f",
-      "modelPath": "/model/kaykit_space/rocks_B.gltf",
-      "position": [
-        -14,
-        3.8,
-        -19
-      ],
-      "rotation": [
-        0,
-        0.7336293856408265,
-        0
-      ],
-      "scale": 1.9000000000000001,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "5fcd0934-572d-44fe-8ff5-bd0813ee68da",
-      "modelPath": "/model/kaykit_space/rocks_A.gltf",
-      "position": [
-        -10,
-        3.8,
-        -19.5
-      ],
-      "rotation": [
-        0,
-        1.4336293856408275,
-        0
-      ],
-      "scale": 2.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "a64ca639-b9d2-4ae5-b063-da1885addd87",
-      "modelPath": "/model/kaykit_space/rocks_B.gltf",
-      "position": [
-        -5,
-        3.8,
-        -20
-      ],
-      "rotation": [
-        0,
-        2.133629385640827,
-        0
-      ],
-      "scale": 1.6,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "35110d23-b852-4233-b42a-5d380a96fab6",
-      "modelPath": "/model/kaykit_space/rocks_A.gltf",
-      "position": [
-        0,
-        3.8,
-        -20
-      ],
-      "rotation": [
-        0,
-        2.833629385640826,
-        0
-      ],
-      "scale": 1.9000000000000001,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "6fd51585-2d0c-4c8c-ae35-970ded04639e",
-      "modelPath": "/model/kaykit_space/rocks_B.gltf",
-      "position": [
-        5,
-        3.8,
-        -20
-      ],
-      "rotation": [
-        0,
-        3.5336293856408254,
-        0
-      ],
-      "scale": 2.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "a11e6f17-ffd9-45f4-9554-5f9cb951766b",
-      "modelPath": "/model/kaykit_space/rocks_A.gltf",
-      "position": [
-        10,
-        3.8,
-        -19.5
-      ],
-      "rotation": [
-        0,
-        4.233629385640825,
-        0
-      ],
-      "scale": 1.6,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "5ed91b1b-8a9a-40c1-a32e-2dfac98fe4a5",
-      "modelPath": "/model/kaykit_space/rocks_B.gltf",
-      "position": [
-        14,
-        3.8,
-        -19
-      ],
-      "rotation": [
-        0,
-        4.9336293856408275,
-        0
-      ],
-      "scale": 1.9000000000000001,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "cc525c54-7457-46fd-b978-4cc9c9a6ebad",
-      "modelPath": "/model/kaykit_space/rock_A.gltf",
-      "position": [
-        -8,
-        0.3,
-        14
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": 1.2,
       "hiddenParts": [],
       "colors": {}
     },
     {
-      "id": "fa4beaf8-e7f6-40dd-9f81-78c20505ff8a",
+      "id": "a3cb9e63-817a-478a-90d8-25653aed03fb",
       "modelPath": "/model/kaykit_space/rock_B.gltf",
+      "position": [
+        -5.591565238961394,
+        2,
+        4.548474337481673
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "357ef94f-78ce-44a1-82fb-6d43f36af0bc",
+      "modelPath": "/model/kaykit_space/rock_B.gltf",
+      "position": [
+        -6.154060683027469,
+        2,
+        4.116655537895139
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "f19153fb-8596-4126-856f-9cd7078b5ef1",
+      "modelPath": "/model/kaykit_space/lights.gltf",
+      "position": [
+        -6.5,
+        2,
+        5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "da2a52f4-0667-4b4b-8a83-4c87624ef145",
+      "modelPath": "/model/kaykit_space/lights.gltf",
+      "position": [
+        -1.5,
+        1,
+        -5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "bd399c3f-66df-4af3-a1e0-49120ac53383",
+      "modelPath": "/model/kaykit_space/lights.gltf",
+      "position": [
+        -8,
+        1,
+        -2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "f8e9bf69-c112-4af0-a1d4-7ffaf86e1044",
+      "modelPath": "/model/kaykit_space/rocks_B.gltf",
+      "position": [
+        -6,
+        1,
+        -4
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "e55ffde8-cda5-49ee-9196-02426247b0d1",
+      "modelPath": "/model/kaykit_space/windturbine_tall.gltf",
+      "position": [
+        -8.5,
+        1,
+        -9.5
+      ],
+      "rotation": [
+        0,
+        0.7853981633974483,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "23b24a35-5804-45f7-b72f-da4d50405845",
+      "modelPath": "/model/kaykit_space/windturbine_tall.gltf",
       "position": [
         -7,
-        0.3,
-        18
+        1,
+        -9.5
       ],
       "rotation": [
         0,
-        1.1,
+        0.7853981633974483,
         0
       ],
-      "scale": 1.2,
+      "scale": 1,
       "hiddenParts": [],
       "colors": {}
     },
     {
-      "id": "13c1dfc0-e2bb-4e5d-bccc-e0e26674d986",
-      "modelPath": "/model/kaykit_space/rock_A.gltf",
+      "id": "33451948-7914-40c3-973d-808439f221b9",
+      "modelPath": "/model/kaykit_space/windturbine_tall.gltf",
       "position": [
-        8,
-        0.3,
-        13
+        -5.5,
+        1,
+        -9.5
       ],
       "rotation": [
         0,
+        0.7853981633974483,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "215a45b8-9930-43d2-8f2e-57c95bf6a4bf",
+      "modelPath": "/model/kaykit_space/windturbine_low.gltf",
+      "position": [
+        0,
+        4,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 0.75,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "83dfcf82-bffd-4194-997e-3d5d48dfdb55",
+      "modelPath": "/model/kaykit_space/solarpanel.gltf",
+      "position": [
+        -5.999142860823746,
+        2,
+        6.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "22ea4775-692a-4b46-813d-68c14e5d9388",
+      "modelPath": "/model/kaykit_space/solarpanel.gltf",
+      "position": [
+        -5.798459872849948,
+        2,
+        6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "f3c2a842-d83c-4443-a26b-fd3a1f3b2993",
+      "modelPath": "/model/kaykit_space/solarpanel.gltf",
+      "position": [
+        -5.593768216397567,
+        2,
+        5.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "fc385870-bd27-466a-8e96-adb43587e119",
+      "modelPath": "/model/kaykit_space/cargodepot_A.gltf",
+      "position": [
+        -8.914034675205436,
+        1,
+        -1.2507835308537967
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "5a8816b1-7090-4e9e-9847-095f93ef15d5",
+      "modelPath": "/model/kaykit_space/cargo_A.gltf",
+      "position": [
+        1.050345250042713,
+        1.3381999805569649,
+        -4.4073996814196725
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 0.75,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "205c59bf-9373-427b-bedb-039885ab47fc",
+      "modelPath": "/model/kaykit_space/cargo_A.gltf",
+      "position": [
+        1.0492461341915285,
+        1.3381999805569649,
+        -4.833320219056256
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 0.75,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "127bdd78-b0b5-4592-83f7-8ee229970e83",
+      "modelPath": "/model/kaykit_space/containers_A.gltf",
+      "position": [
+        1.0579741879081954,
+        1.3381999656558037,
+        -3.8348726271216593
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 0.75,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "a0fc9c46-674f-44bd-a3d4-5e4f16566cb8",
+      "modelPath": "/model/kaykit_space/containers_A.gltf",
+      "position": [
+        1.0444160817171695,
+        1.4623425710067015,
+        -3.832026585972532
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 0.75,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "3d94e3d9-9b13-45dc-99bc-0f7a999abc28",
+      "modelPath": "/model/kaykit_space/rock_A.gltf",
+      "position": [
+        2.6933945501496273,
+        1,
+        -8.56016218813742
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "c700d715-08e0-47f4-adb6-94239fe11126",
+      "modelPath": "/model/kaykit_space/spacetruck_large.gltf",
+      "position": [
+        -0.5429028647165461,
+        1,
+        5.653999540237534
+      ],
+      "rotation": [
+        0,
+        0.7853981633974483,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {
+        "spacetruck": "#686868"
+      }
+    },
+    {
+      "id": "7e9dda0b-d478-47ef-8453-98fca2995749",
+      "modelPath": "/model/kaykit_space/spacetruck_trailer.gltf",
+      "position": [
+        -3.1436917382201575,
+        1,
+        4.8757326406498915
+      ],
+      "rotation": [
+        0,
+        2.356194490192345,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {
+        "spacetruck": "#686868"
+      }
+    },
+    {
+      "id": "1f8038f9-396d-477d-9509-0e91f3ded9a1",
+      "modelPath": "/model/kaykit_space/lander_base.gltf",
+      "position": [
+        -2.9815578977980732,
+        1.0000000000000009,
+        3.1170689707118147
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {
+        "lander": "#686868"
+      }
+    },
+    {
+      "id": "npc-commander-bio",
+      "modelPath": "/model/kaykit_space/npc_commander.glb",
+      "position": [
+        1.5,
+        1,
+        5
+      ],
+      "rotation": [
+        0,
+        -0.7,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "npc-engineer-reactor",
+      "modelPath": "/model/kaykit_space/npc_engineer.glb",
+      "position": [
+        -2.2,
+        1,
+        3.8
+      ],
+      "rotation": [
+        0,
+        1,
+        0
+      ],
+      "scale": 1,
+      "hiddenParts": [],
+      "colors": {}
+    },
+    {
+      "id": "npc-terrascope-geodata",
+      "modelPath": "/model/kaykit_space/npc_terrascope.glb",
+      "position": [
         2.2,
+        1,
+        3
+      ],
+      "rotation": [
+        0,
+        -1.2,
         0
       ],
-      "scale": 1.2,
+      "scale": 1,
       "hiddenParts": [],
       "colors": {}
     },
     {
-      "id": "99105904-7f0b-4243-9cd5-5867db27cf21",
-      "modelPath": "/model/kaykit_space/rock_B.gltf",
+      "id": "npc-forma-cad",
+      "modelPath": "/model/kaykit_space/npc_forma.glb",
       "position": [
-        8,
-        0.3,
-        18
+        1.2,
+        1,
+        -0.5
       ],
       "rotation": [
         0,
-        3.3000000000000003,
+        -2.4,
         0
       ],
-      "scale": 1.2,
+      "scale": 1,
       "hiddenParts": [],
       "colors": {}
     },
     {
-      "id": "3c2d52b7-b5b4-4080-b869-9acd1462c62f",
-      "modelPath": "/model/kaykit_space/rock_A.gltf",
+      "id": "npc-comms-subspace",
+      "modelPath": "/model/kaykit_space/npc_comms.glb",
       "position": [
-        -12,
-        1.8,
-        2
+        -1,
+        1,
+        -4.5
       ],
       "rotation": [
         0,
-        4.4,
+        0.5,
         0
       ],
-      "scale": 1.2,
+      "scale": 1,
       "hiddenParts": [],
       "colors": {}
     },
     {
-      "id": "c7304165-acb2-4caf-bc89-de0c64bf26ed",
-      "modelPath": "/model/kaykit_space/rock_B.gltf",
+      "id": "npc-lumina-optics",
+      "modelPath": "/model/kaykit_space/npc_lumina.glb",
       "position": [
-        12,
-        1.8,
-        2
+        -5.5,
+        1,
+        -7
       ],
       "rotation": [
         0,
-        5.5,
+        0.8,
         0
       ],
-      "scale": 1.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "489edc86-7af0-47f8-a302-ac860de0b074",
-      "modelPath": "/model/kaykit_space/rock_A.gltf",
-      "position": [
-        -8,
-        1.8,
-        -2
-      ],
-      "rotation": [
-        0,
-        0.3168146928204143,
-        0
-      ],
-      "scale": 1.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "e7cf2949-e976-4877-9135-7f96dd538649",
-      "modelPath": "/model/kaykit_space/rock_B.gltf",
-      "position": [
-        8,
-        1.8,
-        -2
-      ],
-      "rotation": [
-        0,
-        1.4168146928204148,
-        0
-      ],
-      "scale": 1.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "6903361b-a9dc-46f9-b7fa-846e0fdb6bb8",
-      "modelPath": "/model/kaykit_space/rock_A.gltf",
-      "position": [
-        -6,
-        3.8,
-        -11
-      ],
-      "rotation": [
-        0,
-        2.5168146928204145,
-        0
-      ],
-      "scale": 1.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "b5ee5e08-3658-4801-ba17-638299d30c9f",
-      "modelPath": "/model/kaykit_space/rock_B.gltf",
-      "position": [
-        6,
-        3.8,
-        -11
-      ],
-      "rotation": [
-        0,
-        3.616814692820414,
-        0
-      ],
-      "scale": 1.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "b0ed9764-001a-465f-9823-bcf6f9374117",
-      "modelPath": "/model/kaykit_space/rock_A.gltf",
-      "position": [
-        -10,
-        3.8,
-        -17
-      ],
-      "rotation": [
-        0,
-        4.716814692820414,
-        0
-      ],
-      "scale": 1.2,
-      "hiddenParts": [],
-      "colors": {}
-    },
-    {
-      "id": "5aa62229-fd77-40ba-9928-4810563fd035",
-      "modelPath": "/model/kaykit_space/rock_B.gltf",
-      "position": [
-        10,
-        3.8,
-        -17
-      ],
-      "rotation": [
-        0,
-        5.816814692820415,
-        0
-      ],
-      "scale": 1.2,
+      "scale": 1,
       "hiddenParts": [],
       "colors": {}
     }

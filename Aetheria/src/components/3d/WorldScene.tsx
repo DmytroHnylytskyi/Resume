@@ -220,7 +220,7 @@ function SubspaceExcavationParticles(): React.ReactElement {
   });
 
   return (
-    <group position={[14.0, 2.5, -12.0]}>
+    <group position={[0.0, 2.0, 0.0]}>
       <points ref={pointsRef}>
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" args={[positions, 3]} />
@@ -304,8 +304,8 @@ function ProximityManager({
 
     // ── 2. Easter Egg Deep Mining Drill Trigger ──
     const now = performance.now();
-    const gx = p.x - 14.0;
-    const gz = p.z - (-12.0);
+    const gx = p.x - 0.0;
+    const gz = p.z - 0.0;
     if (gx * gx + gz * gz < 9.0) {
       if (now - lastEasterEggTriggerRef.current > 6000) {
         lastEasterEggTriggerRef.current = now;
@@ -341,9 +341,14 @@ const MODEL_COLLIDER_DEFS: Record<string, ModelBound> = {
   'basemodule_A.gltf': { halfExtents: [1.12, 0.5, 1.09], offset: [0, 0.5, 0] },
   'basemodule_B.gltf': { halfExtents: [1.04, 0.5, 1.16], offset: [0, 0.5, 0] },
   'basemodule_C.gltf': { halfExtents: [1.1, 0.5, 1.1], offset: [0, 0.5, 0] },
+  'basemodule_D.gltf': { halfExtents: [1.1, 0.5, 1.1], offset: [0, 0.5, 0] },
+  'basemodule_E.gltf': { halfExtents: [1.1, 0.5, 1.1], offset: [0, 0.5, 0] },
   'basemodule_garage.gltf': { halfExtents: [1.0, 0.5, 1.19], offset: [0, 0.5, 0] },
+  'roofmodule_cargo_A.gltf': { halfExtents: [0.9, 0.3, 0.9], offset: [0, 0.3, 0] },
+  'roofmodule_cargo_C.gltf': { halfExtents: [0.9, 0.3, 0.9], offset: [0, 0.3, 0] },
   'cargodepot_A.gltf': { halfExtents: [0.75, 0.5, 0.75], offset: [0, 0.5, 0] },
   'cargodepot_B.gltf': { halfExtents: [0.75, 0.5, 0.75], offset: [0, 0.5, 0] },
+  'cargo_A.gltf': { halfExtents: [0.45, 0.3, 0.45], offset: [0, 0.3, 0] },
   'cargo_B_stacked.gltf': { halfExtents: [0.6, 0.45, 0.6], offset: [0, 0.45, 0] },
   'cargo_A_packed.gltf': { halfExtents: [0.55, 0.4, 0.55], offset: [0, 0.4, 0] },
   'containers_A.gltf': { halfExtents: [0.55, 0.5, 0.55], offset: [0, 0.5, 0] },
@@ -356,14 +361,20 @@ const MODEL_COLLIDER_DEFS: Record<string, ModelBound> = {
   'spacetruck.gltf': { halfExtents: [0.35, 0.35, 0.55], offset: [0, 0.35, 0] },
   'spacetruck_large.gltf': { halfExtents: [0.45, 0.45, 0.75], offset: [0, 0.45, 0] },
   'spacetruck_trailer.gltf': { halfExtents: [0.45, 0.35, 0.75], offset: [0, 0.35, 0] },
+  'lander_base.gltf': { halfExtents: [0.8, 0.4, 0.8], offset: [0, 0.4, 0] },
+  'landingpad_small.gltf': { halfExtents: [0.95, 0.25, 0.95], offset: [0, 0.25, 0] },
+  'terrain_mining.gltf': { halfExtents: [1.0, 0.5, 1.0], offset: [0, 0.5, 0] },
   'solarpanel.gltf': { halfExtents: [0.45, 0.25, 0.22], offset: [0, 0.25, 0] },
   'lights.gltf': { halfExtents: [0.25, 0.9, 0.25], offset: [0, 0.9, 0] },
   'structure_tall.gltf': { halfExtents: [0.75, 1.0, 0.75], offset: [0, 1.0, 0] },
   'structure_low.gltf': { halfExtents: [0.75, 0.5, 0.75], offset: [0, 0.5, 0] },
   'rocks_A.gltf': { halfExtents: [0.65, 0.4, 0.75], offset: [0, 0.4, 0] },
   'rocks_B.gltf': { halfExtents: [0.65, 0.4, 0.75], offset: [0, 0.4, 0] },
+  'rock_A.gltf': { halfExtents: [0.55, 0.4, 0.55], offset: [0, 0.4, 0] },
+  'rock_B.gltf': { halfExtents: [0.55, 0.4, 0.55], offset: [0, 0.4, 0] },
   'tunnel_straight_A.gltf': { halfExtents: [0.9, 0.35, 0.45], offset: [0, 0.35, 0] },
   'tunnel_straight_B.gltf': { halfExtents: [0.9, 0.35, 0.45], offset: [0, 0.35, 0] },
+  'tunnel_diagonal_short_A.gltf': { halfExtents: [0.9, 0.35, 0.9], offset: [0, 0.35, 0] },
   'tunnel_diagonal_long_A.gltf': { halfExtents: [1.2, 0.35, 1.2], offset: [0, 0.35, 0] },
   'tunnel_diagonal_long_B.gltf': { halfExtents: [1.2, 0.35, 1.2], offset: [0, 0.35, 0] }
 };
@@ -462,43 +473,40 @@ export default function WorldScene({ playerPosRef }: WorldSceneProps): React.Rea
       {/* ── Unified Compound Static Physics Body ── */}
       <RigidBody type="fixed" colliders={false}>
         {/* Outer Perimeter Containment Walls */}
-        <CuboidCollider args={[28, 4.0, 0.6]} position={[0, 4.0, -25.5]} />
-        <CuboidCollider args={[28, 4.0, 0.6]} position={[0, 4.0, 25.5]} />
-        <CuboidCollider args={[0.6, 4.0, 28]} position={[-25.5, 4.0, 0]} />
-        <CuboidCollider args={[0.6, 4.0, 28]} position={[25.5, 4.0, 0]} />
+        <CuboidCollider args={[8.0, 4.0, 0.5]} position={[-3.0, 4.0, -11.0]} />
+        <CuboidCollider args={[8.0, 4.0, 0.5]} position={[-3.0, 4.0, 8.5]} />
+        <CuboidCollider args={[0.5, 4.0, 10.0]} position={[-10.5, 4.0, -1.25]} />
+        <CuboidCollider args={[0.5, 4.0, 10.0]} position={[4.5, 4.0, -1.25]} />
 
         {/* ── Solid Multi-Tier Plateau Foundations ── */}
-        {/* Tier 2: Mid Command Hub Plateau Foundation (Y = 2.0m) */}
-        <CuboidCollider args={[15.0, 1.0, 6.0]} position={[0, 1.0, -1.0]} friction={0.8} />
+        {/* Elevated Solar Terrace Foundation (Y = 2.0m) */}
+        <CuboidCollider args={[1.6, 0.5, 2.2]} position={[-6.0, 1.5, 5.0]} friction={0.8} />
 
-        {/* Tier 3: High Vantage Energy Ridge Plateau Foundation (Y = 4.0m) */}
-        <CuboidCollider args={[13.0, 2.0, 5.0]} position={[0, 2.0, -14.0]} friction={0.8} />
+        {/* Central Mining Drill Plaza Foundation (Y = 2.0m) */}
+        <CuboidCollider args={[1.2, 0.5, 1.2]} position={[0.0, 1.5, 0.0]} friction={0.8} />
 
-        {/* ── Low-Friction Angled Slope Colliders (Smooth, Snag-Free Ramps) ── */}
-        {/* Ramp 1: Tier 1 -> Tier 2 (Rise 1.45m from Z=9.5 to Z=5.5) */}
+        {/* ── Low-Friction Angled Slope Colliders for Smooth Ramp Navigation ── */}
         <CuboidCollider
-          args={[1.5, 0.15, 2.2]}
-          position={[-2.0, 1.28, 7.5]}
-          rotation={[-0.347, 0, 0]}
-          friction={0.1}
-        />
-        <CuboidCollider
-          args={[1.5, 0.15, 2.2]}
-          position={[2.0, 1.28, 7.5]}
-          rotation={[-0.347, 0, 0]}
-          friction={0.1}
-        />
-
-        {/* Ramp 2: Tier 2 -> Tier 3 (Rise 2.0m from Z=-6.0 to Z=-10.0) */}
-        <CuboidCollider
-          args={[1.5, 0.15, 2.3]}
-          position={[-2.0, 3.0, -8.0]}
+          args={[1.0, 0.15, 1.2]}
+          position={[-7.0, 1.35, 5.0]}
           rotation={[-0.4636, 0, 0]}
           friction={0.1}
         />
         <CuboidCollider
-          args={[1.5, 0.15, 2.3]}
-          position={[2.0, 3.0, -8.0]}
+          args={[1.0, 0.15, 1.2]}
+          position={[-5.0, 1.35, 5.0]}
+          rotation={[0.4636, 0, 0]}
+          friction={0.1}
+        />
+        <CuboidCollider
+          args={[1.0, 0.15, 1.2]}
+          position={[1.0, 1.35, 1.0]}
+          rotation={[0.4636, 0, 0]}
+          friction={0.1}
+        />
+        <CuboidCollider
+          args={[1.0, 0.15, 1.2]}
+          position={[-1.0, 1.35, -1.0]}
           rotation={[-0.4636, 0, 0]}
           friction={0.1}
         />
