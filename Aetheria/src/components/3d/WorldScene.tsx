@@ -265,8 +265,11 @@ function ProximityManager({
 
     for (let i = 0; i < npcList.length; i++) {
       const npc = npcList[i];
-      const dx = p.x - npc.position[0];
-      const dz = p.z - npc.position[2];
+      const modelSubstr = `npc_${npc.id.toLowerCase()}`;
+      const placed = islandSceneData.placedObjects?.find((po) => po.modelPath.toLowerCase().includes(modelSubstr));
+      const targetPos = placed ? placed.position : npc.position;
+      const dx = p.x - targetPos[0];
+      const dz = p.z - targetPos[2];
       const distSq = dx * dx + dz * dz;
 
       // Interaction radius threshold ~3.8m (distSq 14.5)
@@ -388,6 +391,11 @@ export default function WorldScene({ playerPosRef }: WorldSceneProps): React.Rea
       const lower = obj.modelPath.toLowerCase();
       const filename = obj.modelPath.split('/').pop() || '';
       const isFloor = lower.includes('terrain') && !lower.includes('mining');
+
+      // NPCs are rendered exclusively by CrewNPCs with skeletal animation rigs
+      if (lower.includes('npc_') || lower.includes('mannequin')) {
+        return;
+      }
 
       if (!groups[obj.modelPath]) groups[obj.modelPath] = [];
       groups[obj.modelPath].push(obj);

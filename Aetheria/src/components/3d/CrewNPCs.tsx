@@ -19,12 +19,18 @@ import * as THREE from 'three';
 import { clone as cloneSkeleton } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import { NPC_DIALOGUES, NPCDialogueDef } from '../../data/npcDialogues';
 import { NPCId } from '../../types/store';
+import rawIslandSceneData from '../../data/islandScene.json';
+import { IslandSceneData } from '../../types/scene';
+
+const islandSceneData = rawIslandSceneData as unknown as IslandSceneData;
 
 const TARGET_HEIGHT = 1.65;
 const DEGENERATE_SCALE_FALLBACK = 0.748;
 
 interface SingleNPCProps {
   def: NPCDialogueDef;
+  pos: [number, number, number];
+  rot: [number, number, number];
   playerPosRef?: React.MutableRefObject<THREE.Vector3 | null>;
   mannequinScene: THREE.Group;
   simulationAnims: THREE.AnimationClip[];
@@ -34,6 +40,8 @@ interface SingleNPCProps {
 
 function SingleNPC({
   def,
+  pos,
+  rot,
   playerPosRef,
   mannequinScene,
   simulationAnims,
@@ -42,7 +50,7 @@ function SingleNPC({
 }: SingleNPCProps): React.ReactElement {
   const groupRef = useRef<THREE.Group>(null);
   const ringRef = useRef<THREE.Mesh>(null);
-  const defaultYaw = def.rotation[1];
+  const defaultYaw = rot[1];
 
   const { clone, mixer, autoScale } = useMemo(() => {
     const cl = cloneSkeleton(mannequinScene) as THREE.Group;
@@ -113,8 +121,8 @@ function SingleNPC({
 
     if (playerPosRef && playerPosRef.current) {
       const p = playerPosRef.current;
-      const dx = p.x - def.position[0];
-      const dz = p.z - def.position[2];
+      const dx = p.x - pos[0];
+      const dz = p.z - pos[2];
       const distSq = dx * dx + dz * dz;
 
       // When player is within 4.5m, rotate smoothly to face the player
@@ -130,7 +138,7 @@ function SingleNPC({
   });
 
   return (
-    <group position={def.position}>
+    <group position={pos}>
       {/* ── Rapier 3D Solid Collider ── */}
       <RigidBody type="fixed" colliders={false}>
         <CapsuleCollider args={[0.54, 0.30]} position={[0, 0.84, 0]} />
@@ -179,7 +187,7 @@ function SingleNPC({
       />
 
       {/* ── Animated Skinned Mannequin Mesh ── */}
-      <group ref={groupRef} rotation={def.rotation}>
+      <group ref={groupRef} rotation={rot}>
         <group scale={autoScale} position={[0, 0, 0]}>
           <primitive object={clone} />
         </group>
@@ -204,10 +212,17 @@ export default function CrewNPCs({ playerPosRef }: CrewNPCsProps): React.ReactEl
     <group name="CrewNPCsGroup">
       {npcKeys.map((key) => {
         const def = NPC_DIALOGUES[key];
+        const modelSubstr = `npc_${key.toLowerCase()}`;
+        const placed = islandSceneData.placedObjects?.find((p) => p.modelPath.toLowerCase().includes(modelSubstr));
+        const pos: [number, number, number] = placed ? placed.position : def.position;
+        const rot: [number, number, number] = placed ? (placed.rotation as [number, number, number]) : def.rotation;
+
         return (
           <SingleNPC
             key={def.id}
             def={def}
+            pos={pos}
+            rot={rot}
             playerPosRef={playerPosRef}
             mannequinScene={mannequinScene}
             simulationAnims={simulationAnims}

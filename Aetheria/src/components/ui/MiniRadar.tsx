@@ -4,7 +4,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { radarState } from '../../store/radarState';
 import { useGameStore } from '../../store/useGameStore';
 import { Map, X, Navigation } from 'lucide-react';
-import { StatueKey } from '../../types/scene';
+import { StatueKey, IslandSceneData } from '../../types/scene';
+import rawIslandSceneData from '../../data/islandScene.json';
+
+const islandSceneData = rawIslandSceneData as unknown as IslandSceneData;
 
 interface LandmarkDef {
   id: string;
@@ -137,6 +140,21 @@ export default function MiniRadar(): React.ReactElement | null {
 
   const [hoveredLandmark, setHoveredLandmark] = useState<LandmarkDef | null>(null);
 
+  const dynamicLandmarks = React.useMemo(() => {
+    return LANDMARKS.map((lm) => {
+      const modelSubstr = `npc_${lm.id.toLowerCase()}`;
+      const placed = islandSceneData.placedObjects?.find((p) => p.modelPath.toLowerCase().includes(modelSubstr));
+      if (placed) {
+        return {
+          ...lm,
+          x: placed.position[0],
+          z: placed.position[2]
+        };
+      }
+      return lm;
+    });
+  }, []);
+
   const openLandmark = (lm: LandmarkDef) => {
     if (lm.projectId) {
       setSelectedProject(lm.projectId);
@@ -241,7 +259,7 @@ export default function MiniRadar(): React.ReactElement | null {
 
           {/* Landmark Blips */}
           <div className="radar-blips-layer">
-            {LANDMARKS.map((lm) => {
+            {dynamicLandmarks.map((lm) => {
               const blipX = RADAR_RADIUS_PX + (lm.x / ISLAND_SPAN) * RADAR_USABLE_RADIUS;
               const blipY = RADAR_RADIUS_PX + (lm.z / ISLAND_SPAN) * RADAR_USABLE_RADIUS;
 
@@ -338,7 +356,7 @@ export default function MiniRadar(): React.ReactElement | null {
               </div>
 
               {/* Interactive Landmark Pins */}
-              {LANDMARKS.map((lm) => {
+              {dynamicLandmarks.map((lm) => {
                 const mapLeft = 50 + (lm.x / ISLAND_SPAN) * TACTICAL_MAP_SPREAD_PERCENT;
                 const mapTop = 50 + (lm.z / ISLAND_SPAN) * TACTICAL_MAP_SPREAD_PERCENT;
 
