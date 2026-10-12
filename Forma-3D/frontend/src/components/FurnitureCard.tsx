@@ -57,6 +57,15 @@ export interface FurnitureCardProps {
 export function getFurnitureIcon(name: string = ''): { icon: LucideIcon, color: string } {
   const n = name.toLowerCase();
   
+  // Space Base & NPC matches
+  if (n.includes('npc') || n.includes('astronaut') || n.includes('crew') || n.includes('екіпаж') || n.includes('mannequin')) return { icon: Sparkles, color: '#38bdf8' };
+  if (n.includes('lander') || n.includes('челнок') || n.includes('rover') || n.includes('truck') || n.includes('вантажівка')) return { icon: Maximize2, color: '#3b82f6' };
+  if (n.includes('drill') || n.includes('буров') || n.includes('solar') || n.includes('turbine') || n.includes('панель') || n.includes('турбіна')) return { icon: Flame, color: '#10b981' };
+  if (n.includes('tunnel') || n.includes('тунель') || n.includes('module') || n.includes('модуль') || n.includes('ангар')) return { icon: Layers, color: '#a855f7' };
+  if (n.includes('landingpad') || n.includes('майданчик') || n.includes('terrain') || n.includes('платформ') || n.includes('рампа')) return { icon: Grid, color: '#06b6d4' };
+  if (n.includes('cargo') || n.includes('container') || n.includes('контейнер') || n.includes('ящик')) return { icon: Box, color: '#f59e0b' };
+  if (n.includes('rock') || n.includes('скеля')) return { icon: Landmark, color: '#94a3b8' };
+
   if (n.includes('pumpkin') || n.includes('jacko')) return { icon: Flame, color: '#f97316' };
   if (n.includes('candle')) return { icon: Flame, color: '#fbbf24' };
   if (n.includes('statue') || n.includes('angel') || n.includes('stag')) return { icon: Landmark, color: '#38bdf8' };
