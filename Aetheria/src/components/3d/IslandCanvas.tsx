@@ -359,7 +359,7 @@ function AtmosphereSky(): React.ReactElement {
 
   // ── Starfield positions (static shell inside the dome, upper sky biased) ──
   const starPositions = useMemo(() => {
-    const COUNT = 800;
+    const COUNT = 1400;
     const arr = new Float32Array(COUNT * 3);
     for (let i = 0; i < COUNT; i++) {
       const y = -0.9 + Math.random() * 1.9; // [-0.9, 1] — mostly above horizon
@@ -677,7 +677,6 @@ export default function IslandCanvas(): React.ReactElement {
   );
 }
 
-useGLTF.preload('/model/kaykit_halloween/character.glb');
-useTexture.preload('/model/kaykit_halloween/Arissa_diffuse.webp');
-useTexture.preload('/model/kaykit_halloween/Arissa_normal.webp');
-useTexture.preload('/model/kaykit_halloween/Arissa_specular.webp');
+useGLTF.preload('/model/kaykit_space/Mannequin_Medium.glb');
+useGLTF.preload('/model/kaykit_space/Rig_Medium_MovementBasic.glb');
+useGLTF.preload('/model/kaykit_space/Rig_Medium_General.glb');

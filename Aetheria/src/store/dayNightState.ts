@@ -41,16 +41,16 @@ function hexToRgb(h: string): RGB {
 // hand-tuned sunrise/sunset arc. This is a keyframed LUT rather than a naive
 // day↔night crossfade, so the middle of any transition IS a sunset/dawn.
 const SKY_STOPS: SkyStop[] = [
-  { t: 0.00, zenith: hexToRgb('#1a2750'), horizon: hexToRgb('#405a8c'), sunTint: hexToRgb('#c3d6ff') }, // midnight
-  { t: 0.14, zenith: hexToRgb('#1c2450'), horizon: hexToRgb('#4a4a75'), sunTint: hexToRgb('#b8c8f0') }, // pre-dawn
-  { t: 0.24, zenith: hexToRgb('#3d3a6e'), horizon: hexToRgb('#ff9e6d'), sunTint: hexToRgb('#ffb37e') }, // dawn
-  { t: 0.34, zenith: hexToRgb('#3f7fd0'), horizon: hexToRgb('#ffd9a8'), sunTint: hexToRgb('#ffe9b8') }, // morning
-  { t: 0.50, zenith: hexToRgb('#2e7fd6'), horizon: hexToRgb('#cfe8fa'), sunTint: hexToRgb('#ffe9b8') }, // noon (shipped day)
-  { t: 0.64, zenith: hexToRgb('#3873c9'), horizon: hexToRgb('#ffd9a8'), sunTint: hexToRgb('#ffcf8a') }, // golden hour
-  { t: 0.75, zenith: hexToRgb('#5b4a9e'), horizon: hexToRgb('#ff7e5c'), sunTint: hexToRgb('#ff9d5c') }, // sunset
-  { t: 0.84, zenith: hexToRgb('#251d4e'), horizon: hexToRgb('#7c5a8e'), sunTint: hexToRgb('#e07a8f') }, // dusk
-  { t: 0.93, zenith: hexToRgb('#1a2450'), horizon: hexToRgb('#3d5480'), sunTint: hexToRgb('#c3d6ff') }, // nightfall
-  { t: 1.00, zenith: hexToRgb('#1a2750'), horizon: hexToRgb('#405a8c'), sunTint: hexToRgb('#c3d6ff') }  // wrap = midnight
+  { t: 0.00, zenith: hexToRgb('#070a14'), horizon: hexToRgb('#131938'), sunTint: hexToRgb('#6366f1') }, // midnight deep space
+  { t: 0.14, zenith: hexToRgb('#0c1228'), horizon: hexToRgb('#1e2450'), sunTint: hexToRgb('#38bdf8') }, // pre-dawn cosmic nebula
+  { t: 0.24, zenith: hexToRgb('#1e1c3e'), horizon: hexToRgb('#d97706'), sunTint: hexToRgb('#fbbf24') }, // dawn solar corona
+  { t: 0.34, zenith: hexToRgb('#1e40af'), horizon: hexToRgb('#fde68a'), sunTint: hexToRgb('#fef08a') }, // morning orbital sun
+  { t: 0.50, zenith: hexToRgb('#1d4ed8'), horizon: hexToRgb('#bfdbfe'), sunTint: hexToRgb('#fef9c3') }, // noon stellar peak
+  { t: 0.64, zenith: hexToRgb('#1e3a8a'), horizon: hexToRgb('#fcd34d'), sunTint: hexToRgb('#f59e0b') }, // golden orbital hour
+  { t: 0.75, zenith: hexToRgb('#312e81'), horizon: hexToRgb('#e11d48'), sunTint: hexToRgb('#fb7185') }, // sunset eclipse
+  { t: 0.84, zenith: hexToRgb('#1e1b4b'), horizon: hexToRgb('#4c1d95'), sunTint: hexToRgb('#a855f7') }, // dusk nebula aurora
+  { t: 0.93, zenith: hexToRgb('#090d1e'), horizon: hexToRgb('#172554'), sunTint: hexToRgb('#818cf8') }, // nightfall cosmos
+  { t: 1.00, zenith: hexToRgb('#070a14'), horizon: hexToRgb('#131938'), sunTint: hexToRgb('#6366f1') }  // wrap = midnight deep space
 ];
 
 export interface SkySample {

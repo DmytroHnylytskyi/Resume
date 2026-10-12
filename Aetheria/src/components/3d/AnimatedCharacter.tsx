@@ -1,27 +1,25 @@
 'use client';
 
 /**
- * AnimatedCharacter — the playable avatar.
+ * AnimatedCharacter — the playable sci-fi astronaut/android avatar.
  *
- * Renders the Arissa GLB with optimized WebP textures and drives a skeletal
- * animation state machine: locomotion flags are polled from the shared
- * `characterAnimState` buffer inside useFrame (zero React re-renders) and
- * crossfaded on the AnimationMixer (Idle/Walk/Run loop, Jump plays once).
- * The model is auto-scaled to TARGET_HEIGHT regardless of authored units.
+ * Renders the KayKit Mannequin_Medium GLB and drives a skeletal animation state
+ * machine: locomotion flags are polled from the shared `characterAnimState` buffer
+ * inside useFrame (zero React re-renders) and crossfaded on the AnimationMixer
+ * (Idle_A, Walking_A, Running_A loop, Jump_Full_Short plays once).
+ * The model is auto-scaled to TARGET_HEIGHT (1.65m) to fit inside the 1.68m capsule collider.
  */
 
 import React, { useRef, useMemo, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { useGLTF, useTexture } from '@react-three/drei';
+import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { characterAnimState } from '../../store/characterAnimState';
 import { useGameStore } from '../../store/useGameStore';
 import { clone as cloneSkeleton } from 'three/examples/jsm/utils/SkeletonUtils.js';
 
 const TARGET_HEIGHT = 1.65;
-// Scale used only if the bbox measurement degenerates (empty/flat model);
-// reproduces the ratio for the shipped 1.65 m character as a safe default.
-const DEGENERATE_SCALE_FALLBACK = 0.0092;
+const DEGENERATE_SCALE_FALLBACK = 0.748;
 
 export default function AnimatedCharacter(): React.ReactElement {
   const setCharacterLoaded = useGameStore((s) => s.setCharacterLoaded);
@@ -31,86 +29,74 @@ export default function AnimatedCharacter(): React.ReactElement {
     return () => setCharacterLoaded(false);
   }, [setCharacterLoaded]);
 
-  // ── 1. Load Character Textures (Optimized WebP, 85% bandwidth reduction) ──
-  const [diffuseMap, normalMap, specularMap] = useTexture([
-    '/model/kaykit_halloween/Arissa_diffuse.webp',
-    '/model/kaykit_halloween/Arissa_normal.webp',
-    '/model/kaykit_halloween/Arissa_specular.webp'
-  ]);
+  // ── 1. Load Mannequin Model & Animation GLBs ──
+  const { scene: mannequinScene } = useGLTF('/model/kaykit_space/Mannequin_Medium.glb');
+  const { animations: movementAnims } = useGLTF('/model/kaykit_space/Rig_Medium_MovementBasic.glb');
+  const { animations: generalAnims } = useGLTF('/model/kaykit_space/Rig_Medium_General.glb');
 
-  // Configure texture color space, wrapping, and filtering
-  [diffuseMap, normalMap, specularMap].forEach((tex) => {
-    tex.wrapS = THREE.RepeatWrapping;
-    tex.wrapT = THREE.RepeatWrapping;
-    tex.generateMipmaps = true;
-    tex.needsUpdate = true;
-  });
-  diffuseMap.colorSpace = THREE.SRGBColorSpace;
-  diffuseMap.minFilter = THREE.LinearMipmapLinearFilter;
-  diffuseMap.magFilter = THREE.LinearFilter;
-
-  // ── 2. Load Unified GLB Character & Animations ──
-  const { scene, animations } = useGLTF('/model/kaykit_halloween/character.glb');
-
-  // ── 3. Build Skeletal Mesh with Authentic Texturing & AnimationMixer ──
+  // ── 2. Build Skeletal Mesh & Animation Mixer ──
   const { characterModel, mixer, actionsMap, autoScale } = useMemo(() => {
-    const clone = cloneSkeleton(scene) as THREE.Group;
-
-    // Rotation is controlled by avatarGroupRef in CharacterController
+    const clone = cloneSkeleton(mannequinScene) as THREE.Group;
     clone.rotation.y = 0;
 
-    // Measure raw bounding box height
+    // Measure raw bounding box height (~2.2036m)
     const box = new THREE.Box3().setFromObject(clone);
-    const size = box.getSize(new THREE.Vector3());
-    const rawHeight = size.y;
+    const rawHeight = box.getSize(new THREE.Vector3()).y;
     const scaleFactor = rawHeight > 0 ? TARGET_HEIGHT / rawHeight : DEGENERATE_SCALE_FALLBACK;
 
-    // Optimized material: FrontSide only, no shadows (shadows disabled globally).
-    // Matte cloth finish: the phong specular map must NOT be wired as a
-    // roughness map (its bright = shiny regions inverted into low roughness,
-    // producing wet plastic highlights), and low metalness keeps the stencil
-    // costume from glinting under the key light.
-    const characterMaterial = new THREE.MeshStandardMaterial({
-      map: diffuseMap,
-      normalMap: normalMap,
-      normalScale: new THREE.Vector2(0.5, 0.5),
-      roughness: 0.88,
-      metalness: 0.02,
-      side: THREE.FrontSide
-    });
-
+    // Optimize materials for clean sci-fi astronaut aesthetic
     clone.traverse((child) => {
       if ((child as THREE.SkinnedMesh).isSkinnedMesh || (child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.SkinnedMesh;
         mesh.castShadow = false;
         mesh.receiveShadow = false;
-        mesh.frustumCulled = false; // Required for skinned mesh animation
-        mesh.material = characterMaterial;
+        mesh.frustumCulled = false; // Required for skinned mesh animation stability
+
+        if (mesh.material) {
+          const mat = mesh.material as THREE.MeshStandardMaterial;
+          mat.roughness = 0.65;
+          mat.metalness = 0.35;
+        }
       }
     });
 
     const animMixer = new THREE.AnimationMixer(clone);
     const actions: Record<string, THREE.AnimationAction> = {};
 
-    animations.forEach((clip) => {
-      const action = animMixer.clipAction(clip);
-      if (clip.name === 'Idle') {
-        action.setLoop(THREE.LoopRepeat, Infinity);
-      } else if (clip.name === 'Walk') {
-        action.timeScale = 1.15;
-        action.setLoop(THREE.LoopRepeat, Infinity);
-      } else if (clip.name === 'Run') {
-        action.timeScale = 1.10;
-        action.setLoop(THREE.LoopRepeat, Infinity);
-      } else if (clip.name === 'Jump') {
-        action.timeScale = 1.25;
-        action.setLoop(THREE.LoopOnce, 1);
-        action.clampWhenFinished = true;
-      }
-      actions[clip.name] = action;
-    });
+    // Map KayKit animation clips to canonical locomotion states
+    const idleClip = generalAnims.find((c) => c.name === 'Idle_A') || generalAnims[0];
+    const walkClip = movementAnims.find((c) => c.name === 'Walking_A');
+    const runClip = movementAnims.find((c) => c.name === 'Running_A');
+    const jumpClip =
+      movementAnims.find((c) => c.name === 'Jump_Full_Short') ||
+      movementAnims.find((c) => c.name === 'Jump_Start');
 
-    // Start playing default Idle
+    if (idleClip) {
+      const act = animMixer.clipAction(idleClip);
+      act.setLoop(THREE.LoopRepeat, Infinity);
+      actions['Idle'] = act;
+    }
+    if (walkClip) {
+      const act = animMixer.clipAction(walkClip);
+      act.timeScale = 1.15;
+      act.setLoop(THREE.LoopRepeat, Infinity);
+      actions['Walk'] = act;
+    }
+    if (runClip) {
+      const act = animMixer.clipAction(runClip);
+      act.timeScale = 1.10;
+      act.setLoop(THREE.LoopRepeat, Infinity);
+      actions['Run'] = act;
+    }
+    if (jumpClip) {
+      const act = animMixer.clipAction(jumpClip);
+      act.timeScale = 1.25;
+      act.setLoop(THREE.LoopOnce, 1);
+      act.clampWhenFinished = true;
+      actions['Jump'] = act;
+    }
+
+    // Default to Idle
     actions['Idle']?.play();
 
     return {
@@ -119,11 +105,11 @@ export default function AnimatedCharacter(): React.ReactElement {
       actionsMap: actions,
       autoScale: scaleFactor
     };
-  }, [scene, animations, diffuseMap, normalMap, specularMap]);
+  }, [mannequinScene, movementAnims, generalAnims]);
 
   const currentActionRef = useRef<string>('Idle');
 
-  // ── 4. Smooth State Machine Crossfading (frame-driven, zero React re-renders) ──
+  // ── 3. Smooth State Machine Crossfading (frame-driven, zero React re-renders) ──
   useFrame((_, delta) => {
     const anim = characterAnimState;
     const target = anim.isJumping
@@ -152,7 +138,6 @@ export default function AnimatedCharacter(): React.ReactElement {
   );
 }
 
-useTexture.preload('/model/kaykit_halloween/Arissa_diffuse.webp');
-useTexture.preload('/model/kaykit_halloween/Arissa_normal.webp');
-useTexture.preload('/model/kaykit_halloween/Arissa_specular.webp');
-useGLTF.preload('/model/kaykit_halloween/character.glb');
+useGLTF.preload('/model/kaykit_space/Mannequin_Medium.glb');
+useGLTF.preload('/model/kaykit_space/Rig_Medium_MovementBasic.glb');
+useGLTF.preload('/model/kaykit_space/Rig_Medium_General.glb');

@@ -19,6 +19,18 @@ export type ThemeMode = 'dark' | 'light';
 
 export type CameraMode = 'third_person' | 'bird_eye';
 
+export type NPCId =
+  | 'commander'
+  | 'chief_engineer'
+  | 'comms_officer'
+  | 'ui_architect'
+  | 'geodata_analyst'
+  | 'photonics_specialist';
+
+export interface DialogueState {
+  npcId: NPCId;
+}
+
 export interface GameState {
   // Locale
   language: Locale;
@@ -48,6 +60,8 @@ export interface GameState {
   setActiveModal: (modal: StatueKey | null) => void;
   selectedProject: string | null;
   setSelectedProject: (projectId: string | null) => void;
+  activeDialogue: DialogueState | null;
+  setActiveDialogue: (dialogue: DialogueState | null) => void;
   interactionPrompt: InteractionPrompt | null;
   setInteractionPrompt: (prompt: InteractionPrompt | null) => void;
 

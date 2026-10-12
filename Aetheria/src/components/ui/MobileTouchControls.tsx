@@ -29,6 +29,7 @@ export default function MobileTouchControls(): React.ReactElement | null {
     isInitialWelcomeOpen,
     activeModal,
     selectedProject,
+    activeDialogue,
     isTacticalMapOpen
   } = useGameStore();
 
@@ -272,7 +273,7 @@ export default function MobileTouchControls(): React.ReactElement | null {
 
   // Hide mobile controls when modals or tactical map are active
   const isAnyModalOpen = Boolean(
-    activeModal || selectedProject || isInitialWelcomeOpen || isTacticalMapOpen
+    activeModal || selectedProject || activeDialogue || isInitialWelcomeOpen || isTacticalMapOpen
   );
 
   if (!isTouchDevice || viewMode !== '3d' || isAnyModalOpen) {

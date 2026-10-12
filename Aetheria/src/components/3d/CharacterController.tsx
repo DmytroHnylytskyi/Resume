@@ -46,7 +46,7 @@ interface CharacterControllerProps {
  */
 export default function CharacterController({
   playerPosRef,
-  spawnPoint = [0.0, 1.0, 14.0]
+  spawnPoint = [0.0, 1.2, 14.0]
 }: CharacterControllerProps): React.ReactElement {
   const rigidBodyRef = useRef<RapierRigidBody>(null);
   const avatarGroupRef = useRef<THREE.Group>(null);
@@ -56,11 +56,14 @@ export default function CharacterController({
   // frame stalls on integrated GPUs — same cost class as the jump-state fix.
   const activeModal = useGameStore((s) => s.activeModal);
   const selectedProject = useGameStore((s) => s.selectedProject);
+  const activeDialogue = useGameStore((s) => s.activeDialogue);
   const isInitialWelcomeOpen = useGameStore((s) => s.isInitialWelcomeOpen);
   const isTacticalMapOpen = useGameStore((s) => s.isTacticalMapOpen);
   const isIntroPlaying = useGameStore((s) => s.isIntroPlaying);
   const setIntroPlaying = useGameStore((s) => s.setIntroPlaying);
-  const isAnyModalOpen = Boolean(activeModal || selectedProject || isInitialWelcomeOpen || isTacticalMapOpen);
+  const isAnyModalOpen = Boolean(
+    activeModal || selectedProject || activeDialogue || isInitialWelcomeOpen || isTacticalMapOpen
+  );
 
   const keys = useRef({
     forward: false,

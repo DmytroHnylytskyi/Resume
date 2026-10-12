@@ -50,6 +50,10 @@ export const useGameStore = create<GameState>((set) => ({
   selectedProject: null,
   setSelectedProject: (projectId: string | null) => set({ selectedProject: projectId }),
 
+  // ── Holographic Dialogue State ──
+  activeDialogue: null,
+  setActiveDialogue: (dialogue) => set({ activeDialogue: dialogue }),
+
   // ── Proximity Interaction HUD Prompt ([E] Key) ──
   interactionPrompt: null,
   setInteractionPrompt: (prompt) => set({ interactionPrompt: prompt }),

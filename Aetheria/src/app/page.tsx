@@ -15,6 +15,7 @@ import ClassicLandingView from '../components/ui/ClassicLandingView';
 import MiniRadar from '../components/ui/MiniRadar';
 import MobileTouchControls from '../components/ui/MobileTouchControls';
 import LandscapeOrientationGuard from '../components/ui/LandscapeOrientationGuard';
+import DialogueHUD from '../components/ui/DialogueHUD';
 
 const IslandCanvas = dynamic(() => import('../components/3d/IslandCanvas'), {
   ssr: false
@@ -203,6 +204,9 @@ export default function HomePage(): React.ReactElement {
 
           {/* Circular Glass Mini-Radar & Island Tactical Map */}
           <MiniRadar />
+
+          {/* Holographic Sci-Fi Dialogue HUD */}
+          <DialogueHUD />
 
           {/* 3D Modal Windows */}
           <BioModal />

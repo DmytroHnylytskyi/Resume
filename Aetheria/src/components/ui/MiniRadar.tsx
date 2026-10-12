@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { radarState } from '../../store/radarState';
 import { useGameStore } from '../../store/useGameStore';
-import { translations } from '../../data/resumeData';
 import { Map, X, Navigation } from 'lucide-react';
 import { StatueKey } from '../../types/scene';
 
@@ -23,106 +22,106 @@ interface LandmarkDef {
 
 const LANDMARKS: LandmarkDef[] = [
   {
+    id: 'commander',
+    nameUk: 'Командир Валерія (Біографія)',
+    nameEn: 'Commander Valeria (Bio)',
+    shortUk: 'Командир',
+    shortEn: 'Commander',
+    type: 'statue',
+    modalKey: 'bio',
+    x: -3.5,
+    z: 11.0,
+    color: '#fbbf24'
+  },
+  {
+    id: 'chief_engineer',
+    nameUk: 'Головний інженер Векс (Стек)',
+    nameEn: 'Chief Engineer Vex (Skills)',
+    shortUk: 'Інженер',
+    shortEn: 'Engineer',
+    type: 'statue',
+    modalKey: 'skills',
+    x: 4.5,
+    z: 3.5,
+    color: '#c084fc'
+  },
+  {
+    id: 'comms_officer',
+    nameUk: "Офіцер зв'язку Тайра (Контакти)",
+    nameEn: 'Comms Officer Tayra (Contacts)',
+    shortUk: "Зв'язок",
+    shortEn: 'Comms',
+    type: 'statue',
+    modalKey: 'contacts',
+    x: -5.0,
+    z: 3.5,
+    color: '#38bdf8'
+  },
+  {
     id: 'forma',
-    nameUk: 'Forma-3D (3D-редактор)',
-    nameEn: 'Forma-3D (Spatial)',
+    nameUk: 'Forma-3D (UI-Архітектор Нова)',
+    nameEn: 'Forma-3D (UI Architect Nova)',
     shortUk: 'Forma-3D',
     shortEn: 'Forma-3D',
     type: 'project',
     projectId: 'forma',
-    x: 0,
-    z: -16,
+    x: 9.5,
+    z: -3.5,
     color: '#34d399'
   },
   {
     id: 'terrascope',
-    nameUk: 'TerraScope (Геоаналітика)',
-    nameEn: 'TerraScope (GIS)',
+    nameUk: 'TerraScope (Геодата Оріон)',
+    nameEn: 'TerraScope (Geodata Orion)',
     shortUk: 'TerraScope',
     shortEn: 'TerraScope',
     type: 'project',
     projectId: 'terrascope',
-    x: -16,
-    z: -8.5,
+    x: -9.5,
+    z: -3.5,
     color: '#60a5fa'
   },
   {
     id: 'lumina',
-    nameUk: 'Lumina (LMS-платформа)',
-    nameEn: 'Lumina (LMS)',
+    nameUk: 'Lumina (Фотоніка Ліра)',
+    nameEn: 'Lumina (Photonics Lyra)',
     shortUk: 'Lumina',
     shortEn: 'Lumina',
     type: 'project',
     projectId: 'lumina',
-    x: 16,
-    z: -8,
+    x: 0.0,
+    z: -12.5,
     color: '#fb7185'
   },
   {
-    id: 'bio',
-    nameUk: 'Біографія (Статуя)',
-    nameEn: 'Biography (Statue)',
-    shortUk: 'Біографія',
-    shortEn: 'Bio',
-    type: 'statue',
-    modalKey: 'bio',
-    x: -6,
-    z: -6,
-    color: '#fbbf24'
-  },
-  {
-    id: 'skills',
-    nameUk: 'Навички (Вівтар знань)',
-    nameEn: 'Skills (Altar)',
-    shortUk: 'Навички',
-    shortEn: 'Skills',
-    type: 'statue',
-    modalKey: 'skills',
-    x: 2.5,
-    z: 10,
-    color: '#c084fc'
-  },
-  {
-    id: 'contacts',
-    nameUk: 'Контакти (Статуя зв’язку)',
-    nameEn: 'Contacts (Statue)',
-    shortUk: 'Контакти',
-    shortEn: 'Contacts',
-    type: 'statue',
-    modalKey: 'contacts',
-    x: 7,
-    z: -6,
-    color: '#38bdf8'
-  },
-  {
-    id: 'secret',
-    nameUk: 'Секретна могила (Пасхалка)',
-    nameEn: 'Secret Grave Pit (Easter Egg)',
-    shortUk: 'Секрет',
-    shortEn: 'Secret',
+    id: 'shuttle',
+    nameUk: 'Шатл Lander-A (Майданчик прибуття)',
+    nameEn: 'Shuttle Lander-A (Arrival Pad)',
+    shortUk: 'Шатл',
+    shortEn: 'Shuttle',
     type: 'secret',
-    x: 14,
-    z: 18,
+    x: 0.0,
+    z: 14.0,
+    color: '#f59e0b'
+  },
+  {
+    id: 'drill',
+    nameUk: 'Глибинний бур (Пасхалка обриву)',
+    nameEn: 'Deep Core Mining Drill (Easter Egg)',
+    shortUk: 'Бур',
+    shortEn: 'Mining Drill',
+    type: 'secret',
+    x: 14.0,
+    z: -12.0,
     color: '#a855f7'
   }
 ];
 
 const RADAR_RADIUS_PX = 62;
 const RADAR_USABLE_RADIUS = 44;
-const ISLAND_SPAN = 22; // World coordinate extent [-22, 22]
-// World-to-map spread on the tactical modal: island coordinates are mapped
-// onto ±44% of the square container (6%..94%), preserving a 1:1 aspect.
+const ISLAND_SPAN = 28; // World coordinate extent [-28, 28]
 const TACTICAL_MAP_SPREAD_PERCENT = 44;
 
-/**
- * MiniRadar — HUD mini-radar + expanded tactical island map.
- *
- * Polls the shared `radarState` buffer in a requestAnimationFrame loop
- * (zero React re-renders) to translate world coordinates onto the radar
- * disc and the tactical map. Landmark blips are fixed at authentic island
- * coordinates; on the expanded map ([M], Esc, or radar click) they become
- * navigation pins that open the matching project modal or statue dialog.
- */
 export default function MiniRadar(): React.ReactElement | null {
   const {
     language,
@@ -138,8 +137,6 @@ export default function MiniRadar(): React.ReactElement | null {
 
   const [hoveredLandmark, setHoveredLandmark] = useState<LandmarkDef | null>(null);
 
-  // Single navigation entry for map pins and legend chips: a landmark
-  // resolves to either a project showcase or a statue dialog.
   const openLandmark = (lm: LandmarkDef) => {
     if (lm.projectId) {
       setSelectedProject(lm.projectId);
@@ -160,7 +157,7 @@ export default function MiniRadar(): React.ReactElement | null {
       const pz = radarState.z;
       const yaw = radarState.yaw;
 
-      // Heading angle in degrees (North = 0°, East = 90°, South = 180°, West = -90°)
+      // Heading angle in degrees
       const headingDeg = (-yaw * 180) / Math.PI;
 
       // 1. Synchronize Mini-Radar Player Position and Vision Cone
@@ -194,18 +191,16 @@ export default function MiniRadar(): React.ReactElement | null {
     return () => cancelAnimationFrame(animId);
   }, []);
 
-  // Keyboard shortcut: Press 'M' to toggle tactical island map, 'Esc' to close
+  // Keyboard shortcut: Press 'M' to toggle tactical outpost map, 'Esc' to close
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement)?.tagName)) return;
       if (isInitialWelcomeOpen) return;
 
       if (e.code === 'KeyM') {
-        // Toggle tactical map if no project/statue modal is open
         if (activeModal || selectedProject) return;
         setTacticalMapOpen(!isTacticalMapOpen);
       } else if (e.code === 'Escape' && isTacticalMapOpen) {
-        // If a project or statue modal is open, let its own Esc handler close it first
         if (activeModal || selectedProject) return;
         setTacticalMapOpen(false);
       }
@@ -225,7 +220,7 @@ export default function MiniRadar(): React.ReactElement | null {
           onClick={() => setTacticalMapOpen(true)}
           title={language === 'uk' ? 'Натисніть або [M] для тактичної карти' : 'Click or press [M] for tactical map'}
         >
-          {/* Island Schematic Background on Radar */}
+          {/* Outpost Schematic Background on Radar */}
           <div className="radar-island-contour" />
           <div className="radar-path-ns" />
           <div className="radar-path-ew" />
@@ -236,7 +231,7 @@ export default function MiniRadar(): React.ReactElement | null {
           <div className="radar-crosshair h" />
           <div className="radar-crosshair v" />
 
-          {/* Fixed Cardinal Compass Dial (True Geographic Orientation) */}
+          {/* Fixed Cardinal Compass Dial */}
           <div className="radar-compass-dial">
             <span className="cardinal-point north">N</span>
             <span className="cardinal-point east">E</span>
@@ -244,7 +239,7 @@ export default function MiniRadar(): React.ReactElement | null {
             <span className="cardinal-point west">W</span>
           </div>
 
-          {/* True Landmark Blips (Fixed at Authentic Island Coordinates) */}
+          {/* Landmark Blips */}
           <div className="radar-blips-layer">
             {LANDMARKS.map((lm) => {
               const blipX = RADAR_RADIUS_PX + (lm.x / ISLAND_SPAN) * RADAR_USABLE_RADIUS;
@@ -277,7 +272,7 @@ export default function MiniRadar(): React.ReactElement | null {
           </div>
         </div>
 
-        {/* Centered Map Action Button below Radar */}
+        {/* Action Button below Radar */}
         <div className="radar-action-container">
           {hoveredLandmark ? (
             <div className="radar-hover-pill glass-panel" style={{ borderColor: hoveredLandmark.color }}>
@@ -290,7 +285,7 @@ export default function MiniRadar(): React.ReactElement | null {
             <button
               className="radar-map-btn glass-panel"
               onClick={() => setTacticalMapOpen(true)}
-              title={language === 'uk' ? 'Відкрити тактичну карту острова [M]' : 'Open tactical map [M]'}
+              title={language === 'uk' ? 'Відкрити тактичну карту аванпосту [M]' : 'Open tactical map [M]'}
             >
               <Map size={13} className="radar-map-btn-icon" />
               <span>{language === 'uk' ? 'Карта [M]' : 'Map [M]'}</span>
@@ -299,7 +294,7 @@ export default function MiniRadar(): React.ReactElement | null {
         </div>
       </div>
 
-      {/* ── Tactical Island Map Modal (Expanded Map on [M] or Radar Click) ── */}
+      {/* ── Tactical Outpost Map Modal (Expanded Map on [M] or Radar Click) ── */}
       {isTacticalMapOpen && (
         <div className="tactical-map-backdrop" onClick={() => setTacticalMapOpen(false)}>
           <div className="tactical-map-modal glass-panel" onClick={(e) => e.stopPropagation()}>
@@ -308,10 +303,12 @@ export default function MiniRadar(): React.ReactElement | null {
                 <Map size={20} className="tactical-map-icon" />
                 <div>
                   <h3 className="tactical-map-title">
-                    {language === 'uk' ? 'Тактична карта Aetheria' : 'Aetheria Tactical Island Map'}
+                    {language === 'uk' ? 'Тактична карта аванпосту Aetheria' : 'Aetheria Outpost Tactical Map'}
                   </h3>
                   <span className="tactical-map-subtitle">
-                    {language === 'uk' ? 'Клікніть на маркер для перегляду деталей' : 'Click any landmark to inspect details'}
+                    {language === 'uk'
+                      ? 'Клікніть на станцію або члена екіпажу для перегляду'
+                      : 'Click any crew station or landmark to inspect'}
                   </span>
                 </div>
               </div>
@@ -320,21 +317,21 @@ export default function MiniRadar(): React.ReactElement | null {
               </button>
             </div>
 
-            {/* Island Geometric Map Container (True 1:1 Aspect Ratio) */}
+            {/* Geometric Map Container */}
             <div className="tactical-map-canvas-container">
-              {/* Outer Sea / Abyss */}
+              {/* Space Background */}
               <div className="tactical-map-ocean-ring" />
 
-              {/* Stone Fortress Island Perimeter */}
+              {/* Space Outpost Base Perimeter */}
               <div className="tactical-map-island-body">
-                {/* Cobblestone paths */}
+                {/* Outpost corridors and platforms */}
                 <div className="tactical-path-main-ns" />
                 <div className="tactical-path-fork-w" />
                 <div className="tactical-path-fork-e" />
                 <div className="tactical-central-hub" />
               </div>
 
-              {/* Compass Rose (North Indicator) */}
+              {/* Compass Rose */}
               <div className="tactical-compass-rose">
                 <Navigation size={12} className="tactical-compass-arrow" />
                 <span>N</span>
@@ -342,7 +339,6 @@ export default function MiniRadar(): React.ReactElement | null {
 
               {/* Interactive Landmark Pins */}
               {LANDMARKS.map((lm) => {
-                // Map island coordinates [-22, 22] to 1:1 container %
                 const mapLeft = 50 + (lm.x / ISLAND_SPAN) * TACTICAL_MAP_SPREAD_PERCENT;
                 const mapTop = 50 + (lm.z / ISLAND_SPAN) * TACTICAL_MAP_SPREAD_PERCENT;
 
@@ -366,7 +362,7 @@ export default function MiniRadar(): React.ReactElement | null {
                 );
               })}
 
-              {/* Live Player Position Pin with Accurate Heading Direction */}
+              {/* Live Player Position Pin */}
               <div ref={tacticalPlayerRef} className="tactical-player-pin">
                 <div className="tactical-player-arrow" />
                 <div className="tactical-player-dot" />
@@ -376,7 +372,7 @@ export default function MiniRadar(): React.ReactElement | null {
             {/* Quick Navigation Chips Legend */}
             <div className="tactical-map-legend">
               <span className="legend-title">
-                {language === 'uk' ? 'Швидкий перехід до локацій:' : 'Quick Landmark Navigation:'}
+                {language === 'uk' ? 'Швидкий перехід до станцій екіпажу:' : 'Quick Crew Station Navigation:'}
               </span>
               <div className="legend-items-row">
                 {LANDMARKS.filter((l) => l.type !== 'secret').map((lm) => (
