@@ -79,11 +79,11 @@ export default function CharacterController({
   const targetPitch = useRef(0.32); // 18° downward angle to view character & ground
   const cameraYaw = useRef(0.0);
   const cameraPitch = useRef(0.32);
-  const cameraDistance = useRef(4.0);
+  const cameraDistance = useRef(2.8);
 
   // Steadicam buffers (reusable — zero GC pressure)
-  const smoothLookTarget = useRef(new THREE.Vector3(spawnPoint[0], spawnPoint[1] + 0.8, spawnPoint[2]));
-  const smoothCamPos = useRef(new THREE.Vector3(spawnPoint[0], spawnPoint[1] + 2.2, spawnPoint[2] + 4.0));
+  const smoothLookTarget = useRef(new THREE.Vector3(spawnPoint[0], spawnPoint[1] + 0.45, spawnPoint[2]));
+  const smoothCamPos = useRef(new THREE.Vector3(spawnPoint[0], spawnPoint[1] + 1.2, spawnPoint[2] + 2.8));
   const currentVelocity = useRef(new THREE.Vector3());
   const isGrounded = useRef(true);
   const wasGrounded = useRef(true);
@@ -380,7 +380,7 @@ export default function CharacterController({
 
     if (!Number.isFinite(cameraYaw.current)) cameraYaw.current = 0.0;
     if (!Number.isFinite(cameraPitch.current)) cameraPitch.current = 0.32;
-    if (!Number.isFinite(cameraDistance.current)) cameraDistance.current = 4.0;
+    if (!Number.isFinite(cameraDistance.current)) cameraDistance.current = 2.8;
 
     // Synchronize zero-overhead radar telemetry
     radarState.x = translation.x;
@@ -391,8 +391,8 @@ export default function CharacterController({
     if (translation.y < -3.0) {
       rigidBodyRef.current.setTranslation({ x: spawnPoint[0], y: spawnPoint[1], z: spawnPoint[2] }, true);
       rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
-      smoothLookTarget.current.set(spawnPoint[0], spawnPoint[1] + 0.8, spawnPoint[2]);
-      smoothCamPos.current.set(spawnPoint[0], spawnPoint[1] + 2.2, spawnPoint[2] + 4.0);
+      smoothLookTarget.current.set(spawnPoint[0], spawnPoint[1] + 0.45, spawnPoint[2]);
+      smoothCamPos.current.set(spawnPoint[0], spawnPoint[1] + 1.2, spawnPoint[2] + 2.8);
       return;
     }
 
@@ -486,7 +486,7 @@ export default function CharacterController({
 
     // ── 3rd-Person Camera & Cinematic Intro Swoop ──
     smoothLookTarget.current.x = THREE.MathUtils.lerp(smoothLookTarget.current.x, translation.x, 0.12);
-    smoothLookTarget.current.y = THREE.MathUtils.lerp(smoothLookTarget.current.y, translation.y + 0.85, 0.10);
+    smoothLookTarget.current.y = THREE.MathUtils.lerp(smoothLookTarget.current.y, translation.y + 0.45, 0.10);
     smoothLookTarget.current.z = THREE.MathUtils.lerp(smoothLookTarget.current.z, translation.z, 0.12);
 
     const cosPitch = Math.cos(cameraPitch.current);
@@ -529,7 +529,7 @@ export default function CharacterController({
       angularDamping={2.5}
       ccd={true}
     >
-      <CapsuleCollider args={[0.54, 0.30]} position={[0, 0.84, 0]} friction={0.8} />
+      <CapsuleCollider args={[0.20, 0.17]} position={[0, 0.37, 0]} friction={0.8} />
 
       <group ref={avatarGroupRef} position={[0, 0, 0]} rotation={[0, Math.PI, 0]}>
         <CharacterErrorBoundary fallback={<CharacterFallback />}>

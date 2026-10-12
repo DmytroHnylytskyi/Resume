@@ -272,8 +272,8 @@ function ProximityManager({
       const dz = p.z - targetPos[2];
       const distSq = dx * dx + dz * dz;
 
-      // Interaction radius threshold ~3.8m (distSq 14.5)
-      if (distSq < 14.5 && distSq < closestDistSq) {
+      // Interaction radius threshold ~2.5m (distSq 6.25)
+      if (distSq < 6.25 && distSq < closestDistSq) {
         closestDistSq = distSq;
         closestNpc = npc;
       }
@@ -336,47 +336,47 @@ interface ModelBound {
 }
 
 const MODEL_COLLIDER_DEFS: Record<string, ModelBound> = {
-  'landingpad_large.gltf': { halfExtents: [1.25, 0.25, 1.25], offset: [0, 0.25, 0] },
-  'lander_A.gltf': { halfExtents: [0.68, 0.6, 0.68], offset: [0, 0.6, 0] },
-  'basemodule_A.gltf': { halfExtents: [1.12, 0.5, 1.09], offset: [0, 0.5, 0] },
-  'basemodule_B.gltf': { halfExtents: [1.04, 0.5, 1.16], offset: [0, 0.5, 0] },
-  'basemodule_C.gltf': { halfExtents: [1.1, 0.5, 1.1], offset: [0, 0.5, 0] },
-  'basemodule_D.gltf': { halfExtents: [1.1, 0.5, 1.1], offset: [0, 0.5, 0] },
-  'basemodule_E.gltf': { halfExtents: [1.1, 0.5, 1.1], offset: [0, 0.5, 0] },
-  'basemodule_garage.gltf': { halfExtents: [1.0, 0.5, 1.19], offset: [0, 0.5, 0] },
-  'roofmodule_cargo_A.gltf': { halfExtents: [0.9, 0.3, 0.9], offset: [0, 0.3, 0] },
-  'roofmodule_cargo_C.gltf': { halfExtents: [0.9, 0.3, 0.9], offset: [0, 0.3, 0] },
-  'cargodepot_A.gltf': { halfExtents: [0.75, 0.5, 0.75], offset: [0, 0.5, 0] },
-  'cargodepot_B.gltf': { halfExtents: [0.75, 0.5, 0.75], offset: [0, 0.5, 0] },
-  'cargo_A.gltf': { halfExtents: [0.45, 0.3, 0.45], offset: [0, 0.3, 0] },
-  'cargo_B_stacked.gltf': { halfExtents: [0.6, 0.45, 0.6], offset: [0, 0.45, 0] },
-  'cargo_A_packed.gltf': { halfExtents: [0.55, 0.4, 0.55], offset: [0, 0.4, 0] },
-  'containers_A.gltf': { halfExtents: [0.55, 0.5, 0.55], offset: [0, 0.5, 0] },
-  'containers_B.gltf': { halfExtents: [0.55, 0.5, 0.55], offset: [0, 0.5, 0] },
-  'containers_C.gltf': { halfExtents: [0.55, 0.5, 0.55], offset: [0, 0.5, 0] },
-  'containers_D.gltf': { halfExtents: [0.55, 0.5, 0.55], offset: [0, 0.5, 0] },
-  'drill_structure.gltf': { halfExtents: [0.85, 1.4, 0.85], offset: [0, 1.4, 0] },
-  'windturbine_tall.gltf': { halfExtents: [0.4, 1.1, 0.4], offset: [0, 1.1, 0] },
-  'windturbine_low.gltf': { halfExtents: [0.4, 0.7, 0.4], offset: [0, 0.7, 0] },
-  'spacetruck.gltf': { halfExtents: [0.35, 0.35, 0.55], offset: [0, 0.35, 0] },
-  'spacetruck_large.gltf': { halfExtents: [0.45, 0.45, 0.75], offset: [0, 0.45, 0] },
-  'spacetruck_trailer.gltf': { halfExtents: [0.45, 0.35, 0.75], offset: [0, 0.35, 0] },
-  'lander_base.gltf': { halfExtents: [0.8, 0.4, 0.8], offset: [0, 0.4, 0] },
-  'landingpad_small.gltf': { halfExtents: [0.95, 0.25, 0.95], offset: [0, 0.25, 0] },
-  'terrain_mining.gltf': { halfExtents: [1.0, 0.5, 1.0], offset: [0, 0.5, 0] },
-  'solarpanel.gltf': { halfExtents: [0.45, 0.25, 0.22], offset: [0, 0.25, 0] },
-  'lights.gltf': { halfExtents: [0.25, 0.9, 0.25], offset: [0, 0.9, 0] },
-  'structure_tall.gltf': { halfExtents: [0.75, 1.0, 0.75], offset: [0, 1.0, 0] },
-  'structure_low.gltf': { halfExtents: [0.75, 0.5, 0.75], offset: [0, 0.5, 0] },
-  'rocks_A.gltf': { halfExtents: [0.65, 0.4, 0.75], offset: [0, 0.4, 0] },
-  'rocks_B.gltf': { halfExtents: [0.65, 0.4, 0.75], offset: [0, 0.4, 0] },
-  'rock_A.gltf': { halfExtents: [0.55, 0.4, 0.55], offset: [0, 0.4, 0] },
-  'rock_B.gltf': { halfExtents: [0.55, 0.4, 0.55], offset: [0, 0.4, 0] },
-  'tunnel_straight_A.gltf': { halfExtents: [0.9, 0.35, 0.45], offset: [0, 0.35, 0] },
-  'tunnel_straight_B.gltf': { halfExtents: [0.9, 0.35, 0.45], offset: [0, 0.35, 0] },
-  'tunnel_diagonal_short_A.gltf': { halfExtents: [0.9, 0.35, 0.9], offset: [0, 0.35, 0] },
-  'tunnel_diagonal_long_A.gltf': { halfExtents: [1.2, 0.35, 1.2], offset: [0, 0.35, 0] },
-  'tunnel_diagonal_long_B.gltf': { halfExtents: [1.2, 0.35, 1.2], offset: [0, 0.35, 0] }
+  'landingpad_large.gltf': { halfExtents: [1.25, 0.35, 1.25], offset: [0, 0.35, 0] },
+  'landingpad_small.gltf': { halfExtents: [1.05, 0.35, 1.05], offset: [0, 0.35, 0] },
+  'lander_A.gltf': { halfExtents: [0.75, 0.75, 0.75], offset: [0, 0.75, 0] },
+  'lander_base.gltf': { halfExtents: [0.95, 0.65, 0.95], offset: [0, 0.65, 0] },
+  'basemodule_A.gltf': { halfExtents: [1.15, 0.65, 1.15], offset: [0, 0.65, 0] },
+  'basemodule_B.gltf': { halfExtents: [1.15, 0.65, 1.15], offset: [0, 0.65, 0] },
+  'basemodule_C.gltf': { halfExtents: [1.15, 0.65, 1.15], offset: [0, 0.65, 0] },
+  'basemodule_D.gltf': { halfExtents: [1.15, 0.65, 1.15], offset: [0, 0.65, 0] },
+  'basemodule_E.gltf': { halfExtents: [1.15, 0.65, 1.15], offset: [0, 0.65, 0] },
+  'basemodule_garage.gltf': { halfExtents: [1.10, 0.65, 1.20], offset: [0, 0.65, 0] },
+  'roofmodule_cargo_A.gltf': { halfExtents: [0.95, 0.40, 0.95], offset: [0, 0.40, 0] },
+  'roofmodule_cargo_C.gltf': { halfExtents: [0.95, 0.40, 0.95], offset: [0, 0.40, 0] },
+  'cargodepot_A.gltf': { halfExtents: [0.85, 0.65, 0.85], offset: [0, 0.65, 0] },
+  'cargodepot_B.gltf': { halfExtents: [0.85, 0.65, 0.85], offset: [0, 0.65, 0] },
+  'cargo_A.gltf': { halfExtents: [0.55, 0.45, 0.55], offset: [0, 0.45, 0] },
+  'cargo_B_stacked.gltf': { halfExtents: [0.65, 0.55, 0.65], offset: [0, 0.55, 0] },
+  'cargo_A_packed.gltf': { halfExtents: [0.60, 0.50, 0.60], offset: [0, 0.50, 0] },
+  'containers_A.gltf': { halfExtents: [0.60, 0.60, 0.60], offset: [0, 0.60, 0] },
+  'containers_B.gltf': { halfExtents: [0.60, 0.60, 0.60], offset: [0, 0.60, 0] },
+  'containers_C.gltf': { halfExtents: [0.60, 0.60, 0.60], offset: [0, 0.60, 0] },
+  'containers_D.gltf': { halfExtents: [0.60, 0.60, 0.60], offset: [0, 0.60, 0] },
+  'drill_structure.gltf': { halfExtents: [0.95, 2.20, 0.95], offset: [0, 1.20, 0] },
+  'windturbine_tall.gltf': { halfExtents: [0.45, 2.20, 0.45], offset: [0, 2.00, 0] },
+  'windturbine_low.gltf': { halfExtents: [0.45, 1.20, 0.45], offset: [0, 1.00, 0] },
+  'spacetruck.gltf': { halfExtents: [0.35, 0.45, 0.55], offset: [0, 0.45, 0] },
+  'spacetruck_large.gltf': { halfExtents: [0.45, 0.55, 0.75], offset: [0, 0.55, 0] },
+  'spacetruck_trailer.gltf': { halfExtents: [0.45, 0.45, 0.75], offset: [0, 0.45, 0] },
+  'terrain_mining.gltf': { halfExtents: [1.05, 0.60, 1.05], offset: [0, 0.50, 0] },
+  'solarpanel.gltf': { halfExtents: [0.55, 0.45, 0.35], offset: [0, 0.40, 0] },
+  'lights.gltf': { halfExtents: [0.30, 1.20, 0.30], offset: [0, 1.20, 0] },
+  'structure_tall.gltf': { halfExtents: [0.85, 1.50, 0.85], offset: [0, 1.50, 0] },
+  'structure_low.gltf': { halfExtents: [0.85, 0.75, 0.85], offset: [0, 0.75, 0] },
+  'rocks_A.gltf': { halfExtents: [0.75, 0.65, 0.80], offset: [0, 0.55, 0] },
+  'rocks_B.gltf': { halfExtents: [0.75, 0.65, 0.80], offset: [0, 0.55, 0] },
+  'rock_A.gltf': { halfExtents: [0.65, 0.55, 0.65], offset: [0, 0.45, 0] },
+  'rock_B.gltf': { halfExtents: [0.65, 0.55, 0.65], offset: [0, 0.45, 0] },
+  'tunnel_straight_A.gltf': { halfExtents: [0.95, 0.45, 0.50], offset: [0, 0.45, 0] },
+  'tunnel_straight_B.gltf': { halfExtents: [0.95, 0.45, 0.50], offset: [0, 0.45, 0] },
+  'tunnel_diagonal_short_A.gltf': { halfExtents: [0.95, 0.45, 0.95], offset: [0, 0.45, 0] },
+  'tunnel_diagonal_long_A.gltf': { halfExtents: [1.25, 0.45, 1.25], offset: [0, 0.45, 0] },
+  'tunnel_diagonal_long_B.gltf': { halfExtents: [1.25, 0.45, 1.25], offset: [0, 0.45, 0] }
 };
 
 interface ObstacleColliderItem {
@@ -384,6 +384,7 @@ interface ObstacleColliderItem {
   halfExtents: [number, number, number];
   position: [number, number, number];
   rotation: [number, number, number];
+  friction?: number;
 }
 
 // ══════════════════════════════════════════════════════
@@ -394,9 +395,10 @@ interface WorldSceneProps {
 }
 
 export default function WorldScene({ playerPosRef }: WorldSceneProps): React.ReactElement {
-  const { instancedGroups, obstacleColliders } = useMemo(() => {
+  const { instancedGroups, obstacleColliders, slopeColliders } = useMemo(() => {
     const groups: Record<string, PlacedObject[]> = {};
     const colliders: ObstacleColliderItem[] = [];
+    const slopes: ObstacleColliderItem[] = [];
 
     islandSceneData.placedObjects.forEach((obj: PlacedObject) => {
       const lower = obj.modelPath.toLowerCase();
@@ -411,13 +413,66 @@ export default function WorldScene({ playerPosRef }: WorldSceneProps): React.Rea
       if (!groups[obj.modelPath]) groups[obj.modelPath] = [];
       groups[obj.modelPath].push(obj);
 
+      const rawScale = Array.isArray(obj.scale) ? obj.scale[0] : (obj.scale || 1);
+      const yaw = (obj.rotation || [0, 0, 0])[1];
+
+      // ── Generate low-friction, snag-free ramp colliders for all 14 slopes/corners ──
+      if (lower.includes('slope')) {
+        if (lower.includes('terrain_slope_outer_corner')) {
+          // Outer corner pyramid: angled ramp along the diagonal (-45° yaw, ~19.5° pitch)
+          const qYaw = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
+          const qCornerYaw = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 4);
+          const qTilt = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), 0.340);
+          const qFinal = qYaw.multiply(qCornerYaw).multiply(qTilt);
+          const euler = new THREE.Euler().setFromQuaternion(qFinal, 'XYZ');
+
+          slopes.push({
+            id: `slope_corner_${obj.id}`,
+            halfExtents: [1.42 * rawScale, 0.14 * rawScale, 0.72 * rawScale],
+            position: [obj.position[0], 1.48 * rawScale, obj.position[2]],
+            rotation: [euler.x, euler.y, euler.z],
+            friction: 0.15
+          });
+          // Solid base block beneath the ramp to prevent tunneling into terrain void
+          slopes.push({
+            id: `slope_corner_base_${obj.id}`,
+            halfExtents: [0.65 * rawScale, 0.25 * rawScale, 0.65 * rawScale],
+            position: [obj.position[0], 1.25 * rawScale, obj.position[2]],
+            rotation: [0, yaw, 0],
+            friction: 0.8
+          });
+        } else if (lower.includes('terrain_slope_inner_corner')) {
+          // Inner corner plateau transition
+          slopes.push({
+            id: `slope_inner_${obj.id}`,
+            halfExtents: [0.95 * rawScale, 0.45 * rawScale, 0.95 * rawScale],
+            position: [obj.position[0], 1.45 * rawScale, obj.position[2]],
+            rotation: [0, yaw, 0],
+            friction: 0.2
+          });
+        } else {
+          // Straight ramp: rises along local X by ~26.56°
+          const qYaw = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
+          const qTilt = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), 0.4636476);
+          const qFinal = qYaw.multiply(qTilt);
+          const euler = new THREE.Euler().setFromQuaternion(qFinal, 'XYZ');
+
+          slopes.push({
+            id: `slope_straight_${obj.id}`,
+            halfExtents: [1.15 * rawScale, 0.14 * rawScale, 1.0 * rawScale],
+            position: [obj.position[0], 1.48 * rawScale, obj.position[2]],
+            rotation: [euler.x, euler.y, euler.z],
+            friction: 0.15
+          });
+        }
+        return;
+      }
+
       // Add obstacle collider if defined
       if (!isFloor) {
         const def = MODEL_COLLIDER_DEFS[filename];
         if (def) {
-          const rawScale = Array.isArray(obj.scale) ? obj.scale[0] : (obj.scale || 1);
           const off = def.offset ?? [0, 0, 0];
-          const yaw = (obj.rotation || [0, 0, 0])[1];
           const cy = Math.cos(yaw);
           const sy = Math.sin(yaw);
           const rotXZ = (ox: number, oz: number): [number, number] => [
@@ -438,7 +493,8 @@ export default function WorldScene({ playerPosRef }: WorldSceneProps): React.Rea
               obj.position[1] + off[1] * rawScale,
               obj.position[2] + mainOz * rawScale
             ],
-            rotation: obj.rotation || [0, 0, 0]
+            rotation: obj.rotation || [0, 0, 0],
+            friction: 0.8
           });
         }
       }
@@ -446,7 +502,8 @@ export default function WorldScene({ playerPosRef }: WorldSceneProps): React.Rea
 
     return {
       instancedGroups: groups,
-      obstacleColliders: colliders
+      obstacleColliders: colliders,
+      slopeColliders: slopes
     };
   }, []);
 
@@ -478,38 +535,23 @@ export default function WorldScene({ playerPosRef }: WorldSceneProps): React.Rea
         <CuboidCollider args={[0.5, 4.0, 10.0]} position={[-10.5, 4.0, -1.25]} />
         <CuboidCollider args={[0.5, 4.0, 10.0]} position={[4.5, 4.0, -1.25]} />
 
-        {/* ── Solid Multi-Tier Plateau Foundations ── */}
+        {/* ── Solid Multi-Tier Plateau Foundations (Prevent clipping through hill cores) ── */}
         {/* Elevated Solar Terrace Foundation (Y = 2.0m) */}
-        <CuboidCollider args={[1.6, 0.5, 2.2]} position={[-6.0, 1.5, 5.0]} friction={0.8} />
+        <CuboidCollider args={[1.8, 0.5, 2.5]} position={[-6.0, 1.5, 5.0]} friction={0.8} />
 
         {/* Central Mining Drill Plaza Foundation (Y = 2.0m) */}
-        <CuboidCollider args={[1.2, 0.5, 1.2]} position={[0.0, 1.5, 0.0]} friction={0.8} />
+        <CuboidCollider args={[1.6, 0.5, 1.6]} position={[0.0, 1.5, 0.0]} friction={0.8} />
 
-        {/* ── Low-Friction Angled Slope Colliders for Smooth Ramp Navigation ── */}
-        <CuboidCollider
-          args={[1.0, 0.15, 1.2]}
-          position={[-7.0, 1.35, 5.0]}
-          rotation={[-0.4636, 0, 0]}
-          friction={0.1}
-        />
-        <CuboidCollider
-          args={[1.0, 0.15, 1.2]}
-          position={[-5.0, 1.35, 5.0]}
-          rotation={[0.4636, 0, 0]}
-          friction={0.1}
-        />
-        <CuboidCollider
-          args={[1.0, 0.15, 1.2]}
-          position={[1.0, 1.35, 1.0]}
-          rotation={[0.4636, 0, 0]}
-          friction={0.1}
-        />
-        <CuboidCollider
-          args={[1.0, 0.15, 1.2]}
-          position={[-1.0, 1.35, -1.0]}
-          rotation={[-0.4636, 0, 0]}
-          friction={0.1}
-        />
+        {/* ── Low-Friction Angled Slope Colliders for Smooth Multi-Tier Ramp Navigation ── */}
+        {slopeColliders.map((item) => (
+          <CuboidCollider
+            key={item.id}
+            args={item.halfExtents}
+            position={item.position}
+            rotation={item.rotation}
+            friction={item.friction ?? 0.15}
+          />
+        ))}
 
         {/* ── All Modular Buildings, Cargo, Vehicles, and Perimeter Rocks ── */}
         {obstacleColliders.map((item) => (
@@ -518,6 +560,7 @@ export default function WorldScene({ playerPosRef }: WorldSceneProps): React.Rea
             args={item.halfExtents}
             position={item.position}
             rotation={item.rotation}
+            friction={item.friction ?? 0.8}
           />
         ))}
       </RigidBody>

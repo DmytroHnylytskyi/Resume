@@ -659,7 +659,7 @@ export default function IslandCanvas(): React.ReactElement {
           <WorldScene playerPosRef={playerPosRef} />
 
           {/* 3rd-Person Playable Animated Character */}
-          <CharacterController playerPosRef={playerPosRef} spawnPoint={[0.0, 1.4, 6.0]} />
+          <CharacterController playerPosRef={playerPosRef} spawnPoint={[0.0, 1.1, 6.0]} />
         </Physics>
       </Suspense>
 

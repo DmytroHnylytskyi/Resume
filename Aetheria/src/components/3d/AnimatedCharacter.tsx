@@ -18,8 +18,8 @@ import { characterAnimState } from '../../store/characterAnimState';
 import { useGameStore } from '../../store/useGameStore';
 import { clone as cloneSkeleton } from 'three/examples/jsm/utils/SkeletonUtils.js';
 
-const TARGET_HEIGHT = 1.65;
-const DEGENERATE_SCALE_FALLBACK = 0.748;
+const TARGET_HEIGHT = 0.75;
+const DEGENERATE_SCALE_FALLBACK = 0.34;
 
 export default function AnimatedCharacter(): React.ReactElement {
   const setCharacterLoaded = useGameStore((s) => s.setCharacterLoaded);

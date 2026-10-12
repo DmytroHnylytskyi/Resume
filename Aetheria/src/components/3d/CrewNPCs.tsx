@@ -24,8 +24,8 @@ import { IslandSceneData } from '../../types/scene';
 
 const islandSceneData = rawIslandSceneData as unknown as IslandSceneData;
 
-const TARGET_HEIGHT = 1.65;
-const DEGENERATE_SCALE_FALLBACK = 0.748;
+const TARGET_HEIGHT = 0.75;
+const DEGENERATE_SCALE_FALLBACK = 0.34;
 
 interface SingleNPCProps {
   def: NPCDialogueDef;
@@ -141,7 +141,7 @@ function SingleNPC({
     <group position={pos}>
       {/* ── Rapier 3D Solid Collider ── */}
       <RigidBody type="fixed" colliders={false}>
-        <CapsuleCollider args={[0.54, 0.30]} position={[0, 0.84, 0]} />
+        <CapsuleCollider args={[0.20, 0.17]} position={[0, 0.37, 0]} />
       </RigidBody>
 
       {/* ── Ground Sector Aura Halo ── */}
@@ -150,7 +150,7 @@ function SingleNPC({
         position={[0, 0.05, 0]}
         rotation={[-Math.PI / 2, 0, 0]}
       >
-        <ringGeometry args={[0.45, 1.25, 32]} />
+        <ringGeometry args={[0.20, 0.55, 32]} />
         <meshBasicMaterial
           color={def.hexColor}
           transparent
@@ -166,7 +166,7 @@ function SingleNPC({
         position={[0, 0.04, 0]}
         rotation={[-Math.PI / 2, 0, 0]}
       >
-        <ringGeometry args={[1.15, 1.85, 32]} />
+        <ringGeometry args={[0.50, 0.85, 32]} />
         <meshBasicMaterial
           color={def.hexColor}
           transparent
@@ -179,10 +179,10 @@ function SingleNPC({
 
       {/* ── Sector Glow Light ── */}
       <pointLight
-        position={[0, 1.6, 0]}
+        position={[0, 0.85, 0]}
         color={def.hexColor}
-        intensity={2.8}
-        distance={4.5}
+        intensity={2.2}
+        distance={3.0}
         decay={2.0}
       />
 
