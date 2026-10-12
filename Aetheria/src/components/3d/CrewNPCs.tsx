@@ -140,7 +140,7 @@ function SingleNPC({
   return (
     <group position={pos}>
       {/* ── Rapier 3D Solid Collider ── */}
-      <RigidBody type="fixed" colliders={false}>
+      <RigidBody type="fixed" colliders={false} position={pos}>
         <CapsuleCollider args={[0.20, 0.17]} position={[0, 0.37, 0]} />
       </RigidBody>
 

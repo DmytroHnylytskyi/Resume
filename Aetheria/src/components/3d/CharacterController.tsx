@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useEffect, Suspense } from 'react';
+import React, { useRef, useEffect, useCallback, Suspense } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { RigidBody, CapsuleCollider, RapierRigidBody } from '@react-three/rapier';
 import * as THREE from 'three';
@@ -73,6 +73,19 @@ export default function CharacterController({
     jump: false,
     shift: false
   });
+
+  const resetAllKeys = useCallback(() => {
+    keys.current.forward = false;
+    keys.current.backward = false;
+    keys.current.left = false;
+    keys.current.right = false;
+    keys.current.jump = false;
+    keys.current.shift = false;
+    currentVelocity.current.set(0, 0, 0);
+    characterAnimState.isMoving = false;
+    characterAnimState.isSprinting = false;
+    characterAnimState.isJumping = false;
+  }, []);
 
   // Camera angles: Looking forward into negative Z (cemetery/island)
   const targetYaw = useRef(0.0);
@@ -197,7 +210,7 @@ export default function CharacterController({
     };
   }, [gl, isAnyModalOpen, isIntroPlaying]);
 
-  // Release pointer lock and reset keys whenever ANY modal opens
+  // Release pointer lock and reset keys whenever ANY modal opens or closes
   useEffect(() => {
     if (isAnyModalOpen) {
       if (document.pointerLockElement) {
@@ -205,23 +218,23 @@ export default function CharacterController({
           document.exitPointerLock();
         } catch (_) {}
       }
-      keys.current.forward = false;
-      keys.current.backward = false;
-      keys.current.left = false;
-      keys.current.right = false;
-      keys.current.jump = false;
-      keys.current.shift = false;
-      characterAnimState.isMoving = false;
-      characterAnimState.isSprinting = false;
-      characterAnimState.isJumping = false;
     }
-  }, [isAnyModalOpen]);
+    resetAllKeys();
+  }, [isAnyModalOpen, resetAllKeys]);
 
-  // ── 2. Keyboard Event Handlers ──
+  // ── 2. Keyboard Event Handlers (Zero stuck keys, window blur guards) ──
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement)?.tagName)) return;
-      if (isAnyModalOpen || isIntroPlaying) return;
+      const state = useGameStore.getState();
+      const anyModalOpen = Boolean(
+        state.activeModal ||
+        state.selectedProject ||
+        state.activeDialogue ||
+        state.isInitialWelcomeOpen ||
+        state.isTacticalMapOpen
+      );
+      if (anyModalOpen || state.isIntroPlaying) return;
 
       const code = e.code;
       if (code === 'KeyW' || code === 'ArrowUp') keys.current.forward = true;
@@ -235,7 +248,7 @@ export default function CharacterController({
       if (code === 'ShiftLeft' || code === 'ShiftRight') keys.current.shift = true;
       if (code === 'KeyE') {
         // Read via getState(): subscribing to interactionPrompt would re-render on every proximity edge
-        const prompt = useGameStore.getState().interactionPrompt;
+        const prompt = state.interactionPrompt;
         if (prompt && prompt.action) {
           getGlobalCyberAudio().play('interact');
           prompt.action();
@@ -244,7 +257,7 @@ export default function CharacterController({
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
-      if (isAnyModalOpen) return;
+      // NOTE: Never return early on keyup! Even if a modal opens or tab switches, releasing a key MUST clear it!
       const code = e.code;
       if (code === 'KeyW' || code === 'ArrowUp') keys.current.forward = false;
       if (code === 'KeyS' || code === 'ArrowDown') keys.current.backward = false;
@@ -254,13 +267,28 @@ export default function CharacterController({
       if (code === 'ShiftLeft' || code === 'ShiftRight') keys.current.shift = false;
     };
 
+    const handleWindowBlur = () => {
+      resetAllKeys();
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        resetAllKeys();
+      }
+    };
+
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
+    window.addEventListener('blur', handleWindowBlur);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
+      window.removeEventListener('blur', handleWindowBlur);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [isAnyModalOpen, isIntroPlaying]);
+  }, [resetAllKeys]);
 
   // ── 3. Physics & Camera Update Frame Loop ──
   useFrame(() => {
@@ -523,13 +551,13 @@ export default function CharacterController({
       colliders={false}
       position={spawnPoint}
       enabledRotations={[false, false, false]}
-      friction={0.8}
+      friction={0.0}
       restitution={0.0}
       linearDamping={2.5}
       angularDamping={2.5}
       ccd={true}
     >
-      <CapsuleCollider args={[0.20, 0.17]} position={[0, 0.37, 0]} friction={0.8} />
+      <CapsuleCollider args={[0.17, 0.20]} position={[0, 0.37, 0]} friction={0.0} />
 
       <group ref={avatarGroupRef} position={[0, 0, 0]} rotation={[0, Math.PI, 0]}>
         <CharacterErrorBoundary fallback={<CharacterFallback />}>
