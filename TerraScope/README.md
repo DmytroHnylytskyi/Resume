@@ -1,5 +1,14 @@
 # TerraScope
 
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=nextdotjs)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
+[![Three.js](https://img.shields.io/badge/Three.js-R3F-black)](https://threejs.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-Python-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![License: PolyForm Strict 1.0.0](https://img.shields.io/badge/license-PolyForm%20Strict%201.0.0-black)](LICENSE)
+
+> **License:** source-available under [PolyForm Strict 1.0.0](LICENSE) — viewing and noncommercial evaluation are welcome; redistribution, modification, derivative works and commercial use require written permission. Third-party assets keep their own terms — see [NOTICE.md](NOTICE.md).
+
 [English](#english) | [Українська](#українська)
 
 ---

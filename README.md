@@ -1,5 +1,10 @@
 # Full-Stack Web Development & 3D Interactive Portfolio
 
+[![License: PolyForm Strict 1.0.0](https://img.shields.io/badge/license-PolyForm%20Strict%201.0.0-black)](LICENSE)
+[![Web Guru Awards — Guru of the Day 2026](https://img.shields.io/badge/Web%20Guru%20Awards-Guru%20of%20the%20Day%202026-f59e0b)](https://www.webguruawards.com/sites/aetheria-interactive-3d-webgl-portfolio)
+
+> **License:** original code, 3D work and design are source-available under [PolyForm Strict 1.0.0](LICENSE). Viewing and noncommercial evaluation are welcome; redistribution, modification, derivative works and commercial use require written permission. Third-party assets keep their own terms — see [NOTICE.md](NOTICE.md).
+
 [English](#english) | [Українська](#українська)
 
 ---
@@ -184,6 +189,16 @@ uvicorn app.main:app --reload --port 8003
 - **Forma-3D:** [http://localhost:3001](http://localhost:3001)
 - **TerraScope:** [http://localhost:3002](http://localhost:3002)
 - **Lumina:** [http://localhost:3003](http://localhost:3003)
+
+---
+
+## License / Ліцензія
+
+**Copyright © 2026 Dmytro Hnylytskyi.** Original source code, 3D scenes, shaders, interface design and copy are source-available under **PolyForm Strict 1.0.0** ([LICENSE](LICENSE)): you may view and evaluate the work for noncommercial purposes, but redistribution, modification, derivative works and commercial use require written permission.
+
+Third-party assets and dependencies are **not** covered by that license and remain under their own terms — see [NOTICE.md](NOTICE.md). KayKit assets are CC0; the Web Guru Awards badge belongs to Web Guru Awards.
+
+**Авторське право © 2026 Дмитро Гнилицький.** Оригінальний код, 3D-сцени, шейдери, дизайн і тексти доступні за **PolyForm Strict 1.0.0** ([LICENSE](LICENSE)): перегляд і некомерційне ознайомлення дозволені, а розповсюдження, зміни, похідні роботи та комерційне використання — лише з письмового дозволу. Сторонні ассети — за їхніми власними ліцензіями ([NOTICE.md](NOTICE.md)).
 
 
 

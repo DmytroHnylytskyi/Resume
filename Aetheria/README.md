@@ -1,5 +1,15 @@
 # Aetheria - Interactive 3D WebGL Portfolio and Hub
 
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=nextdotjs)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Three.js](https://img.shields.io/badge/Three.js-0.174-black)](https://threejs.org/)
+[![Rapier](https://img.shields.io/badge/Rapier-3D-ff6b6b)](https://rapier.rs/)
+[![License: PolyForm Strict 1.0.0](https://img.shields.io/badge/license-PolyForm%20Strict%201.0.0-black)](LICENSE)
+[![Web Guru Awards](https://img.shields.io/badge/Web%20Guru%20Awards-Guru%20of%20the%20Day%202026-f59e0b)](https://www.webguruawards.com/sites/aetheria-interactive-3d-webgl-portfolio)
+
+> **License:** original code, 3D scenes, shaders and design are source-available under [PolyForm Strict 1.0.0](LICENSE). Viewing and noncommercial evaluation are welcome; redistribution, modification, derivative works and commercial use require written permission. Third-party assets keep their own terms — see [NOTICE.md](NOTICE.md).
+
 [English](#english) | [Українська](#українська)
 
 ---
@@ -178,6 +188,8 @@ Aetheria — це інтерактивне 3D WebGL портфоліо та го
 
 - **Web Guru Awards — Guru of the Day** (8 жовтня 2026) за інтерактивне 3D WebGL портфоліо Aetheria. [Сторінка нагороди](https://www.webguruawards.com/sites/aetheria-interactive-3d-webgl-portfolio).
 - Номінація на **Guru of the Month**.
+
+> **Ліцензія:** оригінальний код, 3D-сцени, шейдери та дизайн доступні за [PolyForm Strict 1.0.0](LICENSE). Перегляд і некомерційне ознайомлення дозволені; розповсюдження, зміни, похідні роботи та комерційне використання — лише з письмового дозволу. Сторонні ассети — за їхніми власними ліцензіями, див. [NOTICE.md](NOTICE.md).
 
 ---
 
