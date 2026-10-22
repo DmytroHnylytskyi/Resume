@@ -15,6 +15,11 @@ The application features a dual-experience architecture:
 1. **Interactive 3D World:** Third-person spatial exploration on a modular island environment with physics simulation, animated avatar movement, proximity-based interactions, knowledge statues, and project portals.
 2. **Classic Web Resume:** A responsive, accessible, structured CV landing page with comprehensive sections for professional summary, education, verified certifications, technical skills, featured projects, and direct contact channels.
 
+### Awards
+
+- **Web Guru Awards — Guru of the Day** (October 8, 2026) for Aetheria's interactive 3D WebGL portfolio. [Award page](https://www.webguruawards.com/sites/aetheria-interactive-3d-webgl-portfolio).
+- Nominated for **Guru of the Month**.
+
 ---
 
 ### Tech Stack
@@ -168,6 +173,11 @@ Aetheria — це інтерактивне 3D WebGL портфоліо та го
 Додаток реалізує архітектуру двох режимів перегляду:
 1. **Інтерактивний 3D-Світ:** Просторове дослідження модульного острова з повноцінною симуляцією фізики, анімованим персонажем від третьої особи, системою взаємодії за дистанцією, статуями знань та 3D-порталами до проєктів.
 2. **Класичне Резюме:** Адаптивний, доступний, структурований веб-лендінг із детальним описом інженерного бекграунду, вищої освіти, верифікованих сертифікацій, стеку технологій, реалізованих проєктів та прямих контактів.
+
+### Нагороди
+
+- **Web Guru Awards — Guru of the Day** (8 жовтня 2026) за інтерактивне 3D WebGL портфоліо Aetheria. [Сторінка нагороди](https://www.webguruawards.com/sites/aetheria-interactive-3d-webgl-portfolio).
+- Номінація на **Guru of the Month**.
 
 ---
 

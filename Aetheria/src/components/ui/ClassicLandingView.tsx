@@ -1051,6 +1051,53 @@ export default function ClassicLandingView(): React.ReactElement {
             </div>
           </section>
 
+          {/* ── Recognition: Web Guru Awards ──
+              Официальный badge со ссылкой на award-страницу. В коде Web Guru
+              он позиционируется fixed в левом верхнем углу — здесь он встроен
+              в футер, чтобы не перекрывать логотип и top-bar. */}
+          <aside className={styles.recognition} aria-labelledby="recognition-title">
+            <a
+              className={styles.recognitionBadge}
+              href="https://www.webguruawards.com/sites/aetheria-interactive-3d-webgl-portfolio"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={isUk ? 'Web Guru Awards — Guru of the Day' : 'Web Guru Awards — Guru of the Day'}
+            >
+              {/* Official badge artwork served by Web Guru Awards. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="https://imgcdn.webguruawards.com/public/awards/GOTD/img_guru_of_the_day_gray.png"
+                alt="Web Guru Awards — Guru of the Day"
+                width={75}
+                height={111}
+                loading="lazy"
+                decoding="async"
+              />
+            </a>
+            <div className={styles.recognitionCopy}>
+              <span className={styles.recognitionEyebrow}>
+                {isUk ? 'Визнання' : 'Recognition'}
+              </span>
+              <h2 id="recognition-title" className={styles.recognitionTitle}>
+                Guru of the Day
+              </h2>
+              <p className={styles.recognitionText}>
+                {isUk
+                  ? 'Aetheria відзначено Web Guru Awards як Guru of the Day 8 жовтня 2026 року. Номінація на Guru of the Month.'
+                  : 'Aetheria was selected as Web Guru Awards “Guru of the Day” on October 8, 2026. Nominated for Guru of the Month.'}
+              </p>
+              <a
+                className={styles.recognitionLink}
+                href="https://www.webguruawards.com/sites/aetheria-interactive-3d-webgl-portfolio"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {isUk ? 'Переглянути нагороду' : 'View the award'}
+                <ArrowUpRight size={14} aria-hidden="true" />
+              </a>
+            </div>
+          </aside>
+
           <footer className={styles.footer}>
             <a href="#hero" className={styles.footerBrand}>DH<span>.</span></a>
             <p>&copy; {new Date().getFullYear()} {profile.name}. {t.rightsReserved}</p>

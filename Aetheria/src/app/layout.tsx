@@ -89,6 +89,7 @@ export default function RootLayout({
     '@type': 'Person',
     name: 'Dmytro Hnylytskyi',
     jobTitle: 'Full-Stack & Creative 3D Developer',
+    award: 'Web Guru Awards — Guru of the Day (October 8, 2026)',
     url: 'https://hnylytskyi.dev',
     email: 'mailto:hnylytskyidmitri@gmail.com',
     address: { '@type': 'PostalAddress', addressLocality: 'Kyiv', addressCountry: 'UA' },
