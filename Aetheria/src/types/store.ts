@@ -32,13 +32,13 @@ export interface DialogueState {
 }
 
 /**
- * Материалы портфолио, которые открывает экипаж. Один в один с targetKey в
- * npcDialogues: там тип берётся отсюда, поэтому список объявлен в одном месте.
+ * Portfolio materials opened by the crew. One-to-one with targetKey in
+ * npcDialogues: the type there comes from here, so the list is declared in one place.
  */
 export const MATERIAL_KEYS = ['bio', 'skills', 'contacts', 'forma', 'terrascope', 'lumina'] as const;
 export type MaterialKey = (typeof MATERIAL_KEYS)[number];
 
-/** Персистентная часть досье: то, что переживает перезагрузку страницы. */
+/** Persistent part of the dossier: what survives a page reload. */
 export interface DossierSnapshot {
   metCrew: NPCId[];
   openedMaterials: MaterialKey[];
@@ -67,7 +67,7 @@ export interface GameState {
   setSceneLoaded: (loaded: boolean) => void;
   isCharacterLoaded: boolean;
   setCharacterLoaded: (loaded: boolean) => void;
-  /** Материалы прогреты (compileAsync): интро не стартует, пока true не станет. */
+  /** Materials prewarmed (compileAsync): the intro does not start until this becomes true. */
   isRendererReady: boolean;
   setRendererReady: (ready: boolean) => void;
 
@@ -100,11 +100,11 @@ export interface GameState {
   isTacticalMapOpen: boolean;
   setTacticalMapOpen: (open: boolean) => void;
 
-  // ── Досье экипажа ──
-  // Прогресс обхода станции: кого встретил и какие материалы открыл. Живёт в
-  // store, а не в модульном буфере вроде dayNightState, ровно потому что на него
-  // реагирует интерфейс — счётчик в HUD и пины на тактической карте; буфер без
-  // подписки их бы не разбудил. Переживает перезагрузку (localStorage).
+  // ── Crew dossier ──
+  // Station tour progress: who was met and which materials were opened. Lives in the
+  // store, not in a module buffer like dayNightState, precisely because the UI
+  // reacts to it — the HUD counter and tactical map pins; a buffer without
+  // a subscription would not wake them. Survives reloads (localStorage).
   metCrew: NPCId[];
   openedMaterials: MaterialKey[];
   markCrewMet: (npcId: NPCId) => void;

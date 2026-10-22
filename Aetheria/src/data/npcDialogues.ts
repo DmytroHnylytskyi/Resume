@@ -6,16 +6,16 @@
  * The copy stays calm and specific: the crew explains what stands in front of the
  * visitor and what is worth opening next, without advertising language.
  *
- * Координаты, цвет сектора и имя сектора здесь НЕ хранятся: они приходят из
- * zones.ts, это свойство места, а не человека. Здесь остаётся то, что принадлежит
- * разговору — реплики, жест, вращение и то, что NPC открывает (targetKey).
+ * Coordinates, sector color and sector name are NOT stored here: they come from
+ * zones.ts, they are a property of the place, not of the person. What remains here
+ * belongs to the conversation — lines, gesture, rotation and what the NPC opens (targetKey).
  */
 
 import { NPCId, MaterialKey } from '../types/store';
 import { ZONES, ZoneId, SectorColor } from './zones';
 
-// Сектор переехал в zones.ts; тип ре-экспортируется, чтобы не ломать тех, кто
-// брал его отсюда.
+// The sector moved to zones.ts; the type is re-exported so as not to break those who
+// imported it from here.
 export type { SectorColor };
 
 export interface LocalizedString {
@@ -25,9 +25,9 @@ export interface LocalizedString {
 
 export interface NPCDialogueDef {
   id: NPCId;
-  /** Сектор, в котором стоит NPC. Координаты, цвет и имя места — в zones.ts. */
+  /** The sector the NPC stands in. Coordinates, color and place name are in zones.ts. */
   zone: ZoneId;
-  /** Файл модели в public/model/kaykit_space — единственная связка NPC↔размещение в islandScene.json. */
+  /** Model file in public/model/kaykit_space — the only NPC↔placement link in islandScene.json. */
   modelFile: string;
   name: LocalizedString;
   role: LocalizedString;
@@ -42,8 +42,8 @@ export interface NPCDialogueDef {
   actionLabel: LocalizedString;
   dismissLabel: LocalizedString;
   targetType: 'modal' | 'project';
-  /** Что открывает разговор. Список живёт в types/store (MATERIAL_KEYS) — его
-   *  же ведёт досье, отмечая, какие материалы посетитель уже посмотрел. */
+  /** What the conversation opens. The list lives in types/store (MATERIAL_KEYS) — the dossier
+   *  also tracks it, marking which materials the visitor has already viewed. */
   targetKey: MaterialKey;
 }
 

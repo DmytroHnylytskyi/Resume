@@ -1,27 +1,27 @@
 /**
- * zones.ts — секторы станции: единственная точка правды о том, какие места есть
- * на карте, как они называются, кто в них стоит и в каком порядке их обходить.
+ * zones.ts — station sectors: the single source of truth about which places exist
+ * on the map, what they are called, who stands in them and in what order to visit them.
  *
- * Зачем отдельный файл. До него «зона» не существовала как сущность: имя сектора
- * лежало второй половиной строки бейджа в npcDialogues, цвет — полями конкретного
- * NPC, позиция — там же. Из-за этого нельзя было ни подписать зону на карте, ни
- * повесить на неё триггер, ни отсортировать обход: нечего было взять за единицу.
+ * Why a separate file. Before it, a "zone" did not exist as an entity: the sector name
+ * lived as the second half of the badge string in npcDialogues, the color — in the fields of a
+ * specific NPC, the position — there too. Because of this it was impossible to label a zone
+ * on the map, attach a trigger to it, or sort the tour: there was no unit to take.
  *
- * Модуль — ЛИСТ: он ничего не импортирует из данных сцены, только тип NPCId.
- * Ссылки идут в одну сторону, `npcDialogues` → `zones`, поэтому цикла импортов
- * нет, а поля NPC (position / sector / hexColor / rgbColor) теперь ЧИТАЮТСЯ
- * отсюда, а не дублируются литералами. Разойтись они больше не могут.
+ * The module is a LEAF: it imports nothing from scene data, only the NPCId type.
+ * References go one way, `npcDialogues` → `zones`, so there is no import cycle,
+ * and NPC fields (position / sector / hexColor / rgbColor) are now READ
+ * from here instead of being duplicated by literals. They can no longer diverge.
  *
- * Чего здесь намеренно НЕТ: того, что открывает NPC (targetKey / targetType).
- * Это свойство разговора, а не места, и живёт в npcDialogues.
+ * What is intentionally ABSENT here: what an NPC opens (targetKey / targetType).
+ * That is a property of the conversation, not of the place, and lives in npcDialogues.
  */
 
 import { NPCId } from '../types/store';
 
 /**
- * Цветовая тема сектора. Живёт здесь, а не в npcDialogues: это свойство места,
- * а не человека. npcDialogues ре-экспортирует тип, чтобы не ломать тех, кто
- * брал его оттуда.
+ * Sector color theme. Lives here, not in npcDialogues: it is a property of the place,
+ * not of the person. npcDialogues re-exports the type so as not to break those who
+ * imported it from there.
  */
 export type SectorColor = 'gold' | 'violet' | 'cyan' | 'emerald' | 'sapphire' | 'rose_coral';
 
@@ -33,7 +33,7 @@ export type ZoneId =
   | 'lumina_optics'
   | 'subspace_array';
 
-/** Локальная копия формы LocalizedString: импортировать её из npcDialogues нельзя, это дало бы цикл. */
+/** Local copy of the LocalizedString shape: importing it from npcDialogues is impossible, that would create a cycle. */
 export interface ZoneLabel {
   en: string;
   uk: string;
@@ -41,30 +41,30 @@ export interface ZoneLabel {
 
 export interface ZoneDef {
   id: ZoneId;
-  /** Кто стоит в секторе. Ссылка по id, а не по позиции: позиция ниже. */
+  /** Who stands in the sector. A reference by id, not by position: the position is below. */
   crewId: NPCId;
-  /** Имя места, а не человека: вторая половина бейджа NPC. */
+  /** The name of the place, not of the person: the second half of the NPC badge. */
   name: ZoneLabel;
   sector: SectorColor;
   hexColor: string;
   rgbColor: string;
-  /** Мировые координаты сектора — они же координаты стоящего в нём NPC. */
+  /** World coordinates of the sector — the same coordinates as the NPC standing in it. */
   position: [number, number, number];
   /**
-   * Радиус сектора для маркеров и триггеров входа.
-   * Пять и восемь, а не одно число: командир и UI-архитектор стоят в хабе в
-   * 3.5 м друг от друга, и общий радиус в 8 м накрыл бы оба сектора целиком.
-   * При пересечении побеждает ближайший сектор.
+   * Sector radius for markers and entry triggers.
+   * Five and eight, not one number: the commander and the UI architect stand in the hub
+   * 3.5 m apart, and a common 8 m radius would cover both sectors entirely.
+   * When they overlap, the nearest sector wins.
    */
   radius: number;
-  /** Порядок обхода. Собран по логике резюме, см. ZONE_ORDER. */
+  /** Visit order. Built around the resume narrative, see ZONE_ORDER. */
   order: number;
 }
 
 /**
- * Порядок обхода — это не порядок по карте, а порядок рассказа о человеке:
- * кто я → чем владею технически → три проекта → как связаться.
- * Совпадает с тем, что открывает каждый NPC (targetKey в npcDialogues):
+ * The visit order is not the order on the map but the order of the story about the person:
+ * who I am → what I own technically → three projects → how to get in touch.
+ * Matches what each NPC opens (targetKey in npcDialogues):
  * bio → skills → forma → terrascope → lumina → contacts.
  */
 export const ZONES: Record<ZoneId, ZoneDef> = {
@@ -86,7 +86,7 @@ export const ZONES: Record<ZoneId, ZoneDef> = {
     sector: 'violet',
     hexColor: '#c084fc',
     rgbColor: '192, 132, 252',
-    // Верхнее плато, четвёртый ярус: сектор не на общем уровне земли.
+    // Upper plateau, fourth tier: the sector is not at the common ground level.
     position: [-16.7, 4.0, -10.6],
     radius: 8,
     order: 2
@@ -133,17 +133,17 @@ export const ZONES: Record<ZoneId, ZoneDef> = {
     rgbColor: '56, 189, 248',
     position: [-12.6, 1.0, 19.2],
     radius: 8,
-    // Последний по обходу: его материал — контакты, естественное завершение тура.
+    // Last in the tour: its material is contacts, the natural end of the tour.
     order: 6
   }
 };
 
-/** Зоны в порядке обхода. Производная от ZONES — сортировать вручную не надо. */
+/** Zones in visit order. Derived from ZONES — no manual sorting needed. */
 export const ZONE_ORDER: ZoneId[] = (Object.keys(ZONES) as ZoneId[]).sort(
   (a, b) => ZONES[a].order - ZONES[b].order
 );
 
-/** Зона по id NPC. Нужна там, где на входе есть только экипаж (диалоги, радар). */
+/** Zone by NPC id. Needed where only the crew is available as input (dialogues, radar). */
 export const ZONE_BY_CREW: Record<NPCId, ZoneId> = (Object.keys(ZONES) as ZoneId[]).reduce(
   (acc, id) => {
     acc[ZONES[id].crewId] = id;
@@ -153,15 +153,15 @@ export const ZONE_BY_CREW: Record<NPCId, ZoneId> = (Object.keys(ZONES) as ZoneId
 );
 
 /**
- * Ближайший сектор к точке на плоскости XZ. Пересечения радиусов разрешаются по
- * расстоянию, поэтому хаб с его двумя секторами в 3.5 м друг от друга работает
- * корректно. Возвращает null, если игрок вне всех радиусов.
+ * Nearest sector to a point on the XZ plane. Radius overlaps are resolved by
+ * distance, so the hub with its two sectors 3.5 m apart works
+ * correctly. Returns null if the player is outside all radii.
  */
 /**
- * Ближайший сектор, с экипажем которого ещё не знакомы. В отличие от
- * nearestZone считается по XZ без ограничения радиусом: подсказка «куда идти»
- * должна работать и когда игрок на другом конце станции, а не молчать.
- * Возвращает null, когда обойдены все — тогда подсказывать нечего.
+ * Nearest sector whose crew has not been met yet. Unlike
+ * nearestZone it is computed in XZ without a radius limit: the "where to go" hint
+ * must work even when the player is at the other end of the station, not stay silent.
+ * Returns null when all have been visited — then there is nothing to hint.
  */
 export function nearestUnmetZone(
   x: number,

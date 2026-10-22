@@ -7,7 +7,7 @@
  * - High-performance GPU instancing via `THREE.InstancedMesh` for 900+ modular pieces
  * - Physics colliders built from MEASURED mesh bounds (src/data/modelBounds.generated.ts)
  *   via src/data/sceneColliders.ts — terrain boxes + low invisible perimeter walls
- *   at the island edge (пропсы и рампы — точная физика собственных треугольников мешей)
+ *   at the island edge (props and ramps get exact physics from their own mesh triangles)
  * - 6 interactive animated NPC crew members with dynamic look-at rotation
  * - Proximity interaction manager dispatching holographic dialogue HUD prompts
  */
@@ -41,10 +41,10 @@ import {
 const islandSceneData = rawIslandSceneData as unknown as IslandSceneData;
 
 // Preload all unique scene assets in parallel on initial evaluation.
-// NPC- и Mannequin-файлы скипаем (фильтр 1:1 с рендер-группами ниже):
-// их никогда не рендерит WorldScene — CrewNPCs грузит и preload'ит
-// свои Mannequin-клоны и риги сам, а npc_*.glb (~2.4 МБ) здесь лишь
-// раздували очередь drei useProgress и трафик.
+// Skip NPC and Mannequin files (filter 1:1 with the render groups below):
+// WorldScene never renders them — CrewNPCs loads and preloads
+// its own Mannequin clones and rigs, while npc_*.glb (~2.4 MB) here only
+// inflated the drei useProgress queue and traffic.
 if (typeof window !== 'undefined') {
   const uniquePaths = Array.from(new Set(islandSceneData.placedObjects.map((o) => o.modelPath)));
   uniquePaths
@@ -59,9 +59,9 @@ if (typeof window !== 'undefined') {
     });
 }
 
-// NPC-позиции для ProximityManager приходят из ../../data/npcPlacements —
-// один резолвер на всю игру (физика, радар, маркеры над головами, этот
-// менеджер). В кадре — только чтение координат, никакого find() по 997 объектам.
+// NPC positions for ProximityManager come from ../../data/npcPlacements —
+// one resolver for the whole game (physics, radar, overhead markers, this
+// manager). Per frame only coordinates are read, no find() over 997 objects.
 
 // ══════════════════════════════════════════════════════
 // 1. HIGH-PERF INSTANCED RENDERER FOR REPEATED PROPS
@@ -69,7 +69,7 @@ if (typeof window !== 'undefined') {
 interface InstancedModelGroupProps {
   modelPath: string;
   instances: PlacedObject[];
-  /** Общий атлас-материал каталога (один на всю статику — см. kitAssets.ts). */
+  /** Shared catalog atlas material (one for all static geometry — see kitAssets.ts). */
   material: THREE.Material;
 }
 
@@ -77,10 +77,10 @@ function isTerrainSurfaceModel(filenameLower: string): boolean {
   return filenameLower.startsWith('terrain_') || filenameLower.startsWith('rock');
 }
 
-// Деталь-текстура грунта (256²): крупный молтлинг + мелкое зерно + гравийные
-// спеклы. Накладывается в шейдере в МИРОВЫХ координатах (vWorldXZ), поэтому
-// рисунок бесшовно продолжается через стыки плит — вместо «рассеивания по
-// полосам» виден настоящий каменистый грунт.
+// Ground detail texture (256²): large mottling + fine grain + gravel
+// speckles. Applied in the shader in WORLD coordinates (vWorldXZ), so the
+// pattern continues seamlessly across slab seams — instead of "smearing in
+// bands" you see real rocky ground.
 function getTerrainDetailTexture(): THREE.CanvasTexture {
   const w = window as unknown as Record<string, THREE.CanvasTexture | undefined>;
   const cacheKey = '__aetheriaTerrainDetail';
@@ -90,7 +90,7 @@ function getTerrainDetailTexture(): THREE.CanvasTexture {
   canvas.width = canvas.height = 256;
   const ctx = canvas.getContext('2d');
   if (ctx) {
-    // Базовый крупный молтлинг: 16×16 шум → растяжка (мягкие пятна 0.35..0.8)
+    // Base large mottling: 16×16 noise → upscale (soft spots 0.35..0.8)
     const l1 = document.createElement('canvas');
     l1.width = l1.height = 16;
     const c1 = l1.getContext('2d');
@@ -105,7 +105,7 @@ function getTerrainDetailTexture(): THREE.CanvasTexture {
       ctx.imageSmoothingEnabled = true;
       ctx.drawImage(l1, 0, 0, 256, 256);
     }
-    // Средняя октава: 64×64 шум, полупрозрачно (варьирует тон местами)
+    // Mid octave: 64×64 noise, semi-transparent (varies the tone locally)
     const l2 = document.createElement('canvas');
     l2.width = l2.height = 64;
     const c2 = l2.getContext('2d');
@@ -119,7 +119,7 @@ function getTerrainDetailTexture(): THREE.CanvasTexture {
       c2.putImageData(img, 0, 0);
       ctx.drawImage(l2, 0, 0, 256, 256);
     }
-    // Мелкое HOSTOE зерно: 128×128 поверх
+    // Fine dense grain: 128×128 on top
     const l3 = document.createElement('canvas');
     l3.width = l3.height = 128;
     const c3 = l3.getContext('2d');
@@ -133,7 +133,7 @@ function getTerrainDetailTexture(): THREE.CanvasTexture {
       c3.putImageData(img, 0, 0);
       ctx.drawImage(l3, 0, 0, 256, 256);
     }
-    // Гравийные спеклы: тёмные камешки и светлые крапинки
+    // Gravel speckles: dark pebbles and light flecks
     for (let i = 0; i < 900; i++) {
       const x = Math.random() * 256;
       const y = Math.random() * 256;
@@ -156,13 +156,13 @@ function InstancedModelGroup({ modelPath, instances, material }: InstancedModelG
   const gl = useThree((s) => s.gl);
   const instRef = useRef<THREE.InstancedMesh>(null);
   const filenameLower = (modelPath.split('/').pop() || '').toLowerCase();
-  // Смежные плиты пола ничего не отбрасывают друг на друга — отдавать их
-  // в теневой проход впустую; тени формы дают пропсы и скалы terrain_tall.
+  // Adjacent floor slabs cast nothing on each other — sending them into
+  // the shadow pass is wasted; shape shadows come from props and terrain_tall rocks.
   const isGroundPlate = filenameLower.startsWith('terrain_low');
   const isTerrainSurface = isTerrainSurfaceModel(filenameLower);
-  // Фонари получают собственный вариант общего материала с emissive:
-  // плафоны светятся из атласа, металл стойки остаётся тёмным. Это не новый
-  // материал на каждый фонарь — один клон на всю instanced-группу.
+  // Lamps get their own variant of the shared material with emissive:
+  // the heads glow from the atlas, the stem metal stays dark. This is not a new
+  // material per lamp — one clone for the whole instanced group.
   const isLamp = filenameLower.startsWith('lights');
   const lampMask = useMemo(
     () => (isLamp ? buildLampEmissiveMask(scene) : null),
@@ -172,8 +172,8 @@ function InstancedModelGroup({ modelPath, instances, material }: InstancedModelG
     if (!isLamp) return null;
     const clone = material.clone() as THREE.MeshStandardMaterial | THREE.MeshLambertMaterial;
     clone.emissive = new THREE.Color('#ffcf8a');
-    // Только UV-острова двух плафонов; без маски emissive нет вовсе,
-    // чтобы не вернуть свечение всей ножки.
+    // Only the UV islands of the two heads; without the mask there is no emissive at all,
+    // so the whole stem does not glow again.
     clone.emissiveMap = lampMask;
     clone.emissiveIntensity = 0.5;
     clone.needsUpdate = true;
@@ -185,26 +185,26 @@ function InstancedModelGroup({ modelPath, instances, material }: InstancedModelG
     if (lampMaterial) lampMaterial.emissiveIntensity = 0.5 + 0.9 * getNightFactor();
   });
 
-  // Сабмеши модели (до 5 примитивов у грузовиков/буров) запекаются в одну
-  // геометрию: один InstancedMesh на модель вместо N draw call'ов.
+  // The model's submeshes (up to 5 primitives for trucks/drills) are baked into one
+  // geometry: one InstancedMesh per model instead of N draw calls.
   const geometry = useMemo(() => mergeSceneGeometry(scene), [scene]);
   useEffect(() => () => geometry?.dispose(), [geometry]);
-  // Копии атласа внутри GLTF больше не нужны — освобождаем их.
+  // Atlas copies inside the GLTF are no longer needed — release them.
   useEffect(() => disposeKitSourceMaterials(scene), [scene]);
 
   const meshData = useMemo(() => {
-    // Единый источник габаритов с физикой: и визуал, и коллайдеры
-    // масштабируются одним UNIT_SCALE и заякориваются за один и тот же
-    // измеренный минимум Y меша (MODEL_BOUNDS). Прежняя эвристика
-    // getUnitScale по порогам maxDim удаляла рассинхрон только случайно —
-    // у всех 72 моделей каталога maxDim < 10 и она всегда давала 1.
+    // Single source of dimensions shared with physics: both the visual and the colliders
+    // are scaled by one UNIT_SCALE and anchored to the same
+    // measured mesh minimum Y (MODEL_BOUNDS). The previous getUnitScale
+    // heuristic based on maxDim thresholds removed the desync only by chance —
+    // all 72 catalog models have maxDim < 10 and it always returned 1.
     const filename = modelPath.split('/').pop() || '';
     const bounds = MODEL_BOUNDS[filename];
     if (bounds) return { uScale: UNIT_SCALE, minY: bounds.min[1] };
 
-    // Защитный fallback для моделей вне каталога extractModelBounds
-    // (его тест гарантирует запись, поэтому путь мёртв, но без него
-    // новая модель без bounds сломала бы визуал).
+    // Safety fallback for models outside the extractModelBounds catalog
+    // (its test guarantees an entry, so this path is dead, but without it
+    // a new model without bounds would break the visuals).
     const box = new THREE.Box3().setFromObject(scene);
     const size = box.getSize(new THREE.Vector3());
     const maxDim = Math.max(size.x, size.y, size.z);
@@ -226,12 +226,12 @@ function InstancedModelGroup({ modelPath, instances, material }: InstancedModelG
       const rawScale = Array.isArray(obj.scale) ? obj.scale[0] : (obj.scale || 1);
       const fs = rawScale * meshData.uScale;
 
-      // Плита пола terrain_low — идеальный куб 2×2×1: поворот на 90° вокруг Y
-      // не меняет ни силуэт, ни стыковку с соседями (боковые грани равнозначны).
-      // Зато он разворачивает запечённый в атласе линейный градиент верхней
-      // грани (перепад яркости 22% по v шло на КАЖДУЮ плиту в одну сторону) —
-      // без этого все 728 плит несли одну и ту же светотень и складывались в
-      // ровные полосы каждые 2 м.
+      // The terrain_low floor slab is a perfect 2×2×1 cube: a 90° rotation around Y
+      // changes neither the silhouette nor the fit with neighbors (the side faces are equivalent).
+      // But it does rotate the linear gradient baked into the atlas on the top
+      // face (a 22% brightness drop along v went the same way on EVERY slab) —
+      // without this all 728 slabs carried the same shading and folded into
+      // even bands every 2 m.
       const plateYaw = isGroundPlate
         ? (((Math.round(obj.position[0] / 2) * 5 + Math.round(obj.position[2] / 2) * 11) % 4) + 4) % 4 *
           (Math.PI / 2)
@@ -253,7 +253,7 @@ function InstancedModelGroup({ modelPath, instances, material }: InstancedModelG
   useEffect(() => {
     const instMesh = instRef.current;
     if (!instMesh) return;
-    // Локальные матрицы узлов уже запечены в merged-геометрию.
+    // Node local matrices are already baked into the merged geometry.
     for (let i = 0; i < placementMatrices.length; i++) {
       instMesh.setMatrixAt(i, placementMatrices[i]);
     }
@@ -261,48 +261,48 @@ function InstancedModelGroup({ modelPath, instances, material }: InstancedModelG
     instMesh.computeBoundingSphere();
   }, [placementMatrices]);
 
-  // ── Земля: полностью матовый диффузный материал + мир-тайловая деталь ──
+  // ── Ground: fully matte diffuse material + world-tiled detail ──
   //
-  // «Белые блики ровными полосами» на грунте давали две вещи, обе — про
-  // скользящие углы (плиты 2×2 м, уходящие к горизонту):
-  //  1. Диэлектрический specular у MeshStandardMaterial: F0 = 0.04, но на
-  //     скользящих углах Fresnel тянет отражение почти к 1. roughness = 1
-  //     блик не убирает, а только размазывает — вытянутые перспективой плиты
-  //     блестят полосами. Земле блик не нужен вообще, поэтому материал
-  //     подменяется на MeshLambertMaterial: у него specular-ветки в шейдере
-  //     нет, реакция на свет — только диффузная.
-  //  2. Выбор mip-уровня на скользящих углах: анизотропия поднята 4 → 8, а
-  //     две мелкие октавы деталь-текстуры гаснут с дистанцией (к своей
-  //     средней, а не в ноль — иначе земля у горизонта потемнела бы).
-  // Диффузная часть та же (атлас каталога × мир-тайловая деталь), поэтому вид
-  // грунта сохраняется — меняется только его реакция на свет.
-  // ── Земля: полностью матовый диффузный материал + мир-тайловая деталь ──
+  // "White highlights in even bands" on the ground came from two things, both about
+  // grazing angles (2×2 m slabs receding to the horizon):
+  //  1. Dielectric specular of MeshStandardMaterial: F0 = 0.04, but at
+  //     grazing angles Fresnel pulls reflection almost to 1. roughness = 1
+  //     does not remove the highlight, only smears it — slabs stretched by perspective
+  //     shine in bands. The ground needs no highlight at all, so the material
+  //     is swapped for MeshLambertMaterial: it has no specular branch in the shader,
+  //     its response to light is purely diffuse.
+  //  2. Mip-level selection at grazing angles: anisotropy raised 4 → 8, and
+  //     the two fine detail-texture octaves fade with distance (toward their
+  //     average, not to zero — otherwise the ground at the horizon would darken).
+  // The diffuse part is the same (catalog atlas × world-tiled detail), so the ground
+  // look is preserved — only its response to light changes.
+  // ── Ground: fully matte diffuse material + world-tiled detail ──
   //
-  // «Белые блики ровными полосами» на грунте давали две вещи, обе — про
-  // скользящие углы (плиты 2×2 м, уходящие к горизонту):
-  //  1. Диэлектрический specular у MeshStandardMaterial: F0 = 0.04, но на
-  //     скользящих углах Fresnel тянет отражение почти к 1. roughness = 1
-  //     блик не убирает, а только размазывает — вытянутые перспективой плиты
-  //     блестят полосами. Земле блик не нужен вообще, поэтому материал
-  //     подменяется на MeshLambertMaterial: у него specular-ветки в шейдере
-  //     нет, реакция на свет — только диффузная.
-  //  2. Выбор mip-уровня на скользящих углах: анизотропия поднята 4 → 8, а
-  //     две мелкие октавы деталь-текстуры гаснут с дистанцией (к своей
-  //     средней, а не в ноль — иначе земля у горизонта потемнела бы).
-  // Диффузная часть та же (атлас каталога × мир-тайловая деталь), поэтому вид
-  // грунта сохраняется — меняется только его реакция на свет.
+  // "White highlights in even bands" on the ground came from two things, both about
+  // grazing angles (2×2 m slabs receding to the horizon):
+  //  1. Dielectric specular of MeshStandardMaterial: F0 = 0.04, but at
+  //     grazing angles Fresnel pulls reflection almost to 1. roughness = 1
+  //     does not remove the highlight, only smears it — slabs stretched by perspective
+  //     shine in bands. The ground needs no highlight at all, so the material
+  //     is swapped for MeshLambertMaterial: it has no specular branch in the shader,
+  //     its response to light is purely diffuse.
+  //  2. Mip-level selection at grazing angles: anisotropy raised 4 → 8, and
+  //     the two fine detail-texture octaves fade with distance (toward their
+  //     average, not to zero — otherwise the ground at the horizon would darken).
+  // The diffuse part is the same (catalog atlas × world-tiled detail), so the ground
+  // look is preserved — only its response to light changes.
   //
-  // Материал деривативный: карта общая с kitMaterial (одна текстура на всю
-  // сцену), поэтому копий атласа по-прежнему нет.
+  // The material is derivative: the map is shared with kitMaterial (one texture for the whole
+  // scene), so there are still no atlas copies.
   const terrainMaterial = useMemo(() => {
     if (!isTerrainSurface) return null;
 
     const mat = makeCheapMaterial(material, {
       name: 'terrain_matte',
-      // Плиты пола — идеальные кубы, у них и так пофасетные нормали: flat
-      // ничего не добавляет, зато его нормаль из производных экранных
-      // координат неустойчива на скользящих углах. Склонам и скалам
-      // фасетка нужна — им flatShading оставляем.
+      // Floor slabs are perfect cubes and already have per-face normals: flat
+      // adds nothing, while its normal derived from screen-space derivatives
+      // is unstable at grazing angles. Slopes and rocks need the faceting —
+      // flatShading stays on for them.
       flatShading: !isGroundPlate
     });
 
@@ -324,19 +324,19 @@ function InstancedModelGroup({ modelPath, instances, material }: InstancedModelG
         .replace(
           '#include <map_fragment>',
           `#include <map_fragment>
-          // Мир-тайловая деталь: периоды 2 м / 0.69 м / 0.23 м — рисунок
-          // продолжается через стыки плит без швов.
+          // World-tiled detail: periods 2 m / 0.69 m / 0.23 m — the pattern
+          // continues across slab seams without joints.
           float detA = texture2D(uTerrainDetail, vWorldXZ.xz * 0.50).r;
           float detB = texture2D(uTerrainDetail, vWorldXZ.xz * 1.45 + 0.37).r;
           float detC = texture2D(uTerrainDetail, vWorldXZ.xz * 4.30 + 0.71).r;
-          // Мелкие октавы гаснут с дистанцией к своему среднему (0.25), а не
-          // в ноль: средняя яркость грунта от этого не меняется, а рябь под
-          // скользящим углом успевает погаснуть до того, как начнёт алиасить.
+          // Fine octaves fade with distance toward their average (0.25), not
+          // to zero: the average ground brightness does not change, while the ripple at
+          // a grazing angle fades before it starts to alias.
           float detailFade = 1.0 - smoothstep(7.0, 30.0, length(vViewPosition));
           float fine = detB * 0.35 + detC * 0.15;
           float detail = detA * 0.50 + mix(0.25, fine, detailFade);
           diffuseColor.rgb *= (0.78 + 0.44 * detail);
-          // Лёгкий тёпло-холодный разброс оттенка (грунт не монохромен)
+          // Slight warm-cool hue variation (the ground is not monochrome)
           float tint = (detB - 0.5) * 0.12 * detailFade;
           diffuseColor.rgb *= vec3(1.0 + tint, 1.0 + tint * 0.35, 1.0 - tint);`
         );
@@ -348,7 +348,7 @@ function InstancedModelGroup({ modelPath, instances, material }: InstancedModelG
 
   useEffect(() => () => terrainMaterial?.dispose(), [terrainMaterial]);
 
-  // Анизотропия общей карты — один раз на сцену, а не на каждую модель.
+  // Anisotropy of the shared map — once per scene, not per model.
   useEffect(() => {
     const map = (material as THREE.MeshStandardMaterial).map;
     if (!map) return;
@@ -376,15 +376,15 @@ function InstancedModelGroup({ modelPath, instances, material }: InstancedModelG
 // 1b. EXACT PHYSICS OF SLOPES AND PROPS — MESH TRIANGLES (TrimeshCollider)
 // ══════════════════════════════════════════════════════
 /**
- * ModelShapeColliders — точная физика неконвексных форм из их треугольников.
+ * ModelShapeColliders — exact physics of non-convex shapes from their triangles.
  *
- * Механизм доказан на рампах: бокс по AABB антенн/турбин с лопастями/скал/плит
- * с бортиками разъезжался с мешем — игрок заскакивал на пустоту бокса и упирался
- * в невидимые стены. Матрица размещения идентична визуалу InstancedModelGroup
- * (scale·UNIT_SCALE, заякоривание за измеренный минимум Y из MODEL_BOUNDS,
- * rotation, позиция × мировая матрица узла GLTF) — trimesh-физика бит-в-бит
- * с визуалом. В ?debug=1 поверх тела рисуется каркас сумм, чтобы сверять
- * «меш vs коллайдер» глазами.
+ * The mechanism was proven on ramps: an AABB box for antennas/turbines with blades/rocks/slabs
+ * with curbs drifted from the mesh — the player jumped onto the empty box space and hit
+ * invisible walls. The placement matrix is identical to the InstancedModelGroup visual
+ * (scale·UNIT_SCALE, anchored to the measured minimum Y from MODEL_BOUNDS,
+ * rotation, position × GLTF node world matrix) — trimesh physics is bit-for-bit
+ * with the visual. In ?debug=1 a wireframe of the bodies is drawn over them to check
+ * "mesh vs collider" by eye.
  */
 interface ModelShapeCollidersProps {
   modelPath: string;
@@ -411,8 +411,8 @@ function ModelShapeColliders({ modelPath, instances, debugColor }: ModelShapeCol
       const filename = obj.modelPath.split('/').pop() || '';
       const bounds = MODEL_BOUNDS[filename];
       const fs = (Array.isArray(obj.scale) ? obj.scale[0] : obj.scale || 1) * UNIT_SCALE;
-      // Та же матрица размещения, что у InstancedModelGroup: пивот по
-      // измеренному минимуму Y, масштаб fs, yaw из islandScene.json.
+      // Same placement matrix as InstancedModelGroup: pivot at the
+      // measured minimum Y, scale fs, yaw from islandScene.json.
       mat4.compose(
         new THREE.Vector3(
           obj.position[0],
@@ -448,7 +448,7 @@ function ModelShapeColliders({ modelPath, instances, debugColor }: ModelShapeCol
         const geom = new THREE.BufferGeometry();
         geom.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
         geom.setIndex(indices);
-        // Только рёбра (не сетка треугольников) — читаемый каркас поверх мира.
+        // Edges only (not a triangle mesh) — a readable wireframe over the world.
         debugGeometry = new THREE.EdgesGeometry(geom, 1);
         geom.dispose();
       }
@@ -470,11 +470,11 @@ function ModelShapeColliders({ modelPath, instances, debugColor }: ModelShapeCol
 
   if (bodies.length === 0) return null;
 
-  // Один fixed-body на модель вместо одного на каждое размещение: вершин
-  // уже в мировых координатах, поэтому тело стоит в нуле, а trimesh-коллайдеры
-  // просто складываются в компаунд. На карте это ~44 тела вместо ~300 —
-  // ровно та разница, которую профиль показывал в forEach по rigid body
-  // states каждый физический шаг.
+  // One fixed body per model instead of one per placement: the vertices
+  // are already in world coordinates, so the body sits at zero and the trimesh colliders
+  // simply stack into a compound. On the map that is ~44 bodies instead of ~300 —
+  // exactly the difference the profile showed in the forEach over rigid body
+  // states on every physics step.
   return (
     <RigidBody type="fixed" colliders={false}>
       {bodies.map((b) => (
@@ -492,14 +492,14 @@ function ModelShapeColliders({ modelPath, instances, debugColor }: ModelShapeCol
 }
 
 /**
- * Слияние лежащих на одной высоте плит в крупные боксы.
+ * Merging slabs lying at the same height into large boxes.
  *
- * sceneColliders (и его гейт) остаются точными «одна плита — один бокс»:
- * это источник правды для сверки. Но в физический мир 871 отдельный бокс
- * отправлять необязательно — они все статические, осевые и стоят сеткой
- * 2×2 м. Склеиваем подряд идущие плиты одного ряда в один длинный бокс:
- * объём тот же бит-в-бит, а широкая фаза Rapier обходит в разы меньше
- * коллайдеров. Склоны и tall/mining не трогаем (у них другой размер).
+ * sceneColliders (and its gate) remain exact "one slab — one box":
+ * that is the source of truth for verification. But there is no need to send 871 separate boxes
+ * into the physics world — they are all static, axis-aligned and laid out on a
+ * 2×2 m grid. We merge consecutive slabs of one row into one long box:
+ * the volume is the same bit-for-bit, while the Rapier broad phase traverses far fewer
+ * colliders. We leave slopes and tall/mining alone (they have a different size).
  */
 function mergeGroundColliders(colliders: ReturnType<typeof buildSceneColliders>['colliders']): typeof colliders {
   const merged: typeof colliders = [];
@@ -567,7 +567,7 @@ function ProximityManager({
 }): null {
   // Granular Zustand subscriptions: whole-store subscription would re-render
   // this subtree (inside Canvas) on ANY store change (prompt edge, toast,
-  // day/night theme sync) — тот же паттерн, что в CharacterController.tsx.
+  // day/night theme sync) — the same pattern as in CharacterController.tsx.
   const language = useGameStore((s) => s.language);
   const currentPromptTitleRef = useRef<string | null>(null);
 
@@ -578,9 +578,9 @@ function ProximityManager({
     const p = playerPosRef.current;
     if (!Number.isFinite(p.x) || !Number.isFinite(p.z)) return;
 
-    // Actions читаем через getState(): подписка на них не нужна — ссылки
-    // стабильно, а подписка на interactionPrompt ре-рендерила бы поддерево
-    // сцены на каждый proximity edge.
+    // We read actions via getState(): subscribing to them is unnecessary — the references are
+    // stable, while subscribing to interactionPrompt would re-render the scene
+    // subtree on every proximity edge.
     const { setActiveDialogue, setInteractionPrompt } = useGameStore.getState();
 
     // ── 1. Interactive NPC Crew Proximity ──
@@ -589,8 +589,8 @@ function ProximityManager({
 
     for (let i = 0; i < npcList.length; i++) {
       const npc = npcList[i];
-      // Позиция из заранее собранной NPC_POSITIONS (Map) — никакого
-      // placedObjects.find() с toLowerCase() на 114 объектах каждый кадр.
+      // Position from the prebuilt NPC_POSITIONS (Map) — no
+      // placedObjects.find() with toLowerCase() over 114 objects every frame.
       const targetPos = NPC_POSITIONS.get(npc.id) ?? npc.position;
       const dx = p.x - targetPos[0];
       const dz = p.z - targetPos[2];
@@ -633,10 +633,10 @@ function ProximityManager({
 // ══════════════════════════════════════════════════════
 // 3. SCENE COLLIDERS BUILT FROM MEASURED MESH BOUNDS
 // ══════════════════════════════════════════════════════
-// Вся физика вынесена в чистый модуль ../../data/sceneColliders.ts:
-// он строит коллайдеры из islandSceneData + MODEL_BOUNDS без three.js,
-// поэтому тот же список пересчитывает независимый гейт
-// scripts/checkColliders.mjs (Node снимает типы без сборки).
+// All physics is moved into the pure module ../../data/sceneColliders.ts:
+// it builds colliders from islandSceneData + MODEL_BOUNDS without three.js,
+// so the same list is recomputed by the independent gate
+// scripts/checkColliders.mjs (Node strips types without a build).
 
 // ══════════════════════════════════════════════════════
 // 5. WORLD SCENE ROOT
@@ -645,7 +645,7 @@ interface WorldSceneProps {
   playerPosRef?: React.MutableRefObject<THREE.Vector3 | null>;
 }
 
-// ?debug=1: каркас физики поверх мира — инструмент сверки «меш vs коллайдер»
+// ?debug=1: physics wireframe over the world — a tool to check "mesh vs collider"
 const IS_DEBUG =
   typeof window !== 'undefined' && window.location.search.includes('debug');
 
@@ -662,7 +662,7 @@ const DEBUG_KIND_COLORS: Record<string, number> = {
   safetyFloor: 0xa78bfa
 };
 
-/** Оверлей-каркас всех статических коллайдеров + консольный мост __aetheriaDebug. */
+/** Wireframe overlay of all static colliders + the __aetheriaDebug console bridge. */
 function PhysicsDebugOverlay({
   colliders,
   playerPosRef
@@ -708,8 +708,8 @@ function PhysicsDebugOverlay({
           return Math.sqrt(dx * dx + dy * dy + dz * dz) <= radius + r.reach;
         })
         .map((r) => r.snap);
-    // Инвентарь размещений рядом с игроком (имя модели + позиция) — для
-    // полевой сверки раскладки без рендера.
+    // Inventory of placements near the player (model name + position) — for
+    // field verification of the layout without rendering.
     bridge.propsNear = (radius = 4) => {
       const out: { name: string; x: number; y: number; z: number }[] = [];
       islandSceneData.placedObjects.forEach((o) => {
@@ -750,21 +750,21 @@ function PhysicsDebugOverlay({
 }
 
 export default function WorldScene({ playerPosRef }: WorldSceneProps): React.ReactElement {
-  // Один атлас + один материал на всю статику (см. kitAssets.ts).
+  // One atlas + one material for all static geometry (see kitAssets.ts).
   const kitMaterial = useKitMaterial();
 
   const { instancedGroups, shapeGroups, sceneColliders } = useMemo(() => {
-    // GPU-instancing группирует объекты по модели (один draw call на
-    // модель). Физика двухпоточная: земляные объёмы — чистый модуль
-    // sceneColliders (осевые боксы плит/карьера/стен, источник правды —
-    // modelBounds.generated.ts), склоны и ВСЕ ПРОПСЫ — точные trimesh из
-    // собственных треугольников (ModelShapeColliders) — по одному на
-    // размещение, свертку пересчитывает независимый гейт checkColliders.
+    // GPU instancing groups objects by model (one draw call per
+    // model). Physics has two streams: ground volumes — the pure module
+    // sceneColliders (axis-aligned boxes for slabs/quarry/walls, source of truth —
+    // modelBounds.generated.ts), slopes and ALL PROPS — exact trimesh from
+    // their own triangles (ModelShapeColliders) — one per
+    // placement, the folding is recomputed by the independent checkColliders gate.
     const groups: Record<string, PlacedObject[]> = {};
     const shapes: Record<string, PlacedObject[]> = {};
 
-    // Ровно авторская карта: никакого декора/замостки сверху. Всё, что
-    // добавлялось для заполнения пустот, удалено — пустоты вернулись.
+    // Exactly the authored map: no decoration/paving on top. Everything that
+    // was added to fill gaps has been removed — the gaps are back.
     const allPlacements: PlacedObject[] = islandSceneData.placedObjects;
 
     allPlacements.forEach((obj: PlacedObject) => {
@@ -776,8 +776,8 @@ export default function WorldScene({ playerPosRef }: WorldSceneProps): React.Rea
       if (!groups[obj.modelPath]) groups[obj.modelPath] = [];
       groups[obj.modelPath].push(obj);
 
-      // Небоксируемые размещения (склоны + все пропсы) получают точную
-      // физику своими треугольниками; визуал остаётся в общих группах.
+      // Non-boxed placements (slopes + all props) get exact
+      // physics from their own triangles; the visual stays in the shared groups.
       const filename = (obj.modelPath.split('/').pop() || '').toLowerCase();
       const isBoxedTerrain =
         filename.startsWith('terrain_low') ||
@@ -789,15 +789,15 @@ export default function WorldScene({ playerPosRef }: WorldSceneProps): React.Rea
       }
     });
 
-    // Коллайдеры боксов: плиты/карьер/tall + низкий периметр + общий
-    // страховочный пол. Один RigidBody-компаунд жрёт их все, числа
-    // пересчитывает и сверяет независимый гейт scripts/checkColliders.mjs.
+    // Box colliders: slabs/quarry/tall + low perimeter + the shared
+    // safety floor. One RigidBody compound consumes them all; the numbers are
+    // recomputed and verified by the independent gate scripts/checkColliders.mjs.
     const build = buildSceneColliders(islandSceneData, MODEL_BOUNDS);
 
     return {
       instancedGroups: groups,
       shapeGroups: shapes,
-      // Плиты склеены в длинные боксы (объём тот же), остальное — как есть.
+      // Slabs are merged into long boxes (same volume), the rest is as is.
       sceneColliders: [
         ...mergeGroundColliders(build.colliders),
         ...build.subColliders,
@@ -811,7 +811,7 @@ export default function WorldScene({ playerPosRef }: WorldSceneProps): React.Rea
       {/* ── Proximity Interaction Manager for NPC Dialogues ── */}
       <ProximityManager playerPosRef={playerPosRef} />
 
-      {/* ── ?debug=1: каркас физ-коллайдеров поверх мира ── */}
+      {/* ── ?debug=1: physics collider wireframe over the world ── */}
       {IS_DEBUG && <PhysicsDebugOverlay colliders={sceneColliders} playerPosRef={playerPosRef} />}
 
       {/* ── 6 Interactive Animated Crew NPCs with Look-At & Halos ── */}
@@ -819,7 +819,7 @@ export default function WorldScene({ playerPosRef }: WorldSceneProps): React.Rea
         <CrewNPCs playerPosRef={playerPosRef} />
       </Suspense>
 
-      {/* ── Маркеры над экипажем: видно, куда идти, не открывая карту ── */}
+      {/* ── Markers above the crew: see where to go without opening the map ── */}
       <CrewMarkers />
 
       {/* ── Instanced Batched Meshes (GPU instanced in single draw calls) ── */}
@@ -829,10 +829,10 @@ export default function WorldScene({ playerPosRef }: WorldSceneProps): React.Rea
         </Suspense>
       ))}
 
-      {/* ── Тёплые гало над плафонами фонарей (1 draw call, без point light) ── */}
+      {/* ── Warm halos above the lamp heads (1 draw call, no point light) ── */}
       <LampGlow />
 
-      {/* ── Exact trimesh physics: склоны и все пропсы — своими треугольниками ── */}
+      {/* ── Exact trimesh physics: slopes and all props via their own triangles ── */}
       {Object.entries(shapeGroups).map(([modelPath, instances]) => (
         <Suspense key={`shape-physics-${modelPath}`} fallback={null}>
           <ModelShapeColliders
@@ -844,9 +844,9 @@ export default function WorldScene({ playerPosRef }: WorldSceneProps): React.Rea
       ))}
 
       {/* ── Unified Compound Static Physics Body ── */}
-      {/* Боксовые коллайдеры — только земля (плиты/карьер/tall) + периметр
-          и страховочный пол из sceneColliders; у склонов и пропсов точная
-          trimesh-физика своих мешей выше (ModelShapeColliders). */}
+      {/* Box colliders — only ground (slabs/quarry/tall) + the perimeter
+          and safety floor from sceneColliders; slopes and props get exact
+          trimesh physics of their own meshes above (ModelShapeColliders). */}
       <RigidBody type="fixed" colliders={false}>
         {sceneColliders.map((item) => (
           <CuboidCollider

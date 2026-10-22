@@ -1,23 +1,23 @@
 'use client';
 
 /**
- * CrewMarkers — парящие маркеры над членами экипажа.
+ * CrewMarkers — floating markers above crew members.
  *
- * Отвечает на вопрос «куда идти», не открывая карту: издалека видно, где стоит
- * человек и в каком он секторе. Цвет секторный из zones.ts, позиция — из общего
- * резолвера npcPlacements.ts (тот же ответ, что у физики и радара), так что
- * маркер физически не может висеть не над тем местом, где реально стоит NPC.
+ * Answers "where to go" without opening the map: from afar you can see where
+ * a person stands and which sector they are in. The color is per-sector from zones.ts, the position comes from the shared
+ * resolver npcPlacements.ts (the same answer as physics and the radar), so
+ * the marker physically cannot hang anywhere other than where the NPC actually stands.
  *
- * Состояние читается из досье: непройденный сектор пульсирует и горит ярко,
- * пройденный успокаивается и тускнеет. Движение здесь — не украшение: глаз
- * цепляется за него раньше, чем за цвет, поэтому «где я ещё не был» видно
- * боковым зрением.
+ * State is read from the dossier: an unvisited sector pulses and glows brightly,
+ * a visited one calms down and dims. Motion here is not decoration: the eye
+ * catches it before it catches color, so "where I have not been yet" is visible
+ * in peripheral vision.
  *
- * Маркеры — спрайты, то есть всегда развёрнуты к камере, и пишутся с обычным
- * тестом глубины: за постройкой маркер честно скрывается, а не просвечивает
- * сквозь стену. Дальние сектора за рельефом показывает тактическая карта.
+ * The markers are sprites, i.e. always facing the camera, and are drawn with normal
+ * depth testing: behind a structure the marker is honestly hidden instead of showing
+ * through the wall. Distant sectors behind the terrain are shown by the tactical map.
  *
- * Объектов в редакторе карты для этого не нужно ни одного — всё системное.
+ * No objects are needed in the map editor for this — it is all systematic.
  */
 
 import React, { useMemo, useRef, useEffect } from 'react';
@@ -28,21 +28,21 @@ import { NPC_POSITIONS } from '../../data/npcPlacements';
 import { useGameStore } from '../../store/useGameStore';
 import { NPCId } from '../../types/store';
 
-// Персонаж 0.55 м (см. CrewNPCs), рост гуляет в пределах 0.53..0.58, поэтому
-// фиксированная высота над ступнями подходит всем шестерым. Поднято чуть выше
-// головы намеренно: маркер должен выходить из-за низких бортиков платформ.
+// The character is 0.55 m (see CrewNPCs), height varies within 0.53..0.58, so
+// a fixed height above the feet suits all six. It is raised slightly above
+// the head deliberately: the marker must clear the low platform edges.
 const MARKER_HEIGHT = 1.0;
 const MARKER_SIZE = 0.5;
 
-// Второй слой, который не считается с глубиной. База плотная: командир и
-// инженер стоят за платформами, и честный маркер оттуда просто не виден — а
-// вопрос «куда идти» задаётся именно тогда, когда цель за постройкой. Слабый
-// просвечивающий ободок — общепринятая игровая условность; основной, честно
-// загораживаемый слой остаётся, поэтому в открытом поле виден он.
+// A second layer that ignores depth. The base is dense: the commander and
+// the engineer stand behind platforms, and an honest marker is simply not visible from there — yet
+// the question "where to go" is asked exactly when the target is behind a structure. A faint
+// see-through rim is a common game convention; the main, honestly
+// occluded layer remains, so in open ground it is the one you see.
 const GHOST_MIN_OPACITY = 0.3;
 const GHOST_MAX_OPACITY = 0.55;
 
-/** '#fbbf24' → 'rgba(251, 191, 36, a)' для заливок в canvas. */
+/** '#fbbf24' → 'rgba(251, 191, 36, a)' for canvas fills. */
 function hexToRgba(hex: string, alpha: number): string {
   const value = hex.replace('#', '');
   const r = parseInt(value.slice(0, 2), 16);
@@ -52,19 +52,19 @@ function hexToRgba(hex: string, alpha: number): string {
 }
 
 /**
- * Круглый маячок, нарисованный сразу в цвете сектора.
+ * Round beacon drawn directly in the sector color.
  *
- * Форма прежняя — кольцо с мягким ядром; выросла только яркость. Почему не
- * tinted-спрайт, как раньше: материал умеет лишь умножать текстуру на цвет, а
- * для яркого маркера нужны независимые цвета — насыщенное кольцо сектора,
- * белое ядро и тёмная подложка. Поэтому на каждый из шести секторов рисуется
- * своя текстура 256² (это ~2 МБ на весь экипаж), зато маркер остаётся одним
+ * The shape is the same — a ring with a soft core; only the brightness grew. Why not a
+ * tinted sprite as before: the material can only multiply the texture by a color, while
+ * a bright marker needs independent colors — a saturated sector ring,
+ * a white core and a dark backing. So for each of the six sectors a
+ * separate 256² texture is drawn (~2 MB for the whole crew), but the marker stays one
  * draw call.
  *
- * Яркость держится на трёх слоях: широкое цветное свечение, толстое кольцо в
- * полную силу и белое ядро, которое остаётся белым при любом цвете сектора.
- * Тёмная подложка под кольцом нужна светлым днём: на выбеленной плите иначе
- * пропадает даже насыщенный цвет, а тёмный кант отделяет кольцо от фона.
+ * Brightness rests on three layers: a wide colored glow, a thick ring at
+ * full strength and a white core that stays white regardless of the sector color.
+ * The dark backing under the ring is needed in bright daylight: on a sun-bleached plate
+ * even a saturated color otherwise disappears, and the dark edge separates the ring from the background.
  */
 function makeMarkerTexture(hexColor: string): THREE.CanvasTexture | null {
   if (typeof document === 'undefined') return null;
@@ -77,8 +77,8 @@ function makeMarkerTexture(hexColor: string): THREE.CanvasTexture | null {
 
   const c = size / 2;
 
-  // Свечение: широкий цветной ореол, из-за которого маркер видно боковым
-  // зрением раньше, чем кольцо.
+  // Glow: a wide colored halo that makes the marker visible in peripheral
+  // vision before the ring.
   const glow = ctx.createRadialGradient(c, c, 0, c, c, c);
   glow.addColorStop(0, hexToRgba(hexColor, 0.62));
   glow.addColorStop(0.5, hexToRgba(hexColor, 0.22));
@@ -86,22 +86,22 @@ function makeMarkerTexture(hexColor: string): THREE.CanvasTexture | null {
   ctx.fillStyle = glow;
   ctx.fillRect(0, 0, size, size);
 
-  // Тёмная подложка чуть шире кольца: дневной контраст на светлых плитах.
+  // Dark backing slightly wider than the ring: daytime contrast on light plates.
   ctx.beginPath();
   ctx.arc(c, c, 72, 0, Math.PI * 2);
   ctx.lineWidth = 24;
   ctx.strokeStyle = 'rgba(0, 0, 0, 0.34)';
   ctx.stroke();
 
-  // Само кольцо — толстое и в полную силу цвета сектора.
+  // The ring itself — thick and at full sector color strength.
   ctx.beginPath();
   ctx.arc(c, c, 72, 0, Math.PI * 2);
   ctx.lineWidth = 15;
   ctx.strokeStyle = hexColor;
   ctx.stroke();
 
-  // Белое ядро с коротким свечением: главный источник «яркости», не
-  // зависящий от цвета сектора.
+  // White core with a short glow: the main source of "brightness", not
+  // dependent on the sector color.
   const core = ctx.createRadialGradient(c, c, 0, c, c, 24);
   core.addColorStop(0, 'rgba(255, 255, 255, 0.98)');
   core.addColorStop(0.35, 'rgba(255, 255, 255, 0.72)');
@@ -131,13 +131,13 @@ interface MarkerRecord {
 }
 
 /**
- * Обычное смешивание, а не аддитивное.
+ * Normal blending, not additive.
  *
- * Аддитивный маркер на светлой поверхности исчезает: база стоит под солнцем, и
- * прибавка цвета к уже почти белому фрагменту платформы ничего не меняет —
- * проверено, кольцо читалось на тёмной земле и полностью пропадало на светлой
- * плите. Обычное смешивание даёт цветное кольцо и на светлом, и на тёмном;
- * мягкость берётся из альфы текстуры, а не из режима наложения.
+ * An additive marker disappears on a light surface: the base sits in the sun, and
+ * adding color to an already almost white platform fragment changes nothing —
+ * verified, the ring read on dark ground and vanished completely on a light
+ * plate. Normal blending gives a colored ring on both light and dark;
+ * softness comes from the texture alpha, not from the blend mode.
  */
 function makeSpriteMaterial(
   texture: THREE.CanvasTexture | null,
@@ -145,23 +145,23 @@ function makeSpriteMaterial(
 ): THREE.SpriteMaterial {
   return new THREE.SpriteMaterial({
     map: texture || undefined,
-    // Цвет уже запечён в текстуру (кольцо + подложка + ядро), поэтому материал
-    // не тонирует её, а только показывает как есть.
+    // The color is already baked into the texture (ring + backing + core), so the material
+    // does not tint it, only shows it as is.
     color: 0xffffff,
     transparent: true,
     opacity: opts.opacity,
     depthWrite: false,
     depthTest: opts.depthTest,
-    // Маркер — интерфейс поверх мира, а не предмет в воздухе сектора:
-    // дымка зоны не должна его приглушать.
+    // The marker is UI over the world, not an object in the sector air:
+    // zone fog must not dim it.
     fog: false
   });
 }
 
 export default function CrewMarkers(): React.ReactElement {
-  // По паре материалов и своей текстуре на человека: цвет секторный и запечён
-  // в canvas, поэтому шесть маркеров остаются шестью draw call, а не несут
-  // шейдерную возню с раскраской.
+  // A pair of materials and its own texture per person: the color is per-sector and baked
+  // into canvas, so six markers stay six draw calls instead of carrying
+  // shader coloring work.
   const markers = useMemo<MarkerRecord[]>(
     () =>
       ZONE_ORDER.map((zoneId) => {
@@ -198,8 +198,8 @@ export default function CrewMarkers(): React.ReactElement {
     const delta = Math.min(rawDelta, 0.05);
     elapsed.current += delta;
     const t = elapsed.current;
-    // Досье читаем через getState(): подписка на metCrew ре-рендерила бы поддерево
-    // сцены при каждом знакомстве, а меняются здесь только прозрачность и размер.
+    // We read the dossier via getState(): subscribing to metCrew would re-render the scene
+    // subtree on every introduction, while only opacity and size change here.
     const met = useGameStore.getState().metCrew;
 
     markers.forEach((m, i) => {
@@ -208,7 +208,7 @@ export default function CrewMarkers(): React.ReactElement {
       if (!sprite && !ghost) return;
 
       const isMet = met.includes(m.crewId);
-      // Непройденный сектор дышит вдвое быстрее и глубже пройденного.
+      // An unvisited sector breathes twice as fast and deeper than a visited one.
       const pulse = 0.5 + 0.5 * Math.sin(t * (isMet ? 0.9 : 2.6) + i);
       const bob = m.position[1] + Math.sin(t * 1.1 + i) * 0.06;
       const scale = MARKER_SIZE * (isMet ? 0.86 : 0.98 + 0.14 * pulse);
@@ -217,8 +217,8 @@ export default function CrewMarkers(): React.ReactElement {
       sprite?.scale.set(scale, scale, 1);
       if (sprite) sprite.position.y = bob;
 
-      // Просвечивающий слой тише основного и почти не дышит: он подсказка, а не
-      // второй полноценный маркер, и не должен перетягивать внимание на себя.
+      // The see-through layer is quieter than the main one and barely breathes: it is a hint, not
+      // a second full marker, and must not draw attention to itself.
       m.ghost.opacity = isMet
         ? GHOST_MIN_OPACITY * 0.5
         : GHOST_MIN_OPACITY + (GHOST_MAX_OPACITY - GHOST_MIN_OPACITY) * pulse;
@@ -238,8 +238,8 @@ export default function CrewMarkers(): React.ReactElement {
             position={m.position}
             material={m.material}
           />
-          {/* Просвечивающий слой рисуется последним из прозрачных: иначе его
-              перекрыл бы собственный честный слой. */}
+          {/* The see-through layer is drawn last among transparent objects: otherwise its own
+              honest layer would cover it. */}
           <sprite
             ref={(el) => {
               ghosts.current[i] = el;

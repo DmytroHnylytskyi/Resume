@@ -1,16 +1,16 @@
 'use client';
 
 /**
- * Starfield — звёздное поле с магнитудным разбросом.
+ * Starfield — star field with magnitude scatter.
  *
- * Старая версия рисовала 1400 одинаковых точек 2.4 px одним цветом с мягким
- * спрайтом: небо читалось как крупная «крупа». Здесь у каждой звезды свои
- * размер, цвет и фаза мерцания. Большинство — мелкие 0.8–1.4 px, яркие
- * 1.5–2.2 px редкие, как в реальном ночном небе. Никаких текстур: ядро и
- * короткий ореол считаются в шейдере по gl_PointCoord, один draw call.
+ * The old version drew 1400 identical 2.4 px points in one color with a soft
+ * sprite: the sky read as coarse "grain". Here each star has its own size,
+ * color and twinkle phase. Most are small, 0.8–1.4 px; bright 1.5–2.2 px
+ * stars are rare, as in a real night sky. No textures: the core and a short
+ * halo are computed in the shader from gl_PointCoord, one draw call.
  *
- * Радиус 800: звёзды должны быть дальше горизонта планеты (~636 м), иначе
- * часть звёзд оказывалась бы перед планетой и просвечивала сквозь неё.
+ * Radius 800: stars must lie beyond the planet's horizon (~636 m), otherwise
+ * some stars would appear in front of the planet and show through it.
  */
 
 import React, { useEffect, useMemo } from 'react';
@@ -35,7 +35,7 @@ const VERTEX_SHADER = /* glsl */ `
     vTwinkle = 0.78 + 0.22 * sin(uTime * 0.7 + aPhase);
     vec4 mv = modelViewMatrix * vec4(position, 1.0);
     gl_Position = projectionMatrix * mv;
-    // CSS-пиксели → физические: иначе на dpr 2 звёзды вдвое мельче.
+    // CSS pixels → physical: otherwise at dpr 2 the stars are half as small.
     gl_PointSize = aSize * uDpr;
   }
 `;
@@ -74,8 +74,8 @@ export default function Starfield(): React.ReactElement | null {
     ];
 
     for (let i = 0; i < count; i++) {
-      // Верхняя полусфера с небольшим заходом под горизонт; нижние звёзды
-      // всё равно закрывает планета.
+      // Upper hemisphere with a slight dip below the horizon; the lower stars
+      // are occluded by the planet anyway.
       const y = -0.9 + Math.random() * 1.9;
       const phi = Math.random() * Math.PI * 2;
       const r = Math.sqrt(Math.max(0.05, 1 - y * y));

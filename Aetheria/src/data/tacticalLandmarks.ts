@@ -1,19 +1,19 @@
 /**
- * tacticalLandmarks.ts — единственный источник данных для тактической карты.
+ * tacticalLandmarks.ts — the only data source for the tactical map.
  *
- * Раньше MiniRadar держал LANDMARKS с захардкоженными координатами, и три
- * пина проектов (Forma-3D, TerraScope, Lumina) брали СТАРЫЕ позиции: после
- * пересборки карты они сбивались в центр и налезали друг на друга. Здесь
- * позиции берутся из NPC_POSITIONS (тот же резолвер, что у физики, маркеров
- * и радара).
+ * Previously MiniRadar kept LANDMARKS with hardcoded coordinates, and three
+ * project pins (Forma-3D, TerraScope, Lumina) used STALE positions: after
+ * the map was rebuilt they collapsed into the center and overlapped each other. Here
+ * positions come from NPC_POSITIONS (the same resolver as physics, markers
+ * and radar).
  *
- * На карте только экипаж: шаттл — обычная декорация мира, а не точка маршрута,
- * поэтому в лендмарки он намеренно НЕ входит (пин с «S» и строка «DOCKED»
- * убраны). Его силуэт на схеме тоже больше не рисуется.
+ * The map shows only the crew: the shuttle is ordinary world decoration, not a route
+ * point, so it is intentionally NOT included in the landmarks (the "S" pin and the "DOCKED"
+ * line were removed). Its silhouette is no longer drawn on the schematic either.
  *
- * Карта — производная авторской карты, а не отдельный список. После любого
- * `node scripts/importGameMap.mjs` координаты, порядок и статусы пересчитаются
- * сами; руками ничего синхронизировать не нужно.
+ * The map is a derivative of the authored map, not a separate list. After any
+ * `node scripts/importGameMap.mjs` the coordinates, order and statuses are recalculated
+ * automatically; nothing needs manual synchronization.
  */
 
 import rawIslandSceneData from './islandScene.json';
@@ -31,11 +31,11 @@ export interface TacticalLabel {
 }
 
 export interface TacticalLandmark {
-  /** NPC id: карта показывает только экипаж. */
+  /** NPC id: the map shows only the crew. */
   id: string;
   zoneId: ZoneId;
   crewId: NPCId;
-  /** Порядок обхода 1..6 — он же номер на пине. */
+  /** Visit order 1..6 — also the number on the pin. */
   order: number;
   name: TacticalLabel;
   sector: TacticalLabel;
@@ -47,10 +47,10 @@ export interface TacticalLandmark {
   targetKey: MaterialKey;
 }
 
-/** Нормализация карты: последний 0.44 ширины/высоты — от центра к краю. */
+/** Map normalization: the last 0.44 of width/height — from center to edge. */
 export const TACTICAL_MAP_SPREAD_PERCENT = 44;
 
-/** Полуразмах авторской карты по фактическим размещениям (обычно 30). */
+/** Half-span of the authored map over actual placements (usually 30). */
 export const ISLAND_SPAN = (() => {
   let max = 13;
   for (const o of islandSceneData.placedObjects ?? []) {
@@ -80,13 +80,13 @@ const crewLandmarks: TacticalLandmark[] = ZONE_ORDER.map((zoneId) => {
 });
 
 /**
- * Карта = экипаж в порядке обхода. Шаттл из лендмарков удалён: это декорация
- * стартовой площадки, а не точка маршрута, и пин с легендой только отвлекали
- * от шести секторов.
+ * Map = crew in visit order. The shuttle was removed from landmarks: it is decoration
+ * of the starting pad, not a route point, and the pin with its legend only distracted
+ * from the six sectors.
  */
 export const CREW_LANDMARKS = crewLandmarks;
 
-/** Мировая точка → проценты на квадратной карте (x вправо, z вниз). */
+/** World point → percentages on a square map (x right, z down). */
 export function worldToMapPercent(x: number, z: number): { left: number; top: number } {
   return {
     left: 50 + (x / ISLAND_SPAN) * TACTICAL_MAP_SPREAD_PERCENT,

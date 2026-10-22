@@ -1,21 +1,21 @@
 'use client';
 
 /**
- * CosmicDust — пыль и мелкие обломки, размазанные по ВСЕМУ небу.
+ * CosmicDust — dust and small debris smeared across the WHOLE sky.
  *
- * Появилась взамен роя искр, который крутился вплотную вокруг сингулярности:
- * локальный рой читался отдельным гиммиком у дыры и подчёркивал, что всё
- * остальное небо пустое. Здесь частицы распределены по толстой оболочке вокруг
- * сцены, каждая дрейфует своим ходом и отражается от границ оболочки, поэтому
- * «жизнь» видна в любую сторону, куда ни повернись.
+ * Introduced to replace the spark swarm that spun tightly around the singularity:
+ * the local swarm read as a separate gimmick at the hole and emphasized that all
+ * the rest of the sky was empty. Here particles are distributed over a thick shell around
+ * the scene, each drifts on its own course and reflects off the shell bounds, so
+ * "life" is visible in every direction you turn.
  *
- * Частицы видны и днём (приглушённо), и ночью (ярко): днём небо не должно
- * выглядеть пустым, а ночью пыль сливается со звёздным полем.
+ * Particles are visible both by day (dimmed) and at night (bright): by day the sky should not
+ * look empty, and at night the dust blends with the star field.
  *
- * Оболочка начинается на 110 м — заметно дальше края карты (±29 м), поэтому
- * пыль никогда не висит в лицо игроку и не проваливается под рельеф; по высоте
- * нижняя граница поднята над самыми высокими постройками, чтобы частицы не
- * висели между зданиями.
+ * The shell starts at 110 m — noticeably beyond the map edge (±29 m), so
+ * the dust never hangs in the player's face and never sinks below the terrain; in height
+ * the lower bound is raised above the tallest structures so particles do not
+ * hang between buildings.
  */
 
 import React, { useMemo, useRef, useEffect } from 'react';
@@ -28,19 +28,19 @@ const COUNT = visualQuality.dustCount;
 const R_MIN = 110;
 const R_MAX = 330;
 const Y_MIN = 35;
-// Дрейф каждой частицы — единицы метров в секунду: на дистанции 200–300 м это
-// десятые доли градуса в секунду, то есть спокойное движение, заметное глазом,
-// но не «снегопад».
+// Each particle's drift is a few meters per second: at a distance of 200–300 m that is
+// tenths of a degree per second, i.e. calm motion noticeable to the eye,
+// but not a "snowfall".
 const SPEED_MIN = 3;
 const SPEED_MAX = 9;
-const FIELD_SPIN = 0.004; // рад/с — медленный оборот всего поля
+const FIELD_SPIN = 0.004; // rad/s — slow rotation of the whole field
 
 export default function CosmicDust(): React.ReactElement {
   const groupRef = useRef<THREE.Group>(null);
   const pointsRef = useRef<THREE.Points>(null);
   const materialRef = useRef<THREE.PointsMaterial>(null);
 
-  // Мягкий спрайт частицы: радиальный градиент 64×64, печётся один раз.
+  // Soft particle sprite: 64×64 radial gradient, baked once.
   const spotTexture = useMemo(() => {
     if (typeof document === 'undefined') return null;
     const canvas = document.createElement('canvas');
@@ -64,8 +64,8 @@ export default function CosmicDust(): React.ReactElement {
     const positions = new Float32Array(COUNT * 3);
     const velocities = new Float32Array(COUNT * 3);
     for (let i = 0; i < COUNT; i++) {
-      // Равномерно по верхней полусфере оболочки: y в [0,1) даёт равномерное
-      // покрытие сферического сегмента, а не сгусток у полюса.
+      // Uniform over the upper hemisphere of the shell: y in [0,1) gives uniform
+      // coverage of the spherical segment, not a clump at the pole.
       const yDir = Math.random();
       const rXZ = Math.sqrt(Math.max(0, 1 - yDir * yDir));
       const phi = Math.random() * Math.PI * 2;
@@ -99,8 +99,8 @@ export default function CosmicDust(): React.ReactElement {
     const g = groupRef.current;
     if (g) g.rotation.y = elapsed.current * FIELD_SPIN;
 
-    // На low-пресете буфер обновляется через кадр: 350 частиц на 30 Гц
-    // визуально не отличаются от 60 Гц, а upload и цикл по массиву дешевле.
+    // On the low preset the buffer updates every other frame: 350 particles at 30 Hz
+    // look no different from 60 Hz, while the upload and array loop are cheaper.
     frameParity.current ^= 1;
     const attr = pointsRef.current?.geometry.getAttribute('position');
     if (!(attr instanceof THREE.BufferAttribute)) return;
@@ -122,9 +122,9 @@ export default function CosmicDust(): React.ReactElement {
 
       const r = Math.sqrt(x * x + y * y + z * z) || 1;
 
-      // Отражение от границ оболочки: гасим радиальную составляющую скорости,
-      // чтобы частицы оставались в своём слое, а не улетали в бесконечность и
-      // не сбивались в шар у камеры.
+      // Reflection off the shell bounds: we cancel the radial velocity component
+      // so particles stay in their layer instead of flying off to infinity and
+      // bunching into a ball at the camera.
       if (r > R_MAX || r < R_MIN || y < Y_MIN) {
         const nx = x / r;
         const ny = y / r;
@@ -166,8 +166,8 @@ export default function CosmicDust(): React.ReactElement {
           transparent
           opacity={0.42}
           depthWrite={false}
-          // Пыль лежит в космосе (110–330 м), а туман — атмосфера станции:
-          // на такой дистанции он погасил бы её целиком.
+          // The dust lies in space (110–330 m), while fog is the station's atmosphere:
+          // at such a distance it would extinguish it entirely.
           fog={false}
           blending={THREE.AdditiveBlending}
         />

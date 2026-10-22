@@ -2,22 +2,22 @@
 /**
  * extractModelBounds.mjs
  *
- * Извлекает реальные геометрические границы (AABB) всех GLTF/GLB моделей
- * из public/model/kaykit_space/ и генерирует src/data/modelBounds.generated.ts
- * — источник правды о размерах для физики коллизий.
+ * Extracts the real geometric bounds (AABB) of all GLTF/GLB models
+ * from public/model/kaykit_space/ and generates src/data/modelBounds.generated.ts
+ * — the source of truth about dimensions for collision physics.
  *
- * Математика AABB эквивалентна THREE.Box3().setFromObject(gltf.scene) в three.js
- * сразу после GLTFLoader.load: union по всем мешам, достижимым из корней
- * дефолтной сцены, с учётом трансформов графа узлов (node.matrix или TRS),
- * БЕЗ какого-либо внешнего масштаба.
+ * AABB math is equivalent to THREE.Box3().setFromObject(gltf.scene) in three.js
+ * right after GLTFLoader.load: union over all meshes reachable from the default
+ * scene roots, including node-graph transforms (node.matrix or TRS),
+ * WITHOUT any external scale.
  *
- * Чистый Node (ESM), без внешних зависимостей. .bin и текстуры не читаются:
- * достаточно accessor.min/max атрибута POSITION (обязательны по спецификации
- * glTF 2.0 для POSITION).
+ * Pure Node (ESM), no external dependencies. .bin files and textures are not read:
+ * accessor.min/max of the POSITION attribute is enough (mandatory per the glTF 2.0
+ * specification for POSITION).
  *
- * Самопроверка: каждая уникальная модель из src/data/islandScene.json обязана
- * иметь запись; все числа конечны; размер в разумных пределах (0.01..1000).
- * Любое нарушение => exit 1.
+ * Self-check: every unique model from src/data/islandScene.json must
+ * have a record; all numbers are finite; size is within reasonable limits (0.01..1000).
+ * Any violation => exit 1.
  */
 
 import fs from 'node:fs';
@@ -30,15 +30,15 @@ const MODEL_DIR = path.join(ROOT, 'public', 'model', 'kaykit_space');
 const SCENE_JSON = path.join(ROOT, 'src', 'data', 'islandScene.json');
 const OUT_FILE = path.join(ROOT, 'src', 'data', 'modelBounds.generated.ts');
 
-// ── Мат4 утилиты (column-major, как в three.js / glTF) ─────────────────────
+// ── Mat4 utilities (column-major, as in three.js / glTF) ─────────────────────
 
 const IDENTITY = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 
-/** node.matrix => column-major 4x4 напрямую. TRS => compose(T * R * S). */
+/** node.matrix => column-major 4x4 directly. TRS => compose(T * R * S). */
 function localMatrixOf(node) {
   if (node.matrix) return node.matrix.slice();
   const t = node.translation ?? [0, 0, 0];
-  const r = node.rotation ?? [0, 0, 0, 1]; // кватернион [x, y, z, w]
+  const r = node.rotation ?? [0, 0, 0, 1]; // quaternion [x, y, z, w]
   const s = node.scale ?? [1, 1, 1];
   const [x, y, z, w] = r;
   const x2 = x + x, y2 = y + y, z2 = z + z;
@@ -74,13 +74,13 @@ function transformPoint(m, x, y, z) {
   ];
 }
 
-// ── Чтение glTF JSON (.gltf целиком JSON; .glb — контейнер) ────────────────
+// ── Reading glTF JSON (.gltf is plain JSON; .glb is a container) ────────────────
 
 const GLB_MAGIC = 0x46546c67; // 'glTF'
 const CHUNK_TYPE_JSON = 0x4e4f534a; // 'JSON'
 
-/** .glb: 12-байтовый заголовок (magic, version, length), затем JSON-чанк:
- *  длина чанка — байты 12..16 (uint32 LE), тип — байты 16..20. */
+/** .glb: 12-byte header (magic, version, length), then the JSON chunk:
+ *  chunk length — bytes 12..16 (uint32 LE), type — bytes 16..20. */
 function readGlbJsonChunks(buffer) {
   if (buffer.length < 20) throw new Error('GLB file too short');
   const magic = buffer.readUInt32LE(0);
@@ -102,12 +102,12 @@ function loadGltfJson(filePath) {
   return JSON.parse(buf.toString('utf8'));
 }
 
-// ── AABB: union позиционных bbox всех мешей дефолтной сцены ────────────────
+// ── AABB: union of positional bboxes of all meshes in the default scene ────────────────
 
 function computeUnionBounds(doc) {
   const { nodes = [], meshes = [], accessors = [] } = doc;
   const rootScene = doc.scenes?.[doc.scene ?? 0] ?? doc.scenes?.[0];
-  if (!rootScene) return null; // как в three.js: пустая сцена => Box3.isEmpty()
+  if (!rootScene) return null; // as in three.js: empty scene => Box3.isEmpty()
 
   const min = [Infinity, Infinity, Infinity];
   const max = [-Infinity, -Infinity, -Infinity];
@@ -121,7 +121,7 @@ function computeUnionBounds(doc) {
 
   while (stack.length > 0) {
     const [nodeIndex, parentWorld] = stack.pop();
-    // защита от циклов в графе (битые/вредоносные файлы)
+    // protection against cycles in the graph (broken/malicious files)
     if (visited.has(nodeIndex)) continue;
     visited.add(nodeIndex);
 
@@ -138,7 +138,7 @@ function computeUnionBounds(doc) {
           throw new Error(`POSITION accessor #${posAccIndex} lacks min/max`);
         }
         meshPrimCount++;
-        // 8 углов локального bbox, преобразованных матрицей узла.
+        // 8 corners of the local bbox transformed by the node matrix.
         for (const cx of [acc.min[0], acc.max[0]]) {
           for (const cy of [acc.min[1], acc.max[1]]) {
             for (const cz of [acc.min[2], acc.max[2]]) {
@@ -162,7 +162,7 @@ function computeUnionBounds(doc) {
   return { min, max, meshPrimCount };
 }
 
-// ── Генерация модуля ───────────────────────────────────────────────────────
+// ── Module generation ───────────────────────────────────────────────────────
 
 const round6 = (v) => {
   const r = Math.round(v * 1e6) / 1e6;
@@ -207,7 +207,7 @@ function main() {
     bounds[file] = { min, max, size, maxDim };
   }
 
-  // ── Самопроверка: каждая уникальная модель islandScene.json обязана быть ──
+  // ── Self-check: every unique model from islandScene.json must be present ──
   const sceneRaw = fs.readFileSync(SCENE_JSON, 'utf8');
   const scene = JSON.parse(sceneRaw);
   const sceneFiles = new Set(
@@ -216,14 +216,14 @@ function main() {
       .filter((p) => typeof p === 'string' && /\.(gltf|glb)$/i.test(p))
       .map((p) => path.posix.basename(p))
   );
-  console.log(`[check] islandScene.json: уникальных моделей = ${sceneFiles.size}`);
+  console.log(`[check] islandScene.json: unique models = ${sceneFiles.size}`);
 
   const missing = [...sceneFiles].filter((f) => !bounds[f]).sort();
   if (missing.length > 0) {
-    console.error(`FAIL: модели сцены без записи в MODEL_BOUNDS: ${missing.join(', ')}`);
+    console.error(`FAIL: scene models without a MODEL_BOUNDS record: ${missing.join(', ')}`);
     process.exit(1);
   }
-  console.log(`[check] все ${sceneFiles.size} моделей сцены присутствуют в MODEL_BOUNDS`);
+  console.log(`[check] all ${sceneFiles.size} scene models are present in MODEL_BOUNDS`);
 
   let rangeViolations = [];
   for (const [file, b] of Object.entries(bounds)) {
@@ -235,24 +235,24 @@ function main() {
     }
   }
   if (rangeViolations.length > 0) {
-    console.error(`FAIL: габариты вне разумных пределов (0.01..1000):`);
+    console.error(`FAIL: dimensions outside reasonable limits (0.01..1000):`);
     for (const v of rangeViolations) console.error(`  - ${v}`);
     process.exit(1);
   }
-  console.log(`[check] все ${Object.keys(bounds).length} записей: числа конечны, размер в 0.01..1000`);
+  console.log(`[check] all ${Object.keys(bounds).length} records: numbers are finite, size within 0.01..1000`);
 
   if (filesWithoutMeshes.length > 0) {
-    // Модели без мешей не пишем — но сообщаем явно.
-    console.warn(`[warn] нет достижимых мешей (запись не создана): ${filesWithoutMeshes.join(', ')}`);
+    // Models without meshes are not written — but report them explicitly.
+    console.warn(`[warn] no reachable meshes (record not created): ${filesWithoutMeshes.join(', ')}`);
     for (const f of filesWithoutMeshes) {
       if (sceneFiles.has(f)) {
-        console.error(`FAIL: модель сцены ${f} не имеет мешей => нет записи`);
+        console.error(`FAIL: scene model ${f} has no meshes => no record`);
         process.exit(1);
       }
     }
   }
 
-  // ── Запись модуля ──────────────────────────────────────────────────────────
+  // ── Writing the module ──────────────────────────────────────────────────────
   const entries = Object.entries(bounds);
   const lines = entries.map(([file, b]) => {
     const pad = Math.max(...entries.map(([f]) => f.length));
@@ -263,14 +263,14 @@ function main() {
 
   const header = [
     '// ════════════════════════════════════════════════════════════════════',
-    '// ЭТОТ ФАЙЛ ГЕНЕРИРУЕТСЯ АВТОМАТИЧЕСКИ скриптом scripts/extractModelBounds.mjs',
-    '// НЕ РЕДАКТИРУЙ ВРУЧНУЮ — изменения будут перезаписаны при следующем запуске.',
+    '// THIS FILE IS GENERATED AUTOMATICALLY by scripts/extractModelBounds.mjs',
+    '// DO NOT EDIT MANUALLY — changes will be overwritten on the next run.',
     '//',
-    '// Источник правды о реальных габаритах GLTF/GLB моделей public/model/kaykit_space/',
-    '// для физики коллизий. AABB = union POSITION accessor.min/max по всем мешам,',
-    '// достижимым из корней дефолтной сцены, с учётом трансформов графа узлов',
-    '// (эквивалент THREE.Box3().setFromObject(gltf.scene) сразу после GLTFLoader.load,',
-    '// без внешнего масштаба и без uScale из getUnitScale).',
+    '// Source of truth for the real dimensions of GLTF/GLB models in public/model/kaykit_space/',
+    '// for collision physics. AABB = union of POSITION accessor.min/max over all meshes',
+    '// reachable from the default scene roots, including node-graph transforms',
+    '// (equivalent to THREE.Box3().setFromObject(gltf.scene) right after GLTFLoader.load,',
+    '// without external scale and without uScale from getUnitScale).',
     '// ════════════════════════════════════════════════════════════════════',
     '',
     'export interface ModelBounds {',
@@ -286,19 +286,19 @@ function main() {
   const footer = ['};', ''];
 
   fs.writeFileSync(OUT_FILE, [...header, ...lines, ...footer].join('\n'), 'utf8');
-  console.log(`[ok] записано ${OUT_FILE}: записей = ${entries.length}`);
+  console.log(`[ok] wrote ${OUT_FILE}: records = ${entries.length}`);
 
-  // ── Сводка ────────────────────────────────────────────────────────────────
+  // ── Summary ────────────────────────────────────────────────────────────────
   const dims = entries.map(([, b]) => b.maxDim);
   const minOfDims = Math.min(...dims);
   const maxOfDims = Math.max(...dims);
   const oversized = entries.filter(([, b]) => b.maxDim >= 10).sort((a, b) => b[1].maxDim - a[1].maxDim);
 
-  console.log('── Сводка ──');
-  console.log(`моделей всего: ${entries.length}`);
-  console.log(`минимальный габарит (maxDim): ${round6(minOfDims)}`);
-  console.log(`максимальный габарит (maxDim): ${round6(maxOfDims)}`);
-  console.log(`моделей с maxDim >= 10 (для них getUnitScale в WorldScene.tsx даёт uScale != 1): ${oversized.length}`);
+  console.log('── Summary ──');
+  console.log(`total models: ${entries.length}`);
+  console.log(`minimum dimension (maxDim): ${round6(minOfDims)}`);
+  console.log(`maximum dimension (maxDim): ${round6(maxOfDims)}`);
+  console.log(`models with maxDim >= 10 (for them getUnitScale in WorldScene.tsx yields uScale != 1): ${oversized.length}`);
   for (const [file, b] of oversized) {
     const uScale = b.maxDim > 1000 ? 1 / 1000 : b.maxDim > 100 ? 1 / 100 : b.maxDim > 10 ? 1 / 10 : 1;
     console.log(`  - ${file}: maxDim=${round6(b.maxDim)} => uScale=${uScale}`);

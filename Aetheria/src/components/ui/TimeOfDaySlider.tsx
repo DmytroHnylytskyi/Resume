@@ -37,9 +37,9 @@ export default function TimeOfDaySlider(): React.ReactElement {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [label, setLabel] = useState('Noon');
   const [litPole, setLitPole] = useState<'moon' | 'sun' | null>(null);
-  // Свечение — CSS-переменная на корне, а не React-состояние: оно плавно
-  // меняется каждый кадр, и setState на него ре-рендерил компонент 60 раз
-  // в секунду (в CPU-профиле это читалось как jsxDEV/createElement).
+  // The glow is a CSS variable on the root, not React state: it changes
+  // smoothly every frame, and setState for it re-rendered the component 60 times
+  // per second (in the CPU profile it read as jsxDEV/createElement).
   const lastUi = useRef({ label: '', pole: null as 'moon' | 'sun' | null });
   const trackRef = useRef<HTMLDivElement | null>(null);
   const rootRef = useRef<HTMLDivElement | null>(null);
@@ -63,7 +63,7 @@ export default function TimeOfDaySlider(): React.ReactElement {
       const s = compute();
       if (inputRef.current) inputRef.current.value = String(s.t);
       if (rootRef.current) rootRef.current.style.setProperty('--tod-glow', s.glow);
-      // React трогаем только когда реально сменилась подпись/полюс.
+      // Touch React only when the label/pole has actually changed.
       if (s.label !== lastUi.current.label || s.litPole !== lastUi.current.pole) {
         lastUi.current = { label: s.label, pole: s.litPole };
         setLabel(s.label);

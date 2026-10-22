@@ -25,7 +25,7 @@ export interface IslandSceneData {
   timestamp: string;
   projectName: string;
   spawnPoint: [number, number, number];
-  /** Стартовый yaw камеры/персонажа (радианы). Необязателен для старых карт. */
+  /** Initial camera/character yaw (radians). Optional for older maps. */
   spawnYaw?: number;
   placedObjects: PlacedObject[];
 }

@@ -1,15 +1,15 @@
 'use client';
 
 /**
- * ShatteredMoon — расколотая луна в южном небе.
+ * ShatteredMoon — a shattered moon in the southern sky.
  *
- * Небольшой мёртвый мир (r≈32 м на дистанции ~260 м) с рваным рельефом и
- * облаком обломков: он рассказывает, откуда взялся астероид-платформа.
- * Основной меш + фрезнелевый ободок + 12 инстансов осколков + дуга мелкой
- * пыли — четыре draw call, без источников света и без текстур.
+ * A small dead world (r≈32 m at a distance of ~260 m) with jagged terrain and
+ * a debris cloud: it tells where the asteroid platform came from.
+ * Main mesh + Fresnel rim + 12 instanced fragments + an arc of fine
+ * dust — four draw calls, with no light sources and no textures.
  *
- * Материал Lambert: луна честно реагирует на суточный свет, но ночью
- * остаётся слабое эмиссивное свечение, чтобы силуэт не исчезал.
+ * Lambert material: the moon genuinely reacts to the day/night light, but at
+ * night a faint emissive glow remains so the silhouette does not disappear.
  */
 
 import React, { useEffect, useMemo } from 'react';
@@ -138,8 +138,8 @@ export default function ShatteredMoon(): React.ReactElement {
     []
   );
 
-  // Светящихся трещин на поверхности нет: только тонкий фрезнелевый ободок,
-  // чтобы силуэт читался на фоне звёзд.
+  // There are no glowing cracks on the surface: only a thin Fresnel rim,
+  // so the silhouette reads against the stars.
   useEffect(
     () => () => {
       moonGeometry.dispose();

@@ -9,10 +9,10 @@ import IntroOverlay from '../components/ui/IntroOverlay';
 import ClassicLandingView from '../components/ui/ClassicLandingView';
 
 /**
- * Весь 3D-режим — в одном ленивом чанке. Статический импорт LoadingScreen
- * тянул three.js через @react-three/drei в стартовый бандл классики, а
- * MiniRadar — islandScene.json и тактическую карту. Классика платила за
- * 3D, которое могло не открыться.
+ * The entire 3D mode — in one lazy chunk. A static import of LoadingScreen
+ * pulled three.js via @react-three/drei into the classic landing's initial
+ * bundle, and MiniRadar — islandScene.json and the tactical map. The classic
+ * landing paid for 3D that might never open.
  */
 const IslandExperience = dynamic(() => import('../components/3d/IslandExperience'), {
   ssr: false,

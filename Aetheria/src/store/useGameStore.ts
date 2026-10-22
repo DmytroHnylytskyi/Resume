@@ -15,16 +15,16 @@ import { registerDayNightThemeSync, toggleDayNight } from './dayNightState';
 import { getGlobalCyberAudio } from '../hooks/cyberAudio';
 import { ZONE_BY_CREW } from '../data/zones';
 
-// ── Досье экипажа: сохранение ──
-// Хранилище читается и пишется здесь, а не в page.tsx, как тема с языком: досье
-// меняется по ходу игры, а не один раз при гидратации, поэтому запись должна
-// происходить в тот же момент, что и изменение состояния.
+// ── Crew dossier: persistence ──
+// Storage is read and written here, not in page.tsx like theme and language: the dossier
+// changes during the game, not once at hydration, so the write must
+// happen at the same moment as the state change.
 const DOSSIER_STORAGE_KEY = 'aetheria_dossier';
 
 const EMPTY_DOSSIER: DossierSnapshot = { metCrew: [], openedMaterials: [] };
 
-// Идентификаторы проверяются по списку секторов: в localStorage мог остаться
-// мусор от прежней версии карты, и он бы попал прямо в счётчик и на пины.
+// Identifiers are validated against the sector list: localStorage may contain
+// garbage from a previous map version, and it would land directly in the counter and pins.
 function isNPCId(value: unknown): value is NPCId {
   return typeof value === 'string' && Object.prototype.hasOwnProperty.call(ZONE_BY_CREW, value);
 }
@@ -46,7 +46,7 @@ function readDossier(): DossierSnapshot {
         : []
     };
   } catch {
-    // Приватный режим или битый JSON — досье просто начинается заново.
+    // Private mode or corrupted JSON — the dossier simply starts over.
     return { ...EMPTY_DOSSIER };
   }
 }
@@ -56,7 +56,7 @@ function persistDossier(snapshot: DossierSnapshot): void {
   try {
     window.localStorage.setItem(DOSSIER_STORAGE_KEY, JSON.stringify(snapshot));
   } catch {
-    /* приватный режим — досье не переживёт перезагрузку, но играть не мешает */
+    /* private mode — the dossier will not survive a reload, but it does not prevent playing */
   }
 }
 
@@ -111,9 +111,9 @@ export const useGameStore = create<GameState>((set) => ({
   activeDialogue: null,
   setActiveDialogue: (dialogue) => {
     set({ activeDialogue: dialogue });
-    // Разговор и есть знакомство. Отмечаем встречу здесь — в единственной точке,
-    // где диалог действительно открывается, — поэтому счётчик досье не может
-    // разойтись с тем, что игрок видит на экране.
+    // A conversation is a meeting. We record the meeting here — at the single point
+    // where the dialogue actually opens — so the dossier counter cannot
+    // diverge from what the player sees on screen.
     if (dialogue?.npcId) useGameStore.getState().markCrewMet(dialogue.npcId);
   },
 
@@ -148,9 +148,9 @@ export const useGameStore = create<GameState>((set) => ({
   isTacticalMapOpen: false,
   setTacticalMapOpen: (open: boolean) => set({ isTacticalMapOpen: open }),
 
-  // ── Досье экипажа ──
-  // Восстанавливаем из localStorage сразу при создании стора, чтобы счётчик не
-  // мигал с нуля при каждой перезагрузке.
+  // ── Crew dossier ──
+  // Restored from localStorage immediately when the store is created, so the counter does not
+  // flicker from zero on every reload.
   ...readDossier(),
 
   markCrewMet: (npcId) =>

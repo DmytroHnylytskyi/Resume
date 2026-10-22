@@ -17,10 +17,10 @@ import TacticalMap from './TacticalMap';
 
 const RADAR_RADIUS_PX = 62;
 const RADAR_USABLE_RADIUS = 44;
-// Доля радиуса карты в процентах от ширины корпуса. На мобильных CSS
-// уменьшает корпус до 74 px, а блипы раньше считались в пикселях макета
-// 124 px — уезжали за край и обрезались. Проценты масштабируются вместе
-// с любым размером корпуса.
+// Map radius as a percentage of the housing width. On mobile, CSS
+// shrinks the housing to 74 px, while blips used to be computed in layout pixels
+// of 124 px — they went off the edge and were clipped. Percentages scale with
+// any housing size.
 const RADAR_BLIP_SPREAD_PERCENT = (RADAR_USABLE_RADIUS / RADAR_RADIUS_PX) * 50;
 
 export default function MiniRadar(): React.ReactElement | null {
@@ -42,7 +42,7 @@ export default function MiniRadar(): React.ReactElement | null {
   const metSet = React.useMemo(() => new Set(metCrew), [metCrew]);
   const totalCrew = CREW_LANDMARKS.length;
 
-  // Ближайший непознанный сектор — его пин подсвечивается как следующий.
+  // The nearest unmet sector — its pin is highlighted as the next one.
   const nextZoneId = React.useMemo(
     () => nearestUnmetZone(radarState.x, radarState.z, metCrew),
     [metCrew, isTacticalMapOpen]
@@ -113,8 +113,8 @@ export default function MiniRadar(): React.ReactElement | null {
       if (isInitialWelcomeOpen) return;
 
       if (e.code === 'KeyM') {
-        // Диалог — тоже причина не открывать карту: две панели встают друг
-        // на друга, и непонятно, какая из них сейчас главная.
+        // A dialogue is also a reason not to open the map: two panels would stack
+        // on top of each other, and it would be unclear which one is currently primary.
         if (activeModal || selectedProject || activeDialogue) return;
         setTacticalMapOpen(!isTacticalMapOpen);
       } else if (e.code === 'Escape' && isTacticalMapOpen) {

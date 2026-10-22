@@ -1,52 +1,52 @@
 // ══════════════════════════════════════════════════════════════════════
-// sceneColliders.ts — единый источник физики космо-карты.
+// sceneColliders.ts — single source of truth for the space-map physics.
 //
-// Строит коллайдеры СЦЕНЫ ИЗ ИЗМЕРЕННЫХ габаритов мешей
-// (src/data/modelBounds.generated.ts, источник правды — генератор
-// scripts/extractModelBounds.mjs) и позиций/поворотов размещений
-// (src/data/islandScene.json). Ручной словарь MODEL_COLLIDER_DEFS из
-// WorldScene.tsx удалён: у всех 28 моделей с ручными half-extents хотя бы
-// одна ось расходилась с реальным AABB (до +83% фантомных стен у
-// tunnel_straight_A, до −77% проходимых насквозь мачт windturbine_tall,
-// −76% толщины посадочной площадки), а 49 плит земли и 14 рамп не имели
-// коллайдеров вовсе — игрок ходил по невидимому кубу-полю 90×90 из
-// IslandCanvas.tsx далеко за краем видимого острова.
+// Builds SCENE colliders FROM MEASURED mesh dimensions
+// (src/data/modelBounds.generated.ts, source of truth — the generator
+// scripts/extractModelBounds.mjs) and placement positions/rotations
+// (src/data/islandScene.json). The hand-written MODEL_COLLIDER_DEFS dictionary in
+// WorldScene.tsx was removed: for all 28 models with manual half-extents at least
+// one axis disagreed with the real AABB (up to +83% phantom walls on
+// tunnel_straight_A, down to −77% pass-through windturbine_tall masts,
+// −76% landing pad thickness), and 49 ground tiles and 14 ramps had no
+// colliders at all — the player walked on an invisible 90×90 cube field from
+// IslandCanvas.tsx far beyond the edge of the visible island.
 //
-// Модуль без рантайм-импортов (только type-imports): его напрямую
-// импортирует независимый гейт scripts/checkColliders.mjs — Node 24 сам
-// снимает типы. Функции чистые, все числа воспроизводятся бит-в-бит при
-// одинаковых входах, поэтому гейт пересчитывает коллайдеры по тем же
-// правилам и сверяет c тем, что реально рендерит WorldScene.
+// Module with no runtime imports (type-imports only): it is imported directly by
+// the independent gate scripts/checkColliders.mjs — Node 24 strips types
+// itself. Functions are pure, all numbers reproduce bit-for-bit for
+// identical inputs, so the gate recomputes colliders by the same
+// rules and compares them with what WorldScene actually renders.
 //
-// Правила:
-//  - сплошной бокс по измеренному AABB меша (8 углов, yaw кратно 90° → осевой
-//    бокс) — ТОЛЬКО земляные объёмы: terrain_low* / terrain_mining (проходимая
-//    земля; верх каждого коллайдера равен верху ЕГО плиты: карта многоярусная,
-//    ходовые уровни 1..4 м; кромка карьера terrain_mining снимается на 7 см
-//    вниз — не ходовая) и terrain_tall (точный куб 2×2×2);
-//  - terrain_slope* и ВСЕ ПРОПСЫ — коллайдеров здесь НЕТ: их физику строит
-//    WorldScene из самих треугольников меша (ModelShapeColliders,
-//    TrimeshCollider). Бокс по AABB неконвексных форм (антенны, турбины
-//    с лопастями, скалы, мостики, плиты с бортиками) разъезжался с мешем:
-//    игрок заскакивал на пустоту бокса и упирался в невидимые стены.
-//    Меш-треугольники дают физику бит-в-бит с визуалом без ручной
-//    калибровки — для склонов это уже доказано;
-//  - NPC (npc_*, Mannequin*) коллайдеров не получают — тела рендерит
-//    CrewNPCs со скелетными ригами;
-//  - support/perimeter/safetyFloor — невидимые страховочные объёмы там,
-//    где мешей нет вовсе (для них правило «бокс = AABB меша» неприменимо).
+// Rules:
+//  - solid box over the measured mesh AABB (8 corners, yaw multiple of 90° → axis-aligned
+//    box) — ONLY ground volumes: terrain_low* / terrain_mining (walkable
+//    ground; the top of each collider equals the top of ITS tile: the map is multi-tier,
+//    walkable levels 1..4 m; the terrain_mining quarry rim is lowered by 7 cm
+//    — not walkable) and terrain_tall (exact 2×2×2 cube);
+//  - terrain_slope* and ALL PROPS — NO colliders here: their physics are built by
+//    WorldScene from the mesh triangles themselves (ModelShapeColliders,
+//    TrimeshCollider). AABB boxes around non-convex shapes (antennas, turbines
+//    with blades, rocks, bridges, tiles with curbs) diverged from the mesh:
+//    the player could climb onto empty box space and hit invisible walls.
+//    Mesh triangles give physics bit-for-bit with the visuals without manual
+//    calibration — already proven for slopes;
+//  - NPCs (npc_*, Mannequin*) get no colliders — their bodies are rendered by
+//    CrewNPCs with skeletal rigs;
+//  - support/perimeter/safetyFloor — invisible safety volumes where
+//    there are no meshes at all (the rule "box = mesh AABB" does not apply to them).
 //
-// Визуал (InstancedModelGroup) использует те же UNIT_SCALE и
-// MODEL_BOUNDS: масштаб и заякоривание за низ меша у рендера и физики
-// считаются из одного источника.
+// The visual side (InstancedModelGroup) uses the same UNIT_SCALE and
+// MODEL_BOUNDS: scale and anchoring at the mesh bottom are computed from a single
+// source for both rendering and physics.
 // ══════════════════════════════════════════════════════════════════════
 
 import type { IslandSceneData, PlacedObject } from '../types/scene';
 import type { ModelBounds } from './modelBounds.generated';
 
-// Категория коллайдера (для подсчёта покрытия в гейте): terrain/obstacle —
-// бокс на земляные объёмы, support/perimeter/safetyFloor — невидимые
-// страховочные объёмы без мешей (slope в боксы не попадает — trimesh).
+// Collider category (used for coverage accounting in the gate): terrain/obstacle —
+// box on ground volumes, support/perimeter/safetyFloor — invisible
+// safety volumes without meshes (slope never falls into boxes — trimesh).
 export type ColliderKind =
   | 'terrain'
   | 'slope'
@@ -65,48 +65,48 @@ export interface SceneCollider {
 }
 
 export interface SceneColliderMeta {
-  /** Нижний ходовой ярус карты (минимальный верх плит terrain_low*). */
+  /** Bottom walkable tier of the map (minimum top of terrain_low* tiles). */
   groundLevel: number;
-  /** Верхний уровень рамп (максимальный верх мешей terrain_slope*). */
+  /** Top level of the ramps (maximum top of terrain_slope* meshes). */
   terraceLevel: number;
-  /** AABB острова по плитам земли (для периметра и страховочного пола). */
+  /** Island AABB over ground tiles (for the perimeter and safety floor). */
   islandMinX: number;
   islandMaxX: number;
   islandMinZ: number;
   islandMaxZ: number;
-  /** Верх земли под точкой спавна (-Infinity, если опоры нет). */
+  /** Ground top under the spawn point (-Infinity if there is no support). */
   spawnSupportTop: number;
 }
 
 export interface SceneColliderBuild {
-  /** Ровно один первичный коллайдер на каждое не-NPC размещение (108 шт). */
+  /** Exactly one primary collider per non-NPC placement (108 total). */
   colliders: SceneCollider[];
-  /** Дополнительные капы тех же размещений (базовые плиты под рампами). */
+  /** Additional caps of the same placements (base tiles under ramps). */
   subColliders: SceneCollider[];
-  /** Опоры/периметр/страховочный пол — объёмы там, где мешей нет. */
+  /** Supports/perimeter/safety floor — volumes where there are no meshes. */
   extras: SceneCollider[];
   meta: SceneColliderMeta;
 }
 
-// Единица масштаба мешей каталога. Раньше её подбирала эвристика
-// getUnitScale по порогам maxDim 10/100/1000, но измеренные габариты всех
-// 72 моделей каталога лежат в [0.5 .. 2.999991] (максимум —
-// windturbine_tall.gltf), поэтому эвристика всегда возвращала 1. Значение
-// зашито константой, чтобы визуал (scale * UNIT_SCALE) и физика брали его
-// из одного места.
+// Scale unit of catalog meshes. It used to be picked by the getUnitScale
+// heuristic using maxDim thresholds 10/100/1000, but the measured dimensions of all
+// 72 catalog models lie in [0.5 .. 2.999991] (the maximum is
+// windturbine_tall.gltf), so the heuristic always returned 1. The value is
+// hardcoded as a constant so the visual (scale * UNIT_SCALE) and physics take it
+// from one place.
 export const UNIT_SCALE = 1;
 
-// Снимок неходовой кромки карьера terrain_mining (см. правило terrain ниже).
+// Snapshot of the non-walkable quarry rim terrain_mining (see the terrain rule below).
 export const MINING_RIM_DROP = 0.07;
 
 // ══════════════════════════════════════════════════════════════════════
-// Кватернионы/Эйлер XYZ — дословно повторяют формулы three.js
+// Quaternions/Euler XYZ — replicate three.js formulas verbatim
 // (Quaternion.setFromEuler 'XYZ', Euler.setFromRotationMatrix 'XYZ' —
-// см. node_modules/three/src/math/Euler.js), потому что Rapier-биндинг
-// разворачивает rotation в THREE.Euler(x, y, z) с порядком XYZ, и
-// трансформы коллайдеров обязаны совпадать с трансформами визуала.
-// Сверено с three 0.174: расхождение 0 на 180k случайных вращений и на
-// всех yaw сцены.
+// see node_modules/three/src/math/Euler.js), because the Rapier binding
+// expands rotation into THREE.Euler(x, y, z) with XYZ order, and the
+// collider transforms must match the visual transforms.
+// Verified against three 0.174: zero divergence over 180k random rotations and
+// all scene yaws.
 // ══════════════════════════════════════════════════════════════════════
 
 interface Quat {
@@ -131,7 +131,7 @@ function quatFromEulerXYZ(x: number, y: number, z: number): Quat {
   };
 }
 
-// Столбцовые элементы с layout THREE.Matrix4.elements (te[0..10]).
+// Column elements with THREE.Matrix4.elements layout (te[0..10]).
 function quatToTe(q: Quat): number[] {
   const x = q.x, y = q.y, z = q.z, w = q.w;
   const x2 = x + x, y2 = y + y, z2 = z + z;
@@ -155,11 +155,11 @@ interface Aabb {
   halfExtents: [number, number, number];
 }
 
-// Мировой AABB меша размещения: 8 углов измеренного AABB, умноженные на
-// fs = scale * UNIT_SCALE, повёрнутые на полный rotation объекта (для
-// yaw-only объектов — то же, что «повёрнутые yaw из islandScene.json»),
-// в том же заякоривании за низ меша, что и визуальный InstancedModelGroup:
-// pivotY = position.y − bounds.min.y·fs. Их AABB и есть бокс коллайдера.
+// World AABB of the placement mesh: the 8 corners of the measured AABB multiplied by
+// fs = scale * UNIT_SCALE, rotated by the object's full rotation (for
+// yaw-only objects — the same as "yaw from islandScene.json"), with the same
+// anchoring at the mesh bottom as the visual InstancedModelGroup:
+// pivotY = position.y − bounds.min.y·fs. Their AABB is the collider box.
 function worldAabb(
   bounds: ModelBounds,
   fs: number,
@@ -198,7 +198,7 @@ function worldAabb(
   };
 }
 
-// Верх меша в мире (заякоривание за низ + maxY измеренного AABB).
+// Mesh top in world space (anchored at the bottom + maxY of the measured AABB).
 function meshTopY(bounds: ModelBounds, fs: number, pivotY: number): number {
   return pivotY + bounds.max[1] * fs;
 }
@@ -211,8 +211,8 @@ export function buildSceneColliders(
   const subColliders: SceneCollider[] = [];
   const extras: SceneCollider[] = [];
 
-  // NPC-модели (npc_*, Mannequin*) рендерятся CrewNPCs со скелетным ригом
-  // и коллайдеров не получают — та же отсечка, что и в instancing-рендере.
+  // NPC models (npc_*, Mannequin*) are rendered by CrewNPCs with a skeletal rig
+  // and get no colliders — the same filter as in the instancing renderer.
   const isNpc = (lower: string): boolean => lower.startsWith('npc_') || lower.includes('mannequin');
   const isGroundTile = (lower: string): boolean =>
     lower.startsWith('terrain_low') || lower.startsWith('terrain_mining');
@@ -221,16 +221,16 @@ export function buildSceneColliders(
   const unitScaleOf = (obj: PlacedObject): number =>
     (Array.isArray(obj.scale) ? obj.scale[0] : obj.scale || 1) * UNIT_SCALE;
 
-  // ── Проход 1: подготовка записей и производные уровни сцены ──
+  // ── Pass 1: prepare records and derived scene levels ──
   const records = sceneData.placedObjects.map((obj) => {
     const name = obj.modelPath.split('/').pop() || '';
     const lower = name.toLowerCase();
     const bounds = modelBounds[name];
     if (!bounds) {
-      // extractModelBounds.mjs гарантирует запись для каждой модели сцены
-      // (иначе его тест падает с exit 1) — отсутствие записи — ошибка данных.
+      // extractModelBounds.mjs guarantees a record for every scene model
+      // (otherwise its self-check exits with code 1) — a missing record is a data error.
       throw new Error(
-        `sceneColliders: у модели ${name} нет записи в MODEL_BOUNDS — перегенерируйте: node scripts/extractModelBounds.mjs`
+        `sceneColliders: model ${name} has no MODEL_BOUNDS record — regenerate with: node scripts/extractModelBounds.mjs`
       );
     }
     const fs = unitScaleOf(obj);
@@ -251,14 +251,14 @@ export function buildSceneColliders(
     }
   }
   if (groundTileTops.length === 0) {
-    throw new Error('sceneColliders: в сцене нет плит земли terrain_low* — не из чего вывести уровень пола');
+    throw new Error('sceneColliders: no terrain_low* ground tiles in the scene — cannot derive the floor level');
   }
-  // Многоярусная карта: плиты стоят на уровнях 1..4 м, единой «земли» нет.
-  // groundLevel = нижний ходовой ярус (минимальный верх плит terrain_low*,
-  // выше нуля за счёт анизотропии меша; карьер terrain_mining — локальная
-  // яма, в базовый уровень не входит). Верх коллайдера каждой плиты
-  // определяется потайлово в проходе 2 — единый зажим здесь топил бы
-  // верхние ярусы до нижнего.
+  // Multi-tier map: tiles sit at levels 1..4 m, there is no single "ground".
+  // groundLevel = bottom walkable tier (minimum top of terrain_low* tiles,
+  // above zero due to mesh anisotropy; the terrain_mining quarry is a local
+  // pit and is not part of the base level). The collider top of each tile
+  // is determined per-tile in pass 2 — a single clamp here would sink the
+  // upper tiers to the bottom one.
   const groundLowTops: number[] = [];
   for (const rec of physical) {
     if (rec.lower.startsWith('terrain_low')) {
@@ -266,9 +266,9 @@ export function buildSceneColliders(
     }
   }
   const groundLevel = Math.min(...groundLowTops);
-  // Уровень верхней рампы: на многоярусной карте террасы на каждом ярусе;
-  // историческое поле оставлено как максимум рамп (потребителей у значения
-  // нет, кроме гейта — сверка зеркального пересчёта).
+  // Top ramp level: on a multi-tier map terraces exist on every tier;
+  // the historical field is kept as the maximum of ramps (no consumers of the value
+  // except the gate — mirror recomputation comparison).
   const terraceLevel = rampTopLevels.length > 0 ? Math.max(...rampTopLevels) : groundLevel;
   const islandMinX = Math.min(...groundBoxes.map((b) => b.center[0] - b.halfExtents[0]));
   const islandMaxX = Math.max(...groundBoxes.map((b) => b.center[0] + b.halfExtents[0]));
@@ -276,9 +276,9 @@ export function buildSceneColliders(
   const islandMaxZ = Math.max(...groundBoxes.map((b) => b.center[2] + b.halfExtents[2]));
   const islandMinY = Math.min(...groundBoxes.map((b) => b.center[1] - b.halfExtents[1]));
 
-  // ═══ Проход 2: коллайдеры размещений ═══
-  // Yaw кратен 90° (и rx=rz=0): повёрнутый локальный бокс совпадает с
-  // мировым AABB меша, коллайдер оставляем осевым (rotation [0,0,0]).
+  // ═══ Pass 2: placement colliders ═══
+  // Yaw is a multiple of 90° (and rx=rz=0): the rotated local box coincides with the
+  // mesh's world AABB, so the collider stays axis-aligned (rotation [0,0,0]).
   function isAxisAlignedYaw(euler: [number, number, number]): boolean {
     if (Math.abs(euler[0]) > 1e-12 || Math.abs(euler[2]) > 1e-12) return false;
     const quarter = Math.PI / 2;
@@ -289,12 +289,12 @@ export function buildSceneColliders(
   }
 
   for (const rec of physical) {
-    // Бокс-коллайдеры здесь получают ТОЛЬКО земляные объёмы: плиты и карьер
-    // идеально повторяются осевым боксом (ходовая поверхность — их верх),
-    // terrain_tall — точный куб 2×2×2. Склоны и ВСЕ ПРОПСЫ физику получают
-    // из своих треугольников (ModelShapeColliders в WorldScene): бокс по
-    // AABB антенн/турбин/скал/модулей давал «невидимые стены» и фантомные
-    // полы там, где меша нет — пользователь заскакивал на пустоту бокса.
+    // Box colliders here are applied ONLY to ground volumes: tiles and the quarry
+    // map perfectly to an axis-aligned box (their top is the walkable surface),
+    // terrain_tall is an exact 2×2×2 cube. Slopes and ALL PROPS get their physics
+    // from their own triangles (ModelShapeColliders in WorldScene): an AABB box around
+    // antennas/turbines/rocks/modules produced "invisible walls" and phantom
+    // floors where there is no mesh — the user could climb onto empty box space.
     if (isRamp(rec.lower) || !(isGroundTile(rec.lower) || rec.lower.startsWith('terrain_tall'))) {
       continue;
     }
@@ -311,14 +311,14 @@ export function buildSceneColliders(
     const axisAligned = isAxisAlignedYaw(euler);
     let centerY = box.center[1];
     let halfY = box.halfExtents[1];
-    // Земля: верх коллайдера = верх САМОЙ ПЛИТЫ. Карта многоярусная
-    // (ходовые уровни 1..4 м), единый зажим groundLevel топил бы верхние
-    // ярусы — каждый ярус ходовой по своему верху. Исключение — кромка
-    // карьера terrain_mining (меш до +1.0725 над низом): кромка не ходовая
-    // поверхность, 7 см снимается, чтобы капсула не цепляла невидимый
-    // уступ по периметру кратера. Плиты земли каталога всегда осевые
-    // (yaw кратно 90° — проверено на текущей карте), верх/world-правило
-    // определено в мировых координатах.
+    // Ground: collider top = top of THE TILE ITSELF. The map is multi-tier
+    // (walkable levels 1..4 m); a single groundLevel clamp would sink the upper
+    // tiers — every tier is walkable by its own top. Exception: the
+    // terrain_mining quarry rim (mesh up to +1.0725 above its bottom): the rim is not a
+    // walkable surface, 7 cm is subtracted so the capsule does not catch the invisible
+    // ledge along the crater perimeter. Catalog ground tiles are always axis-aligned
+    // (yaw multiple of 90° — verified on the current map); the top/world rule
+    // is defined in world coordinates.
     if (kind === 'terrain') {
       const top = box.center[1] + box.halfExtents[1];
       const bottom = box.center[1] - box.halfExtents[1];
@@ -343,23 +343,23 @@ export function buildSceneColliders(
     });
   }
 
-  // ═══ Невидимые страховочные объёмы (периметр, пол) ═══
+  // ═══ Invisible safety volumes (perimeter, floor) ═══
 
-  // Бывшие опоры стыков рамп (plaza бура, гребень солнечной террасы) —
-  // артефакты старой процедурной карты: в авторской раскладке из редактора
-  // стыки уже опираются на плиты, а фантомные невидимые боксы только
-  // ломали бы проходы. Качество стыков контролируется e2e-обходом карты.
+  // Former ramp-junction supports (drill plaza, solar terrace ridge) —
+  // artifacts of the old procedural map: in the authored editor layout
+  // junctions already rest on tiles, and phantom invisible boxes would only
+  // break the passages. Junction quality is controlled by the e2e map walk.
 
-  // Периметр: невидимые стены точно на краю плит земли. На многоярусной
-  // карте высота стены каждой стороны привязана к самой высокой плите у
-  // этой стороны: стена единой высоты от нижнего яруса оставляла бы верхние
-  // ярусы открытыми (у 4-го яруса пол на 3 м выше). Возвышение над полом
-  // то же 0.85 м: апогей прыжка v²/(2g) = 5.5²/(2·19.6) ≈ 0.77 м < 0.85 —
-  // перепрыгнуть нельзя.
-  const WALL_MARGIN = 0.1; // грань стены лежит ровно на крае плит
+  // Perimeter: invisible walls exactly at the edge of the ground tiles. On the multi-tier
+  // map the wall height on each side is tied to the highest tile near
+  // that side: a single-height wall from the bottom tier would leave the upper
+  // tiers open (the 4th tier floor is 3 m higher). The elevation above the floor
+  // is the same 0.85 m: the jump apex v²/(2g) = 5.5²/(2·19.6) ≈ 0.77 m < 0.85 —
+  // it cannot be jumped over.
+  const WALL_MARGIN = 0.1; // wall face lies exactly on the tile edge
   const WALL_HALF_THICKNESS = 0.1;
   const WALL_HEIGHT_ABOVE_GROUND = 0.85;
-  const WALL_ADJACENT_STEP = 2.1; // плита «у стороны», если её край в шаге плит от кромки
+  const WALL_ADJACENT_STEP = 2.1; // a tile is "near a side" if its edge is within one tile step of the edge
   function sideWallTop(side: 'north' | 'south' | 'west' | 'east'): number {
     let top = -Infinity;
     for (const b of groundBoxes) {
@@ -426,11 +426,11 @@ export function buildSceneColliders(
     }
   );
 
-  // Страховочный пол строго под визуальным островом: тонкий бокс на 0.1 м
-  // ниже верха плит ловит провал в числовом шве между соседними плитами;
-  // за краем плит пола нет — ходить по невидимому полу в пустоте
-  // невозможно. Ширина = габарит острова + та же кромка, что у стен.
-  const SEAM_DROP = 0.1; // верх ниже уровня земли — провал заметен, но мал
+  // Safety floor strictly under the visual island: a thin box 0.1 m
+  // below the top of the tiles catches falls into the numerical seam between adjacent tiles;
+  // beyond the tile edge there is no floor — walking on an invisible floor in the void
+  // is impossible. Width = island extent + the same margin as the walls.
+  const SEAM_DROP = 0.1; // top below ground level — the drop is noticeable but small
   const SAFETY_HALF_HEIGHT = 0.25;
   const safetyTop = groundLevel - SEAM_DROP;
   extras.push({
@@ -442,8 +442,8 @@ export function buildSceneColliders(
     friction: 0.8
   });
 
-  // Верх земли под точкой спавна (гейт отдельно убеждается, что спавн
-  // стоит на плите, а не в воздухе и не внутри земли).
+  // Ground top under the spawn point (the gate additionally verifies that spawn
+  // stands on a tile, not in the air and not inside the ground).
   const [sx, , sz] = sceneData.spawnPoint;
   let spawnSupportTop = -Infinity;
   for (let i = 0; i < groundBoxes.length; i++) {

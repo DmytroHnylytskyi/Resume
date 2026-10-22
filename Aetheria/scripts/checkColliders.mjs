@@ -1,36 +1,35 @@
 #!/usr/bin/env node
 /**
- * checkColliders.mjs — НЕЗАВИСИМЫЙ гейт физики космо-карты.
+ * checkColliders.mjs — INDEPENDENT gate for the space-map physics.
  *
- * Чистый Node 24, без зависимостей. TS-модуль src/data/sceneColliders.ts
- * импортируется напрямую — Node сам снимает типы.
+ * Pure Node 24, no dependencies. The TS module src/data/sceneColliders.ts
+ * is imported directly — Node strips types itself.
  *
- * Что делает:
- *  1. Сам пересчитывает ВСЕ бокс-коллайдеры из src/data/islandScene.json +
- *     src/data/modelBounds.generated.ts по тем же правилам, что задокументированы
- *     в sceneColliders.ts (8 углов AABB меша; боксы — ТОЛЬКО земляные объёмы:
- *     плиты/карьер/tall-куб + периметр/страховочный пол). Склоны и ВСЕ ПРОПСЫ
- *     боксов НЕ имеют: их физика — TrimeshCollider из треугольников меша
- *     (ModelShapeColliders в WorldScene), и гейт проверяет её отдельно
- *     (п. 2d) по вершинам .bin.
- *  2. Независимость НЕ только от кода модуля, но и от правил/мешей:
- *     — сверяет MODEL_BOUNDS с accessor.min/max самих .gltf/.glb-ассетов
- *       (семантика extractModelBounds: union POSITION по мешам из корней
- *       дефолтной сцены с трансформами графа узлов; .glb — через заголовок);
- *  3. Сверяет пересчёт с тем, что реально рендерится в WorldScene
- *     (список, который отдаёт buildSceneColliders и маппит в CuboidCollider):
- *      — допуск по центру <= 0.05 м;
- *      — по half extents <= 2%;
- *      — для yaw, кратного 90° (и нулевых rx/rz), — строго точное
- *        совпадение (бит-в-бит) по центру, half extents и rotation;
- *      — покрытие всех не-NPC размещений (склоны/пропсы — trimesh, п. 2d);
- *      — верхняя поверхность земли равна верху собственной плиты ;
- *      — спавн стоит на земле (опора есть, падение <= 0.3 м) и его капсула
- *        не пересекает ни боксы, ни мировые AABB trimesh-тел;
- *      — WorldScene рендерит бокс-коллайдеры только через модуль (без ручных
- *        чисел), IslandCanvas больше не держит куб-пол.
- *  4. При любом несоответствии завершается с кодом 1. Последняя строка
- *     вывода — всегда:
+ * What it does:
+ *  1. Independently recomputes ALL box colliders from src/data/islandScene.json +
+ *     src/data/modelBounds.generated.ts by the same rules documented
+ *     in sceneColliders.ts (8 corners of the mesh AABB; boxes — ONLY ground volumes:
+ *     tiles/quarry/tall cube + perimeter/safety floor). Slopes and ALL PROPS
+ *     have NO boxes: their physics is a TrimeshCollider from mesh triangles
+ *     (ModelShapeColliders in WorldScene), and the gate checks it separately
+ *     (item 2d) against .bin vertices.
+ *  2. Independence is NOT only from the module code but also from the rules/meshes:
+ *     — compares MODEL_BOUNDS with accessor.min/max of the .gltf/.glb assets themselves
+ *       (semantics of extractModelBounds: union of POSITION over meshes from default
+ *       scene roots with node-graph transforms; .glb — via its header);
+ *  3. Compares the recomputation with what is actually rendered in WorldScene
+ *     (the list returned by buildSceneColliders and mapped into CuboidCollider):
+ *      — center tolerance <= 0.05 m;
+ *      — half extents <= 2%;
+ *      — for yaw that is a multiple of 90° (and zero rx/rz) — strictly exact
+ *        match (bit-for-bit) on center, half extents and rotation;
+ *      — coverage of all non-NPC placements (slopes/props — trimesh, item 2d);
+ *      — ground top surface equals the top of its own tile;
+ *      — spawn stands on the ground (support exists, drop <= 0.3 m) and its capsule
+ *        does not intersect boxes or world AABBs of trimesh bodies;
+ *      — WorldScene renders box colliders only through the module (no manual
+ *        numbers), IslandCanvas no longer holds a cube floor.
+ *  4. On any mismatch exits with code 1. The last output line — always:
  *     ##COLLIDER_SUMMARY## {"models":N,"colliders":N,"mismatched":N,"uncovered":N}
  */
 
@@ -56,7 +55,7 @@ function fail(msg, err) {
   if (err && err.stack) console.log(`${COL.gray}${String(err.stack).split('\n').slice(0, 4).join('\n')}${COL.reset}`);
 }
 
-// ── Нагрузка данных ──
+// ── Loading data ──
 const scriptDir = path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'));
 const ROOT = path.resolve(scriptDir, '..');
 const scenePath = path.join(ROOT, 'src', 'data', 'islandScene.json');
@@ -74,42 +73,42 @@ try {
   MODEL_BOUNDS = boundsMod.MODEL_BOUNDS;
   moduleApi = await import(pathToFileURL(modulePath).href);
 } catch (err) {
-  // Данные или модуль не читаются — модельный fallback-подсчёт невозможен.
+  // Data or module cannot be read — the model fallback count is impossible.
   const nonNpcAll = sceneData ? sceneData.placedObjects.filter((o) => !/npc_|mannequin/i.test(o.modelPath)) : [];
   const modelsKnown = sceneData
     ? new Set(nonNpcAll.map((o) => o.modelPath.split('/').pop()).filter((n) => MODEL_BOUNDS && MODEL_BOUNDS[n])).size
     : 0;
-  fail(`источники читаются: ${err && err.message}`, err);
+  fail(`sources load: ${err && err.message}`, err);
   printSummary(modelsKnown, 0, failures.length, sceneData ? nonNpcAll.length : 0);
 }
 
 // ══════════════════════════════════════════════════════════════════════
-// Независимый пересчёт (формулы повторяют документированные правила
-// sceneColliders.ts с точным порядком операций — это делает проверку
-// «yaw кратно 90° — строго точное совпадение» осмысленной).
+// Independent recomputation (formulas replicate the documented rules of
+// sceneColliders.ts with the exact operation order — this is what makes the
+// "yaw multiple of 90° — strictly exact match" check meaningful).
 // ══════════════════════════════════════════════════════════════════════
 
-// ── Независимость от МЕШЕЙ (не только от кода модуля) ──
-// Ассеты читаются прямо из public/model/kaykit_space: .gltf — JSON-текст,
-// .glb — через GLB-заголовок (magic/version/length, JSON-чанк с байта 20).
+// ── Independence from MESHES (not just from the module code) ──
+// Assets are read directly from public/model/kaykit_space: .gltf — JSON text,
+// .glb — via the GLB header (magic/version/length, JSON chunk from byte 20).
 function readGltfJson(absPath) {
   const buf = fs.readFileSync(absPath);
   if (absPath.endsWith('.glb')) {
-    if (buf.length < 20) throw new Error(`GLB слишком мал: ${absPath}`);
+    if (buf.length < 20) throw new Error(`GLB too small: ${absPath}`);
     const magic = buf.readUInt32LE(0);
     const version = buf.readUInt32LE(4);
     const total = buf.readUInt32LE(8);
     const chunkLen = buf.readUInt32LE(12);
     const chunkType = buf.readUInt32LE(16);
-    if (magic !== 0x46546c67 || version !== 2) throw new Error(`не GLB v2: ${path.basename(absPath)}`);
-    if (chunkType !== 0x4e4f534a) throw new Error(`первый чанк не JSON: ${path.basename(absPath)}`);
-    if (total !== buf.length) throw new Error(`длина заголовка GLB != размеру файла: ${path.basename(absPath)}`);
+    if (magic !== 0x46546c67 || version !== 2) throw new Error(`not GLB v2: ${path.basename(absPath)}`);
+    if (chunkType !== 0x4e4f534a) throw new Error(`first chunk is not JSON: ${path.basename(absPath)}`);
+    if (total !== buf.length) throw new Error(`GLB header length != file size: ${path.basename(absPath)}`);
     return JSON.parse(buf.slice(20, 20 + chunkLen).toString('utf8'));
   }
   return JSON.parse(buf.toString('utf8'));
 }
 
-// Локальная матрица узла: n.matrix (column-major) или T·R·S из TRS-компонент.
+// Local node matrix: n.matrix (column-major) or T·R·S from TRS components.
 function gltfNodeLocalMatrix(n) {
   if (n.matrix) return n.matrix.slice();
   const t = n.translation || [0, 0, 0];
@@ -128,7 +127,7 @@ function gltfNodeLocalMatrix(n) {
   ];
 }
 
-// a·b для column-major матриц.
+// a·b for column-major matrices.
 function gltfMatMul(a, b) {
   const o = new Array(16).fill(0);
   for (let c = 0; c < 4; c++) {
@@ -147,10 +146,10 @@ function gltfXform(m, p) {
   ];
 }
 
-// Мировой AABB ассета: union углов accessor.min/max по POSITION всех
-// примитивов мешей, достижимых из корней дефолтной сцены, с трансформами
-// графа узлов (та же семантика, что у scripts/extractModelBounds.mjs —
-// эквивалент THREE.Box3().setFromObject сразу после загрузки).
+// World AABB of the asset: union of accessor.min/max corners for POSITION of all mesh
+// primitives reachable from the default scene roots, with node-graph
+// transforms (same semantics as scripts/extractModelBounds.mjs —
+// equivalent to THREE.Box3().setFromObject right after loading).
 function gltfAssetBounds(absPath) {
   const json = readGltfJson(absPath);
   let minX = Infinity, minY = Infinity, minZ = Infinity;
@@ -165,7 +164,7 @@ function gltfAssetBounds(absPath) {
     if (n.mesh !== undefined && json.meshes[n.mesh]) {
       for (const prim of json.meshes[n.mesh].primitives) {
         const acc = json.accessors[prim.attributes.POSITION];
-        if (!acc || !acc.min || !acc.max) throw new Error(`POSITION accessor без min/max: ${absPath}`);
+        if (!acc || !acc.min || !acc.max) throw new Error(`POSITION accessor without min/max: ${absPath}`);
         for (const cx of [acc.min[0], acc.max[0]]) {
           for (const cy of [acc.min[1], acc.max[1]]) {
             for (const cz of [acc.min[2], acc.max[2]]) {
@@ -185,9 +184,9 @@ function gltfAssetBounds(absPath) {
   };
 }
 
-// Ось подъёма клина terrain_slope* по вершинам .bin: центроиды вершин у
-// min-Y и max-Y в плоскости XZ; направление «низ → низ» = подъём.
-// (используется проверкой 2d через общий декод; отдельная функция не нужна)
+// Rise axis of the terrain_slope* wedge over .bin vertices: vertex centroids at
+// min-Y and max-Y in the XZ plane; direction from the min-Y centroid to the max-Y centroid = rise.
+// (used by check 2d via the shared decoder; a separate function is not needed)
 function gateQuatFromEulerXYZ(x, y, z) {
   const c1 = Math.cos(x / 2), c2 = Math.cos(y / 2), c3 = Math.cos(z / 2);
   const s1 = Math.sin(x / 2), s2 = Math.sin(y / 2), s3 = Math.sin(z / 2);
@@ -276,32 +275,32 @@ function gateMedian(values) {
   return sorted.length % 2 === 1 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
 }
 
-// ── Классификация (те же предикаты, что в sceneColliders) ──
-// Единица масштаба гейт ВЫВОДИТ из измеренных габаритов, а не берёт из
-// модуля и не хардкодит: max(maxDim) по MODEL_BOUNDS прогоняется через
-// пороги прежней эвристики getUnitScale (10/100/1000). Сейчас максимум —
-// windturbine_tall 2.999991, ни один порог не достигнут → 1; если завтра
-// в каталог попадёт крупная модель, гейт сам сменит ожидание.
-// Модуль обязан дать тот же ответ (проверка ниже); подмена UNIT_SCALE в
-// модуле расходится с этим значением и валит гейт.
+// ── Classification (same predicates as in sceneColliders) ──
+// The gate DERIVES the scale unit from measured dimensions instead of taking it from the
+// module and instead of hardcoding it: max(maxDim) over MODEL_BOUNDS is run through the
+// thresholds of the former getUnitScale heuristic (10/100/1000). Currently the maximum is
+// windturbine_tall 2.999991, no threshold is reached → 1; if a large model appears
+// in the catalog tomorrow, the gate changes its expectation automatically.
+// The module must produce the same answer (check below); substituting UNIT_SCALE in the
+// module diverges from this value and fails the gate.
 const GATE_MAX_MAXDIM = Math.max(...Object.values(MODEL_BOUNDS).map((b) => b.maxDim));
 const GATE_UNIT_SCALE = GATE_MAX_MAXDIM > 1000 ? 1 / 1000 : GATE_MAX_MAXDIM > 100 ? 1 / 100 : GATE_MAX_MAXDIM > 10 ? 1 / 10 : 1;
-// Снимок неходовой кромки карьера terrain_mining. Зеркалит MINING_RIM_DROP
-// модуля; совпадение констант гейт проверяет сам (см. сверку ниже).
+// Snapshot of the non-walkable terrain_mining quarry rim. Mirrors the module's
+// MINING_RIM_DROP; the gate itself checks that the constants match (see comparison below).
 const GATE_MINING_RIM_DROP = 0.07;
 const isNpcLower = (lower) => lower.startsWith('npc_') || lower.includes('mannequin');
 const isGroundLower = (lower) => lower.startsWith('terrain_low') || lower.startsWith('terrain_mining');
 const isRampLower = (lower) => lower.startsWith('terrain_slope');
-// Бокс-объёмы (осевые, ходовая поверхность = верх плиты): земля + tall-куб
-// 2×2×2. Всё остальное (склоны + пропсы) — точная trimesh-физика мешей.
+// Box volumes (axis-aligned, walkable surface = tile top): ground + tall cube
+// 2×2×2. Everything else (slopes + props) — exact trimesh physics of the meshes.
 const isBoxedLower = (lower) => isGroundLower(lower) || lower.startsWith('terrain_tall');
 
-// Подъём/спуск рамп проверяется по вершинам .bin (см. 2d), констант-дублей
-// больше нет. Профиль посадочных площадок (настил/кольца) удалён вместе с
-// бокс-коллайдерами пропсов: у площадок теперь точная trimesh-физика мешей.
+// Ramp ascent/descent is checked against .bin vertices (see 2d); there are no
+// duplicated constants anymore. The landing pad profile (deck/rings) was removed together
+// with prop box colliders: pads now have exact trimesh mesh physics.
 
 // ══════════════════════════════════════════════════════════════════════
-// Основная проверка
+// Main check
 // ══════════════════════════════════════════════════════════════════════
 
 function gateBuild() {
@@ -309,7 +308,7 @@ function gateBuild() {
     const name = obj.modelPath.split('/').pop() || '';
     const lower = name.toLowerCase();
     if (!MODEL_BOUNDS[name]) {
-      throw new Error(`у модели ${name} нет записи в MODEL_BOUNDS`);
+      throw new Error(`model ${name} has no MODEL_BOUNDS record`);
     }
     const rawScale = Array.isArray(obj.scale) ? obj.scale[0] : obj.scale || 1;
     const fs = rawScale * GATE_UNIT_SCALE;
@@ -327,16 +326,16 @@ function gateBuild() {
       const top = rec.pivotY + MODEL_BOUNDS[rec.name].max[1] * rec.fs;
       groundTops.push(top);
       groundBoxes.push(gateWorldAabb(MODEL_BOUNDS[rec.name], rec.fs, rec.obj.rotation, rec.obj.position));
-      // Многоярусная карта: базовый уровень — по ходовым плитам terrain_low*;
-      // карьер terrain_mining — локальная яма, в базу не входит.
+      // Multi-tier map: the base level comes from walkable terrain_low* tiles;
+      // the terrain_mining quarry is a local pit and is not part of the base.
       if (!rec.lower.startsWith('terrain_mining')) groundLowTops.push(top);
     } else if (isRampLower(rec.lower)) {
       rampTops.push(rec.pivotY + MODEL_BOUNDS[rec.name].max[1] * rec.fs);
     }
   }
   const groundLevel = Math.min(...groundLowTops);
-  // На многоярусной карте террасы на каждом ярусе — из террас выводится
-  // только максимум (историческое поле terraceLevel сохранено ради сверки).
+  // On a multi-tier map terraces exist on every tier — only the maximum is derived
+  // from the terraces (the historical terraceLevel field is kept for comparison).
   const terraceLevel = rampTops.length > 0 ? Math.max(...rampTops) : groundLevel;
   const islandMinX = Math.min(...groundBoxes.map((b) => b.center[0] - b.halfExtents[0]));
   const islandMaxX = Math.max(...groundBoxes.map((b) => b.center[0] + b.halfExtents[0]));
@@ -348,18 +347,18 @@ function gateBuild() {
   const subs = [];
   for (const rec of physical) {
     const exporter = rec.obj;
-    // Склоны и пропсы боксов не имеют: их физика — trimesh меша (проверка 2d).
+    // Slopes and props have no boxes: their physics is mesh trimesh (check 2d).
     if (!isBoxedLower(rec.lower)) {
       continue;
     }
     const euler = [exporter.rotation[0], exporter.rotation[1], exporter.rotation[2]];
     const b = MODEL_BOUNDS[rec.name];
     const box = gateWorldAabb(b, rec.fs, euler, exporter.position);
-    // Земля: верх коллайдера = верх собственной плиты (карта многоярусная,
-    // ходовые уровни 1..4 м); кромка карьера terrain_mining неходовая —
-    // снимается на GATE_MINING_RIM_DROP (тот же «0.07», что MINING_RIM_DROP
-    // модуля; гейт дополнительно сверяет это число с модулем ниже).
-    // terrain_tall — точный куб 2×2×2, верх не зажимается (kind obstacle).
+    // Ground: collider top = top of its own tile (the map is multi-tier,
+    // walkable levels 1..4 m); the terrain_mining quarry rim is non-walkable —
+    // lowered by GATE_MINING_RIM_DROP (the same "0.07" as the module's
+    // MINING_RIM_DROP; the gate additionally compares this number with the module below).
+    // terrain_tall is an exact 2×2×2 cube, its top is not clamped (kind obstacle).
     let groundHalfY = box.halfExtents[1];
     let groundCenterY = box.center[1];
     if (isGroundLower(rec.lower)) {
@@ -378,8 +377,8 @@ function gateBuild() {
     });
   }
 
-  // Периметр (тот же вывод, что у модуля: высота стены каждой стороны по
-  // самой высокой плите у этой стороны + 0.85, многоярусная карта).
+  // Perimeter (same derivation as the module: wall height of each side from the
+  // highest tile on that side + 0.85, multi-tier map).
   const WALL_MARGIN = 0.1;
   const WALL_HALF_THICKNESS = 0.1;
   const WALL_HEIGHT_ABOVE_GROUND = 0.85;
@@ -428,10 +427,10 @@ function gateBuild() {
       friction: 0.8
     }
   ];
-  // Подпорки стыков рамп (plaza бура, гребень террасы) устарели вместе со
-  // старой процедурной картой — модуль их больше не строит (см. там же).
+  // Ramp junction supports (drill plaza, terrace ridge) became obsolete together with
+  // the old procedural map — the module no longer builds them (see there).
 
-  // Верх земли под спавном.
+  // Ground top under the spawn.
   const [sx, , sz] = sceneData.spawnPoint;
   let spawnTop = -Infinity;
   for (let i = 0; i < groundBoxes.length; i++) {
@@ -449,47 +448,47 @@ let gate = null;
 try {
   gate = gateBuild();
 } catch (err) {
-  fail('независимый пересчёт выполняется', err);
+  fail('independent recomputation runs', err);
 }
 
 try {
-  console.log(`${COL.bold}${COL.cyan}=== checkColliders: независимый гейт физики космо-карты ===${COL.reset}`);
+  console.log(`${COL.bold}${COL.cyan}=== checkColliders: independent gate for the space-map physics ===${COL.reset}`);
 
-  // Исходники компонент читаются один раз наверху (нужны и спавн-проверке,
-  // и контролю «числа только из модуля»).
+  // Component sources are read once at the top (needed by the spawn check
+  // and by the "numbers only from the module" check).
   const worldSrc = fs.readFileSync(worldScenePath, 'utf8');
   const canvasSrc = fs.readFileSync(islandCanvasPath, 'utf8');
 
-  // ── 1. Единый вызов модуля (числовой вывод к проверкам) ──
+  // ── 1. Single module call (numeric output to the checks) ──
   const moduleBuild = moduleApi.buildSceneColliders(sceneData, MODEL_BOUNDS);
   const meta = moduleBuild.meta;
-  // Единица масштаба: значение модуля обязано совпасть с выведенной гейтом.
+  // Scale unit: the module value must match the one derived by the gate.
   moduleApi.UNIT_SCALE === GATE_UNIT_SCALE
-    ? ok(`UNIT_SCALE модуля = ${moduleApi.UNIT_SCALE} == вывод гейта: max(maxDim по MODEL_BOUNDS) = ${GATE_MAX_MAXDIM} → пороги 10/100/1000 → ${GATE_UNIT_SCALE}`)
-    : fail(`UNIT_SCALE модуля ${moduleApi.UNIT_SCALE} != выведенной гейтом ${GATE_UNIT_SCALE}`);
+    ? ok(`module UNIT_SCALE = ${moduleApi.UNIT_SCALE} == gate derivation: max(maxDim over MODEL_BOUNDS) = ${GATE_MAX_MAXDIM} → thresholds 10/100/1000 → ${GATE_UNIT_SCALE}`)
+    : fail(`module UNIT_SCALE ${moduleApi.UNIT_SCALE} != derived by gate ${GATE_UNIT_SCALE}`);
   moduleApi.MINING_RIM_DROP === GATE_MINING_RIM_DROP
-    ? ok(`снимок кромки карьера: MINING_RIM_DROP модуля = ${moduleApi.MINING_RIM_DROP} == гейта ${GATE_MINING_RIM_DROP}`)
-    : fail(`MINING_RIM_DROP: модуль ${moduleApi.MINING_RIM_DROP} != гейта ${GATE_MINING_RIM_DROP}`);
+    ? ok(`quarry rim snapshot: module MINING_RIM_DROP = ${moduleApi.MINING_RIM_DROP} == gate ${GATE_MINING_RIM_DROP}`)
+    : fail(`MINING_RIM_DROP: module ${moduleApi.MINING_RIM_DROP} != gate ${GATE_MINING_RIM_DROP}`);
   if (gate) {
     Math.abs(meta.groundLevel - gate.groundLevel) <= 1e-9
-      ? ok(`уровень земли из AABB плит: ${meta.groundLevel} (независимо: ${gate.groundLevel})`)
-      : fail(`уровень земли: модуль ${meta.groundLevel} vs гейт ${gate.groundLevel}`);
+      ? ok(`ground level from tile AABBs: ${meta.groundLevel} (independently: ${gate.groundLevel})`)
+      : fail(`ground level: module ${meta.groundLevel} vs gate ${gate.groundLevel}`);
     Math.abs(meta.terraceLevel - gate.terraceLevel) <= 1e-9
-      ? ok(`уровень верхней террасы из AABB рамп: ${meta.terraceLevel} (независимо: ${gate.terraceLevel})`)
-      : fail(`уровень террасы: модуль ${meta.terraceLevel} vs гейт ${gate.terraceLevel}`);
+      ? ok(`top terrace level from ramp AABBs: ${meta.terraceLevel} (independently: ${gate.terraceLevel})`)
+      : fail(`terrace level: module ${meta.terraceLevel} vs gate ${gate.terraceLevel}`);
   }
 
-  // ── 1b. MODEL_BOUNDS против самих .gltf/.glb-ассетов ──
-  // (независимость от генератора: гейт не верит MODEL_BOUNDS на слово).
+  // ── 1b. MODEL_BOUNDS against the .gltf/.glb assets themselves ──
+  // (independence from the generator: the gate does not trust MODEL_BOUNDS blindly).
   {
     const assetsDir = path.join(ROOT, 'public', 'model', 'kaykit_space');
-    const BOUNDS_TOL = 5e-6; // данные в bounds округлены до 6 знаков
+    const BOUNDS_TOL = 5e-6; // data in bounds is rounded to 6 decimals
     let checked = 0;
     const bad = [];
     for (const [name, b] of Object.entries(MODEL_BOUNDS)) {
       const file = path.join(assetsDir, name);
       if (!fs.existsSync(file)) {
-        bad.push(`${name}: файла нет`);
+        bad.push(`${name}: file missing`);
         continue;
       }
       let measured;
@@ -503,32 +502,32 @@ try {
         Math.abs(measured.min[0] - b.min[0]), Math.abs(measured.min[1] - b.min[1]), Math.abs(measured.min[2] - b.min[2]),
         Math.abs(measured.max[0] - b.max[0]), Math.abs(measured.max[1] - b.max[1]), Math.abs(measured.max[2] - b.max[2])
       );
-      // Зачётные производные поля тоже должны быть согласованы с min/max:
-      // size = max − min, maxDim = максимальная компонента size.
+      // Derived fields must also agree with min/max:
+      // size = max − min, maxDim = the largest component of size.
       const sizeDrift = Math.max(
         Math.abs(b.size[0] - (b.max[0] - b.min[0])),
         Math.abs(b.size[1] - (b.max[1] - b.min[1])),
         Math.abs(b.size[2] - (b.max[2] - b.min[2]))
       );
       const maxDimDrift = Math.abs(b.maxDim - Math.max(b.size[0], b.size[1], b.size[2]));
-      if (!(drift <= BOUNDS_TOL)) bad.push(`${name}: дрейф min/max ${drift.toExponential(2)} м`);
-      else if (!(sizeDrift <= BOUNDS_TOL)) bad.push(`${name}: size не согласован с min/max`);
-      else if (!(maxDimDrift <= BOUNDS_TOL)) bad.push(`${name}: maxDim не согласован с size`);
+      if (!(drift <= BOUNDS_TOL)) bad.push(`${name}: min/max drift ${drift.toExponential(2)} m`);
+      else if (!(sizeDrift <= BOUNDS_TOL)) bad.push(`${name}: size disagrees with min/max`);
+      else if (!(maxDimDrift <= BOUNDS_TOL)) bad.push(`${name}: maxDim disagrees with size`);
       checked++;
     }
     checked === Object.keys(MODEL_BOUNDS).length && bad.length === 0
-      ? ok(`MODEL_BOUNDS совпадает с accessor.min/max всех ${checked} ассетов (допуск ${BOUNDS_TOL})`)
-      : fail(`MODEL_BOUNDS расходится с ассетами (${bad.length}): ${bad.slice(0, 4).join('; ')}`);
+      ? ok(`MODEL_BOUNDS matches accessor.min/max of all ${checked} assets (tolerance ${BOUNDS_TOL})`)
+      : fail(`MODEL_BOUNDS diverges from assets (${bad.length}): ${bad.slice(0, 4).join('; ')}`);
   }
 
-  // ── 2. Покрытие всех не-NPC размещений ──
-  // Склоны excluded: у них физика trimesh (2d), а не первичный бокс.
+  // ── 2. Coverage of all non-NPC placements ──
+  // Slopes excluded: their physics is trimesh (2d), not a primary box.
   const nonNpc = sceneData.placedObjects.filter((o) => {
     const n = (o.modelPath.split('/').pop() || '').toLowerCase();
     return !isNpcLower(n);
   });
-  // Два класса физики: земляные объёмы — осевые боксы (модуль + гейт),
-  // склоны и ВСЕ ПРОПСЫ — trimesh из собственных треугольников (2d).
+  // Two physics classes: ground volumes — axis-aligned boxes (module + gate),
+  // slopes and ALL PROPS — trimesh from their own triangles (2d).
   const boxedObjs = nonNpc.filter((o) => isBoxedLower((o.modelPath.split('/').pop() || '').toLowerCase()));
   const trimeshObjs = nonNpc.filter((o) => {
     const n = (o.modelPath.split('/').pop() || '').toLowerCase();
@@ -548,40 +547,40 @@ try {
     }
   }
   uncovered === 0
-    ? ok(`покрытие всех ${boxedObjs.length} бокс-размещений первичными коллайдерами (+${trimeshObjs.length} склонов/пропсов на trimesh, п. 2d)`)
-    : fail(`не покрыто размещений: ${uncovered} (${missingIds.slice(0, 4).join(', ')}...)`);
+    ? ok(`coverage of all ${boxedObjs.length} box placements with primary colliders (+${trimeshObjs.length} slopes/props on trimesh, item 2d)`)
+    : fail(`uncovered placements: ${uncovered} (${missingIds.slice(0, 4).join(', ')}...)`);
 
   modulePrimaries.length === boxedObjs.length && new Set(modulePrimaries.map((c) => c.id)).size === modulePrimaries.length
-    ? ok(`первичных коллайдеров ровно ${modulePrimaries.length} — по одному на бокс-размещение, id уникальны`)
-    : fail(`число первичных коллайдеров ${modulePrimaries.length} != размещений ${boxedObjs.length}`);
+    ? ok(`exactly ${modulePrimaries.length} primary colliders — one per box placement, ids unique`)
+    : fail(`primary collider count ${modulePrimaries.length} != placements ${boxedObjs.length}`);
 
-  // ── 2d. Склоны + пропсы: trimesh-физика обязана соответствовать мешу ──
-  // Для каждого не-бокс размещения гейт сам декодирует ВСЕ вершины POSITION
-  // из .bin (учитывая трансформы узлов .gltf и матрицу размещения:
-  // scale·UNIT_SCALE, заякоривание за низ меша, полный Эйлер XYZ — те же
-  // формулы, что в ModelShapeColliders) и требует:
-  //   — число треугольников > 0 и валидные индексы (в диапазоне вершин);
-  //   — осевые экземпляры: мировые min/max геометрии ==
-  //     gateWorldAabb(MODEL_BOUNDS...) — физическая поверхность не больше и
-  //     не меньше видимого меша;
-  //   — экземпляры с произвольным yaw (45°): физическая поверхность не
-  //     вылезает за corner-AABB видимого меша (разреженная сетка даёт
-  //     мировой AABB вершин строго меньше — это норма).
-  const trimeshWorldAabbs = []; // для спавн-капсулы (5b): компакт готовится в блоке ниже
+  // ── 2d. Slopes + props: trimesh physics must match the mesh ──
+  // For each non-box placement the gate decodes ALL POSITION vertices
+  // from .bin (taking into account .gltf node transforms and the placement matrix:
+  // scale·UNIT_SCALE, anchoring at the mesh bottom, full Euler XYZ — the same
+  // formulas as in ModelShapeColliders) and requires:
+  //   — triangle count > 0 and valid indices (within the vertex range);
+  //   — axis-aligned instances: world min/max of the geometry ==
+  //     gateWorldAabb(MODEL_BOUNDS...) — the physical surface is neither larger nor
+  //     smaller than the visible mesh;
+  //   — instances with arbitrary yaw (45°): the physical surface does not
+  //     protrude beyond the corner AABB of the visible mesh (a sparse mesh yields
+  //     a world vertex AABB strictly smaller — that is normal).
+  const trimeshWorldAabbs = []; // for the spawn capsule (5b): the set is prepared in the block below
   {
     const assetsDir = path.join(ROOT, 'public', 'model', 'kaykit_space');
     let trimeshBad = 0;
     const trimeshErrors = [];
     let trimeshTriangles = 0;
     let trimeshVertices = 0;
-    // Габаритный кэш: одна модель грузится один раз.
+    // Dimension cache: each model is loaded once.
     const primCache = new Map();
     const loadModelPrims = (name) => {
       if (primCache.has(name)) return primCache.get(name);
       const gltfPath = path.join(assetsDir, name);
       const json = readGltfJson(gltfPath);
       const binUri = json.buffers[json.bufferViews[0].buffer ?? 0].uri;
-      if (!binUri) throw new Error(`${name}: без .bin буфера`);
+      if (!binUri) throw new Error(`${name}: no .bin buffer`);
       const bin = fs.readFileSync(path.join(path.dirname(gltfPath), decodeURIComponent(binUri)));
       const meshData = json.meshes.map((msh) =>
         msh.primitives.map((prim) => {
@@ -608,7 +607,7 @@ try {
           return { positions, idx };
         })
       );
-      // Карта узлов с мешами → их мировые матрицы от корней дефолтной сцены.
+      // Map of nodes with meshes → their world matrices from the default scene roots.
       const nodeWorldByMesh = new Map();
       const walk = (ni, parent) => {
         const n = json.nodes[ni];
@@ -633,7 +632,7 @@ try {
       const expected = gateWorldAabb(rec.bounds, rec.fs, obj.rotation, obj.position);
       try {
         const { meshData, nodeWorldByMesh } = loadModelPrims(name);
-        // Матрица размещения (column-major, как gltfMatMul): T·R·S.
+        // Placement matrix (column-major, as in gltfMatMul): T·R·S.
         const q = gateQuatFromEulerXYZ(obj.rotation[0], obj.rotation[1], obj.rotation[2]);
         const te = gateQuatToTe(q);
         const mPlace = [
@@ -648,7 +647,7 @@ try {
         let triangles = 0;
         meshData.forEach((prims, meshIdx) => {
           const nodeWorld = nodeWorldByMesh.get(meshIdx);
-          if (!nodeWorld) throw new Error(`${name}: узел меша ${meshIdx} недостижим из корней сцены`);
+          if (!nodeWorld) throw new Error(`${name}: mesh node ${meshIdx} is unreachable from scene roots`);
           const m = gltfMatMul(mPlace, nodeWorld);
           for (const prim of prims) {
             prim.positions.forEach((p) => {
@@ -661,7 +660,7 @@ try {
             triangles += nIdx / 3;
             if (prim.idx) {
               const bad = prim.idx.some((i) => i < 0 || i >= prim.positions.length);
-              if (bad) throw new Error(`${name}: индекс вне диапазона вершин`);
+              if (bad) throw new Error(`${name}: index out of vertex range`);
             }
           }
         });
@@ -675,9 +674,9 @@ try {
         const tol = 5e-4;
         if (triangles <= 0) {
           trimeshBad++;
-          trimeshErrors.push(`${obj.id.slice(0, 8)} ${name}: 0 треугольников`);
+          trimeshErrors.push(`${obj.id.slice(0, 8)} ${name}: 0 triangles`);
         } else if (axisAligned) {
-          // Осевые экземпляры: физика обязана совпадать с мешем точно.
+          // Axis-aligned instances: physics must match the mesh exactly.
           const drift = Math.max(
             Math.abs(minX - (expected.center[0] - expected.halfExtents[0])), Math.abs(maxX - (expected.center[0] + expected.halfExtents[0])),
             Math.abs(minY - (expected.center[1] - expected.halfExtents[1])), Math.abs(maxY - (expected.center[1] + expected.halfExtents[1])),
@@ -685,13 +684,13 @@ try {
           );
           if (!(drift <= tol)) {
             trimeshBad++;
-            trimeshErrors.push(`${obj.id.slice(0, 8)} ${name}: AABB геометрии расходится на ${drift.toExponential(2)} м`);
+            trimeshErrors.push(`${obj.id.slice(0, 8)} ${name}: geometry AABB diverges by ${drift.toExponential(2)} m`);
           }
         } else {
-          // Произвольный yaw (45° пропсы): у разреженного меша мировой AABB
-          // вершин строго меньше corner-AABB — проверяем Т Р Е Б У ЕМОЕ
-          // направление: физическая поверхность не должна вылезать за
-          // видимый габарит меша (это и есть «невидимая стена»).
+          // Arbitrary yaw (45° props): for a sparse mesh the world vertex AABB
+          // is strictly smaller than the corner AABB — check the REQUIRED
+          // direction: the physical surface must not protrude beyond the
+          // visible mesh extent (that is exactly what an "invisible wall" is).
           const outside = Math.max(
             (expected.center[0] - expected.halfExtents[0]) - minX, maxX - (expected.center[0] + expected.halfExtents[0]),
             (expected.center[1] - expected.halfExtents[1]) - minY, maxY - (expected.center[1] + expected.halfExtents[1]),
@@ -699,7 +698,7 @@ try {
           );
           if (!(outside <= tol)) {
             trimeshBad++;
-            trimeshErrors.push(`${obj.id.slice(0, 8)} ${name} yaw=${yaw}: trimesh торчит за меш на ${outside.toExponential(2)} м`);
+            trimeshErrors.push(`${obj.id.slice(0, 8)} ${name} yaw=${yaw}: trimesh protrudes beyond the mesh by ${outside.toExponential(2)} m`);
           }
         }
       } catch (err) {
@@ -707,17 +706,17 @@ try {
         trimeshErrors.push(`${obj.id.slice(0, 8)} ${name}: ${err.message}`);
       }
     }
-    // И ожидание: WorldScene строит физику склонов/пропсов из своих
-    // треугольников (ModelShapeColliders с TrimeshCollider), а не из чисел модуля.
+    // And the expectation: WorldScene builds slope/prop physics from their own
+    // triangles (ModelShapeColliders with TrimeshCollider), not from module numbers.
     const hasSlopeTrimesh =
       worldSrc.includes('ModelShapeColliders') && /<TrimeshCollider\s+args=\{\[b\.vertices, b\.indices\]\}/.test(worldSrc.replace(/\n\s+/g, ' ')) && worldSrc.includes('shapeGroups');
     trimeshBad === 0 && hasSlopeTrimesh && trimeshObjs.length > 0
-      ? ok(`склоны+пропсы (${trimeshObjs.length} шт, ${trimeshTriangles} треугольников, ${trimeshVertices} вершин): trimesh = реальной геометрии мешей (осевые — точно, повёрнутые — без выпираний)`)
-      : fail(`trimesh-физика: ${trimeshBad} проблем (${trimeshErrors.slice(0, 3).join('; ')}); ModelShapeColliders+TrimeshCollider+shapeGroups в WorldScene: ${hasSlopeTrimesh}`);
+      ? ok(`slopes+props (${trimeshObjs.length} items, ${trimeshTriangles} triangles, ${trimeshVertices} vertices): trimesh = real mesh geometry (axis-aligned — exact, rotated — no protrusions)`)
+      : fail(`trimesh physics: ${trimeshBad} problems (${trimeshErrors.slice(0, 3).join('; ')}); ModelShapeColliders+TrimeshCollider+shapeGroups in WorldScene: ${hasSlopeTrimesh}`);
   }
 
-  // ── 3. Сверка чисел коллайдеров: модуль vs независимый пересчёт ──
-  const CENTER_TOL = 0.05; // м
+  // ── 3. Collider number comparison: module vs independent recomputation ──
+  const CENTER_TOL = 0.05; // m
   const HALF_TOL = 0.02; // 2%
   const isMultipleOf90 = (euler) => {
     const [rx, ry, rz] = euler;
@@ -749,7 +748,7 @@ try {
     if (exact && !tuplesEqual(entry.halfExtents, gateEntry.halfExtents)) label += ` halves ${JSON.stringify(entry.halfExtents)} vs ${JSON.stringify(gateEntry.halfExtents)}`;
     if (exact && !tuplesEqual(entry.rotation, gateEntry.rotation)) label += ` rotation ${JSON.stringify(entry.rotation)} vs ${JSON.stringify(gateEntry.rotation)}`;
     if (!exact) {
-      if (!centerOk(entry.position, gateEntry.position)) label += ` center drift > ${CENTER_TOL}м: ${JSON.stringify(entry.position)} vs ${JSON.stringify(gateEntry.position)}`;
+      if (!centerOk(entry.position, gateEntry.position)) label += ` center drift > ${CENTER_TOL}m: ${JSON.stringify(entry.position)} vs ${JSON.stringify(gateEntry.position)}`;
       if (!halvesOk(entry.halfExtents, gateEntry.halfExtents)) label += ` halves drift > ${HALF_TOL * 100}%: ${JSON.stringify(entry.halfExtents)} vs ${JSON.stringify(gateEntry.halfExtents)}`;
     }
     return label.trim();
@@ -758,35 +757,35 @@ try {
   if (gate) {
     for (const p of modulePrimaries) {
       const g = gateById.get(p.id);
-      if (!g) { mismatched++; mismatches.push(`${p.id}: нет в независимом пересчёте`); continue; }
+      if (!g) { mismatched++; mismatches.push(`${p.id}: missing in the independent recomputation`); continue; }
       const obj = sceneData.placedObjects.find((o) => o.id === p.id);
       const label = compareOne(p, g, obj.rotation);
       if (label) { mismatched++; mismatches.push(`${p.id}:${label}`); }
     }
     for (const s of moduleBuild.subColliders) {
       const g = gate.subs.find((x) => x.id === s.id);
-      if (!g) { mismatched++; mismatches.push(`${s.id}: нет в независимом пересчёте`); continue; }
+      if (!g) { mismatched++; mismatches.push(`${s.id}: missing in the independent recomputation`); continue; }
       const rec = nonNpc.find((o) => o.id === s.id.replace(/#.*$/, ''));
       const label = compareOne(s, g, rec.rotation);
       if (label) { mismatched++; mismatches.push(`${s.id}:${label}`); }
     }
     for (const e of moduleBuild.extras) {
       const g = gate.extras.find((x) => x.id === e.id);
-      if (!g) { mismatched++; mismatches.push(`${e.id}: нет в независимом пересчёте`); continue; }
+      if (!g) { mismatched++; mismatches.push(`${e.id}: missing in the independent recomputation`); continue; }
       const label = compareOne(e, g, [0, 0, 0]);
       if (label) { mismatched++; mismatches.push(`${e.id}:${label}`); }
     }
   } else {
     mismatched = modulePrimaries.length;
   }
-  // Обе ветки сверки исторически проверяли боксы произвольного yaw; после
-  // перевода пропсов на trimesh бокс-коллайдеры ТОЛЬКО осевые (плиты/кубы),
-  // поэтому требуем полное покрытие строгой веткой и пустую tolerant.
+  // Both comparison branches historically checked arbitrary-yaw boxes; after
+  // props moved to trimesh, box colliders are ONLY axis-aligned (tiles/cubes),
+  // so we require full coverage by the strict branch and an empty tolerant branch.
   exactChecked > 0 && tolerantChecked === 0
-    ? ok(`сверка строго точная: все ${exactChecked} земляных боксов осевые (yaw кратно 90°), бит-в-бит`)
-    : fail(`сверка боксов: строго=${exactChecked}, с допуском=${tolerantChecked} — земляные боксы обязаны быть осевыми`);
+    ? ok(`strictly exact comparison: all ${exactChecked} ground boxes are axis-aligned (yaw multiple of 90°), bit-for-bit`)
+    : fail(`box comparison: strict=${exactChecked}, tolerant=${tolerantChecked} — ground boxes must be axis-aligned`);
 
-  // ── 4. Верх земли = верх мешей плит (точное совпадение) ──
+  // ── 4. Ground top = top of tile meshes (exact match) ──
   if (gate) {
     let topBad = 0;
     const topErrors = [];
@@ -795,7 +794,7 @@ try {
       const n = name.toLowerCase();
       if (!n.startsWith('terrain_low')) continue;
       const fs = (Array.isArray(r.scale) ? r.scale[0] : r.scale || 1) * GATE_UNIT_SCALE;
-      // Верх меша плиты = заякоривание за низ + maxY измеренного AABB.
+      // Tile mesh top = anchoring at the bottom + maxY of the measured AABB.
       const expectedTop = r.position[1] -
         MODEL_BOUNDS[name].min[1] * fs +
         MODEL_BOUNDS[name].max[1] * fs;
@@ -808,14 +807,14 @@ try {
       }
     }
     topBad === 0
-      ? ok(`верх земли строго равен верху мешей всех плит terrain_low* (${sceneData.placedObjects.filter((r) => ((r.modelPath.split('/').pop() || '').toLowerCase().startsWith('terrain_low'))).length} шт)`)
-      : fail(`верх земли не совпадает с верхом мешей у ${topBad} плит: ${topErrors.slice(0, 3).join('; ')}`);
+      ? ok(`ground top is strictly equal to the mesh top of all terrain_low* tiles (${sceneData.placedObjects.filter((r) => ((r.modelPath.split('/').pop() || '').toLowerCase().startsWith('terrain_low'))).length} items)`)
+      : fail(`ground top does not match mesh tops for ${topBad} tiles: ${topErrors.slice(0, 3).join('; ')}`);
   }
 
-  // ── 4b. Верх земляных коллайдеров = верх собственной плиты ──
-  // (многоярусная карта: у каждой плиты свой ходовой уровень 1..4 м;
-  // кромка карьера terrain_mining зажимается на MINING_RIM_DROP вниз —
-  // регресс-охрана: AABB-верх 1.0715 давал невидимый уступ 7 см).
+  // ── 4b. Ground collider top = top of its own tile ──
+  // (multi-tier map: each tile has its own walkable level 1..4 m;
+  // the terrain_mining quarry rim is clamped down by MINING_RIM_DROP —
+  // regression guard: an AABB top of 1.0715 produced an invisible 7 cm ledge).
   {
     let ledgeBad = 0;
     const ledgeErrors = [];
@@ -828,22 +827,22 @@ try {
       const rimTop = r.position[1] - MODEL_BOUNDS[name].min[1] * fs + MODEL_BOUNDS[name].max[1] * fs;
       const expectedTop = n.startsWith('terrain_mining') ? rimTop - GATE_MINING_RIM_DROP : rimTop;
       const c = moduleById.get(r.id);
-      if (!c || c.kind !== 'terrain') { ledgeBad++; ledgeErrors.push(`${r.id}: коллайдер terrain не найден`); continue; }
+      if (!c || c.kind !== 'terrain') { ledgeBad++; ledgeErrors.push(`${r.id}: terrain collider not found`); continue; }
       ledgedChecked++;
       const top = c.position[1] + c.halfExtents[1];
       if (Math.abs(top - expectedTop) > 1e-9) {
         ledgeBad++;
-        ledgeErrors.push(`${r.id}: верх ${top} != верху своей плиты ${expectedTop} (ярус ${rimTop.toFixed(2)})`);
+        ledgeErrors.push(`${r.id}: top ${top} != top of its tile ${expectedTop} (tier ${rimTop.toFixed(2)})`);
       }
     }
     ledgeBad === 0
-      ? ok(`потайловые уровни: верх всех ${ledgedChecked} земляных коллайдеров равен верху своей плиты (кромка mining зажата на ${GATE_MINING_RIM_DROP})`)
-      : fail(`невидимые уступы/провалы плит: ${ledgeBad} шт: ${ledgeErrors.slice(0, 3).join('; ')}`);
+      ? ok(`per-tile levels: the top of all ${ledgedChecked} ground colliders equals the top of its tile (mining rim clamped by ${GATE_MINING_RIM_DROP})`)
+      : fail(`invisible ledges/tile drops: ${ledgeBad} items: ${ledgeErrors.slice(0, 3).join('; ')}`);
   }
 
-  // ── 5. Спавн стоит на земле ──
-  // Игра спавнит персонажа явным пропом из IslandCanvas (fallback —
-  // spawnPoint из JSON сцены); проверяем именно фактическую точку.
+  // ── 5. Spawn stands on the ground ──
+  // The game spawns the character with an explicit prop from IslandCanvas (fallback —
+  // spawnPoint from the scene JSON); we check the actual point.
   let [sx, sy, sz] = sceneData.spawnPoint;
   const spawnProp = canvasSrc
     ? (canvasSrc.match(/spawnPoint=\{\[\s*([-\d.\s,]+?)\s*\]\}/) || [])[1]
@@ -859,14 +858,14 @@ try {
   const supported = spawnTopModule !== -Infinity && Math.abs(spawnTopModule - spawnTopGate) <= 1e-9 &&
     sy - spawnTopModule > 0 && sy - spawnTopModule <= 0.3;
   supported
-    ? ok(`спавн [${sx}, ${sy}, ${sz}] стоит на земле: верх плиты ${spawnTopModule}, просадка ${(sy - spawnTopModule).toFixed(2)} м`)
-    : fail(`спавн [${sx}, ${sy}, ${sz}] без опоры на земле: верх=${spawnTopModule}, независимый=${spawnTopGate}`);
+    ? ok(`spawn [${sx}, ${sy}, ${sz}] stands on the ground: tile top ${spawnTopModule}, drop ${(sy - spawnTopModule).toFixed(2)} m`)
+    : fail(`spawn [${sx}, ${sy}, ${sz}] has no ground support: top=${spawnTopModule}, independent=${spawnTopGate}`);
 
-  // ── 5b. Спавн-капсула не пересекает ни один коллайдер ──
-  // (регресс-охрана находки о депенетрационном пинке: бокс spacetruck_large
-  // доходил до [0,1.1,6], капсула r=0.2 пересекала его на ~0.16 м).
-  // Консервативно: мировые AABB коллайдеров (|R|·h) против AABB капсулы
-  // CapsuleCollider [0.17, 0.20] offset 0.37 → y от низа тела до +0.74.
+  // ── 5b. Spawn capsule does not intersect any collider ──
+  // (regression guard for the depenetration kick finding: the spacetruck_large box
+  // reached [0,1.1,6], the r=0.2 capsule intersected it by ~0.16 m).
+  // Conservative: world AABBs of colliders (|R|·h) against the capsule AABB
+  // CapsuleCollider [0.17, 0.20] offset 0.37 → y from body bottom to +0.74.
   {
     const CAP_R = 0.15;
     const CAP_H = 0.54;
@@ -874,7 +873,7 @@ try {
     const capMax = [sx + CAP_R, sy + CAP_H, sz + CAP_R];
     const overlaps = [];
     for (const c of [...moduleBuild.colliders, ...moduleBuild.subColliders, ...moduleBuild.extras]) {
-      // Мировые полубоксы: |R| rows по столбцам te для полного Эйлера.
+      // World half-boxes: |R| rows over the te columns for a full Euler rotation.
       const te = gateQuatToTe(gateQuatFromEulerXYZ(c.rotation[0], c.rotation[1], c.rotation[2]));
       const wh = [
         Math.abs(te[0]) * c.halfExtents[0] + Math.abs(te[4]) * c.halfExtents[1] + Math.abs(te[8]) * c.halfExtents[2],
@@ -887,8 +886,8 @@ try {
         c.position[2] - wh[2] >= capMax[2] || c.position[2] + wh[2] <= capMin[2];
       if (!sep) overlaps.push(`${c.id}: AABB x[${(c.position[0] - wh[0]).toFixed(2)}..${(c.position[0] + wh[0]).toFixed(2)}] y[${(c.position[1] - wh[1]).toFixed(2)}..${(c.position[1] + wh[1]).toFixed(2)}] z[${(c.position[2] - wh[2]).toFixed(2)}..${(c.position[2] + wh[2]).toFixed(2)}]`);
     }
-    // Trimesh-тела (склоны + пропсы): их мировые AABB уже декодированы из
-    // .bin вершин (2d, trimeshWorldAabbs) — включаем в ту же проверку.
+    // Trimesh bodies (slopes + props): their world AABBs are already decoded from
+    // .bin vertices (2d, trimeshWorldAabbs) — include them in the same check.
     for (const t of trimeshWorldAabbs) {
       const sep =
         t.min[0] >= capMax[0] || t.max[0] <= capMin[0] ||
@@ -897,44 +896,44 @@ try {
       if (!sep) overlaps.push(`trimesh ${t.id.slice(0, 8)}: AABB x[${t.min[0].toFixed(2)}..${t.max[0].toFixed(2)}] y[${t.min[1].toFixed(2)}..${t.max[1].toFixed(2)}] z[${t.min[2].toFixed(2)}..${t.max[2].toFixed(2)}]`);
     }
     overlaps.length === 0
-      ? ok(`спавн-капсула r=0.15 не пересекает ни один из ${moduleBuild.colliders.length + moduleBuild.subColliders.length + moduleBuild.extras.length + trimeshWorldAabbs.length} коллайдеров (боксы + trimesh)`)
-      : fail(`спавн-капсула пересекает ${overlaps.length} коллайдер(ов): ${overlaps.slice(0, 3).join('; ')}`);
+      ? ok(`spawn capsule r=0.15 does not intersect any of ${moduleBuild.colliders.length + moduleBuild.subColliders.length + moduleBuild.extras.length + trimeshWorldAabbs.length} colliders (boxes + trimesh)`)
+      : fail(`spawn capsule intersects ${overlaps.length} collider(s): ${overlaps.slice(0, 3).join('; ')}`);
   }
 
-  // ── 6. WorldScene реально рендерит ровно эти числа ──
-  if (!worldSrc.includes('buildSceneColliders(')) fail('WorldScene потребляет buildSceneColliders');
-  else if (/MODEL_COLLIDER_DEFS\s*[:=]/.test(worldSrc)) fail('в WorldScene удалён ручной словарь MODEL_COLLIDER_DEFS (иначе числа вне модуля)');
+  // ── 6. WorldScene actually renders exactly these numbers ──
+  if (!worldSrc.includes('buildSceneColliders(')) fail('WorldScene consumes buildSceneColliders');
+  else if (/MODEL_COLLIDER_DEFS\s*[:=]/.test(worldSrc)) fail('the manual MODEL_COLLIDER_DEFS dictionary was removed from WorldScene (otherwise numbers live outside the module)');
   else {
-    ok('WorldScene потребляет buildSceneColliders, ручной словарь удалён');
+    ok('WorldScene consumes buildSceneColliders, the manual dictionary was removed');
   }
   const cuboidCount = (worldSrc.match(/<CuboidCollider/g) || []).length;
   if (cuboidCount !== 1 || !/<CuboidCollider\s+key=\{item\.id\}\s+args=\{item\.halfExtents\}/.test(worldSrc.replace(/\n\s+/g, ' '))) {
-    fail(`WorldScene рендерит CuboidCollider только маппингом по модулю (найдено <CuboidCollider: ${cuboidCount})`);
+    fail(`WorldScene renders CuboidCollider only by mapping over the module (found <CuboidCollider: ${cuboidCount})`);
   } else {
-    ok('WorldScene рендерит единственный mapped <CuboidCollider> без захардкоженных чисел');
+    ok('WorldScene renders a single mapped <CuboidCollider> without hardcoded numbers');
   }
   if (!worldSrc.includes('UNIT_SCALE') || !worldSrc.includes('MODEL_BOUNDS[')) {
-    fail('InstancedModelGroup использует UNIT_SCALE и MODEL_BOUNDS (единый источник масштаба/якорения с физикой)');
+    fail('InstancedModelGroup uses UNIT_SCALE and MODEL_BOUNDS (single source of scale/anchoring with physics)');
   } else {
-    ok('InstancedModelGroup: масштаб от UNIT_SCALE, якорение от MODEL_BOUNDS — вровень с физикой');
+    ok('InstancedModelGroup: scale from UNIT_SCALE, anchoring from MODEL_BOUNDS — in line with physics');
   }
   if (/CuboidCollider|args=\{\[45,/.test(canvasSrc)) {
-    fail('IslandCanvas больше не держит невидимый куб-пол 90×90 (перенесён в WorldScene/sceneColliders)');
+    fail('IslandCanvas no longer holds the invisible 90×90 cube floor (moved to WorldScene/sceneColliders)');
   } else {
-    ok('IslandCanvas: куб-пол 90×90 удалён, физика пола только из sceneColliders');
+    ok('IslandCanvas: the 90×90 cube floor was removed, floor physics comes only from sceneColliders');
   }
 
-  // ── Итог ──
+  // ── Summary ──
   if (failures.length === 0 && mismatched === 0 && uncovered === 0) {
-    console.log(`\n${COL.green}${COL.bold}ГАТ ПРОЙДЕН: коллайдеры = измеренным AABB мешей, покрытие полное.${COL.reset}`);
+    console.log(`\n${COL.green}${COL.bold}GATE PASSED: colliders = measured mesh AABBs, coverage is complete.${COL.reset}`);
   } else {
-    console.log(`\n${COL.red}${COL.bold}ГАТ ПРОВАЛЕН:${COL.reset}`);
+    console.log(`\n${COL.red}${COL.bold}GATE FAILED:${COL.reset}`);
     for (const f of failures) console.log(`  ${COL.red}- ${f}${COL.reset}`);
     for (const m of mismatches.slice(0, 12)) console.log(`  ${COL.red}~ ${m}${COL.reset}`);
   }
   printSummary(uniqueModels.size, modulePrimaries.length, mismatched, uncovered);
 } catch (err) {
-  fail('гейт завершился неожиданной ошибкой', err);
+  fail('gate ended with an unexpected error', err);
   printSummary(0, 0, failures.length, sceneData ? nonNpcFallbackCount() : 0);
 }
 
@@ -948,7 +947,7 @@ function nonNpcFallbackCount() {
 }
 
 function printSummary(models, colliders, mismatched, uncovered) {
-  // ПОСЛЕДНЯЯ строка вывода — ровно указанный формат.
+  // The LAST output line — exactly the specified format.
   process.stdout.write(
     `##COLLIDER_SUMMARY## ${JSON.stringify({ models, colliders, mismatched, uncovered })}\n`
   );

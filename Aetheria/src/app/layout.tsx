@@ -99,10 +99,10 @@ export default function RootLayout({
   return (
     <html lang="en" data-theme="light" className={spaceGrotesk.variable}>
       <head>
-        {/* Персонаж игры — kaykit_space/Mannequin_Medium; его грузят
-            useGLTF.preload в IslandCanvas/CrewNPCs. Предзагруз хэллоуинского
-            character.glb (3.2 МБ) + webp остался от старой сцены, игрой не
-            использовался и стоил каждому посетителю этих мегабайт. */}
+        {/* The game character — kaykit_space/Mannequin_Medium; it is loaded by
+            useGLTF.preload in IslandCanvas/CrewNPCs. The preload of the Halloween
+            character.glb (3.2 MB) + webp remained from the old scene, was not
+            used by the game, and cost every visitor those megabytes. */}
         {/* Applied before first paint: persisted theme wins, otherwise the OS
             preference — prevents the light-theme flash for dark-mode visitors. */}
         <script

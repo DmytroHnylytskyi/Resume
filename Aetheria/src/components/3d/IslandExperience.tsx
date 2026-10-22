@@ -1,14 +1,15 @@
 'use client';
 
 /**
- * IslandExperience — весь 3D-режим одним ленивым чанком.
+ * IslandExperience — the entire 3D mode in one lazy chunk.
  *
- * Зачем отдельный компонент: раньше страница статически импортировала
- * LoadingScreen (а тот — `useProgress` из @react-three/drei, который тянет
- * three) и MiniRadar (а тот — islandScene.json с тактической картой). Из-за
- * этого классическое резюме скачивало three.js и всю карту до первого рендера,
- * хотя 3D-режим мог вообще не открыться. Теперь страница грузит этот модуль
- * только при viewMode === '3d', а классика остаётся легкой.
+ * Why this is a separate component: the page used to import LoadingScreen
+ * statically, and that pulled `useProgress` from @react-three/drei (which in
+ * turn pulls three), while MiniRadar pulled islandScene.json and the tactical
+ * map into the classic bundle. As a result the classic resume downloaded
+ * three.js and the whole map before its first render, even when the visitor
+ * never opened 3D. The page now loads this module only when
+ * viewMode === '3d', keeping the classic view light.
  */
 
 import React from 'react';
@@ -24,9 +25,9 @@ import DialogueHUD from '../ui/DialogueHUD';
 import IslandCanvas from './IslandCanvas';
 
 /**
- * Короткая черная шторка при переходе из классики: warp/клик уже затемнил
- * экран, а чанк 3D-сцены может грузиться сотни миллисекунд. Без неё на это
- * время мелькала бы классическая страница.
+ * Short black curtain for the classic -> 3D transition: the warp/click has
+ * already darkened the screen, and the 3D chunk may take hundreds of
+ * milliseconds to load. Without it the classic page would flash in between.
  */
 function WormholeArrivalCurtain(): React.ReactElement | null {
   const [visible, setVisible] = React.useState(true);

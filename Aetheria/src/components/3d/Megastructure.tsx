@@ -1,12 +1,12 @@
 'use client';
 
 /**
- * Megastructure — разорванная древняя орбитальная дуга в небе.
+ * Megastructure — a torn ancient orbital arc in the sky.
  *
- * Не полное кольцо и не второй «бублик» рядом с аккреционным диском: две
- * тонкие дуги с большими пропусками и редкими огнями вдоль них. Читается
- * как остаток мегаструктуры, а не как природное кольцо. Три draw call:
- * две дуги + один Points с огнями; без текстуры и без источников света.
+ * Not a complete ring and not a second "donut" next to the accretion disk: two
+ * thin arcs with large gaps and sparse lights along them. It reads
+ * as a remnant of a megastructure, not as a natural ring. Three draw calls:
+ * two arcs + one Points with the lights; no texture and no light sources.
  */
 
 import React, { useEffect, useMemo } from 'react';
@@ -77,7 +77,7 @@ export default function Megastructure(): React.ReactElement {
     []
   );
 
-  // Поперечные рёбра превращают светящуюся полосу в решётку мегаструктуры.
+  // Cross ribs turn the glowing band into the megastructure's lattice.
   const ribGeometry = useMemo(
     () => new THREE.BoxGeometry(0.5, OUTER - INNER + 2.6, 0.9),
     []

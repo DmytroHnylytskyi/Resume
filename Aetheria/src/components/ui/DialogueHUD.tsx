@@ -1,17 +1,17 @@
 'use client';
 
 /**
- * DialogueHUD — карточка разговора с экипажем станции.
+ * DialogueHUD — the conversation card for the station crew.
  *
- * Один каркас на всех шестерых: та же «обсидиановая» панель, что у модалок
- * (glass-panel + те же классы заголовка и кнопок), поэтому разговор читается
- * как часть интерфейса станции, а не как шесть отдельных приложений. Сектор
- * остаётся только цветовым акцентом — линия сверху, иконка и точка, — а не
- * темой окна: неоновая рамка, сканлайны и градиентные кнопки убраны.
+ * One frame for all six: the same “obsidian” panel as the modals
+ * (glass-panel + the same header and button classes), so the conversation reads
+ * as part of the station interface, not as six separate apps. The sector
+ * remains only a color accent — top line, icon, and dot — and not the
+ * window theme: the neon frame, scanlines, and gradient buttons are gone.
  *
- * Печать текста посимвольно сохранена: она задаёт ритм чтения и не мешает.
- * Клик по панели, Enter или Space мгновенно показывают реплику целиком;
- * Escape и клик по фону закрывают разговор.
+ * The character-by-character typing is preserved: it sets the reading rhythm without getting in the way.
+ * Clicking the panel, Enter, or Space instantly shows the whole line;
+ * Escape and clicking the backdrop close the conversation.
  */
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
@@ -33,7 +33,7 @@ import { radarState } from '../../store/radarState';
 import { ZONES, nearestUnmetZone } from '../../data/zones';
 import type { NPCId } from '../../types/store';
 
-/** Иконка в заголовке — единственная визуальная метка профессии. */
+/** The icon in the header — the only visual marker of the profession. */
 type CrewIcon = React.ComponentType<{ size?: number; strokeWidth?: number }>;
 
 const NPC_ICONS: Record<NPCId, CrewIcon> = {
@@ -56,8 +56,8 @@ export default function DialogueHUD(): React.ReactElement | null {
     language
   } = useGameStore();
 
-  // Подсказка «куда дальше» считается от позиции игрока, а не от порядка
-  // обхода: физически ближайший сектор полезнее, чем следующий по сценарию.
+  // The “where to next” hint is computed from the player's position, not from
+  // the route order: the physically nearest sector is more useful than the next one in the script.
   const nextZone = React.useMemo(
     () => nearestUnmetZone(radarState.x, radarState.z, metCrew),
     [metCrew, activeDialogue]
@@ -127,8 +127,8 @@ export default function DialogueHUD(): React.ReactElement | null {
     audio.play('interact', 0.4);
     setActiveDialogue(null);
 
-    // Досье отмечает сам факт открытия материала — здесь, а не по закрытию окна:
-    // посетитель мог закрыть его сразу, но материал он всё равно увидел.
+    // The dossier records the very fact that the material was opened — here, not on window close:
+    // the visitor may have closed it immediately, but they still saw the material.
     markMaterialOpened(npcDef.targetKey);
 
     if (npcDef.targetType === 'modal') {
@@ -164,8 +164,8 @@ export default function DialogueHUD(): React.ReactElement | null {
   const currentRenderedText = fullText.slice(0, displayedTextLength);
   const Icon = NPC_ICONS[npcDef.id];
 
-  // Цвет сектора приходит из данных и живёт только в CSS-переменных панели:
-  // один класс на все диалоги, акцент — параметр. См. .dialogue-* в globals.css.
+  // The sector color comes from the data and lives only in the panel's CSS variables:
+  // one class for all dialogues, the accent is a parameter. See .dialogue-* in globals.css.
   const accentStyle = {
     '--dialogue-accent': npcDef.hexColor,
     '--dialogue-accent-rgb': npcDef.rgbColor
@@ -188,7 +188,7 @@ export default function DialogueHUD(): React.ReactElement | null {
       >
         <div className="modal-accent-line dialogue-accent-line" />
 
-        {/* Header: иконка, имя, роль; бейдж сектора и закрытие — справа */}
+        {/* Header: icon, name, role; sector badge and close — on the right */}
         <div className="modal-header dialogue-header">
           <div className="modal-badge-group">
             <div className="modal-badge-icon dialogue-icon" aria-hidden="true">
@@ -224,7 +224,7 @@ export default function DialogueHUD(): React.ReactElement | null {
           {!isTypingComplete && <span className="dialogue-caret" aria-hidden="true" />}
         </p>
 
-        {/* Footer: одна и та же пара кнопок во всех диалогах */}
+        {/* Footer: the same pair of buttons in every dialogue */}
         <div className="dialogue-footer">
           <button
             type="button"
@@ -250,10 +250,10 @@ export default function DialogueHUD(): React.ReactElement | null {
           </button>
         </div>
 
-        {/* Куда идти дальше. Разговор — естественный момент направить посетителя
-            к следующему сектору, и заодно это подсказка, зачем вообще обходить
-            станцию. Текущий NPC уже отмечен встреченным при открытии диалога,
-            поэтому в «ближайшем непознанном» он не появится. */}
+        {/* Where to go next. A conversation is a natural moment to point the visitor
+            to the next sector, and it also hints at why one should tour the
+            station at all. The current NPC is already marked as met when the dialogue opens,
+            so it will not appear in the “nearest unmet” hint. */}
         {nextZone ? (
           <div className="dialogue-next-hint">
             <span className="dialogue-next-dot" style={{ backgroundColor: ZONES[nextZone].hexColor }} />

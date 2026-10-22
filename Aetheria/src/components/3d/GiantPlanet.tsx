@@ -1,29 +1,29 @@
 'use client';
 
 /**
- * GiantPlanet — землеподобный мир под платформой станции.
+ * GiantPlanet — an Earth-like world beneath the station platform.
  *
- * Геометрия: сфера r=800 с центром y=−920 (верх на −120 под палубой).
- * Поверхность — океан, континенты, горные провинции, скалы, снег, пляжи;
- * облака — отдельная сфера r+10; атмосфера — сфера r×1.012 с гало.
+ * Geometry: sphere r=800 centered at y=−920 (top at −120 below the deck).
+ * Surface — ocean, continents, mountain provinces, rock, snow, beaches;
+ * clouds — a separate sphere r+10; atmosphere — a sphere r×1.012 with a halo.
  *
- * ── Почему всё запекается ────────────────────────────────────────────────
- * Процедурный рельеф требует 15–20 выборок 3D-шума на пиксель каждый кадр.
- * На десктопе это ~12 FPS, на телефоне — неприемлемо. Поэтому тяжёлый
- * шейдер выполняется РОВНО ОДИН РАЗ при входе в 3D: поверхность и облака
- * рендерятся в две текстуры (ортокамера сверху, полярная шапка 36°).
- * В кадре остаются: одна выборка текстуры, дешёвая детализация двумя
- * value-noise, блик, дымка/лимб и ночной тинт. Цена кадра — единицы
- * инструкций вместо сотен.
+ * ── Why everything is baked ───────────────────────────────────────────────
+ * Procedural terrain requires 15–20 3D noise samples per pixel every frame.
+ * On desktop that is ~12 FPS, on a phone — unacceptable. So the heavy
+ * shader runs EXACTLY ONCE when entering 3D: the surface and clouds
+ * are rendered into two textures (ortho camera from above, 36° polar cap).
+ * What remains per frame: one texture sample, cheap detail from two
+ * value-noise octaves, specular, haze/limb and night tint. The per-frame cost is a few
+ * instructions instead of hundreds.
  *
- * Полярная шапка, а не equirect: платформа висит над точкой планеты,
- * ближайшей к ней, и видит только ~30° вокруг неё. Шапка 36° покрывает
- * весь видимый диск с запасом и не имеет полюсного сжатия. Ориентация
- * шапки привязана к наклону оси планеты (PLANET_AXIS/T/B), поэтому
- * запечённый свет остаётся правильным в мире.
+ * A polar cap rather than equirect: the platform hangs over the planet point
+ * closest to it and sees only ~30° around it. The 36° cap covers
+ * the whole visible disk with margin and has no polar compression. The cap
+ * orientation is tied to the planet axis tilt (PLANET_AXIS/T/B), so the
+ * baked light stays correct in world space.
  *
- * Планета статична: запечённый диффузный свет фиксирован в локальных
- * координатах. Облака медленно вращаются вместе со своей текстурой.
+ * The planet is static: the baked diffuse light is fixed in local
+ * coordinates. The clouds rotate slowly together with their texture.
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
@@ -32,9 +32,9 @@ import * as THREE from 'three';
 import { getNightFactor } from '../../store/dayNightState';
 import { visualQuality } from '../../store/debugState';
 
-// 4096²-запечка только для мощного десктопа: medium (современные телефоны)
-// получает 2048² — на мобильном GPU 4096 и по VRAM, и по времени запечки
-// слишком дорог, а разницу с 2× DPR экрана уже не видно.
+// 4096² bake only for a powerful desktop: medium (modern phones)
+// gets 2048² — on a mobile GPU 4096 is too expensive both in VRAM and bake time,
+// and the difference from a 2× screen DPR is no longer visible.
 const HQ = visualQuality.planetHighRes;
 
 const PLANET_RADIUS = 800;
@@ -44,51 +44,51 @@ const PLANET_QUAT = new THREE.Quaternion().setFromEuler(
   new THREE.Euler(PLANET_TILT[0], PLANET_TILT[1], PLANET_TILT[2])
 );
 
-// Силуэт планеты — главный носитель «сферичности»: на high даём 128
-// сегментов по экватору, на low оставляем дешёвые 64.
+// The planet silhouette is the main carrier of "sphericity": on high we give 128
+// segments around the equator, on low we keep a cheap 64.
 const PLANET_WIDTH_SEGMENTS = HQ ? 128 : 64;
 const PLANET_HEIGHT_SEGMENTS = HQ ? 96 : 48;
 
-// Свет планеты. Физически это сингулярность, но она висит почти точно над
-// точкой планеты, ближайшей к станции: при вертикальном ключе производная
-// ndl по наклону нормали равна нулю, и любой рельеф выглядит плоской
-// заливкой. Поэтому ключ сдвинут на ~35° — скользящий свет читает склоны.
+// Planet lighting. Physically it is the singularity, but it hangs almost exactly above
+// the planet point closest to the station: with a vertical key the derivative of
+// ndl with respect to normal tilt is zero, and any terrain looks like a flat
+// fill. So the key is shifted by ~35° — grazing light reads the slopes.
 const SUN_DIR = new THREE.Vector3(0.42, 0.8, -0.43).normalize();
 
-// ── Запекание ─────────────────────────────────────────────────────────────
-// Шапка 36° вокруг точки, ближайшей к платформе. Видимый с палубы диск —
-// ~30°, запас 6° уходит за горизонт.
+// ── Baking ────────────────────────────────────────────────────────────────
+// A 36° cap around the point closest to the platform. The disk visible from the deck is
+// ~30°, the 6° margin goes below the horizon.
 const CAP_RAD = THREE.MathUtils.degToRad(36);
 const CAP_SIN = Math.sin(CAP_RAD);
-// Планета видна с палубы в 3–4 экранных пикселя на тексель, поэтому 1024²
-// (прежний low) читалась крупными квадратами — именно её и видел слабый GPU.
-// Low теперь 2048² (2× линейного разрешения), HQ — 4096². 4096 на слабом
-// iGPU в холодной прод-сборке подвешивал поток драйвера, поэтому он только
-// для HQ: лучше стабильный первый запуск, чем лишние тексели.
-// MSAA в запечке не нужен — в шапке нет геометрических силуэтов.
-// visualQuality.touch — это handheld (UA/maxTouchPoints/DPR), а не только
-// `pointer: coarse`: телефон в desktop-mode отдаёт fine pointer, и прежняя
-// проверка включала ему 4096², что на мобильном GPU блокировало поток.
+// The planet is seen from the deck at 3–4 screen pixels per texel, so 1024²
+// (the former low) read as large squares — exactly what a weak GPU saw.
+// Low is now 2048² (2× linear resolution), HQ — 4096². 4096 on a weak
+// iGPU in a cold production build stalled the driver thread, so it is only
+// for HQ: a stable first launch beats extra texels.
+// MSAA is not needed in the bake — the cap has no geometric silhouettes.
+// visualQuality.touch means handheld (UA/maxTouchPoints/DPR), not just
+// `pointer: coarse`: a phone in desktop mode reports a fine pointer, and the previous
+// check gave it 4096², which blocked the thread on a mobile GPU.
 const TOUCH = visualQuality.touch;
 const SURFACE_TEX_SIZE = TOUCH ? 2048 : HQ ? 4096 : 2048;
 const CLOUD_TEX_SIZE = TOUCH ? 1024 : HQ ? 2048 : 1024;
 
-// Оси шапки в ЛОКАЛЬНЫХ координатах планеты. Планета наклонена, поэтому
-// «верх» мира — не её локальный +Y. A — направление на платформу,
-// T/B — касательный базис для UV.
+// Cap axes in the planet's LOCAL coordinates. The planet is tilted, so the world
+// "up" is not its local +Y. A is the direction toward the platform,
+// T/B is the tangent basis for UV.
 const WORLD_UP = new THREE.Vector3(0, 1, 0);
 const PLANET_AXIS = WORLD_UP.clone().applyQuaternion(PLANET_QUAT.clone().invert()).normalize();
 const PLANET_T = new THREE.Vector3().crossVectors(WORLD_UP, PLANET_AXIS).normalize();
 const PLANET_B = new THREE.Vector3().crossVectors(PLANET_AXIS, PLANET_T).normalize();
-// Тот же базис в мировых координатах — для нормали детализации (во
-// фрагментном шейдере modelMatrix недоступна).
+// The same basis in world coordinates — for the detail normal (modelMatrix is
+// not available in the fragment shader).
 const PLANET_AXIS_W = PLANET_AXIS.clone().applyQuaternion(PLANET_QUAT).normalize();
 const PLANET_T_W = PLANET_T.clone().applyQuaternion(PLANET_QUAT).normalize();
 const PLANET_B_W = PLANET_B.clone().applyQuaternion(PLANET_QUAT).normalize();
-// Солнце в локальных координатах — для запечённого диффузного света.
+// The sun in local coordinates — for the baked diffuse light.
 const SUN_LOCAL = SUN_DIR.clone().applyQuaternion(PLANET_QUAT.clone().invert()).normalize();
 
-// Облака не наклонены (их шапка смотрит в мировой +Y).
+// Clouds are not tilted (their cap looks along world +Y).
 const CLOUD_AXIS = new THREE.Vector3(0, 1, 0);
 const CLOUD_T = new THREE.Vector3(1, 0, 0);
 const CLOUD_B = new THREE.Vector3(0, 0, -1);
@@ -97,9 +97,9 @@ const CLOUD_SPIN = 0.0012;
 const SHELL_SEGMENTS: [number, number] = HQ ? [96, 64] : [48, 32];
 const CLOUD_SEGMENTS: [number, number] = HQ ? [96, 64] : [64, 48];
 
-// ShaderMaterial пишет в sRGB-фреймбуфер напрямую, без colorspace-чанка.
-// Трактуем hex как уже линейный, иначе THREE.Color переведёт его в linear
-// и планета выйдет заметно темнее задуманного.
+// ShaderMaterial writes directly into the sRGB framebuffer, without a colorspace chunk.
+// We treat hex as already linear, otherwise THREE.Color converts it to linear
+// and the planet comes out noticeably darker than intended.
 const srgb = (hex: string) => new THREE.Color().setStyle(hex, THREE.LinearSRGBColorSpace);
 
 const PALETTE = {
@@ -118,13 +118,13 @@ const PALETTE = {
 };
 
 /**
- * Тайловая normal-map для ближнего плана: 256² (low — 128²), RGB = нормаль
- * в касательном базисе, A = высота для зерна альбедо. Периодический
- * value-noise, поэтому текстура бесшовно повторяется (тайл 14 м).
+ * Tiled normal map for close-up: 256² (low — 128²), RGB = normal
+ * in the tangent basis, A = height for albedo grain. Periodic
+ * value-noise, so the texture tiles seamlessly (tile 14 m).
  *
- * Зачем: запечённая поверхность 2048² даёт ~0.46 м/texel; вблизи это
- * ступеньки. Эта текстура добавляет светотень на масштабе 0.5–2 м и
- * маскирует блоки, оставаясь одной выборкой в кадре.
+ * Why: the baked 2048² surface gives ~0.46 m/texel; up close that is
+ * stair-stepping. This texture adds shading at the 0.5–2 m scale and
+ * masks the blocks while staying one sample per frame.
  */
 function makeDetailTexture(size: number): THREE.DataTexture {
   const data = new Uint8Array(size * size * 4);
@@ -163,8 +163,8 @@ function makeDetailTexture(size: number): THREE.DataTexture {
     }
   }
 
-  // 12, а не 16: на 16 мелкий рельеф читался «ковром». На таком наклоне
-  // нормали уже дают заметную светотень, не превращая планету в шум.
+  // 12, not 16: at 16 the fine relief read as a "carpet". At this slope
+  // the normals already give noticeable shading without turning the planet into noise.
   const strength = 12;
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
@@ -212,9 +212,9 @@ const VERTEX_SHADER = /* glsl */ `
 `;
 
 /**
- * Тяжёлый шейдер поверхности. Используется ТОЛЬКО для запекания в текстуру:
- * на выходе — диффузно освещённый цвет без блика, дымки и лимба (они
- * зависят от камеры и считаются в рантайме).
+ * Heavy surface shader. Used ONLY for baking into a texture:
+ * the output is diffusely lit color without specular, haze or limb (they
+ * depend on the camera and are computed at runtime).
  */
 const SURFACE_BAKE_FRAGMENT = /* glsl */ `
   uniform vec3 uSunDir;
@@ -284,7 +284,7 @@ const SURFACE_BAKE_FRAGMENT = /* glsl */ `
     return a;
   }
 
-  // Ridged multifractal — острые хребты вместо холмов.
+  // Ridged multifractal — sharp ridges instead of hills.
   float ridged(vec3 p) {
     float sum = 0.0;
     float amp = 0.5;
@@ -304,7 +304,7 @@ const SURFACE_BAKE_FRAGMENT = /* glsl */ `
     vec3 p = normalize(vLocalNormal);
     vec3 nGeo = normalize(vWorldNormal);
 
-    // Доменный варп: изогнутые береговые линии вместо клеток.
+    // Domain warp: curved coastlines instead of cells.
     vec3 w = vec3(
       vnoise(p * 1.9 + vec3(2.4, 8.1, 1.3)),
       vnoise(p * 1.9 + vec3(7.7, 1.9, 5.2)),
@@ -315,8 +315,8 @@ const SURFACE_BAKE_FRAGMENT = /* glsl */ `
     float cont = fbm4(q * 3.1 + vec3(3.0, 1.0, 7.0));
     float land = smoothstep(0.494, 0.506, cont);
 
-    // Горные провинции: основной крупный пояс + второй, более мелкий.
-    // В сумме горы занимают заметно больше суши, чем в первой версии.
+    // Mountain provinces: a main large belt + a second, finer one.
+    // In total the mountains occupy noticeably more land than in the first version.
     float mount = smoothstep(0.445, 0.535, fbm2(q * 4.5 + vec3(17.0, 5.0, 11.0)));
     float mount2 = smoothstep(0.535, 0.620, fbm2(q * 11.0 + vec3(9.0, 3.0, 5.0)));
     mount = max(mount, mount2 * 0.80);
@@ -328,7 +328,7 @@ const SURFACE_BAKE_FRAGMENT = /* glsl */ `
     fine *= fine;
     float elev = land * (0.02 + 0.75 * mount * ridge + 0.12 * micro + 0.04 * crust + 0.04 * fine);
 
-    // ── Альбедо ──
+    // ── Albedo ──
     float shelf = smoothstep(0.40, 0.494, cont);
     vec3 sea = mix(uSeaDeep, uSeaShallow, shelf);
     sea = mix(sea, uSeaCoast, smoothstep(0.470, 0.496, cont) * 0.9);
@@ -350,9 +350,9 @@ const SURFACE_BAKE_FRAGMENT = /* glsl */ `
 
     vec3 albedo = mix(sea, ground, land);
 
-    // ── Рельефный бамп по производным высоты ──
-    // В запекании это ортокамера сверху: производные равномерные, без
-    // растяжения у лимба, поэтому склоны гор получают правильный наклон.
+    // ── Relief bump from height derivatives ──
+    // In the bake this is an ortho camera from above: the derivatives are uniform, with no
+    // stretching at the limb, so mountain slopes get the correct tilt.
     float relief = elev * 70.0;
     vec3 dpdx = dFdx(vWorldPos);
     vec3 dpdy = dFdy(vWorldPos);
@@ -368,8 +368,8 @@ const SURFACE_BAKE_FRAGMENT = /* glsl */ `
     float term = pow(ndl, 0.85);
     vec3 color = albedo * (0.15 + 0.9 * term) * uSun;
 
-    // Долины и подножия темнее вершин: без этого суша читалась заливкой, а
-    // не рельефом. Мягко и дёшево — AO по самой высоте, без новых выборок.
+    // Valleys and foothills are darker than peaks: without this the land read as a fill,
+    // not as relief. Soft and cheap — AO from the height itself, with no new samples.
     float valleyAO = mix(0.74, 1.0, smoothstep(0.0, 0.22, elev));
     color *= mix(1.0, valleyAO, land);
 
@@ -378,8 +378,8 @@ const SURFACE_BAKE_FRAGMENT = /* glsl */ `
 `;
 
 /**
- * Рантайм поверхности: текстура + дешёвая детализация + зависящие от
- * камеры блик/дымка/лимб/ночь.
+ * Surface runtime: texture + cheap detail + camera-dependent
+ * specular/haze/limb/night.
  */
 const SURFACE_RUNTIME_FRAGMENT = /* glsl */ `
   uniform sampler2D uSurface;
@@ -408,37 +408,37 @@ const SURFACE_RUNTIME_FRAGMENT = /* glsl */ `
     vec3 nGeo = normalize(vWorldNormal);
     vec3 viewDir = normalize(cameraPosition - vWorldPos);
 
-    // Касательный базис шапки в локальных координатах планеты.
+    // Tangent basis of the cap in the planet's local coordinates.
     vec2 basis = vec2(dot(p, uCapT), dot(p, uCapB));
 
-    // Крупа: нормаль и зерно из тайловой текстуры. Одна выборка на всё.
+    // Grain: normal and grain from the tiled texture. One sample for everything.
     vec4 det = texture2D(uDetail, basis * uDetailScale);
     vec3 dn = det.xyz * 2.0 - 1.0;
     float footprint = length(fwidth(p)) * 800.0;
     float detailFade = 1.0 - smoothstep(1.2, 6.0, footprint);
 
-    // Лёгкий LOD-bias: вблизи 2048-текстура магнифицируется в 3–6 px на
-    // texel и кромки читаются ступеньками. Пол-мипа сглаживает их; мелкую
-    // резкость возвращает normal-map детализации ниже.
+    // Slight LOD bias: up close the 2048 texture is magnified to 3–6 px per
+    // texel and edges read as stair-steps. Half a mip smooths them; fine
+    // sharpness is restored by the detail normal map below.
     vec2 uv = basis / (2.0 * uCapSin) + 0.5;
     vec3 color = texture2D(uSurface, uv, uLodBias).rgb;
 
-    // Направленная микро-светотень: та же запечённая база, но склоны
-    // мелкого рельефа ловят свет пиксель-в-пиксель.
+    // Directional micro-shading: the same baked base, but the slopes of
+    // fine relief catch the light pixel by pixel.
     vec3 nDetail = normalize(uDetT * dn.x + uDetB * dn.y + uDetA * dn.z);
     float baseNdl = max(dot(nGeo, uSunDir), 0.0);
     float detailNdl = max(dot(nDetail, uSunDir), 0.0);
     float shade = clamp(1.0 + (detailNdl - baseNdl) * 1.35, 0.62, 1.38);
     color *= mix(1.0, shade, detailFade);
     color *= mix(1.0, 0.93 + 0.14 * det.a, detailFade * 0.9);
-    // Второй слой крупнее и со сдвигом: рвёт повторяемость 20-метрового
-    // тайла, из-за которой суша выглядела однородной.
+    // A second layer, larger and offset: breaks the repetition of the 20-meter
+    // tile that made the land look uniform.
     vec4 det2 = texture2D(uDetail, basis * uDetailScale * 0.37 + vec2(0.23, 0.61));
     color *= mix(1.0, 0.90 + 0.10 * det2.a, detailFade * 0.7);
 
-    // Тени облаков — главная объёмная подсказка после рельефа: облачная
-    // сфера вращается, поэтому направление сэмпла раскручиваем назад на её
-    // текущий угол и берём покрытие из уже запечённой текстуры облаков.
+    // Cloud shadows — the main volumetric cue after relief: the cloud
+    // sphere rotates, so we unrotate the sample direction back by its
+    // current angle and take coverage from the already baked cloud texture.
     float cs = cos(uCloudSpin);
     float sn = sin(uCloudSpin);
     vec3 pc = vec3(cs * nGeo.x - sn * nGeo.z, nGeo.y, sn * nGeo.x + cs * nGeo.z);
@@ -447,14 +447,14 @@ const SURFACE_RUNTIME_FRAGMENT = /* glsl */ `
     float sunward = max(dot(nGeo, uSunDir), 0.0);
     color *= 1.0 - cloudCover * 0.24 * (0.35 + 0.65 * sunward);
 
-    // Блик по геометрической нормали: воду отделяет от суши.
+    // Specular from the geometric normal: separates water from land.
     float ocean = smoothstep(0.0, 0.08, color.b - color.r);
     float term = max(dot(nGeo, uSunDir), 0.0);
     vec3 hv = normalize(uSunDir + viewDir);
     float spec = pow(max(dot(nGeo, hv), 0.0), 120.0) * ocean * 1.1 * term;
     color += vec3(1.0, 0.95, 0.86) * spec;
 
-    // Дымка и лимб зависят от камеры — считаются здесь, а не запекаются.
+    // Haze and limb depend on the camera — computed here, not baked.
     float muGeo = max(dot(nGeo, viewDir), 0.0);
     float haze = pow(1.0 - muGeo, 4.0);
     color = mix(color, uHaze, haze * 0.28);
@@ -509,9 +509,9 @@ const CLOUD_VERTEX = /* glsl */ `
 `;
 
 /**
- * Запекание облаков: тот же процедурный шейдер, что был в рантайме.
- * Используется один раз; на выходе RGB цвета облака и A = готовое
- * покрытие (с альфой), без ночного тинта.
+ * Cloud bake: the same procedural shader that used to run at runtime.
+ * Used once; the output is the cloud RGB color and A = final
+ * coverage (with alpha), without the night tint.
  */
 const CLOUD_BAKE_FRAGMENT = /* glsl */ `
   uniform float uTime;
@@ -605,7 +605,7 @@ const CLOUD_RUNTIME_FRAGMENT = /* glsl */ `
   }
 `;
 
-/** Один тяжёлый проход в render target с ортокамерой над шапкой. */
+/** One heavy pass into a render target with an ortho camera above the cap. */
 function bakeCap(
   gl: THREE.WebGLRenderer,
   target: THREE.WebGLRenderTarget,
@@ -635,7 +635,7 @@ function bakeCap(
   gl.setRenderTarget(target);
   gl.clear();
   gl.render(scene, camera);
-  // Возврат цели генерирует мипмапы render target (three, setRenderTarget).
+  // Restoring the target generates the render target mipmaps (three, setRenderTarget).
   gl.setRenderTarget(prevTarget);
   gl.setClearColor(prevColor, prevAlpha);
 
@@ -647,8 +647,8 @@ export default function GiantPlanet(): React.ReactElement {
   const gl = useThree((s) => s.gl);
   const cloudMeshRef = useRef<THREE.Mesh>(null);
 
-  // Заглушки на время запекания: пока текстуры нет, планета — тёмный диск,
-  // а не чёрная дыра в сцене.
+  // Placeholders during the bake: while the texture is not ready, the planet is a dark disk,
+  // not a black hole in the scene.
   const surfacePlaceholder = useMemo(() => {
     const t = new THREE.DataTexture(new Uint8Array([8, 26, 40, 255]), 1, 1, THREE.RGBAFormat);
     t.colorSpace = THREE.NoColorSpace;
@@ -678,8 +678,8 @@ export default function GiantPlanet(): React.ReactElement {
           uDetA: { value: PLANET_AXIS_W.clone() },
           uCapSin: { value: CAP_SIN },
           uDetailScale: { value: PLANET_RADIUS / DETAIL_TILE_METERS },
-          // 2048/3072 почти не магнифицируются — сильный bias больше не нужен
-          // и только вернул бы «мыло», на которое жаловались раньше.
+          // 2048/3072 are barely magnified — a strong bias is no longer needed
+          // and would only bring back the "soap" that was complained about before.
           uLodBias: { value: HQ ? 0.35 : 0.25 },
           uSunDir: { value: SUN_DIR.clone() },
           uHaze: { value: PALETTE.uHaze },
@@ -731,14 +731,14 @@ export default function GiantPlanet(): React.ReactElement {
     [cloudPlaceholder]
   );
 
-  // ── Запекание один раз при монтировании ─────────────────────────────────
+  // ── Bake once on mount ───────────────────────────────────────────────────
   useEffect(() => {
-    // 8×: у лимба текстура сжата сильнее всего, и без этого кольцо горизонта
-    // смазывается в полосу. 16× на этой машине давал драйверный залип.
+    // 8×: at the limb the texture is compressed the most, and without this the horizon ring
+    // smears into a band. 16× on this machine caused a driver freeze.
     const anisotropy = Math.min(8, gl.capabilities.getMaxAnisotropy());
     const surfaceRT = new THREE.WebGLRenderTarget(SURFACE_TEX_SIZE, SURFACE_TEX_SIZE, {
-      // MSAA в шапке бесполезен: внутри капа нет геометрических силуэтов,
-      // которые он сглаживал бы, — только цвет шейдера.
+      // MSAA is useless in the cap: inside the cap there are no geometric silhouettes
+      // for it to smooth — only shader color.
       samples: 0,
       depthBuffer: false,
       stencilBuffer: false,
@@ -793,8 +793,8 @@ export default function GiantPlanet(): React.ReactElement {
       depthWrite: false
     });
 
-    // Сегментов больше, чем texel'ов на диаметр нет смысла, но 384×256
-    // убирает фасетку интерполированных нормалей на крупном рельефе.
+    // More segments than texels across the diameter makes no sense, but 384×256
+    // removes the faceting of interpolated normals on large-scale relief.
     bakeCap(gl, surfaceRT, surfaceBake, PLANET_RADIUS, PLANET_AXIS, PLANET_B, [384, 256]);
     bakeCap(gl, cloudRT, cloudBake, PLANET_RADIUS + 10, CLOUD_AXIS, CLOUD_B, [192, 128]);
 
@@ -837,10 +837,10 @@ export default function GiantPlanet(): React.ReactElement {
     surfaceMaterial.uniforms.uNight.value = nf;
     cloudMaterial.uniforms.uNight.value = nf;
     atmoMaterial.uniforms.uNight.value = nf;
-    // Днём лимб тёплый, ночью — электрический циан, как у сингулярности.
+    // By day the limb is warm, at night — electric cyan, like the singularity.
     (surfaceMaterial.uniforms.uRim.value as THREE.Color).copy(nightRim).lerp(dayRim, 1 - nf);
-    // Облака дрейфуют вращением своей запечённой текстуры. Тот же угол
-    // получает шейдер поверхности — по нему он кладёт тени облаков.
+    // Clouds drift by rotating their baked texture. The same angle
+    // is passed to the surface shader — it uses it to place the cloud shadows.
     const cm = cloudMeshRef.current;
     if (cm) {
       cm.rotateY(delta * CLOUD_SPIN);

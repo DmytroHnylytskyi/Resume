@@ -6,10 +6,10 @@
  * Each crew member features:
  * - Independent cloned Mannequin_Medium skeletal mesh
  * - Sector-specific skeletal animation (Waving, Work_A, Interact, Cheering)
- * - Distinct body tint (per-sector material color, НЕ emissive — раньше вся
- *   фигура светилась сектором: emissive 0.18 + две аддитивные ауры + точечный
- *   свет на каждом из 6 NPC) и лёгкая вариация роста
- * - Dim grounded marker ring (normal blending — маркер читается, но не блумит)
+ * - Distinct body tint (per-sector material color, NOT emissive — previously the whole
+ *   figure glowed with its sector: emissive 0.18 + two additive auras + a point
+ *   light on each of the 6 NPCs) and a slight height variation
+ * - Dim grounded marker ring (normal blending — the marker reads but does not bloom)
  * - Smooth dynamic look-at rotation turning toward the player on approach
  * - Rapier 3D capsule collider preventing player clipping
  */
@@ -29,11 +29,11 @@ import { IslandSceneData } from '../../types/scene';
 
 const islandSceneData = rawIslandSceneData as unknown as IslandSceneData;
 
-const TARGET_HEIGHT = 0.55; // пропорции каталога kaykit (см. AnimatedCharacter)
+const TARGET_HEIGHT = 0.55; // kaykit catalog proportions (see AnimatedCharacter)
 const DEGENERATE_SCALE_FALLBACK = 0.34;
 
-// Детерминированная вариация роста по id (0.97..1.05) — одинаковый
-// Mannequin-меш с разной высотой читается как разные персонажи.
+// Deterministic height variation by id (0.97..1.05) — the same
+// Mannequin mesh at different heights reads as different characters.
 function heightFactorOf(id: string): number {
   let h = 2166136261;
   for (let i = 0; i < id.length; i++) {
@@ -76,16 +76,16 @@ function SingleNPC({
     const rawHeight = box.getSize(new THREE.Vector3()).y;
     const scale = rawHeight > 0 ? (TARGET_HEIGHT * heightFactor) / rawHeight : DEGENERATE_SCALE_FALLBACK;
 
-    // 6 skinned-примитивов на NPC → один draw call на человека.
+    // 6 skinned primitives per NPC → one draw call per person.
     mergeSkinnedMeshes(cl);
 
-    // Различимые образы: цвет-тинт материала сектора (обычный множитель —
-    // НЕ emissive: тело больше не светится в темноте).
+    // Distinguishable looks: sector material color tint (a plain multiplier —
+    // NOT emissive: the body no longer glows in the dark).
     const tintColor = new THREE.Color(def.hexColor);
     cl.traverse((child) => {
       if ((child as THREE.SkinnedMesh).isSkinnedMesh || (child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.SkinnedMesh;
-        mesh.castShadow = true; // тень от солнечного key, как у игрока
+        mesh.castShadow = true; // shadow from the sun key, same as the player
         mesh.receiveShadow = false;
         mesh.frustumCulled = false;
 
@@ -168,15 +168,15 @@ function SingleNPC({
   return (
     <group position={pos}>
       {/* ── Rapier 3D Solid Collider ── */}
-      {/* position здесь НЕ задаём: Rapier-биндинг ставит тело по
-          object.matrixWorld (уже включает position группы) — с явным
-          position={pos} капсулы уезжали на 2×координаты ([3,2,10] вместо
-          [1.5,1,5]) и висели вдали от видимых тел. */}
+      {/* We do NOT set position here: the Rapier binding places the body by
+          object.matrixWorld (which already includes the group position) — with an explicit
+          position={pos} the capsules moved to 2× coordinates ([3,2,10] instead of
+          [1.5,1,5]) and hung far from the visible bodies. */}
       <RigidBody type="fixed" colliders={false}>
         <CapsuleCollider args={[0.15, 0.125]} position={[0, 0.27, 0]} />
       </RigidBody>
 
-      {/* ── Ground marker ring (обычный блендинг, не аддитивный) ── */}
+      {/* ── Ground marker ring (normal blending, not additive) ── */}
       <mesh
         ref={ringRef}
         position={[0, 0.05, 0]}
@@ -218,8 +218,8 @@ export default function CrewNPCs({ playerPosRef }: CrewNPCsProps): React.ReactEl
     <group name="CrewNPCsGroup">
       {npcKeys.map((key) => {
         const def = NPC_DIALOGUES[key];
-        // Связка NPC↔размещение — по явному имени файла из диалога
-        // (эвристика 'npc_'+id ломалась: chief_engineer ≠ npc_engineer.glb).
+        // NPC↔placement pairing is by the explicit file name from the dialogue
+        // (the 'npc_'+id heuristic broke: chief_engineer ≠ npc_engineer.glb).
         const placed = islandSceneData.placedObjects?.find((p) => p.modelPath.endsWith('/' + def.modelFile));
         const pos: [number, number, number] = placed ? placed.position : def.position;
         const rot: [number, number, number] = placed ? (placed.rotation as [number, number, number]) : def.rotation;

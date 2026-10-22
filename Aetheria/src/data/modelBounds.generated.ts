@@ -1,12 +1,12 @@
 // ════════════════════════════════════════════════════════════════════
-// ЭТОТ ФАЙЛ ГЕНЕРИРУЕТСЯ АВТОМАТИЧЕСКИ скриптом scripts/extractModelBounds.mjs
-// НЕ РЕДАКТИРУЙ ВРУЧНУЮ — изменения будут перезаписаны при следующем запуске.
+// THIS FILE IS GENERATED AUTOMATICALLY by scripts/extractModelBounds.mjs
+// DO NOT EDIT MANUALLY — changes will be overwritten on the next run.
 //
-// Источник правды о реальных габаритах GLTF/GLB моделей public/model/kaykit_space/
-// для физики коллизий. AABB = union POSITION accessor.min/max по всем мешам,
-// достижимым из корней дефолтной сцены, с учётом трансформов графа узлов
-// (эквивалент THREE.Box3().setFromObject(gltf.scene) сразу после GLTFLoader.load,
-// без внешнего масштаба и без uScale из getUnitScale).
+// Source of truth for the real dimensions of GLTF/GLB models in public/model/kaykit_space/
+// for collision physics. AABB = union of POSITION accessor.min/max over all meshes
+// reachable from the default scene roots, including node-graph transforms
+// (equivalent to THREE.Box3().setFromObject(gltf.scene) right after GLTFLoader.load,
+// without external scale and without uScale from getUnitScale).
 // ════════════════════════════════════════════════════════════════════
 
 export interface ModelBounds {

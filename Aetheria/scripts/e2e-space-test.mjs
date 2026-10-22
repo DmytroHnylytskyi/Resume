@@ -272,10 +272,10 @@ await runTest(T1, 'T1.2.3', 'R2: Living sector contains modular habitat labs (ba
   const content = (checkFileExists(sceneJsonRel) ? readTextFile(sceneJsonRel) : '') +
                   (checkFileExists(worldSceneRel) ? readTextFile(worldSceneRel) : '');
 
-  // Состав жилого сектора по авторской карте (Forma 3D Workspace): хаб из
-  // башен basemodule_D с E-капами на платах basemodule_A; C-модуль и гараж —
-  // на северо-западном плато и в энергетическом секторе. basemodule_B в
-  // авторской раскладке не используется.
+  // Living sector composition per the authored map (Forma 3D Workspace): a hub of
+  // basemodule_D towers with E-caps on basemodule_A plates; the C module and garage —
+  // on the northwest plateau and in the energy sector. basemodule_B is not used in
+  // the authored layout.
   const hasLabA = content.includes('basemodule_A');
   const hasLabD = content.includes('basemodule_D');
   const hasLabE = content.includes('basemodule_E');
@@ -333,9 +333,9 @@ await runTest(T1, 'T1.3.1', 'R3: All 6 interactive crew NPCs defined with unique
 });
 
 await runTest(T1, 'T1.3.2', 'R3: 6 distinct sector badges configured (gold, violet, cyan, emerald, sapphire, rose_coral)', () => {
-  // Секторы переехали в zones.ts (это свойство места, а не человека), поэтому
-  // источников стало три: данные зон, данные экипажа и стили HUD. Проверяемое
-  // утверждение то же самое — все шесть тем секторов где-то объявлены.
+  // Sectors moved to zones.ts (a property of the place, not of the person), so
+  // there are three sources: zone data, crew data and HUD styles. The assertion
+  // is the same — all six sector themes are declared somewhere.
   const zoneFileRel = path.join('src', 'data', 'zones.ts');
   const npcFileRel = path.join('src', 'data', 'npcDialogues.ts');
   const hudFileRel = path.join('src', 'components', 'ui', 'DialogueHUD.tsx');
@@ -407,9 +407,9 @@ await runTest(T1, 'T1.4.3', 'R4: Rapier CapsuleCollider proportioned for the 0.5
   const content = readTextFile(controllerRel);
 
   assert.ok(content.includes('CapsuleCollider'), 'Must use Rapier CapsuleCollider');
-  // Аватар 0.55 м (пропорции каталога kaykit: пикап ~0.69 м, модуль ~1 м):
-  // капсула halfHeight 0.125 + radius 0.15, offset 0.27 — капсула высотой
-  // 0.54 м стоит основанием на теле персонажа.
+  // Avatar 0.55 m (kaykit catalog proportions: pickup ~0.69 m, module ~1 m):
+  // capsule halfHeight 0.125 + radius 0.15, offset 0.27 — a capsule of height
+  // 0.54 m stands with its base at the character body.
   assert.ok(content.includes('0.125') && content.includes('0.15'), 'Must specify capsule half-height and radius [0.125, 0.15]');
   assert.ok(content.includes('0.27'), 'Must offset capsule by 0.27 so its bottom aligns with feet');
 });
@@ -806,7 +806,7 @@ await runTest(T3, 'T3.X.2', 'Interaction: Ramp Traversal -> Tier 2 Incline -> Mi
   const playerAtLab = [6, 2.5, -4.5]; // dist = 1.5m
   assert.equal(checkProximity(playerAtLab, uiArchitectStation, 14.0), true, 'Proximity prompt must activate near UI Architect');
 
-  // 3. Open dialogue and trigger action button «Запустити демо»
+  // 3. Open dialogue and trigger the action button (Launch demo)
   const store = {
     activeDialogue: { npcId: 'ui_architect' },
     selectedProject: null,
@@ -823,7 +823,7 @@ await runTest(T3, 'T3.X.3', 'Interaction: Dialogue Close -> Control Unlock -> Ca
   let isAnyModalOpen = Boolean(activeDialogue);
   assert.equal(isAnyModalOpen, true, 'Controls locked while dialogue is open');
 
-  // User clicks «Бувай» (close dialogue)
+  // User clicks the dismiss action (close dialogue)
   activeDialogue = null;
   isAnyModalOpen = Boolean(activeDialogue);
   assert.equal(isAnyModalOpen, false, 'Controls unlocked when dialogue closes');
@@ -888,7 +888,7 @@ await runTest(T4, 'T4.S.1', 'Scenario 1: Arrival & Commander Welcome (Bio modal 
   };
   assert.equal(dialogue.sector, 'gold', 'Commander belongs to Gold sector');
 
-  // Step 4: Click «Показати деталі»
+  // Step 4: Click "Show details"
   const activeModal = dialogue.targetModal;
   assert.equal(activeModal, 'bio', 'Must open BioModal summarizing leadership journey');
 });
@@ -934,8 +934,8 @@ await runTest(T4, 'T4.S.4', 'Scenario 4: Subspace Telemetry & Satellite Sync (Co
 });
 
 await runTest(T4, 'T4.S.5', 'Scenario 5: Map Perimeter Defense (Void Drop Prevention, no easter egg)', () => {
-  // Пасхалка бура удалена (стал обычным пропсом карты с точной физикой);
-  // сценарий оставлен за проверкой периметра острова от падения в пустоту.
+  // Drill easter egg removed (it became an ordinary map prop with exact physics);
+  // the scenario is kept to verify the island perimeter against falling into the void.
   const playerPos = [16, 4.0, -21];
 
   // Perimeter collision prevents stepping off edge
@@ -944,8 +944,8 @@ await runTest(T4, 'T4.S.5', 'Scenario 5: Map Perimeter Defense (Void Drop Preven
   assert.equal(clampedX, playerPos[0], 'Player remains clamped within perimeter');
   assert.equal(clampedZ, playerPos[2], 'Player remains clamped within perimeter');
 
-  // Убедимся, что пасхалка вырезана полностью: ни тоста, ни триггера, ни
-  // частиц, ни секретного пина радара не осталось в коде.
+  // Make sure the easter egg is fully removed: no toast, no trigger, no
+  // particles, no secret radar pin left in the code.
   const sources = ['src/components/3d/WorldScene.tsx', 'src/components/ui/ControlsHUD.tsx', 'src/components/ui/MiniRadar.tsx', 'src/store/useGameStore.ts']
     .map((f) => readTextFile(path.join('.', f)))
     .join('');

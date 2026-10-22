@@ -1,38 +1,38 @@
 'use client';
 
 /**
- * SingularityCelestial — гравитационная сингулярность в небе игровой сцены.
+ * SingularityCelestial — a gravitational singularity in the game scene's sky.
  *
- * Это ДОСЛОВНЫЙ перенос ядра из классической версии: `GravitationalCoreMesh`
- * в src/components/singularity/SingularityBackground.tsx. Состав, пропорции,
- * наклоны, порядок отрисовки и настройки шейдеров повторяют его один в один —
- * если нужно сверить, сравнивать надо именно с той функцией, а не с этим
- * комментарием.
+ * This is a VERBATIM port of the core from the classic version: `GravitationalCoreMesh`
+ * in src/components/singularity/SingularityBackground.tsx. Its composition, proportions,
+ * tilts, draw order and shader settings replicate it one to one —
+ * if you need to verify, compare against that function, not this
+ * comment.
  *
- * Отличия от классического ядра ровно три, и все вынужденные:
+ * There are exactly three differences from the classic core, and all are forced:
  *
- *  1. Масштаб. Классика рисует ядро вплотную к камере (группа стоит на
- *     z ≈ −2.2, ядро r = 1.25), здесь оно висит небесным телом в 170 м.
- *     Все радиусы умножены на один множитель SINGULARITY_SCALE — пропорции
- *     классики сохранены, меняется только общий размер.
- *  2. Позиции и анимации прокрутки нет: в игре нет скролла, поэтому
- *     uScrollVelocity и uWarpProgress всегда 0, а группа не смещается.
- *  3. Материалы получают КОПИЮ юниформов (UniformsUtils.clone) вместо общей
- *     ссылки, как в классике. В классическом коде `{ ...QuasarAccretionShader }`
- *     раздаёт один и тот же объект юниформов и диску, и гало, поэтому запись
- *     uRotationAngle «диска» и «гало» затирает друг друга; здесь так не делаем,
- *     но на вид это не влияет — разница только в фазе вращения узора.
+ *  1. Scale. The classic draws the core right next to the camera (the group sits at
+ *     z ≈ −2.2, the core r = 1.25), here it hangs as a celestial body 170 m away.
+ *     All radii are multiplied by a single factor SINGULARITY_SCALE — the classic
+ *     proportions are preserved, only the overall size changes.
+ *  2. There is no position and scroll animation: the game has no scrolling, so
+ *     uScrollVelocity and uWarpProgress are always 0, and the group does not move.
+ *  3. The materials get a COPY of the uniforms (UniformsUtils.clone) instead of a shared
+ *     reference, as in the classic. In the classic code `{ ...QuasarAccretionShader }`
+ *     hands the same uniforms object to both the disk and the halo, so writing
+ *     uRotationAngle for the "disk" and the "halo" overwrites each other; we do not do that here,
+ *     but it does not affect the look — the difference is only in the rotation phase of the pattern.
  *
- * Патчей шейдера здесь больше нет: полоса, плотность и прозрачность берутся
- * стоковые, как в классике.
+ * There are no shader patches here anymore: the band, density and opacity are taken
+ * stock, as in the classic.
  *
- * Шейдерные материалы обходят ACES-тонмаппинг (у ShaderMaterial нет
- * tonemapping-чанка), поэтому яркость диска задана в «сырых» цветах квазара
- * и не требует пересчёта экспозиции сцены.
+ * Shader materials bypass ACES tone mapping (ShaderMaterial has no
+ * tonemapping chunk), so the disk brightness is specified in the quasar's "raw" colors
+ * and does not require recomputing the scene exposure.
  *
- * Роя падающих частиц (InfallStarfield) здесь нет намеренно: искры, крутившиеся
- * вплотную вокруг дыры, читались локальным гиммиком и подчёркивали, что всё
- * остальное небо пустое. Вместо них пыль размазана по всему небу — CosmicDust.
+ * There is deliberately no swarm of infalling particles (InfallStarfield) here: the sparks that spun
+ * tightly around the hole read as a local gimmick and emphasized that all
+ * the rest of the sky was empty. Instead the dust is smeared across the whole sky — CosmicDust.
  */
 
 import React, { useMemo, useRef, useEffect } from 'react';
@@ -45,45 +45,45 @@ import {
 import { getNightFactor } from '../../store/dayNightState';
 import { visualQuality } from '../../store/debugState';
 
-// Пропорции классического ядра (ядро 1.25 / кайма 1.32 / диск 1.34..5.8 /
-// гало 1.32..4.4) домножены на общий множитель.
+// The classic core proportions (core 1.25 / rim 1.32 / disk 1.34..5.8 /
+// halo 1.32..4.4) are multiplied by a single factor.
 //
-// Сейчас ×1.8: ядро 18 вместо 1.25, диск до 83.5 — при дистанции 170 м это
-// ядро ~12.1° углового диаметра.
+// Currently ×1.8: core 18 instead of 1.25, disk up to 83.5 — at a distance of 170 m this is
+// a core of ~12.1° angular diameter.
 //
-// Множитель — это ещё и ограничитель по геометрии, и оба ограничения
-// проверяются на нём. Ближняя кромка диска уходит вглубь карты линейно, но её
-// высота растёт вместе с посадкой (см. SINGULARITY_POS): на нынешних 18° при
-// ×1.8 она проходит в ~37 м — с большим запасом над башнями хаба. Видимая
-// кромка гало опускается под горизонт всего на ~4°; на ×3 это было 18° и было
-// единственным, что действительно лезло ниже горизонта.
+// The factor is also a geometry limiter, and both constraints
+// are checked against it. The near edge of the disk goes inland linearly, but its
+// height grows with the placement (see SINGULARITY_POS): at the current 18° with
+// ×1.8 it passes at ~37 m — with a large margin above the hub towers. The visible
+// halo edge drops below the horizon by only ~4°; at ×3 it was 18° and was
+// the only thing that actually went below the horizon.
 const SINGULARITY_SCALE = 1.8;
-// ×8 — перевод классических единиц в мировые: классика рисует ядро вплотную к
-// камере (r = 1.25 при группе на z ≈ −2.2), в игре оно висит в 170 м. Это НЕ
-// часть регулятора размера и меняться не должно; SINGULARITY_SCALE — отдельный
-// множитель поверх него.
+// ×8 converts classic units to world units: the classic draws the core right next to the
+// camera (r = 1.25 with the group at z ≈ −2.2), in the game it hangs 170 m away. This is NOT
+// part of the size control and must not change; SINGULARITY_SCALE is a separate
+// factor on top of it.
 const CLASSIC_TO_WORLD = 8;
 const S = CLASSIC_TO_WORLD * SINGULARITY_SCALE;
 const CORE_R = 1.25 * S;
 const HORIZON_R = 1.32 * S;
 const DISK_INNER = 1.34 * S;
 const DISK_OUTER = 5.8 * S;
-// У гало внутренний радиус 1.32, а не 1.34: в классике оно начинается вровень
-// с каймой фотонной сферы, а не с диском.
+// The halo's inner radius is 1.32, not 1.34: in the classic it starts flush
+// with the photon sphere rim, not with the disk.
 const HALO_INNER = 1.32 * S;
 const HALO_OUTER = 4.4 * S;
 
-// Сегментация как в классике: 48 у сфер, 80 у колец. На low-пресете —
-// вдвое реже: диск всё равно рисуется аддитивным шейдером, где силуэт
-// важнее полигональной плотности.
+// Segmentation as in the classic: 48 for spheres, 80 for rings. On the low preset —
+// half as dense: the disk is drawn with an additive shader anyway, where silhouette
+// matters more than polygon density.
 const SPHERE_SEGMENTS = visualQuality.richEffects ? 48 : 24;
 const RING_SEGMENTS = visualQuality.richEffects ? 80 : 48;
 
 function makeAccretionMaterial(): THREE.ShaderMaterial {
   return new THREE.ShaderMaterial({
     ...QuasarAccretionShader,
-    // Копия юниформов перекрывает ту, что пришла со спредом (иначе диск и гало
-    // делили бы один объект — см. пункт 3 в шапке файла).
+    // The uniforms copy overrides the one that came with the spread (otherwise the disk and halo
+    // would share one object — see item 3 in the file header).
     uniforms: THREE.UniformsUtils.clone(QuasarAccretionShader.uniforms),
     side: THREE.DoubleSide,
     transparent: true,
@@ -100,7 +100,7 @@ function makeHorizonMaterial(): THREE.ShaderMaterial {
   });
 }
 
-/** Сингулярность: непрерывная анимация значений, без React-ререндеров. */
+/** Singularity: continuous value animation, without React re-renders. */
 export default function SingularityCelestial({ position }: { position: THREE.Vector3 }): React.ReactElement {
   const diskMaterial = useMemo(makeAccretionMaterial, []);
   const haloMaterial = useMemo(makeAccretionMaterial, []);
@@ -120,8 +120,8 @@ export default function SingularityCelestial({ position }: { position: THREE.Vec
 
   useFrame((_, rawDelta) => {
     const delta = Math.min(rawDelta, 0.05);
-    // Базовая скорость 0.12 рад/с — как в классике без прокрутки; гало идёт
-    // на 0.75 от неё (в классике та же связка).
+    // Base speed 0.12 rad/s — as in the classic without scrolling; the halo runs
+    // at 0.75 of it (the same coupling in the classic).
     rotationAngle.current += delta * 0.12;
     elapsed.current += delta;
     const dayFactor = 1 - getNightFactor();
@@ -144,25 +144,25 @@ export default function SingularityCelestial({ position }: { position: THREE.Vec
 
   return (
     <group name="SingularityCelestial" position={position}>
-      {/* ── 1. Горизонт событий: чисто чёрное ядро ── */}
+      {/* ── 1. Event horizon: purely black core ── */}
       <mesh>
         <sphereGeometry args={[CORE_R, SPHERE_SEGMENTS, SPHERE_SEGMENTS]} />
         <meshBasicMaterial color="#000000" side={THREE.DoubleSide} />
       </mesh>
 
-      {/* ── 2. Фотонная сфера: френель-кайма ── */}
+      {/* ── 2. Photon sphere: Fresnel rim ── */}
       <mesh material={horizonMaterial}>
         <sphereGeometry args={[HORIZON_R, SPHERE_SEGMENTS, SPHERE_SEGMENTS]} />
       </mesh>
 
-      {/* ── 3. Экваториальный аккреционный диск ── */}
+      {/* ── 3. Equatorial accretion disk ── */}
       <group rotation={[-Math.PI / 2 + 0.18, 0, 0]}>
         <mesh material={diskMaterial} renderOrder={10}>
           <ringGeometry args={[DISK_INNER, DISK_OUTER, RING_SEGMENTS, 1]} />
         </mesh>
       </group>
 
-      {/* ── 4. Гравитационно-линзовое вертикальное гало ── */}
+      {/* ── 4. Gravitationally lensed vertical halo ── */}
       <group rotation={[0, 0, Math.PI * 0.48]}>
         <mesh material={haloMaterial} renderOrder={11}>
           <ringGeometry args={[HALO_INNER, HALO_OUTER, RING_SEGMENTS, 1]} />

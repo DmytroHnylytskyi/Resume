@@ -18,9 +18,9 @@ import Megastructure from './Megastructure';
 import rawIslandSceneData from '../../data/islandScene.json';
 import { IslandSceneData } from '../../types/scene';
 
-// Спавн — один источник с гейтами: spawnPoint из islandScene.json (его же
-// проверяет scripts/checkColliders.mjs). Раньше здесь был захардкоженный
-// [0.3, 1.1, 6.0], расходившийся с JSON при перестройке карты.
+// Spawn — a single source with the gates: spawnPoint from islandScene.json (the same one
+// checked by scripts/checkColliders.mjs). Previously there was a hardcoded
+// [0.3, 1.1, 6.0] here, which drifted from the JSON when the map was rebuilt.
 const SCENE_DATA = rawIslandSceneData as unknown as IslandSceneData;
 const SPAWN_POINT = SCENE_DATA.spawnPoint;
 const SPAWN_YAW = SCENE_DATA.spawnYaw ?? 0;
@@ -37,8 +37,8 @@ import { getGlobalCyberAudio } from '../../hooks/cyberAudio';
  * reported while sprinting. Quantized steps, asymmetric thresholds and a
  * cooldown keep resolution changes rare and one-directional instead.
  */
-// ?probe=1 — только рендер-проба (для замеров); ?debug=1 включает её же плюс
-// физический оверлей. Разделены, чтобы QA-замеры не платили за 900 EdgesGeometry.
+// ?probe=1 — render probe only (for measurements); ?debug=1 enables it plus
+// the physics overlay. They are separate so QA measurements do not pay for 900 EdgesGeometry.
 const PROBE_MODE =
   typeof window !== 'undefined' &&
   (new URLSearchParams(window.location.search).has('probe') ||
@@ -46,9 +46,9 @@ const PROBE_MODE =
 
 const DPR_FLOOR = Math.min(visualQuality.nativeDpr, visualQuality.dprFloor);
 const DPR_CAP = Math.min(visualQuality.nativeDpr, visualQuality.dprCap);
-// Старт на 1.5, а не на потолке: на 3× телефоне сразу 2.0 — дорогая
-// аллокация swapchain и рывок на входе. Адаптивный шаг поднимет до потолка,
-// если железо держит >56 FPS.
+// Start at 1.5, not at the cap: on a 3× phone 2.0 right away means an expensive
+// swapchain allocation and a hitch on entry. The adaptive step will raise it to the cap
+// if the hardware holds >56 FPS.
 const DPR_START =
   visualQuality.tier === 'high'
     ? Math.min(DPR_CAP, Math.max(DPR_FLOOR, 1.5))
@@ -241,24 +241,24 @@ const MOON_ARC = makeArc(MOON_ARC_EAST, MOON_ARC_APEX, MOON_ARC_WEST);
 
 const LIGHT_DIST = 60;
 
-// Сингулярность заняла место солнца и луны: неподвижное небесное тело внутри
-// купола; свет днём/ночью по-прежнему несёт пара directional-светов.
+// The singularity took the place of the sun and moon: an immobile celestial body inside
+// the dome; day/night lighting is still carried by a pair of directional lights.
 //
-// Посадка изменена: раньше она висела на вершине солнечной дуги (apogee 30°)
-// на дистанции 290 — это читалось мелкой точкой высоко в небе, оторванной от
-// острова. Теперь 18° над горизонтом на 170 м — тело видно, стоит лишь чуть
-// поднять камеру, и оно читается частью карты, а не далёкой звездой.
+// Placement changed: it used to hang at the top of the solar arc (apogee 30°)
+// at a distance of 290 — it read as a small dot high in the sky, detached from
+// the island. Now 18° above the horizon at 170 m — the body is visible as soon as the camera
+// is raised a little, and it reads as part of the map rather than a distant star.
 //
-// Высота работает не только на композицию: от неё зависит зазор до карты.
-// Ближняя кромка диска наклонена к наблюдателю, и её высота над островом равна
-// `170·sin(посадка) − 0.179·DISK_OUTER`: масштаб тянет кромку вниз, посадка
-// поднимает. Сейчас (18°, ×1.8) кромка идёт в ~36 м — запас двойной к башням
-// хаба. Купол (r = 360) и звёздную сферу (r = 330) тело не задевает: даже на
-// ×3 дальний край доходил только до 319 м.
+// The height works not only for composition: the clearance to the map depends on it.
+// The near edge of the disk is tilted toward the observer, and its height above the island equals
+// `170·sin(placement) − 0.179·DISK_OUTER`: scale pulls the edge down, placement
+// raises it. Currently (18°, ×1.8) the edge runs at ~36 m — double the margin above the hub
+// towers. The body does not touch the dome (r = 360) or the star sphere (r = 330): even at
+// ×3 the far edge only reached 319 m.
 //
-// Кадр держит угол до ~19°: при взгляде вверх на пределе (pitch −0,2) центр
-// кадра стоит на +11.5°, и 18° ложатся ниже верхней кромки, а на 20°+ тело
-// начинает упираться в HUD.
+// The frame holds an angle up to ~19°: at the maximum upward look (pitch −0.2) the center
+// of the frame sits at +11.5°, and 18° falls below the top edge, while at 20°+ the body
+// starts to run into the HUD.
 const SINGULARITY_DIST = 170;
 const SINGULARITY_POS = new THREE.Vector3(0, 0.309, -0.951)
   .normalize()
@@ -323,8 +323,8 @@ function AtmosphereSky(): React.ReactElement {
           float sunAmt = pow(max(dot(dir, uSunDir), 0.0), 5.0);
           col = mix(col, uSunTint, sunAmt * 0.45);
 
-          // Млечный Путь: очень слабая полоса с пылевыми сгустками. Живёт
-          // прямо в куполе, без новой геометрии и без лишнего draw call.
+          // Milky Way: a very faint band with dust clumps. Lives
+          // right in the dome, with no new geometry and no extra draw call.
           float band = exp(-pow(dot(dir, normalize(vec3(0.18, 0.56, 0.81))) * 5.2, 2.0));
           float knots = 0.5 + 0.5 * sin(dir.x * 21.0 + dir.z * 17.0) * sin(dir.y * 19.0 + 1.7);
           vec3 mw = vec3(0.42, 0.5, 0.78) * band * (0.32 + 0.5 * knots) * uNight;
@@ -388,17 +388,17 @@ function AtmosphereSky(): React.ReactElement {
     (domeMat.uniforms.uSunDir.value as THREE.Vector3).copy(_dirSun);
     setSrgb(_bgColor, sky.horizon);
 
-    // Сингулярность — неподвижное небесное тело: позиции не обновляются,
-    // она сама тянет свои uniform'ы в собственном useFrame.
+    // The singularity is an immobile celestial body: positions are not updated,
+    // it updates its own uniforms in its own useFrame.
 
-    // Млечный Путь проявляется только ночью; звёзды ведут свой шейдер.
+    // The Milky Way appears only at night; the stars run their own shader.
     const nf = getNightFactor();
     domeMat.uniforms.uNight.value = nf;
 
     // ── Unified light rig (values only; count never changes) ──
-    // Цветокоррекция: прежняя сумма света 6.2 без теней замыливала сцену —
-    // ключ понижен до ~2.1, заполнялки до долей, солнечная тень стала
-    // главным источником формы. Ночные ветки понижены пропорционально.
+    // Color grading: the previous total light of 6.2 without shadows washed out the scene —
+    // the key was lowered to ~2.1, fills to fractions, and the sun shadow became
+    // the main source of form. Night branches are lowered proportionally.
     const sunI = Math.sqrt(clamp01(s.sunElev)); // fast warm-up after sunrise
     const sl = sunLightRef.current;
     if (sl) {
@@ -452,32 +452,32 @@ function AtmosphereSky(): React.ReactElement {
         <sphereGeometry args={[850, 32, 20]} />
       </mesh>
 
-      {/* ── Магнитудное звёздное поле: мелкие/яркие, цветные, с мерцанием ── */}
+      {/* ── Magnitude star field: small/bright, colored, with twinkle ── */}
       <Starfield />
 
-      {/* ── Гигантская планета под платформой: закрывает пустоту под островом,
-          даёт масштаб и объясняет, почему станция висит над миром. ── */}
+      {/* ── Giant planet under the platform: covers the emptiness below the island,
+          gives scale and explains why the station hangs above the world. ── */}
       <GiantPlanet />
 
-      {/* ── Расколотая луна и древняя разорванная орбитальная дуга в небе ── */}
+      {/* ── Shattered moon and an ancient torn orbital arc in the sky ── */}
       <ShatteredMoon />
       <Megastructure />
 
-      {/* ── Пыль и мелкие обломки по всему небу: днём приглушённо, ночью ярко.
-          Заменила рой искр, который крутился только у сингулярности. ── */}
+      {/* ── Dust and small debris across the whole sky: dimmed by day, bright at night.
+          Replaced the spark swarm that spun only around the singularity. ── */}
       <CosmicDust />
 
-      {/* ── Гравитационная сингулярность вместо солнца и луны:
-          чёрное ядро, аккреционный диск, линзовое гало.
-          Неподвижна на 15° над горизонтом, палитра следует циклу. ── */}
+      {/* ── Gravitational singularity instead of the sun and moon:
+          black core, accretion disk, lensed halo.
+          Immobile at 15° above the horizon, the palette follows the cycle. ── */}
       <SingularityCelestial position={SINGULARITY_POS} />
 
       {/* ── Permanent unified light rig ──
-          Key = sun by day, moon by night (свет дуги несут эти два
-          directional-света); cool fill + ambient + hemisphere interpolate
+          Key = sun by day, moon by night (the arc light is carried by these two
+          directional lights); cool fill + ambient + hemisphere interpolate
           between the previously shipped day/night rigs.
-          Тени несёт только солнечный key: интенсивность уходит в нуль
-          к ночи, тени гаснут вместе с ним — одна теневая карта в кадре. */}
+          Only the sun key casts shadows: its intensity goes to zero
+          toward night and the shadows fade with it — one shadow map in the frame. */}
       <directionalLight
         ref={sunLightRef}
         intensity={2.1}
@@ -485,9 +485,9 @@ function AtmosphereSky(): React.ReactElement {
         castShadow={visualQuality.shadows}
         shadow-mapSize-width={visualQuality.shadowMapSize}
         shadow-mapSize-height={visualQuality.shadowMapSize}
-        // Орто-фрустум на весь остров (±30 м по XZ у плит + запас на
-        // пропсы): 64 м / 2048 текселей ≈ 3 см — достаточная плотность,
-        // стабильно без следящего за игроком таргета.
+        // Ortho frustum covering the whole island (±30 m in XZ for the slabs + margin for
+        // props): 64 m / 2048 texels ≈ 3 cm — sufficient density,
+        // stable without a player-following target.
         shadow-camera-left={-32}
         shadow-camera-right={32}
         shadow-camera-top={32}
@@ -498,10 +498,10 @@ function AtmosphereSky(): React.ReactElement {
         shadow-normalBias={0.03}
       />
       <directionalLight ref={moonLightRef} intensity={0} color="#c3d6ff" />
-      {/* На low-пресете остаются только ключевые три источника (sun/moon/
-          ambient): каждый лишний directional — это полный расчёт освещения
-          на каждый фрагмент МешStandardMaterial, а на телефоне пиксели
-          дороже, чем полутон заполняющего света. */}
+      {/* On the low preset only the three key sources remain (sun/moon/
+          ambient): every extra directional means a full lighting calculation
+          per MeshStandardMaterial fragment, and on a phone pixels
+          are more expensive than half a tone of fill light. */}
       {visualQuality.extraLights && (
         <directionalLight ref={fillLightRef} position={[60, 30, 40]} intensity={0.45} color="#93c5fd" />
       )}
@@ -545,14 +545,14 @@ function RenderProbe(): null {
         textures: gl.info.memory.textures,
         dpr: gl.getPixelRatio()
       }),
-      /** Фиксированное разрешение для честных замеров (адаптив иначе меняет dpr). */
+      /** Fixed resolution for honest measurements (otherwise adaptive resolution changes dpr). */
       setDpr: (n: number) => {
         gl.setPixelRatio(n);
         gl.setSize(gl.domElement.clientWidth, gl.domElement.clientHeight, false);
       },
-      /** Время суток для QA-кадров: 0.5 — полдень, 0.0 — полночь. */
+      /** Time of day for QA frames: 0.5 — noon, 0.0 — midnight. */
       time: (t: number) => setTimeOfDay(t),
-      /** Свободная камера (QA): позиция и точка взгляда в мировых метрах. */
+      /** Free camera (QA): position and look-at point in world meters. */
       fly: (px: number, py: number, pz: number, tx: number, ty: number, tz: number) => {
         debugCameraState.position = [px, py, pz];
         debugCameraState.target = [tx, ty, tz];
@@ -567,7 +567,7 @@ function RenderProbe(): null {
   return null;
 }
 
-/** QA-камера поверх контроллера игрока (только при вызове __aetheria.fly). */
+/** QA camera on top of the player controller (only when __aetheria.fly is called). */
 function DebugFlyCamera(): null {
   const camera = useThree((s) => s.camera);
   useFrame(() => {
@@ -641,8 +641,8 @@ export default function IslandCanvas(): React.ReactElement {
       camera={{ position: [-18, 22, 36], fov: 45, far: 1000 }}
       shadows={visualQuality.shadows ? 'soft' : false}
       gl={{
-        // MSAA только на десктопе: на тач-устройствах резкость даёт высокий
-        // DPR (до 2.0), а MSAA — один из самых дорогих пиксельных эффектов.
+        // MSAA on desktop only: on touch devices sharpness comes from high
+        // DPR (up to 2.0), while MSAA is one of the most expensive pixel effects.
         antialias: visualQuality.antialias,
         alpha: false,
         powerPreference: visualQuality.tier === 'low' ? 'default' : 'high-performance',
@@ -661,26 +661,26 @@ export default function IslandCanvas(): React.ReactElement {
 
       {/* ── High-Speed Rapier 3D Physics Simulation with Fixed 60Hz Timestep ── */}
       <Suspense fallback={null}>
-        {/* interpolate выключен на low: он снимает копию всех rigid body
-            каждый физический шаг, а на слабом CPU разница в 1–2 кадра
-            заметнее, чем микро-джиттер интерполяции. */}
+        {/* interpolate is off on low: it takes a copy of every rigid body
+            each physics step, and on a weak CPU the 1–2 frame difference
+            is more noticeable than the interpolation micro-jitter. */}
         <Physics gravity={[0, -19.6, 0]} timeStep={1 / 60} interpolate={!visualQuality.cheapMaterials}>
-          {/* Пол строит WorldScene из плит земли: коллайдер каждой плиты
-              совпадает с её мешем, страховочный пол лежит ПОД островом в
-              пределах визуального края. Прежний невидимый куб 90×90×10
-              (args [45, 5, 45]) доползал до ±45 м — далеко за край
-              видимого острова — и позволял ходить по пустоте. */}
+          {/* The floor is built by WorldScene from ground slabs: each slab's collider
+              matches its mesh, and the safety floor lies UNDER the island within
+              the visual edge. The previous invisible 90×90×10 cube
+              (args [45, 5, 45]) reached ±45 m — far beyond the edge of
+              the visible island — and allowed walking on emptiness. */}
 
           {/* Optimized Modular Space Outpost Objects */}
           <WorldScene playerPosRef={playerPosRef} />
 
           {/* 3rd-Person Playable Animated Character */}
-          {/* Спавн сдвинут к x=0.3: бокс spacetruck_large (yaw 45°, грань
-              до x≈0, z 5.1..6.2, y 1..1.69) доходил до точки [0,1.1,6] —
-              капсула r=0.2 пересекала его на ~0.16 м и получала
-              депенетрационный пинок при спавне; при x=0.3 до грани остаётся
-              0.30 > r + запас. Дефолт [0,1.4,6] в CharacterController —
-              мёртвый путь (проп всегда передаётся), сознательно не тронут. */}
+          {/* Spawn is shifted to x=0.3: the spacetruck_large box (yaw 45°, face
+              up to x≈0, z 5.1..6.2, y 1..1.69) reached the point [0,1.1,6] —
+              the r=0.2 capsule intersected it by ~0.16 m and received a
+              depenetration kick at spawn; at x=0.3 the distance to the face is
+              0.30 > r + margin. The default [0,1.4,6] in CharacterController is
+              a dead path (the prop is always passed), deliberately left untouched. */}
           <CharacterController
             playerPosRef={playerPosRef}
             spawnPoint={[SPAWN_POINT[0], SPAWN_POINT[1], SPAWN_POINT[2]]}

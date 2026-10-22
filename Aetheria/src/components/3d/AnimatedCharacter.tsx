@@ -20,7 +20,7 @@ import { visualQuality } from '../../store/debugState';
 import { makeCheapMaterial, mergeSkinnedMeshes } from './kitAssets';
 import { clone as cloneSkeleton } from 'three/examples/jsm/utils/SkeletonUtils.js';
 
-const TARGET_HEIGHT = 0.55; // пропорции каталога kaykit: пикап ~0.69 м, модуль ~1 м
+const TARGET_HEIGHT = 0.55; // kaykit catalog proportions: pickup ~0.69 m, module ~1 m
 const DEGENERATE_SCALE_FALLBACK = 0.34;
 
 export default function AnimatedCharacter(): React.ReactElement {
@@ -46,16 +46,16 @@ export default function AnimatedCharacter(): React.ReactElement {
     const rawHeight = box.getSize(new THREE.Vector3()).y;
     const scaleFactor = rawHeight > 0 ? TARGET_HEIGHT / rawHeight : DEGENERATE_SCALE_FALLBACK;
 
-    // 6 skinned-примитивов KayKit (руки/ноги/тело/голова) — это 6 draw call'ов
-    // на персонажа. Склеиваем в один SkinnedMesh на том же скелете; анимации
-    // адресуются костям, поэтому миксер продолжает работать без изменений.
+    // KayKit's 6 skinned primitives (arms/legs/body/head) mean 6 draw calls
+    // per character. We merge them into one SkinnedMesh on the same skeleton;
+    // animations target bones, so the mixer keeps working unchanged.
     mergeSkinnedMeshes(clone);
 
     // Optimize materials for clean sci-fi astronaut aesthetic
     clone.traverse((child) => {
       if ((child as THREE.SkinnedMesh).isSkinnedMesh || (child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.SkinnedMesh;
-        mesh.castShadow = true; // персонаж получает тень от солнечного key — контекст формы
+        mesh.castShadow = true; // the character gets a shadow from the sun key — shape context
         mesh.receiveShadow = false;
         mesh.frustumCulled = false; // Required for skinned mesh animation stability
 

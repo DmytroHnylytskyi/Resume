@@ -1,23 +1,23 @@
 'use client';
 
 /**
- * kitAssets — общая геометрия и материалы для каталога KayKit Space Base.
+ * kitAssets — shared geometry and materials for the KayKit Space Base catalog.
  *
- * Зачем отдельный модуль. В каталоге 58 GLTF, и у ВСЕХ одна и та же пара
- * «material spacebits_texture + один атлас 1024²». GLTFLoader не кэширует
- * текстуры между файлами, поэтому каждая модель тянула собственную копию
- * атласа: 40+ копий по ~5.6 МБ — сотни мегабайт VRAM, на телефоне это
- * гарантированный вылет или термальный троттлинг. Здесь атлас грузится ОДИН
- * раз, и вся статика получает один общий материал.
+ * Why a separate module. The catalog has 58 GLTFs, and ALL of them share the same pair
+ * "material spacebits_texture + one 1024² atlas". GLTFLoader does not cache
+ * textures across files, so each model pulled its own copy of the
+ * atlas: 40+ copies at ~5.6 MB each — hundreds of megabytes of VRAM, on a phone that is
+ * a guaranteed crash or thermal throttling. Here the atlas is loaded ONCE
+ * and all static geometry gets one shared material.
  *
- * Второй источник потерь — сабмеши. У грузовиков/буров/турбин до 5
- * примитивов, каждый рисовался своим draw call'ом. mergeSceneGeometry
- * запекает локальные матрицы узлов в одну геометрию: один InstancedMesh на
- * модель вместо N.
+ * The second source of waste is submeshes. Trucks/drills/turbines have up to 5
+ * primitives, each drawn by its own draw call. mergeSceneGeometry
+ * bakes node local matrices into one geometry: one InstancedMesh per
+ * model instead of N.
  *
- * Персонажи (Mannequin) — 6 skinned-примитивов на каждого: 7 персонажей дают
- * 42 draw call'а. mergeSkinnedMeshes склеивает их в один SkinnedMesh на
- * скелет, сохраняя риг и анимации.
+ * Characters (Mannequin) — 6 skinned primitives each: 7 characters give
+ * 42 draw calls. mergeSkinnedMeshes merges them into one SkinnedMesh per
+ * skeleton, preserving the rig and animations.
  */
 
 import { useMemo } from 'react';
@@ -29,16 +29,16 @@ import { visualQuality } from '../../store/debugState';
 export const KIT_ATLAS_PATH = '/model/kaykit_space/spacebits_texture.png';
 
 /**
- * buildLampEmissiveMask — UV-маска «только плафоны» для lights.gltf.
+ * buildLampEmissiveMask — UV mask "heads only" for lights.gltf.
  *
- * Если использовать в emissiveMap весь атлас, светится вся модель: ножка и
- * подставка тоже содержат светлые пиксели. Здесь маска строится из самой
- * геометрии: в canvas заливаются белым только UV-треугольники, чьи центроиды
- * лежат в двух головах фонаря (локально |x| > 0.16, y > 0.8). Всё остальное
- * остаётся чёрным, поэтому emissive есть только у плафонов.
+ * Using the whole atlas as emissiveMap makes the whole model glow: the stem and
+ * base also contain bright pixels. Here the mask is built from the geometry
+ * itself: only UV triangles whose centroids lie in the two lamp heads
+ * (locally |x| > 0.16, y > 0.8) are filled white in the canvas. Everything else
+ * stays black, so only the heads are emissive.
  *
- * Текстура 512², flipY=false как у атласа GLTF; треугольники обводятся на
- * 2 px, чтобы фильтрация не срезала края UV-островов.
+ * Texture 512², flipY=false like the GLTF atlas; triangles are stroked at
+ * 2 px so filtering does not clip the edges of UV islands.
  */
 export function buildLampEmissiveMask(scene: THREE.Object3D, size = 512): THREE.CanvasTexture | null {
   if (typeof document === 'undefined') return null;
@@ -98,7 +98,7 @@ export function buildLampEmissiveMask(scene: THREE.Object3D, size = 512): THREE.
   if (drawn === 0) return null;
 
   const tex = new THREE.CanvasTexture(canvas);
-  // Та же ориентация UV, что у атласа GLTF (flipY=false).
+  // Same UV orientation as the GLTF atlas (flipY=false).
   tex.flipY = false;
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.wrapS = tex.wrapT = THREE.ClampToEdgeWrapping;
@@ -106,14 +106,14 @@ export function buildLampEmissiveMask(scene: THREE.Object3D, size = 512): THREE.
   return tex;
 }
 
-/** Атлас каталога + один общий материал. Возвращает стандартный или Lambert по пресету. */
+/** Catalog atlas + one shared material. Returns standard or Lambert depending on the preset. */
 export function useKitMaterial(): THREE.Material {
   const map = useTexture(KIT_ATLAS_PATH);
 
   return useMemo(() => {
-    // GLTFLoader ставит flipY=false и SRGB для baseColorTexture — при загрузке
-    // через useTexture это надо повторить вручную, иначе UV перевернутся и
-    // цвета потеряют гамму.
+    // GLTFLoader sets flipY=false and SRGB for baseColorTexture — when loading
+    // through useTexture this must be repeated manually, otherwise UVs flip and
+    // the colors lose their gamma.
     map.flipY = false;
     map.colorSpace = THREE.SRGBColorSpace;
     map.anisotropy = 8;
@@ -130,9 +130,9 @@ export function useKitMaterial(): THREE.Material {
   }, [map]);
 }
 
-// Оригинальные материалы GLTF после перехода на общий атлас не рендерятся,
-// но продолжают держать в памяти декодированные изображения (каждая модель —
-// своя копия атласа). Освобождаем их один раз на сцену.
+// The original GLTF materials are not rendered after switching to the shared atlas,
+// but they keep decoded images in memory (each model has its own
+// copy of the atlas). We release them once per scene.
 const disposedKitScenes = new WeakSet<THREE.Object3D>();
 
 export function disposeKitSourceMaterials(scene: THREE.Object3D): void {
@@ -159,7 +159,7 @@ export function disposeKitSourceMaterials(scene: THREE.Object3D): void {
   });
   textures.forEach((tex) => {
     const image = tex.image as ImageBitmap | HTMLImageElement | undefined;
-    // ImageBitmap.close() освобождает декодированный буфер сразу, не дожидаясь GC.
+    // ImageBitmap.close() frees the decoded buffer immediately, without waiting for GC.
     if (image && typeof (image as ImageBitmap).close === 'function') {
       (image as ImageBitmap).close();
     }
@@ -167,7 +167,7 @@ export function disposeKitSourceMaterials(scene: THREE.Object3D): void {
   });
 }
 
-/** Копия материала под Lambert для low-пресета (для персонажей и terrain). */
+/** Material copy as Lambert for the low preset (for characters and terrain). */
 export function makeCheapMaterial(
   source: THREE.Material,
   overrides: THREE.MeshLambertMaterialParameters = {}
@@ -186,9 +186,9 @@ export function makeCheapMaterial(
 }
 
 /**
- * Собирает все меши GLTF-сцены в одну геометрию с запечёнными матрицами узлов.
- * Атрибуты нормализуются до position/normal/uv, чтобы merge не падал на
- * моделях с отличающимся набором (tangent и пр.).
+ * Collects all meshes of a GLTF scene into one geometry with baked node matrices.
+ * Attributes are normalized to position/normal/uv so the merge does not fail on
+ * models with a different attribute set (tangent etc.).
  */
 export function mergeSceneGeometry(scene: THREE.Object3D): THREE.BufferGeometry | null {
   scene.updateMatrixWorld(true);
@@ -197,7 +197,7 @@ export function mergeSceneGeometry(scene: THREE.Object3D): THREE.BufferGeometry 
   scene.traverse((child) => {
     if (!(child as THREE.Mesh).isMesh) return;
     const mesh = child as THREE.Mesh;
-    if ((mesh as THREE.SkinnedMesh).isSkinnedMesh) return; // у статики их нет
+    if ((mesh as THREE.SkinnedMesh).isSkinnedMesh) return; // static geometry has none
     const geo = mesh.geometry.clone();
     if (!geo.getAttribute('normal')) geo.computeVertexNormals();
     if (!geo.getAttribute('uv')) {
@@ -214,7 +214,7 @@ export function mergeSceneGeometry(scene: THREE.Object3D): THREE.BufferGeometry 
   if (pieces.length === 0) return null;
   if (pieces.length === 1) return pieces[0];
 
-  // mergeGeometries требует одинаковый режим индексации.
+  // mergeGeometries requires the same indexing mode.
   const anyNonIndexed = pieces.some((p) => !p.getIndex());
   const normalized = anyNonIndexed ? pieces.map((p) => (p.getIndex() ? p.toNonIndexed() : p)) : pieces;
   const merged = mergeGeometries(normalized, false);
@@ -224,8 +224,8 @@ export function mergeSceneGeometry(scene: THREE.Object3D): THREE.BufferGeometry 
 }
 
 /**
- * Склеивает N SkinnedMesh с общим скелетом в один. Возвращает merged-меш или
- * null, если склейка невозможна (разные скелеты / нет skin-атрибутов).
+ * Merges N SkinnedMeshes sharing one skeleton into one. Returns the merged mesh or
+ * null if merging is impossible (different skeletons / no skin attributes).
  */
 export function mergeSkinnedMeshes(root: THREE.Object3D): THREE.SkinnedMesh | null {
   const meshes: THREE.SkinnedMesh[] = [];
@@ -234,10 +234,10 @@ export function mergeSkinnedMeshes(root: THREE.Object3D): THREE.SkinnedMesh | nu
   });
   if (meshes.length <= 1) return null;
 
-  // SkeletonUtils.clone создаёт отдельный объект Skeleton на каждый
-  // SkinnedMesh, но кости в них — одни и те же объекты. Проверяем именно
-  // тождество костей (а не ссылку на Skeleton): иначе склейка молча
-  // отменяется и персонаж остаётся 6 draw call'ами.
+  // SkeletonUtils.clone creates a separate Skeleton object for each
+  // SkinnedMesh, but the bones in them are the same objects. We check bone
+  // identity (not the Skeleton reference): otherwise the merge is silently
+  // cancelled and the character stays at 6 draw calls.
   const skeleton = meshes[0].skeleton;
   const bones0 = skeleton.bones;
   const sameBones = meshes.every(
@@ -256,8 +256,8 @@ export function mergeSkinnedMeshes(root: THREE.Object3D): THREE.SkinnedMesh | nu
         geo.deleteAttribute(name);
       }
     }
-    // Геометрии скинов живут в bind-пространстве: локальные матрицы узлов
-    // (identity у KayKit) запекать НЕЛЬЗЯ, иначе части разъедутся.
+    // Skinned geometries live in bind space: node local matrices
+    // (identity in KayKit) must NOT be baked, otherwise the parts fall apart.
     pieces.push(geo);
   }
 

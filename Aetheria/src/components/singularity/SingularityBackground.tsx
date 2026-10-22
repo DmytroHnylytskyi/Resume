@@ -9,9 +9,9 @@ import { getNightFactor } from '../../store/dayNightState';
 import { useGameStore } from '../../store/useGameStore';
 import { visualQuality } from '../../store/debugState';
 
-// Фон работает на всех устройствах (полная версия классики), но стоимость
-// ограничена уровнем: топовый телефон получает полный вихрь и DPR 1.5,
-// слабый — 500 частиц и DPR 1.0. Раньше всё это скрывалось на мобиле целиком.
+// The background runs on all devices (the full classic version), but the cost
+// is capped by tier: a top-end phone gets the full vortex and DPR 1.5,
+// a weak one — 500 particles and DPR 1.0. Previously all of this was hidden on mobile entirely.
 const BG_PARTICLE_COUNT =
   visualQuality.tier === 'high' ? 1400 : visualQuality.tier === 'medium' ? 900 : 500;
 const BG_DPR_CAP =

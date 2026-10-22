@@ -4096,8 +4096,8 @@ nextjs-portal,
 /* Island Schematic Footprint on Mini-Radar */
 .radar-island-contour {
   position: absolute;
-  /* Проценты от корпуса: на мобильных он 74 px, и пиксельная геометрия
-     макета 124 px обрезалась. */
+  /* Percentages of the housing: on mobile it is 74 px, and the pixel geometry
+     of the 124 px layout was clipped. */
   inset: 14.5%;
   border-radius: 14.5%;
   background: rgba(139, 92, 246, 0.05);
@@ -4243,13 +4243,13 @@ nextjs-portal,
   z-index: 15;
 }
 
-/* ── Досье экипажа: состояние знакомства ──────────────────────────────────
-   В одном месте всё, что зависит от прогресса обхода станции. Классы приходят
-   из MiniRadar.tsx и ControlsHUD.tsx, собственный цвет пина остаётся секторным
-   (он инлайновый), поэтому здесь только приглушение непознанных. */
+/* ── Crew dossier: acquaintance state ──────────────────────────────────
+   Everything that depends on station tour progress in one place. Classes come
+   from MiniRadar.tsx and ControlsHUD.tsx, the pin's own color stays per-sector
+   (it is inline), so only the dimming of unmet sectors is here. */
 .radar-landmark-blip.unmet {
-  /* Непройденный сектор остаётся приглушённым, но читаемым: 0.35 делал
-     мини-карту визуально пустой. */
+  /* An unmet sector stays dimmed but readable: 0.35 made
+     the mini-map look empty. */
   opacity: 0.62;
   filter: saturate(0.55);
 }
@@ -4259,7 +4259,7 @@ nextjs-portal,
   filter: saturate(0.4);
 }
 
-/* Пройденный сектор: ядро пина загорается, пин перестаёт читаться пустым */
+/* Visited sector: the pin core lights up, and the pin no longer reads as empty */
 .tactical-pin-wrapper.visited .tactical-pin-gem-inner {
   box-shadow: 0 0 7px #ffffff;
 }
@@ -4268,8 +4268,8 @@ nextjs-portal,
   opacity: 0.5;
 }
 
-/* Счётчик в верхней панели. Кликабелен и ведёт на тактическую карту — там
-   видно, кого из шестерых ещё не встречал, поэтому счётчик и карта связаны. */
+/* Counter in the top bar. Clickable and leads to the tactical map — there
+   you can see which of the six you have not met yet, so the counter and the map are linked. */
 .dossier-chip {
   font-variant-numeric: tabular-nums;
 }
@@ -4279,8 +4279,8 @@ nextjs-portal,
   box-shadow: 0 0 12px rgba(52, 211, 153, 0.28);
 }
 
-/* Номер шага маршрута на пине: порядок обхода виден глазами, а не только
-   подразумевается порядком в данных. */
+/* Route step number on the pin: the tour order is visible to the eye, rather than only
+   implied by the order in the data. */
 .tactical-pin-order {
   font-size: 9px;
   font-weight: 700;
@@ -4292,8 +4292,8 @@ nextjs-portal,
   font-variant-numeric: tabular-nums;
 }
 
-/* Идёт ПОСЛЕ .unmet намеренно: ближайший непознанный сектор по определению
-   ещё не пройден, но приглушать его нельзя — он и есть цель. */
+/* Deliberately comes AFTER .unmet: the nearest unmet sector is by definition
+   not yet visited, but it must not be dimmed — it is the goal. */
 .tactical-pin-wrapper.next {
   opacity: 1;
   filter: none;
@@ -4314,12 +4314,12 @@ nextjs-portal,
   }
 }
 
-/* ── Экипаж: одно диалоговое окно на всех шестерых ──
-   Каркас повторяет модалки (glass-panel, modal-header, modal-action-btn), чтобы
-   разговор не выглядел отдельным «голографическим» приложением. Цвет сектора
-   приходит из данных в --dialogue-accent(-rgb) и работает только акцентом:
-   линия сверху, иконка, каретка. Тема — общая, через токены, поэтому светлая
-   тема не требует переопределять текст и кнопки. */
+/* ── Crew: one dialogue window for all six ──
+   The frame mirrors the modals (glass-panel, modal-header, modal-action-btn) so
+   the conversation does not look like a separate “holographic” app. The sector color
+   comes from the data in --dialogue-accent(-rgb) and works only as an accent:
+   the top line, icon, caret. The theme is shared, via tokens, so the light
+   theme does not need to override text and buttons. */
 @keyframes dialogueSlideUp {
   from {
     opacity: 0;
@@ -4344,7 +4344,7 @@ nextjs-portal,
 .dialogue-backdrop {
   position: fixed;
   inset: 0;
-  /* Ниже модалок (--z-modal: 1000), но выше HUD: проект открывается поверх. */
+  /* Below the modals (--z-modal: 1000), but above the HUD: the project opens on top. */
   z-index: 950;
   display: flex;
   align-items: flex-end;
@@ -4461,7 +4461,7 @@ nextjs-portal,
   padding: 9px 16px;
 }
 
-/* Подсказка «куда дальше»: тихая строка под кнопками, без второй рамки. */
+/* The “where to next” hint: a quiet line under the buttons, without a second frame. */
 .dialogue-next-hint {
   display: flex;
   align-items: center;
@@ -4487,7 +4487,7 @@ nextjs-portal,
   color: #34d399;
 }
 
-/* На белой панели мятный текст почти не читается — берём тёмный оттенок. */
+/* On the white panel, mint text is almost unreadable — use a darker shade. */
 [data-theme='light'] .dialogue-next-hint.complete {
   color: #059669;
 }
@@ -4607,7 +4607,7 @@ nextjs-portal,
   border-radius: 50%;
 }
 
-/* Полное имя NPC может быть длинным — в мини-пилюле обрезаем его. */
+/* An NPC's full name can be long — truncate it in the mini-pill. */
 .radar-hover-title {
   max-width: 156px;
   overflow: hidden;
@@ -7886,11 +7886,11 @@ nextjs-portal,
 }
 
 /* ── Touch devices: refuse backdrop compositing ──
-   На телефоне backdrop-filter — одна из самых дорогих операций композитора:
-   каждый «стеклянный» слой заставляет GPU перечитывать фон под ним. Здесь
-   31 такой слой, и на мобиле они дают заметный лаг при скролле и открытии
-   модалок. Без blur панели остаются читаемыми: фон у них уже плотный
-   (rgba .88–.94). Это осознанная деградация эффекта ради плавности. ── */
+   On a phone, backdrop-filter is one of the most expensive compositor operations:
+   every “glass” layer forces the GPU to re-read the background beneath it. There are
+   31 such layers here, and on mobile they cause noticeable lag during scrolling and opening
+   modals. Without blur the panels remain readable: their background is already dense
+   (rgba .88–.94). This is a deliberate degradation of the effect for smoothness. ── */
 @media (pointer: coarse) {
   *,
   *::before,

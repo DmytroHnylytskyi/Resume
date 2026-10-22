@@ -148,7 +148,7 @@ nextjs-portal, [data-nextjs-toast], [data-next-badge] {
   opacity: 0.8;
 }
 
-/* в”Ђв”Ђ Top Floating Header Navbar в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
+/* ── Top Floating Header Navbar ────────────────────────── */
 .top-navbar {
   position: absolute;
   top: 20px;
@@ -215,7 +215,7 @@ nextjs-portal, [data-nextjs-toast], [data-next-badge] {
   display: flex;
 }
 
-/* в”Ђв”Ђ Center Toolbar Controls в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
+/* ── Center Toolbar Controls ────────────────────────── */
 .navbar-toolbar-controls {
   display: flex;
   align-items: center;
@@ -278,7 +278,7 @@ nextjs-portal, [data-nextjs-toast], [data-next-badge] {
   margin: 0 4px;
 }
 
-/* в”Ђв”Ђ Model Selector Pills в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
+/* ── Model Selector Pills ────────────────────────── */
 .model-selector-pills {
   display: flex;
   align-items: center;
@@ -317,7 +317,7 @@ nextjs-portal, [data-nextjs-toast], [data-next-badge] {
   box-shadow: 0 0 12px rgba(30, 215, 96, 0.15);
 }
 
-/* в”Ђв”Ђ WASD Camera Hint Badge в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
+/* ── WASD Camera Hint Badge ────────────────────────── */
 .wasd-hint-badge {
   position: absolute;
   bottom: 24px;
@@ -337,7 +337,7 @@ nextjs-portal, [data-nextjs-toast], [data-next-badge] {
   color: var(--color-primary);
 }
 
-/* в”Ђв”Ђ Transform Toolbar в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
+/* ── Transform Toolbar ────────────────────────── */
 .transform-toolbar {
   position: absolute;
   bottom: 24px;
@@ -512,7 +512,7 @@ nextjs-portal, [data-nextjs-toast], [data-next-badge] {
   color: #05140f;
 }
 
-/* в”Ђв”Ђ Instruction Modal Styles в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
+/* ── Instruction Modal Styles ────────────────────────── */
 .instruction-modal-overlay {
   position: fixed;
   top: 0;
@@ -670,7 +670,7 @@ nextjs-portal, [data-nextjs-toast], [data-next-badge] {
   line-height: 1.3;
 }
 
-/* в”Ђв”Ђ Placement Active Banner в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
+/* ── Placement Active Banner ────────────────────────── */
 .placement-active-banner {
   position: fixed;
   top: 84px;
@@ -722,7 +722,7 @@ nextjs-portal, [data-nextjs-toast], [data-next-badge] {
   color: #fff;
 }
 
-/* в”Ђв”Ђ User Profile Modal Styles в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
+/* ── User Profile Modal Styles ────────────────────────── */
 .profile-modal-card {
   max-width: 680px;
 }
@@ -975,7 +975,7 @@ nextjs-portal, [data-nextjs-toast], [data-next-badge] {
   }
 }
 
-/* в”Ђв”Ђ Furniture Sidebar & Toggle в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
+/* ── Furniture Sidebar & Toggle ────────────────────────── */
 .sidebar-toggle-btn {
   position: fixed;
   left: 24px;

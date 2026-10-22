@@ -9,7 +9,7 @@ import ControlsGuideDropdown from './ControlsGuideDropdown';
 import TimeOfDaySlider from './TimeOfDaySlider';
 import { ZONE_ORDER } from '../../data/zones';
 
-/** Сколько всего членов экипажа — из списка секторов, чтобы не заводить вторую константу. */
+/** Total crew members — taken from the sector list to avoid a second constant. */
 const TOTAL_CREW = ZONE_ORDER.length;
 
 /**
@@ -109,8 +109,8 @@ export default function ControlsHUD(): React.ReactElement {
             <span>{t.contacts}</span>
           </button>
 
-          {/* Досье экипажа. Клик ведёт на тактическую карту — именно там видно,
-              кого из шестерых ещё не встретил, поэтому счётчик и карта связаны. */}
+          {/* Crew dossier. A click opens the tactical map — that is where you can see
+              which of the six has not been met yet, so the counter and the map are linked. */}
           <button
             className={`nav-shortcut-btn dossier-chip${metCrew.length >= TOTAL_CREW ? ' complete' : ''}`}
             onClick={() => setTacticalMapOpen(true)}

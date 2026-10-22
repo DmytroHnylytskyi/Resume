@@ -17,17 +17,17 @@ const RUN_SPEED = 4.6;
 const JUMP_FORCE = 5.5;
 
 // ── Cinematic intro flight path (module constants — zero per-frame allocation) ──
-// Новая карта: открывающий кадр снизу-с юго-востока, сингулярность в небе над
-// хабом; затем камера проходит над солнечным полем и южными башнями и садится
-// за спину игроку в западной площади. Финальная точка считается от spawnPoint
-// и spawnYaw, поэтому при смене спавна интро не разъезжается с персонажем.
+// New map: the opening shot is low from the south-east, with the singularity in the sky above
+// the hub; then the camera passes over the solar field and the southern towers and settles
+// behind the player in the western plaza. The final point is computed from spawnPoint
+// and spawnYaw, so changing the spawn does not break the intro alignment with the character.
 const INTRO_SKY_A = new THREE.Vector3(8, 6, 34);
 const INTRO_SKY_B = new THREE.Vector3(10, 12, 24);
 const INTRO_SKY_DRIFT_MS = 2200;
 const INTRO_DESCEND_MS = 2600;
 const INTRO_CONTROL = new THREE.Vector3(-10, 10, 22);
-// Взгляд через хаб в небо: в кадре одновременно солнечное поле внизу,
-// башни хаба в центре и сингулярность вверху.
+// Looking through the hub into the sky: the frame shows the solar field below,
+// the hub towers in the center and the singularity above at the same time.
 const INTRO_CENTER_LOOK = new THREE.Vector3(0, 10, -30);
 const INTRO_END_DISTANCE = 3.6;
 const INTRO_END_PITCH = 0.26;
@@ -35,7 +35,7 @@ const INTRO_END_PITCH = 0.26;
 interface CharacterControllerProps {
   playerPosRef?: React.MutableRefObject<THREE.Vector3 | null>;
   spawnPoint?: [number, number, number];
-  /** Стартовый yaw камеры и персонажа (радианы): куда смотрит игрок на спавне. */
+  /** Initial camera and character yaw (radians): where the player looks at spawn. */
   spawnYaw?: number;
 }
 
@@ -96,8 +96,8 @@ export default function CharacterController({
     characterAnimState.isJumping = false;
   }, []);
 
-  // Спавн-кадр: камера смотрит туда, куда развернут spawnYaw (на северо-восток
-  // к хабу), а не всегда в -Z.
+  // Spawn frame: the camera looks where spawnYaw points (north-east
+  // toward the hub), not always toward -Z.
   const initialCosPitch = Math.cos(0.32);
   const initialSinPitch = Math.sin(0.32);
   const initialCam = useMemo(
@@ -110,7 +110,7 @@ export default function CharacterController({
     [spawnPoint[0], spawnPoint[1], spawnPoint[2], spawnYaw]
   );
 
-  // Камера/персонаж на старте и финальная точка интро (за спиной игрока).
+  // Initial camera/character and the intro's final point (behind the player).
   const targetYaw = useRef(spawnYaw);
   const targetPitch = useRef(0.32);
   const cameraYaw = useRef(spawnYaw);
@@ -132,7 +132,7 @@ export default function CharacterController({
   const smoothLookTarget = useRef(new THREE.Vector3(spawnPoint[0], spawnPoint[1] + 0.33, spawnPoint[2]));
   const smoothCamPos = useRef(initialCam.clone());
   const currentVelocity = useRef(new THREE.Vector3());
-  // Коллизия камеры: текущая допустимая дистанция (плавно догоняет цель).
+  // Camera collision: current allowed distance (smoothly catches up to the target).
   const collisionDistance = useRef(2.8);
   const isGrounded = useRef(true);
   const wasGrounded = useRef(true);
@@ -142,10 +142,10 @@ export default function CharacterController({
   // ── Reusable per-frame scratch vectors (ZERO allocations per frame) ──
   const _playerVec = useRef(new THREE.Vector3());
   const _moveDir = useRef(new THREE.Vector3());
-  // Пул из трёх Ray для проверки коллизии камеры (создаётся один раз).
+  // Pool of three Rays for camera collision checks (created once).
   const camRays = useRef<InstanceType<typeof rapier.Ray>[] | null>(null);
 
-  // ?debug=1: консольный телепорт и наведение камеры (окно отладки карты)
+  // ?debug=1: console teleport and camera aiming (map debug window)
   useEffect(() => {
     if (!DEBUG_MODE) return;
     debugBridge.teleport = (x: number, y: number, z: number) => {
@@ -375,7 +375,7 @@ export default function CharacterController({
       playerPosRef.current.set(translation.x, translation.y, translation.z);
     }
 
-    // ?debug=1 телеметрия ( плоские записи в mutable-мост, ~0 стоимости)
+    // ?debug=1 telemetry (flat writes into the mutable bridge, ~zero cost)
     debugBridge.x = translation.x;
     debugBridge.y = translation.y;
     debugBridge.z = translation.z;
@@ -576,7 +576,7 @@ export default function CharacterController({
       }
     }
 
-    // QA-камера (__aetheria.fly) владеет камерой: не перетираем её позицию.
+    // The QA camera (__aetheria.fly) owns the camera: do not overwrite its position.
     if (debugCameraState.active) return;
 
     // ── 3rd-Person Camera & Cinematic Intro Swoop ──
@@ -587,10 +587,10 @@ export default function CharacterController({
     const cosPitch = Math.cos(cameraPitch.current);
     const sinPitch = Math.sin(cameraPitch.current);
 
-    // ── Коллизия камеры ──
-    // Три параллельных луча из головы вдоль взгляда камеры (центр ± 0.25 м
-    // по горизонтали): так камера не проваливается сквозь стены и крупные
-    // пропсы, но не «дёргается» от тонких углов. Игрок исключён из запроса.
+    // ── Camera collision ──
+    // Three parallel rays from the head along the camera view (center ± 0.25 m
+    // horizontally): this way the camera does not fall through walls and large
+    // props, yet does not "jitter" on thin corners. The player is excluded from the query.
     const dirX = Math.sin(cameraYaw.current) * cosPitch;
     const dirY = sinPitch;
     const dirZ = Math.cos(cameraYaw.current) * cosPitch;
@@ -631,7 +631,7 @@ export default function CharacterController({
         ? cameraDistance.current
         : Math.max(0.55, hitDistance - 0.25);
     const blocked = allowedDistance < cameraDistance.current - 0.03;
-    // К стене подтягиваемся быстро, от стены отходим медленно — без рывка.
+    // We pull in toward a wall quickly and move away from it slowly — no jerk.
     collisionDistance.current = THREE.MathUtils.lerp(
       collisionDistance.current,
       allowedDistance,

@@ -1,14 +1,14 @@
 /**
- * npcPlacements.ts — где на карте реально стоит каждый член экипажа.
+ * npcPlacements.ts — where each crew member actually stands on the map.
  *
- * Единственный резолвер позиции: размещение из islandScene.json ПОБЕЖДАЕТ то,
- * что лежит в npcDialogues (там оно запасное и синхронизируется вручную), ровно
- * как это делают физика и радар. Пока резолвер был один, расхождений не было;
- * как только маркеры над головами начали считать позицию сами, появился третий
- * независимый ответ на вопрос «где NPC», и он мог разъехаться с двумя другими.
+ * The single position resolver: the placement from islandScene.json WINS over what
+ * is stored in npcDialogues (there it is a fallback and is synchronized manually),
+ * exactly as physics and radar do it. While there was a single resolver, there were no
+ * discrepancies; as soon as the markers above heads started computing position themselves,
+ * a third independent answer to the question "where is the NPC" appeared, and it could diverge from the other two.
  *
- * Отдельный модуль, а не экспорт из WorldScene: маркеры монтируются ВНУТРИ
- * WorldScene, и импорт оттуда дал бы цикл.
+ * A separate module rather than an export from WorldScene: markers are mounted INSIDE
+ * WorldScene, and importing from there would create a cycle.
  */
 
 import rawIslandSceneData from './islandScene.json';
@@ -18,7 +18,7 @@ import { NPCId } from '../types/store';
 
 const islandSceneData = rawIslandSceneData as unknown as IslandSceneData;
 
-/** npcId → позиция в мире. Первое совпадение по файлу модели, как и раньше. */
+/** npcId → world position. First match by model file, as before. */
 export const NPC_POSITIONS: Map<NPCId, readonly [number, number, number]> = new Map(
   Object.values(NPC_DIALOGUES).map((npc) => {
     const placed = islandSceneData.placedObjects?.find((po) =>

@@ -1,10 +1,10 @@
 /**
- * debugState.ts — мост рантайм-отладки карты за ?debug=1.
+ * debugState.ts — runtime map-debug bridge behind ?debug=1.
  *
- * Содержит только мутируемое состояние и функцию телепорта, которую
- * CharacterController registers on mount. Production-клиент платит нулевую
- * цену: оверлей физики монтируется лишь при `?debug=1`, а мост читается
- * только из кода, который и так крутится в кадровом цикле.
+ * Contains only mutable state and the teleport function that
+ * CharacterController registers on mount. The production client pays zero
+ * cost: the physics overlay is mounted only with `?debug=1`, and the bridge is read
+ * only from code that already runs in the frame loop.
  */
 
 export interface DebugColliderSnapshot {
@@ -14,11 +14,11 @@ export interface DebugColliderSnapshot {
   position: [number, number, number];
 }
 
-/** ?debug=1 — единственный гейт всей отладочной инфраструктуры (ноль в проде). */
+/** ?debug=1 — the single gate for all debug infrastructure (zero in prod). */
 export const DEBUG_MODE =
   typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('debug');
 
-/** QA-камера: при active кадровый цикл ставит её после контроллера игрока. */
+/** QA camera: when active, the frame loop places it after the player controller. */
 export const debugCameraState = {
   active: false,
   position: [0, 30, 50] as [number, number, number],
@@ -26,42 +26,42 @@ export const debugCameraState = {
 };
 
 export const debugBridge = {
-  /** Бонусные данные по игроку, обновляются в useFrame если debugOverlayOn. */
+  /** Extra player data, updated in useFrame when debugOverlayOn. */
   x: 0,
   y: 0,
   z: 0,
-  /** Ставит CharacterController при монтировании — телепорт из консоли. */
+  /** Set by CharacterController on mount — teleport from the console. */
   teleport: null as null | ((x: number, y: number, z: number) => void),
-  /** Ставит CharacterController — навести камеру: yaw/pitch в радианах, дистанция в метрах. */
+  /** Set by CharacterController — aim the camera: yaw/pitch in radians, distance in meters. */
   setCamera: null as null | ((yaw: number, pitch: number, distance?: number) => void),
-  /** Ставит WorldScene при монтировании — включить/выключить каркасы коллайдеров. */
+  /** Set by WorldScene on mount — toggle collider wireframes. */
   showColliders: null as null | ((on: boolean) => void),
-  /** Ставит WorldScene — список коллайдеров в радиусе от игрока. */
+  /** Set by WorldScene — list colliders within a radius of the player. */
   listNear: null as null | ((radius?: number) => DebugColliderSnapshot[])
 };
 
-// ── Качество рендера (?q=high|low) ──
-// Пресет читается ОДИН раз при монтировании канваса (переключение теней в
-// рантайме форсит перекомпиляцию всех материалов — поэтому это не рантайм-
-// флаг, а режим запуска).
+// ── Render quality (?q=high|low) ──
+// The preset is read ONCE when the canvas mounts (toggling shadows at
+// runtime forces recompilation of all materials — so this is not a runtime
+// flag but a startup mode).
 //
-// high: тени, MeshStandardMaterial, полный световой риг.
-// low:  без теней, MeshLambertMaterial для всей геометрии (дешевле шейдер),
-//       меньше света, ниже DPR, без сглаживания, реже частицы.
+// high: shadows, MeshStandardMaterial, full light rig.
+// low:  no shadows, MeshLambertMaterial for all geometry (cheaper shader),
+//       fewer lights, lower DPR, no antialiasing, sparser particles.
 //
-// Автовыбор: мобильные/тач-устройства, слабые iGPU и софтверный рендер
-// (SwiftShader/llvmpipe) получают low сразу — «открывается на тостере».
-// ?q=high / ?q=low переопределяют детект для проверки глазами.
+// Auto-selection: mobile/touch devices, weak iGPUs and software rendering
+// (SwiftShader/llvmpipe) get low immediately — "opens on a toaster".
+// ?q=high / ?q=low override the detection for visual checks.
 export type QualityTier = 'low' | 'medium' | 'high';
 
 /**
- * Три уровня качества вместо бинарного low/high.
+ * Three quality tiers instead of a binary low/high.
  *
- * Прежняя ошибка: любой `pointer: coarse` сразу давал low. Флагманский
- * телефон получал DPR 1.0 и выключенный AA — рендер вчетверо меньше пикселей,
- * чем умеет экран, и «ужасно пиксельную» картинку, хотя по железу он мощнее
- * иного ноутбука. Теперь тип указателя влияет только на UI и политику AA,
- * а уровень определяют GPU, ядра и память.
+ * Previous mistake: any `pointer: coarse` immediately yielded low. A flagship
+ * phone got DPR 1.0 and AA off — a render with a quarter of the pixels
+ * the screen can do, and an "awfully pixelated" picture, although by hardware it is more powerful
+ * than some laptops. Now the pointer type affects only UI and AA policy,
+ * while the tier is determined by GPU, cores and memory.
  */
 function detectQuality(): {
   tier: QualityTier;
@@ -80,11 +80,11 @@ function detectQuality(): {
   const memory = nav.deviceMemory || 0;
   const nativeDpr = window.devicePixelRatio || 1;
 
-  // HANDHELD ≠ coarse pointer. Телефон в desktop-mode (или с подключённой
-  // мышью/стилусом) отдаёт `pointer: fine`, и прежняя проверка ошибочно
-  // включала ему 4096²-запечку планеты — на мобильном GPU это блокировало
-  // поток на время запечки (та самая «зависшая» заставка). Считаем handheld
-  // по совокупности признаков; coarse оставляем только для политики AA.
+  // HANDHELD ≠ coarse pointer. A phone in desktop mode (or with a connected
+  // mouse/stylus) reports `pointer: fine`, and the previous check erroneously
+  // enabled its 4096² planet bake — on a mobile GPU that blocked
+  // the thread during baking (the infamous "frozen" splash). We detect handheld
+  // by a combination of signals; coarse is kept only for the AA policy.
   const coarse = !!window.matchMedia?.('(pointer: coarse)').matches;
   const maxTouch = nav.maxTouchPoints || 0;
   const handheld =
@@ -110,7 +110,7 @@ function detectQuality(): {
       lose?.loseContext();
     }
   } catch (_) {
-    /* детект не удался — ниже решат ядра/память */
+    /* detection failed — cores/memory decide below */
   }
   const gpu = renderer.toLowerCase();
 
@@ -119,33 +119,33 @@ function detectQuality(): {
   }
 
   if (handheld) {
-    // Топовые мобильные GPU: Apple, Adreno 7xx/8xx, Mali-G7xx/G8xx,
-    // Immortalis, Xclipse. Заведомо мощнее «слабого» десктопа.
+    // Top mobile GPUs: Apple, Adreno 7xx/8xx, Mali-G7xx/G8xx,
+    // Immortalis, Xclipse. Clearly more powerful than a "weak" desktop.
     if (
       /apple gpu|apple m\d|adreno.*\b[78]\d{2}\b|mali-g[789]\d|immortalis|xclipse/.test(gpu) ||
-      // iOS иногда скрывает GPU-строку: Retina-устройство Apple заведомо
-      // тянет полный пресет (адаптивный DPR подстрахует по FPS).
+      // iOS sometimes hides the GPU string: an Apple Retina device is certain
+      // to handle the full preset (adaptive DPR will compensate via FPS).
       (/iphone|ipad|ipod/.test(nav.userAgent) && nativeDpr >= 2)
     ) {
       return { tier: 'high', reason: 'mobile-gpu', touch: true, coarse };
     }
-    // Средний мобильный класс: Adreno 6xx, Mali-G5x/G6x, PowerVR.
+    // Mid-range mobile class: Adreno 6xx, Mali-G5x/G6x, PowerVR.
     if (/adreno.*\b[56]\d{2}\b|mali-[gt][5-8]\d|powervr/.test(gpu)) {
       return { tier: 'medium', reason: 'mobile-gpu', touch: true, coarse };
     }
-    // GPU-строку на iOS/Android иногда маскируют: решают ядра/память/DPR.
+    // GPU string is sometimes masked on iOS/Android: cores/memory/DPR decide.
     if (cores >= 8 || memory >= 8 || nativeDpr >= 3) {
       return { tier: 'medium', reason: 'device-specs', touch: true, coarse };
     }
     return { tier: 'low', reason: 'mobile-unknown', touch: true, coarse };
   }
 
-  // Десктоп: дискретные GPU и Apple Silicon.
+  // Desktop: discrete GPUs and Apple Silicon.
   if (/nvidia|geforce|rtx|gtx|quadro|radeon|apple m\d|arc\(tm\)|iris xe/.test(gpu)) {
     return { tier: 'high', reason: 'desktop-gpu', touch: false, coarse };
   }
-  // Intel HD/UHD 5xx-6xx — прежний «слабый» десктоп: оставляем low, чтобы не
-  // включать тени/PBR там, где раньше было 60 FPS.
+  // Intel HD/UHD 5xx-6xx — the former "weak" desktop: keep low so as not to
+  // enable shadows/PBR where 60 FPS used to be.
   if (/intel.*(hd|uhd) graphics (5|6)\d{2}/.test(gpu)) {
     return { tier: 'low', reason: 'weak-gpu', touch: false, coarse };
   }
@@ -165,29 +165,29 @@ const NATIVE_DPR = typeof window !== 'undefined' ? window.devicePixelRatio || 1 
 
 export const visualQuality: {
   tier: QualityTier;
-  /** Handheld/тач-устройство: телефон ≠ слабое железо, но 4096² ему нельзя. */
+  /** Handheld/touch device: a phone ≠ weak hardware, but 4096² is not allowed for it. */
   touch: boolean;
-  /** Именно `pointer: coarse` — для политики MSAA. */
+  /** Specifically `pointer: coarse` — for the MSAA policy. */
   coarsePointer: boolean;
   nativeDpr: number;
   reason: string;
   shadows: boolean;
   shadowMapSize: number;
-  /** Потолок DPR: на телефоне высокий, чтобы не рендерить «мыло» в 1×. */
+  /** DPR ceiling: high on a phone so as not to render "mush" at 1×. */
   dprCap: number;
   dprFloor: number;
-  /** Lambert вместо Standard для всей статики и персонажей (low). */
+  /** Lambert instead of Standard for all static geometry and characters (low). */
   cheapMaterials: boolean;
-  /** Сколько активных источников света держать (sun/moon/ambient всегда). */
+  /** How many active light sources to keep (sun/moon/ambient always). */
   extraLights: boolean;
   starCount: number;
   dustCount: number;
   dustEveryOtherFrame: boolean;
-  /** MSAA: только десктоп. На телефоне резкость даёт DPR, а MSAA дорог. */
+  /** MSAA: desktop only. On a phone sharpness comes from DPR, and MSAA is expensive. */
   antialias: boolean;
-  /** Крупные визуальные эффекты (кольца сингулярности, большие ореолы ламп). */
+  /** Large visual effects (singularity rings, big lamp halos). */
   richEffects: boolean;
-  /** 4096²-запечка планеты: только мощный десктоп (на iGPU был драйверный залип). */
+  /** 4096² planet bake: powerful desktop only (an iGPU had a driver hang). */
   planetHighRes: boolean;
 } = {
   tier: TIER,
@@ -196,8 +196,8 @@ export const visualQuality: {
   nativeDpr: NATIVE_DPR,
   reason: DETECTED.reason,
   shadows: HIGH,
-  // На телефоне тени дороже по fill rate: 1024 вместо 1536 при том же
-  // визуальном языке (мягкие контактные тени на стилизованных формах).
+  // Shadows are more expensive in fill rate on a phone: 1024 instead of 1536 with the same
+  // visual language (soft contact shadows on stylized shapes).
   shadowMapSize: HIGH ? (TOUCH ? 1024 : 1536) : 0,
   dprCap: HIGH
     ? Math.min(NATIVE_DPR, TOUCH ? 2.0 : 1.5)
@@ -216,7 +216,7 @@ export const visualQuality: {
 };
 
 if (typeof window !== 'undefined') {
-  // Видно в консоли, почему выбран уровень (полевая диагностика).
+  // Visible in the console, why the tier was chosen (field diagnostics).
   console.info(
     `[Aetheria] quality=${visualQuality.tier} (${visualQuality.reason}) handheld=${visualQuality.touch} coarse=${visualQuality.coarsePointer}`
   );

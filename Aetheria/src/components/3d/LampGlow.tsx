@@ -1,19 +1,19 @@
 'use client';
 
 /**
- * LampGlow — рассеянный свет уличных фонарей.
+ * LampGlow — scattered light from street lamps.
  *
- * Три слоя, все без реальных point light:
- *  1. emissive-маска на самих плафонах (см. InstancedModelGroup + kitAssets):
- *     светятся только две головы, ножка и база тёмные;
- *  2. широкое мягкое гало вокруг каждого плафона — один Points-объект на все
- *     62 головы, аддитивное, с мягким градиентом от ядра к краю (это и есть
- *     рассеивание в воздухе, без объёмного света и постобработки);
- *  3. тёплое пятно на земле под каждым фонарём — один InstancedMesh из 31
- *     квада. Оно читается как свет, упавший на палубу, и стоит один draw call.
+ * Three layers, all without real point lights:
+ *  1. emissive mask on the lamp heads themselves (see InstancedModelGroup + kitAssets):
+ *     only the two heads glow, the stem and base stay dark;
+ *  2. a wide soft halo around each head — one Points object for all
+ *     62 heads, additive, with a soft gradient from core to edge (this is the
+ *     scattering in the air, without volumetric light or post-processing);
+ *  3. a warm pool on the ground under each lamp — one InstancedMesh of 31
+ *     quads. It reads as light falling on the deck and costs one draw call.
  *
- * Гало и пятна усиливаются к ночи и гаснут днём. Глубина проверяется
- * по-настоящему: за стеной пятно и гало не просвечивают.
+ * The halos and pools intensify toward night and fade during the day. Depth is
+ * genuinely tested: the pool and halo do not show through walls.
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
@@ -28,8 +28,8 @@ const islandSceneData = rawIslandSceneData as unknown as IslandSceneData;
 
 const HEAD_LOCAL_X = 0.27;
 const HEAD_LOCAL_Y = 0.94;
-// Ночью ядро маленькое, а ореол широкий — это читается как рассеивание,
-// а не как ещё одна яркая точка.
+// At night the core is small and the halo wide — it reads as scattering,
+// not as just another bright spot.
 const GLOW_SIZE = visualQuality.richEffects ? 1.7 : 1.35;
 const POOL_SIZE = visualQuality.richEffects ? 3.0 : 2.4;
 
@@ -114,7 +114,7 @@ export default function LampGlow(): React.ReactElement | null {
       const s = Math.sin(lamp.yaw);
       for (const side of [-1, 1]) {
         const lx = side * HEAD_LOCAL_X * lamp.fs;
-        // Поворот вокруг Y: x' = x·cos + z·sin, z' = −x·sin + z·cos (z=0).
+        // Rotation around Y: x' = x·cos + z·sin, z' = −x·sin + z·cos (z=0).
         positions.push(lamp.x + lx * c, lamp.headY, lamp.z - lx * s);
       }
     }

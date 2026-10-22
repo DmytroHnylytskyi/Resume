@@ -191,9 +191,9 @@ export default function ClassicLandingView(): React.ReactElement {
     };
   }, []);
 
-  // Полноценный фон нужен всем, но на телефоне он не должен соревноваться с
-  // гидратацией и первым скроллом: даём странице встать и через полсекунды
-  // подключаем WebGL. На десктопе — сразу.
+  // Everyone needs the full background, but on a phone it must not compete with
+  // hydration and the first scroll: let the page settle, then enable
+  // WebGL after half a second. On desktop — immediately.
   useEffect(() => {
     const coarse = !!window.matchMedia?.('(pointer: coarse)').matches;
     const id = window.setTimeout(
@@ -538,10 +538,10 @@ export default function ClassicLandingView(): React.ReactElement {
       data-warp-active={isDesktop && warpActive ? 'true' : undefined}
     >
       {/* ── Live Spatial Engine: Gravitational Singularity / Quasar Background.
-          Раньше монтировался только на десктопе — телефоны и планшеты видели
-          «урезанную» классику без фирменного фона. Теперь это полноценная
-          версия на всех устройствах; её стоимость ограничивают качество
-          (частицы/DPR/AA) в SingularityBackground. ── */}
+          Previously it mounted only on desktop — phones and tablets saw a
+          “trimmed” classic landing without the signature background. Now it is
+          the full version on all devices; its cost is bounded by the quality
+          (particles/DPR/AA) in SingularityBackground. ── */}
       {showSingularity && (
         <SingularityBackground
           scrollContainerRef={wrapperRef}
@@ -1052,9 +1052,9 @@ export default function ClassicLandingView(): React.ReactElement {
           </section>
 
           {/* ── Recognition: Web Guru Awards ──
-              Официальный badge со ссылкой на award-страницу. В коде Web Guru
-              он позиционируется fixed в левом верхнем углу — здесь он встроен
-              в футер, чтобы не перекрывать логотип и top-bar. */}
+              The official badge linking to the award page. In Web Guru's code
+              it is positioned fixed in the top-left corner — here it is embedded
+              in the footer so it does not overlap the logo and top bar. */}
           <aside className={styles.recognition} aria-labelledby="recognition-title">
             <a
               className={styles.recognitionBadge}
