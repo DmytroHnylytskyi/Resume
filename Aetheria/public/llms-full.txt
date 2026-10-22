@@ -1,0 +1,1020 @@
+# Aetheria — Full Site Passport for AI Agents and Bots
+
+> Version 1.0 · Last verified 2026-10-22 · Canonical: https://hnylytskyi.dev
+>
+> This document describes the public Aetheria site end to end: both view modes, every persistent screen and state, all published content, all controls, the 3D world, the visual language, and a deterministic protocol for visual evaluation. It is written for AI assistants, crawlers, QA bots and human reviewers. Facts are taken from the source files listed in §10; features that exist only as unused code are marked as such instead of being presented as visible behaviour.
+
+---
+
+## 0. How to use this file
+
+- **Text-only crawler:** read §3 (classic resume). It is the server-rendered, crawlable surface and contains all professional content. The 3D world is a WebGL canvas and cannot be read as text.
+- **Browser-capable agent:** read §2 for URLs, §4 for the 3D world and §7 for the QA bridge. The bridge allows deterministic teleporting, camera placement and time-of-day changes.
+- **Visual reviewer:** follow §8. Do not judge the 3D scene from this text; capture rendered frames.
+- **Fact-checking:** each claim maps to a source file in §10. Where in-game dialogue disagrees with profile data, §9 says which source is authoritative.
+
+---
+
+## 1. Identity
+
+| Field | Value |
+|---|---|
+| Name (EN) | Dmytro Hnylytskyi |
+| Name (UK) | Дмитро Гнилицький |
+| Role | Full-Stack & Creative 3D Developer |
+| Location | Kyiv, Ukraine (100% Remote) |
+| Status | Open to Remote Opportunities / Відкритий до нових пропозицій |
+| Email | hnylytskyidmitri@gmail.com |
+| Telegram | @mokydjin — https://t.me/mokydjin |
+| GitHub | https://github.com/DmytroHnylytskyi |
+| Website | https://hnylytskyi.dev |
+| Award | Web Guru Awards — Guru of the Day, 8 October 2026 |
+| Award page | https://www.webguruawards.com/sites/aetheria-interactive-3d-webgl-portfolio |
+| License | PolyForm Strict 1.0.0 (original code, shaders, UI, composition) |
+| Third-party assets | KayKit Space Base Bits and Character Animations — CC0 1.0 |
+
+The site is a personal portfolio, not a product with accounts. There is no sign-up, checkout, dashboard or server-side user data.
+
+---
+
+## 2. Site model, URLs and persistence
+
+### 2.1 One route, two modes
+
+The whole site is a single Next.js App Router page at `/`.
+
+- **Classic resume** is the default mode. It is a client component but its initial HTML is server-rendered, so crawlers without JavaScript can read the complete CV text. The page opens in this mode on first visit.
+- **3D outpost** is a lazy-loaded chunk (`ssr: false`). It mounts only after the visitor chooses it or the URL asks for it. Entering 3D never reloads the page; language, theme and dossier live in the shared store, while classic-only UI state such as scroll position and the project filter is not preserved.
+- On desktop (viewport width ≥ 900 px) the classic → 3D transition plays a short “warp” animation over the singularity background. On smaller screens the switch is immediate.
+- Opening `?mode=3d` directly still serves the classic HTML first; after hydration the app switches to 3D. A visual test should wait for the 3D canvas and loader to settle.
+
+### 2.2 URL parameters
+
+| Parameter | Values | Effect |
+|---|---|---|
+| `mode` | `classic` or `3d` | Forces the view mode |
+| `lang` | `en` or `uk` | Forces the language; wins over the stored preference and is written back to the URL |
+| `q` | `low`, `medium`, `high` | Forces the 3D quality tier at canvas mount |
+| `debug` | any presence | Enables the QA bridge and the physics wireframe overlay (`window.__aetheriaDebug`, `window.__aetheria`) |
+| `probe` | any presence | Enables the renderer probe only (`window.__aetheria`) |
+
+Two hash groups exist. The mode-selecting group forces the classic view and scrolls to the section: `#resume`, `#classic`, `#projects`, `#about`, `#education`, `#skills`, `#certifications`, `#contacts`. The section-anchor group exists for in-page navigation but is not in the mode-selecting list: `#hero`, `#interactive-3d`, `#resume-main`.
+
+Examples:
+
+- `https://hnylytskyi.dev/?mode=classic&lang=en`
+- `https://hnylytskyi.dev/?mode=3d&q=high`
+- `https://hnylytskyi.dev/?mode=3d&q=high&debug&lang=en`
+- `https://hnylytskyi.dev/?lang=uk#skills`
+
+### 2.3 State stored in the browser
+
+| Key | Storage | Written when | Meaning |
+|---|---|---|---|
+| `aetheria_theme` | localStorage | Theme changes | `light` or `dark`; also read by the pre-paint script |
+| `aetheria_lang` | localStorage | Language changes | `en` or `uk` |
+| `aetheria_time_of_day` | localStorage | Time-of-day slider moves | Cycle position `0..0.999` |
+| `aetheria_intro_seen` | localStorage | Intro ends or is skipped | `1` = do not auto-play the cinematic intro again |
+| `aetheria_dossier` | localStorage | Crew met / material opened | JSON `{ metCrew: string[], openedMaterials: string[] }` |
+| `aetheria_bio_typed` | sessionStorage | Hero bio finishes typing | `1` = skip the typewriter for the rest of the session |
+
+There are no cookies, no analytics, no tracking pixels and no backend API for visitor data.
+
+### 2.4 Defaults
+
+- Language: English.
+- View mode: classic.
+- Theme: OS preference on first paint; otherwise light. If the OS is dark on a first visit, the day/night cycle starts at midnight; otherwise at noon.
+- Audio: muted.
+- Dossier: empty.
+- Quality tier: detected from GPU, CPU cores, memory and handheld signals; `?q=` overrides it.
+
+---
+
+## 3. Classic resume — complete map
+
+### 3.1 Global chrome
+
+**Background layers**
+
+- A WebGL gravitational-singularity / quasar background with an infalling particle vortex. It reacts subtly to scroll velocity and is mounted on all devices, with particle count and DPR capped by quality tier.
+- A CSS sky tint and a hero ambient aura driven by the shared day/night engine.
+- The classic view uses the same time-of-day state as the 3D world; changing it in one mode is reflected in the other.
+
+**Header (desktop)**
+
+- Brand: `DH.` monogram plus the full name and the caption “Digital portfolio”.
+- Primary navigation: Work, About, Education, Skills, Certificates, Contact.
+- Time-of-day slider with moon and sun cap buttons; the track previews the sky gradient and the label shows the current period.
+- Fallback theme button, shown where the slider is hidden (≤ 640 px).
+- Audio toggle.
+- EN / UA language switch.
+- `3D` button that enters the 3D world.
+- Thin scroll-progress bar at the bottom edge of the header.
+
+**Header (mobile)**
+
+- Brand, audio, language, 3D button and a horizontally scrollable section navigation below the header.
+- The time-of-day slider is replaced by a binary theme button at ≤ 640 px.
+
+**Other chrome**
+
+- “Skip to content” link as the first focusable element.
+- Back-to-top button appears after scrolling.
+- Toast messages confirm email copy success or failure.
+
+### 3.2 Sections 01–08
+
+The page is numbered like an editorial document.
+
+#### 01 — Hero
+
+Shown:
+
+- Availability pill with the status “Open to Remote Opportunities”.
+- Live Kyiv clock (`Europe/Kyiv`).
+- Eyebrow: “01 / Ideas. Code. Experience.”
+- Name, role, and a rotating specialty line: 3D World Builder, WebGL Performance, Rapier Physics, Full-Stack Engineer, TypeScript Craftsman.
+- A terminal-style typed bio (skipped for reduced motion or repeat visits in the same session).
+- Primary CTA “Explore my work” → `#projects`; secondary CTA “Let's collaborate” → `#contacts`.
+- Meta row: location, “Download PDF” (opens the print dialog), GitHub.
+- Stats: `04` projects to explore, `04` technology disciplines, `07` certifications.
+- “Scroll to discover” cue.
+- A kinetic “ORBITAL ATELIER” artifact: a 3D-looking cube with nine orbit planes and moving satellites, a pause/resume button, and three links: “From idea to product” → `#projects`, “Architecture & technology” → `#skills`, “Step into the 3D world” → enters 3D.
+
+#### 02 — Projects (“Selected Work”)
+
+Shown:
+
+- Section heading and subtitle “Real-world full-stack & 3D engineering applications”.
+- Toolbar: “Showing N / 4” and, when a filter is active, the selected skill and a “Clear filter” button.
+- Four project cards in a sticky scroll scene. Each card has:
+  - A browser-chrome frame with a live-demo screenshot.
+  - An “Explore project” overlay.
+  - Clickable technology tags that filter the list.
+  - Tagline, title, description, three of the four feature bullets.
+  - Actions: Live Demo (when the project has a URL), Source Code, Project Details.
+- With a fine pointer and motion allowed, the project image tilts slightly and a specular light follows the cursor.
+- If no project matches the selected skill, an empty state appears with “Show all projects”.
+
+#### 03 — About
+
+- Heading “About Me” and subtitle “Engineering philosophy, architecture, and core focus”.
+- Four numbered highlight cards, each with an icon and one paragraph from the profile summary.
+
+#### 04 — Education
+
+- Heading “Education & Academic Background”.
+- One card: KPI, Institute of Atomic and Thermal Energy (IATE), specialty 121 “Software Engineering”, Bachelor's degree, 2023–2027, 4th year in progress, Kyiv.
+
+#### 05 — Skills
+
+- Heading “Tech Stack & Skills”, subtitle “Technologies and tools I use on a daily basis”.
+- Instruction: “Choose a technology to discover the projects built with it.”
+- Four category cards: Frontend Core & State; 3D & Creative WebGL; Backend & Databases; DevOps & Architecture.
+- Every skill is a button; clicking it filters the projects section and scrolls to it.
+
+#### 06 — Certifications
+
+- Heading “Verified Certifications”.
+- Seven cards: issuer, level, title, category, and a “Verified” link to the public credential.
+- All seven are marked verified in the data.
+
+#### 07 — Interactive 3D showcase
+
+- Eyebrow “Interactive Experience”.
+- Technology badges: Three.js, React Three Fiber, Rapier Physics, GLSL Shaders.
+- Headline “Want to experience this stack live?”.
+- Description of the 3D world.
+- Primary CTA “Launch 3D Experience” (desktop: warp transition; mobile: direct).
+- Decorative holographic compass ring.
+
+#### 08 — Contacts
+
+- Eyebrow “The next chapter”.
+- Availability pill.
+- Headline “Have a project in mind?” and the collaboration paragraph.
+- Primary button with the email address (mailto).
+- “Copy Email” button with a success toast and a check icon.
+- Three contact links: Email, Telegram (“Start a conversation”), GitHub (“Explore the code”).
+
+#### Recognition
+
+- A footer-adjacent “Recognition” block with the official Web Guru Awards “Guru of the Day” badge image.
+- Text: Aetheria was selected on 8 October 2026.
+- Link “View the award”.
+- The badge is embedded in the page flow, not as a fixed overlay.
+
+#### Footer
+
+- `DH.` brand link back to the top.
+- Copyright with the current year and the author's name.
+- “See you in 3D” button.
+
+### 3.3 Classic actions
+
+| Action | Where | Result |
+|---|---|---|
+| Navigate sections | Header / mobile nav / footer | Smooth scroll to the section; active section is highlighted |
+| Filter by skill | Skills cards or project tags | Projects list filters; toolbar shows `N / 4`; scrolls to projects |
+| Clear filter | Projects toolbar or empty state | Restores all four projects |
+| Explore project | Project image / “Project Details” | Opens the project modal (also reachable from 3D) |
+| Live Demo | Project card / project modal | Opens the sibling project site in a new tab |
+| Source Code | Project card / project modal | Opens the GitHub subtree in a new tab |
+| Change time of day | Header slider, moon/sun cap | Animates the sky and switches the DOM theme at thresholds |
+| Toggle theme | Fallback button (small screens) | Animates the cycle to the opposite pole |
+| Toggle audio | Header | Enables/disables ambient audio and UI cues |
+| Switch language | Header EN/UA | Instantly re-renders all copy; updates `<html lang>` and the URL |
+| Download PDF | Hero meta row | Opens the browser print dialog with the print-only CV document |
+| Copy email | Hero/contacts | Writes the email to the clipboard and shows a toast |
+| Email / Telegram / GitHub | Contacts | Opens the corresponding link |
+| Enter 3D | Header, hero artifact, section 07, footer | Switches to the 3D world, optionally after the warp |
+| Back to top | Floating button after scroll | Scrolls to the hero |
+| Pause artifact | Orbital artifact button | Stops/resumes the cube animation |
+
+### 3.4 Project modal
+
+The same modal is used from the classic page and from the 3D world. It contains:
+
+- A macOS-style browser frame with the project screenshot and its URL.
+- Tagline and title.
+- Description.
+- “Key Highlights” — all four feature bullets.
+- Tech stack tags.
+- Footer actions: Live Demo (if the project has a public URL) and Source Code.
+- Close by button, backdrop click or `Escape`; focus is trapped inside.
+
+Projects with a public demo: Forma-3D, TerraScope, Lumina. Aetheria itself has no external Live Demo URL and shows Source Code only.
+
+### 3.5 Print document
+
+“Download PDF” calls `window.print()`. A dedicated print-only document is rendered for the browser's print preview:
+
+- Header with name, role, location, email, Telegram, GitHub and website.
+- Professional Summary (bio plus the four summary bullets).
+- Core Technical Skills (four categories, inline).
+- Featured Projects (all four, with stack, description and feature bullets).
+- Education.
+- Verified Certifications (all seven).
+- Footer with name, email, Telegram and website.
+
+The visitor chooses “Save as PDF” in the browser dialog. The site does not generate or download a PDF file directly.
+
+### 3.6 Visual behaviour and accessibility
+
+- Display font: Space Grotesk (self-hosted via `next/font`); body text uses the system UI stack.
+- Design language: editorial monochrome, thin borders, glass panels, large radii (26 px), numbered sections, generous whitespace, warm accent colour derived from the current sky.
+- The page supports light and dark themes through CSS custom properties on `<html data-theme>`.
+- Focus-visible outlines are provided; the skip link is the first tab stop; modals trap focus and close on `Escape`.
+- `prefers-reduced-motion` disables the typed bio, the rotating specialty, the intro flight, project tilt and other decorative motion.
+- Section reveal animations are used on scroll but content is present in the DOM.
+
+### 3.7 Published content — English
+
+#### Profile
+
+- Name: Dmytro Hnylytskyi
+- Role: Full-Stack & Creative 3D Developer
+- Location: Kyiv, Ukraine (100% Remote)
+- Status: Open to Remote Opportunities
+
+Bio:
+
+> Full-Stack engineer specializing in high-performance web applications, resilient asynchronous architectures, and creative browser-based 3D graphics. Focused on building complete digital products from the ground up — from resilient database schemas and non-blocking APIs to 60 FPS WebGL interfaces and spatial 3D configurators.
+
+Summary highlights:
+
+1. 2+ years of hands-on product engineering: crafting complete web applications from database schemas to interactive WebGL clients.
+2. Creative 3D & WebGL mastery: spatial computing, raycasting engines, custom GLSL procedural shaders, GPU instancing, and Rapier 3D physics.
+3. High-concurrency backend design: building non-blocking FastAPI services, Async SQLAlchemy 2.0, JWT auth with token rotation, and rate limiting.
+4. Modern frontend architecture: strict TypeScript, TanStack Query v5 (Optimistic UI), Zustand 5, TailwindCSS, and locked 60 FPS WebGL.
+
+#### Education
+
+- Institution: National Technical University of Ukraine “Igor Sikorsky Kyiv Polytechnic Institute” (KPI)
+- Faculty: Institute of Atomic and Thermal Energy (IATE)
+- Specialty: 121 “Software Engineering”
+- Degree: Bachelor's Degree
+- Period: 2023 — 2027
+- Status: 4th Year (In progress)
+- Location: Kyiv, Ukraine
+
+#### Skills
+
+- **Frontend Core & State:** React 19, Next.js 15 (App Router), TypeScript (Strict), JavaScript (ESNext), TailwindCSS, Zustand 5, TanStack Query v5, Framer Motion, HTML5 / CSS3.
+- **3D & Creative WebGL:** Three.js, React Three Fiber (R3F), Drei, Rapier 3D Physics, Custom GLSL Shaders, Raycasting & Snapping, GPU Instancing, Blender.
+- **Backend & Databases:** Python 3.12+, FastAPI (Async), Async SQLAlchemy 2.0, PostgreSQL 16 (asyncpg), SQLite (aiosqlite), Node.js, Express, Alembic.
+- **DevOps & Architecture:** Docker & Compose, Git & GitHub, Vite, REST API Design, JWT Auth (Token Rotation), Cloudinary CDN, SlowAPI (Rate Limiting).
+
+#### Certifications
+
+| ID | Title | Issuer | Level | Category | Credential |
+|---|---|---|---|---|---|
+| hackerrank-react | Frontend Developer (React) | HackerRank | Verified Skill | Frontend | https://www.hackerrank.com/certificates/1b2b93690e68 |
+| hackerrank-js | JavaScript (Intermediate) | HackerRank | Intermediate | Frontend | https://www.hackerrank.com/certificates/a4919f8d3fc1 |
+| hackerrank-node | Node.js (Intermediate) | HackerRank | Intermediate | Backend | https://www.hackerrank.com/certificates/f643b05e6be5 |
+| hackerrank-sql | SQL (Advanced) | HackerRank | Advanced | Databases | https://www.hackerrank.com/certificates/4c52e6ea4970 |
+| hackerrank-rest | REST API (Intermediate) | HackerRank | Intermediate | Backend | https://www.hackerrank.com/certificates/e1f99257b9cf |
+| hackerrank-python | Python (Basic) | HackerRank | Basic | Backend | https://www.hackerrank.com/certificates/a4643cee10ba |
+| efset-english | EF SET English Certificate | EF Standard English Test | C2 Proficient (78/100) | Languages | https://cert.efset.org/7BCsbE |
+
+#### Projects
+
+**1. Forma-3D (Space Base Scene Editor)**
+
+- Tagline: Modular 3D Space Base scene editor & outpost configurator.
+- Description: Full-stack 3D scene editor for building sci-fi outposts with modular Space Base assets, surface stacking, real-time material customization, and async cloud synchronization.
+- Tags: Three.js, React Three Fiber, Next.js 16, TypeScript, FastAPI, PostgreSQL, Docker.
+- Live demo: https://forma.hnylytskyi.dev (redirects to `/en`).
+- Source: https://github.com/DmytroHnylytskyi/Resume/tree/main/Forma-3D
+- Features:
+  1. Raycasting Surface Snapping for automatic object positioning and height stacking.
+  2. Unreal Engine 5 style freefly camera controls (RMB + WASD + Shift Speed Boost + Focus F).
+  3. Real-time sub-mesh material and color swapping (wood, leather, metal, custom hues).
+  4. Fully asynchronous backend powered by FastAPI + PostgreSQL with JWT auth and scene sync.
+
+**2. TerraScope (3D Geospatial Intelligence)**
+
+- Tagline: Interactive 3D geospatial intelligence and live satellite analytics.
+- Description: Hardware-accelerated 3D planetary Earth visualization with custom atmospheric GLSL shaders, orbital navigation, and real-time live data layers locked at 60 FPS.
+- Tags: Three.js, GLSL Shaders, Next.js 16, FastAPI, Zustand 5, Docker.
+- Live demo: https://terrascope.hnylytskyi.dev
+- Source: https://github.com/DmytroHnylytskyi/Resume/tree/main/TerraScope
+- Features:
+  1. Custom GLSL Day/Night Terminator shader with dynamic solar computation and Fresnel atmosphere glow.
+  2. GPU-instanced data layers: USGS earthquakes, OpenSky live flights, Open-Meteo weather, and NASA NEOs.
+  3. Cache stampede protection on the FastAPI backend via `asyncio.Lock` for high-throughput caching.
+
+**3. Lumina (Full-Stack LMS Learning Platform)**
+
+- Tagline: Modern asynchronous e-learning and student management platform.
+- Description: Comprehensive educational platform featuring interactive course authoring, automated testing, homework submission pipelines, and visual progress analytics.
+- Tags: React 19, Vite, TanStack Query v5, FastAPI, PostgreSQL, React Router 7.
+- Live demo: https://lumina.hnylytskyi.dev
+- Source: https://github.com/DmytroHnylytskyi/Resume/tree/main/Lumina
+- Features:
+  1. Optimistic UI and instant client state caching via TanStack Query v5.
+  2. Role-based access (Student / Teacher) with JWT rotation and rate limiting.
+  3. Interactive lesson media player supporting video, PDF, Google Drive, and Cloudinary CDN.
+  4. Visual student progress curves and study schedules powered by Recharts.
+
+**4. Aetheria (Interactive 3D WebGL Portfolio & Hub)**
+
+- Tagline: Interactive 3D outpost & developer portfolio hub.
+- Description: Comprehensive interactive 3D WebGL portfolio built with Next.js 15, Three.js, React Three Fiber, and Rapier 3D, featuring instanced kit geometry, real-time physics, six crew NPCs, and a zero-latency dual-mode UI.
+- Tags: Next.js 15, React 19, Three.js, React Three Fiber, Rapier 3D, TypeScript, Zustand 5.
+- Live demo: none (this site).
+- Source: https://github.com/DmytroHnylytskyi/Resume/tree/main/Aetheria
+- Features:
+  1. 1,059 placed objects built from 45 unique Space Base models; repeated props rendered with `THREE.InstancedMesh`.
+  2. Rapier 3D physics simulation with fixed 60 Hz timestep and third-person controller.
+  3. Skeletal glTF character animation with smooth state transitions (Idle, Walk, Run, Jump).
+  4. Zero-latency bilingual switching (UK/EN) and theme toggle (Dark/Light) via Zustand 5.
+
+### 3.8 Published content — Ukrainian
+
+The Ukrainian version is a full translation of both modes. It uses the same data shape and the same four projects. Key values:
+
+- Name: Дмитро Гнилицький.
+- Role: Full-Stack & Creative 3D Developer (kept in English).
+- Location: Київ, Україна (100% Remote).
+- Status: Відкритий до нових пропозицій.
+
+Bio:
+
+> Full-Stack інженер із фокусом на високопродуктивних веб-додатках, надійних асинхронних архітектурах та креативній 3D-графіці у браузері. Спеціалізуюся на створенні комплексних цифрових продуктів з нуля — від проєктування реляційних баз даних та відмовостійких API до 60 FPS WebGL-інтерфейсів та просторових 3D-конфігураторів.
+
+Summary highlights:
+
+1. 2+ роки продуктової розробки: створення комплексних веб-сервісів від проєктування БД до інтерактивного WebGL-клієнта.
+2. Експертиза у 3D WebGL & Creative Tech: просторові обчислення, Raycasting, процедурні GLSL-шейдери, GPU Instancing та фізика Rapier 3D.
+3. Високопродуктивний асинхронний бекенд: проєктування non-blocking API на FastAPI, Async SQLAlchemy 2.0, JWT з ротацією токенів та rate limiting.
+4. Сучасна фронтенд-архітектура: суворий TypeScript, TanStack Query v5 (Optimistic UI), Zustand 5, TailwindCSS та 60 FPS рендеринг.
+
+Education:
+
+- НТУУ «Київський політехнічний інститут імені Ігоря Сікорського» (КПІ)
+- НН ІАТЕ (Інститут атомної та теплової енергетики)
+- 121 «Інженерія програмного забезпечення»
+- Бакалавр, 2023 — 2027, 4 курс (в процесі навчання), Київ, Україна
+
+Project titles and taglines:
+
+- Forma-3D (Space Base Scene Editor) — «Модульний 3D-редактор сцен Space Base та конфігуратор аутпосту».
+- TerraScope (3D Geospatial Intelligence) — «Інтерактивна 3D-платформа геопросторової візуалізації та супутникових даних».
+- Lumina (Full-Stack LMS Learning Platform) — «Сучасна асинхронна освітня платформа дистанційного навчання».
+- Aetheria (Interactive 3D WebGL Portfolio & Hub) — «Інтерактивний 3D-аутпост і презентаційний хаб проєктів».
+
+UI labels:
+
+- Navigation: Проєкти, Про мене, Освіта, Навички, Сертифікати, Контакти.
+- Mode switch: 3D Світ / Резюме.
+- Hero actions: Дивитися проєкти, Давайте співпрацювати, Завантажити PDF.
+- Section titles: Обрані Проєкти, Про мене, Освіта & Академічний бекграунд, Стек & Навички, Підтверджені Сертифікації, Контакти.
+- CTA: Є ідея для проєкту? / Зв'язатися зі мною / Скопіювати Email.
+- Modals: Біографія та Інженерний Досвід, Стек технологій & Сертифікати, Контакти та Зв'язок, Деталі Проєкту.
+
+Crew and sector names in Ukrainian are listed in §4.10–4.11. Time-of-day labels are listed in §4.12.
+
+---
+
+## 4. 3D outpost — complete map
+
+### 4.1 Entry, loading and first frame
+
+1. The visitor presses `3D` / “Launch 3D Experience” / the artifact's third link / the footer “See you in 3D”.
+2. On desktop, a warp animation plays over the classic singularity background; on mobile the switch is immediate.
+3. A black “wormhole arrival” curtain fades out over ~0.9 s while the 3D chunk downloads.
+4. A loading overlay shows the AETHERIA 3D brand, a spinner, “Loading 3D World…”, the subtitle “Compiling shaders, 3D assets, and physics simulation”, a progress bar (minimum visible 12%), and the tip that the visitor can switch between 3D and the classic resume at any time.
+5. The loader waits for the character and the shader warm-up, then fades out. A 15 s safety fallback releases a stalled queue.
+6. The cinematic intro starts only after the world is ready, and only on the first visit (or when replayed).
+
+### 4.2 Cinematic intro
+
+- A camera flight over the outpost: from an establishing point above the deck, over the hub and solar field, ending behind the player at spawn.
+- The DOM overlay shows the `AETHERIA` wordmark, the author's name and role, and “Press anything to skip”.
+- Duration is about 4.8 s; an 8 s failsafe ends it if the frame loop stalls.
+- Any key or pointer press skips it.
+- `prefers-reduced-motion` skips it entirely.
+- Completion is stored in `aetheria_intro_seen`; repeat visitors land directly at spawn.
+- It can be replayed from the Controls guide → “Replay cinematic intro”.
+- The HUD top bar is hidden during the intro.
+
+Spawn: `[-8, 1.1, 12]`, yaw `-0.25`.
+
+### 4.3 Controls
+
+Desktop / keyboard and mouse:
+
+| Input | Action |
+|---|---|
+| W, A, S, D or arrow keys | Move |
+| Shift | Sprint |
+| Space | Jump |
+| Click the canvas to lock the pointer, then move the mouse | Orbit the camera 360° |
+| Mouse wheel | Zoom the camera (2.2–7.0 m) |
+| `E` | Interact with crew / open the dossier when the interaction pill is visible |
+| `M` | Toggle the tactical map |
+| `H` | Toggle the controls guide |
+| `Escape` | Close the active modal, dialogue, map or guide |
+
+Pointer lock is requested when the visitor clicks the canvas outside modals; while locked, mouse movement orbits the camera. The Controls guide labels this “RMB / LMB + Drag”, but the implemented desktop path is pointer lock. On touch devices, a right-side drag orbits the camera.
+
+Touch / mobile:
+
+| Input | Action |
+|---|---|
+| Left virtual stick | Move; pushing to the rim sprints |
+| Right-side drag | Orbit the camera |
+| Two-finger pinch | Zoom |
+| Jump button | Jump |
+| Interaction pill | Talk to the crew / open the dossier |
+| Radar button | Open the tactical map |
+
+The Controls guide has two tabs (Touch / Keyboard), lists movement, camera and actions, and includes the replay-intro button. It opens with `H` and closes with `Escape`, the X button or an outside click.
+
+Movement constants: walk 2.6 m/s, sprint 4.6 m/s, jump impulse 5.5, fixed 60 Hz Rapier physics. If the player falls below `y = -3`, the body is reset to the spawn point.
+
+### 4.4 HUD
+
+Top glass bar:
+
+- Brand: the author's name and the `Aetheria 3D` tag.
+- `Resume` — switch back to the classic view.
+- `About Me` — opens the Bio modal.
+- `Skills` — opens the Skills modal.
+- `Contact` — opens the Contacts modal.
+- `Crew N/6` — opens the tactical map; becomes visibly complete when all six are met.
+- `Controls` — opens the controls dropdown.
+- Time-of-day slider with moon and sun caps.
+- Fallback theme button on small screens.
+- Audio toggle.
+- EN / UA language switch.
+
+Other HUD layers:
+
+- A short onboarding pill for the first 7 s (or until the first input): desktop `[W, A, S, D] to move • [Space] jump • [E] interact • [H] guide`; touch `Left stick to move • Drag right to look • [E] interact`.
+- A floating interaction pill when the player is within ~2.5 m of crew: desktop shows the `E` key and the action title; touch shows a sparkle icon and “Open: <title>”.
+- The mini-radar at the bottom-right.
+- Dialogue, modal and map layers when open.
+
+### 4.5 Mini-radar
+
+- Circular glass housing, about 124 px on desktop and 74 px on mobile.
+- Island contour, north/east/south/west compass points, grid rings, crosshair.
+- Six crew blips at their real map positions, each in its sector colour. Unmet crew are visually distinguished.
+- A player pin with a direction cone that follows position and camera yaw at 60 FPS.
+- Hovering a blip shows the crew member's name.
+- Clicking the housing or the “Map [M]” button opens the tactical map.
+
+### 4.6 Tactical map
+
+- Full-screen modal with a dark backdrop.
+- Title: “Aetheria Outpost Tactical Map” / “Тактична карта аванпосту Aetheria”.
+- Subtitle: `Crew N/6 · materials N/6`.
+- A 900×900 canvas schematic drawn from `islandScene.json` and measured model bounds: floor plates by tier, large modules, tunnels, cargo, solar field, dashed crew route, spawn marker, 10 m grid and platform frame.
+- Six numbered pins at the real crew positions; the next unvisited sector pulses.
+- A player pin with heading, updated live.
+- “LIVE SCHEMATIC” caption and a north arrow.
+- Sidebar:
+  - Stats `Crew N/6` and `Materials N/6`.
+  - A row per crew member with number, name, sector and status: `NEXT` / `VISITED` / `UNMET` (UK: `ДАЛІ` / `ПРОЙДЕНО` / `НЕ ЗНАЙОМІ`).
+  - Hint: “Click a pin or a row to open the dossier / project. Hover a pin for its name.”
+- Clicking a pin or row opens the corresponding dossier/project and closes the map.
+- Close by X, `Escape` or backdrop click.
+- The map shows only the six crew; there is no shuttle pin or shuttle silhouette.
+
+### 4.7 Dialogue HUD
+
+- Opens when the visitor presses `E` (or the interaction pill) near a crew member.
+- A full-screen backdrop with an obsidian glass dialogue sheet.
+- Header: profession icon, crew name, role, sector badge, close button.
+- Body: the crew line typed at 2 characters every 22 ms, with a caret.
+- Clicking the text, `Enter` or `Space` skips to the full line.
+- Footer: “Close” and the primary action (e.g. “Open dossier”, “Stack & certifications”, “Contact Dmytro”, “Launch Forma-3D”).
+- The primary action closes the dialogue, marks the corresponding material as opened and opens the modal/project.
+- A “Next: <sector>” hint points to the nearest sector whose crew has not been met; when all six are met it says “Whole crew accounted for — dossier complete”.
+- Close by X, `Escape`, the backdrop or “Close”.
+- The sector colour is used as an accent only; all six dialogues share one frame.
+
+### 4.8 Crew dossier
+
+- Meeting a crew member is recorded when the dialogue opens.
+- Opening a material is recorded when the primary action is pressed.
+- Six materials, one per crew member: `bio`, `skills`, `contacts`, `forma`, `terrascope`, `lumina`.
+- Progress is stored in `localStorage['aetheria_dossier']` and restored on reload.
+- `Crew N/6` reflects meetings; `Materials N/6` reflects opened materials.
+- A store action `resetDossier()` exists, but there is no visible reset button in the UI.
+
+### 4.9 Modals
+
+All modals share the obsidian glass panel, a coloured top accent line, a focus trap, `Escape` to close, and backdrop click to close.
+
+**Bio modal**
+
+- Name, role, location, KPI degree badge.
+- Full bio paragraph.
+- Education card: institution, faculty, specialty, degree, period, status.
+- “Key Engineering Highlights”: the four summary bullets.
+
+**Skills modal**
+
+- Two tabs:
+  - “Tech Stack”: four categories with all skill chips.
+  - “Certifications”: all seven verified credentials with issuer, level, category and a Verified marker. The tab badge shows `7`.
+- Close by button, backdrop or `Escape`.
+
+**Contacts modal**
+
+- Availability banner with a pulsing status dot.
+- Kyiv timezone pill: `Kyiv (UTC+2 / UTC+3)`.
+- Telegram card (primary/fast response) with `@mokydjin`, external link and copy button.
+- Email card with a mailto link and copy button.
+- GitHub card with the profile link.
+- Copy feedback changes the icon to a check for ~2.2 s.
+
+**Project modal**
+
+- Same layout as the classic project modal, opened from Nova, Orion or Lyra, or from a tactical-map pin.
+- Contains the preview, tagline, description, four features, stack and footer links.
+
+### 4.10 Crew roster
+
+| # | ID | Name (EN / UK) | Role (EN / UK) | Sector | Colour | Position | Opens |
+|---|---|---|---|---|---|---|---|
+| 1 | commander | Commander Kira / Командир Кіра | Expedition Commander / Командир експедиції | BIO-ARCHIVE / БІО-АРХІВ | `#fbbf24` gold | `[5.5, 1.4, -6.1]` | Bio modal |
+| 2 | chief_engineer | Chief Engineer Vex / Головний інженер Векс | Reactor & Systems Architect / Архітектор реактора і систем | REACTOR CORE / ЯДРО РЕАКТОРА | `#c084fc` violet | `[-16.7, 4.0, -10.6]` | Skills modal |
+| 3 | ui_architect | UI Architect Nova / UI-архітектор Нова | Forma-3D Lab Lead / Керівник лабораторії Forma-3D | GENERATIVE LAB / ГЕНЕРАТИВНА ЛАБОРАТОРІЯ | `#34d399` emerald | `[7.5, 1.0, -3.2]` | Forma-3D project |
+| 4 | geodata_analyst | Geodata Analyst Orion / Геодата-аналітик Оріон | Orbital GIS Specialist / Фахівець орбітального ГІС | ORBITAL GIS / ОРБІТАЛЬНИЙ ГІС | `#60a5fa` sapphire | `[22.5, 1.0, 24.3]` | TerraScope project |
+| 5 | photonics_specialist | Photonics Specialist Lyra / Фахівець з фотоніки Ліра | Optics & Shader Scientist / Фахівець з оптики та шейдерів | LUMINA OPTICS / ОПТИКА LUMINA | `#fb7185` rose coral | `[21.8, 1.0, 15.6]` | Lumina project |
+| 6 | comms_officer | Comms Officer Tayra / Офіцер зв'язку Тайра | Subspace Relay Officer / Офіцер підпросторового зв'язку | SUBSPACE ARRAY / СУБПРОСТОРОВИЙ МАСИВ | `#38bdf8` cyan | `[-12.6, 1.0, 19.2]` | Contacts modal |
+
+Visit order is 1 → 6. The narrative order is bio → skills → Forma-3D → TerraScope → Lumina → contacts. The “Next” hint is based on the physically nearest unmet sector, not the fixed order.
+
+Dialogue lines shown in-game (English, verbatim):
+
+- **Kira:** “Welcome aboard Aetheria Outpost. I'm Commander Kira. This station is Dmytro's work — every system here, from database schemas to WebGL shaders, built on a Kyiv Polytechnic (KPI) software engineering degree and four years of full-stack practice. My archive holds his full record.”
+- **Vex:** “Reactor's stable. Sixty FPS on deterministic Rapier physics, no per-frame allocations, strict TypeScript across the stack, React 19 and Next.js 15 underneath. The technical passport — stack and certifications — is on this console.”
+- **Nova:** “This deck runs Forma-3D, our generative CAD in the browser: parametric splines, real-time mesh operations and instant glTF export. The demo is interactive — you can model something yourself.”
+- **Orion:** “Orbital telemetry is streaming: TerraScope renders multispectral imagery as live geospatial layers — millions of coordinates, tile pyramids and vector streams in real time. The platform is open for inspection.”
+- **Lyra:** “Keep clear of the beam path. Lumina is our learning platform: interactive media players, automated code checks and live student analytics. The demo is ready when you are.”
+- **Tayra:** “The subspace array is locked on Kyiv and the channel is clean. Mail, Telegram and GitHub are live — send your project or offer through this uplink and it reaches Dmytro directly.”
+
+Two of these lines contain copy that disagrees with the current project data; see §9.
+
+### 4.11 Sectors
+
+| Zone ID | EN name | UK name | Colour | Radius | Position | Crew |
+|---|---|---|---|---|---|---|
+| bio_archive | BIO-ARCHIVE | БІО-АРХІВ | `#fbbf24` | 5 m | `[5.5, 1.4, -6.1]` | Commander Kira |
+| reactor_core | REACTOR CORE | ЯДРО РЕАКТОРА | `#c084fc` | 8 m | `[-16.7, 4.0, -10.6]` | Chief Engineer Vex |
+| generative_lab | GENERATIVE LAB | ГЕНЕРАТИВНА ЛАБОРАТОРІЯ | `#34d399` | 5 m | `[7.5, 1.0, -3.2]` | UI Architect Nova |
+| orbital_gis | ORBITAL GIS | ОРБІТАЛЬНИЙ ГІС | `#60a5fa` | 8 m | `[22.5, 1.0, 24.3]` | Geodata Analyst Orion |
+| lumina_optics | LUMINA OPTICS | ОПТИКА LUMINA | `#fb7185` | 8 m | `[21.8, 1.0, 15.6]` | Photonics Specialist Lyra |
+| subspace_array | SUBSPACE ARRAY | СУБПРОСТОРОВИЙ МАСИВ | `#38bdf8` | 8 m | `[-12.6, 1.0, 19.2]` | Comms Officer Tayra |
+
+Sector radii overlap in the hub; the nearest sector wins.
+
+### 4.12 Day/night cycle
+
+- Continuous position `0..0.999`, where `0` and `1` are midnight and `0.5` is noon.
+- Period labels: Midnight, Dawn, Morning, Noon, Golden, Sunset, Dusk, Midnight (UK: Північ, Світанок, Ранок, Полудень, Золото, Захід, Сутінки).
+- The slider track is a gradient sampled from the same sky colours used by the WebGL dome.
+- Moon cap: cinematic flight to night (`1`). Sun cap: cinematic flight to day (`0.5`).
+- The DOM theme switches at sun-elevation thresholds with hysteresis: light above `+0.06`, dark below `-0.04`.
+- The position is persisted in `aetheria_time_of_day` and shared by classic and 3D.
+- The cycle drives sky gradients, the sun/moon key light, lamp emissive intensity, lamp halos and ground pools, the Milky Way, star opacity and the singularity palette.
+- On a first visit with no saved position, an OS-dark visitor starts at midnight; otherwise at noon.
+
+### 4.13 Audio
+
+- Muted by default. The toggle is in both headers.
+- Enabling starts the ambient track `/audio/aetheria-ambient.mp3` (about 1.15 MB) and a procedural synth drone fallback.
+- UI cues are synthesized: clicks, interaction, jump, footsteps, warp/portal.
+- Audio never autoplays before a user gesture.
+
+### 4.14 Camera, movement and physics
+
+- Third-person orbital camera with independent yaw/pitch smoothing and collision pull-in.
+- Zoom range 2.2–7.0 m; initial distance 2.8 m.
+- Pointer lock on canvas click; while locked, mouse movement orbits the camera. Touch uses a right-side drag.
+- Kinematic-style character velocity with momentum interpolation.
+- Walk 2.6 m/s, sprint 4.6 m/s, jump impulse 5.5, gravity from Rapier.
+- Rapier 3D fixed 60 Hz timestep; capsule body; terrain and prop colliders.
+- Camera collision uses three rays (centre, left, right) against the physics world and pulls in near walls.
+- Falling below `y = -3` resets the body to spawn.
+- The store contains a legacy `cameraMode` field (`third_person` / `bird_eye`) but there is no visible control for it. Do not expect a camera-mode toggle.
+
+### 4.15 Mobile behaviour
+
+- Touch is detected via `ontouchstart`, `maxTouchPoints`, `pointer: coarse` or a small viewport.
+- In portrait, a full-screen guard appears: “Please Rotate Your Device”, “Aetheria 3D is designed for landscape orientation with dual-thumb controls.”
+  - “Fullscreen Mode” button (on iOS it shows “Fullscreen on iPhone” guidance instead).
+  - “Read Vertically as Resume” button switches to the classic view.
+  - iOS hint: Safari “aA” → “Hide Toolbar”, or Share → “Add to Home Screen”.
+- In landscape: left joystick, right-side orbit, pinch zoom, jump button, interaction pill, radar.
+- Mobile quality is chosen from GPU/cores/memory, not merely from `pointer: coarse`; a flagship phone can receive high quality with DPR up to 2.0.
+
+### 4.16 World contents and celestial scene
+
+Outpost:
+
+- 1,059 placed objects from 45 unique models.
+- 859 terrain plates, 31 lamps, 6 crew NPC models.
+- Repeated props use `THREE.InstancedMesh`; static kit geometry is merged per model to keep draw calls low.
+- Colliders are generated from measured mesh AABBs and checked by a separate collider gate.
+- The scene comes from `islandScene.json`, produced by the Forma-3D map importer.
+
+Celestial scene:
+
+- **Planet below the platform:** radius 800, centre `(0, -920, 0)`, so its top is about 120 m below the deck. Earth-like surface with ocean, continents, mountain provinces, snow, beaches; a separate cloud sphere at radius +10; an atmosphere shell at radius ×1.012. The surface and clouds are baked once into a 36° cap texture (2048² on touch/low/medium, 4096² on high desktop) and use a small tiled detail-normal map at runtime. Clouds drift; the planet itself is static.
+- **Starfield:** 700 / 1,100 / 1,400 stars by quality tier on a sphere of radius 800; varied sizes, five colour temperatures, per-star twinkle.
+- **Milky Way:** a faint band with dust clumps in the sky dome, visible at night.
+- **Shattered moon:** radius 32 at `(150, 62, 205)`, with 12 floating fragments and 70 debris points, plus a rim glow. No glowing crack.
+- **Megastructure:** two broken orbital arcs, inner radius 54, outer 58.5, at `(0, 76, 232)`, with 16 navigation lights per arc.
+- **Gravitational singularity:** about 170 m from the deck at roughly 18° above the horizon, scale 1.8, with an accretion disk and halo. It is the visual replacement for the sun/moon and remains the hero object in the northern sky.
+- **Cosmic dust:** 350 / 650 / 1,000 additive points by tier, spread across the sky.
+- Camera far plane 1000; shadow-camera far 200.
+
+### 4.17 Quality tiers and performance budget
+
+| Setting | High | Medium | Low |
+|---|---|---|---|
+| Shadows | Yes, 1536 desktop / 1024 touch | No | No |
+| Materials | MeshStandardMaterial | MeshStandardMaterial | MeshLambertMaterial |
+| Extra lights | Yes | No | No |
+| DPR cap | 1.5 desktop / 2.0 touch | 1.5 | 1.0 |
+| DPR floor | 0.85 desktop / 0.75 touch | 0.7 | 0.6 |
+| Stars | 1,400 | 1,100 | 700 |
+| Dust | 1,000 | 650 | 350 (every other frame) |
+| MSAA | Fine pointer yes; coarse pointer no | Fine pointer yes; coarse pointer no | Fine pointer yes; coarse pointer no |
+| Rich effects (rings, halos) | Yes | Yes | No |
+| Planet bake | 4096² desktop only; 2048² touch | 2048² | 2048² |
+
+- Tier is selected from the GPU string, hardware concurrency, device memory, DPR and handheld signals.
+- `?q=low|medium|high` overrides detection at canvas mount.
+- Software renderers (SwiftShader/llvmpipe) and weak Intel integrated GPUs fall back to low.
+- Adaptive DPR raises/lowers resolution by small steps based on FPS; it avoids frequent swapchain reallocations.
+- Physics runs at a fixed 60 Hz. The UI and camera target 60 FPS; this is a target, not a guarantee on every device.
+
+### 4.18 Accessibility and limits of the 3D mode
+
+- Modals and the dialogue trap focus and close on `Escape`.
+- The HUD has ARIA labels and titles for its controls.
+- The instructions guide is keyboard-accessible (`H`).
+- The 3D canvas itself is not exposed to screen readers. The classic resume is the accessible text equivalent.
+- The scene is not deep-linkable: there is no URL that opens a specific dialogue, sector or modal. Use the QA bridge (§7) or normal navigation.
+- Audio is muted by default.
+- The 3D world is intentionally heavy on first load (Three.js, Rapier, models); the classic view is the lightweight path.
+
+---
+
+## 5. Complete visitor checklist
+
+### Classic
+
+- [ ] Read hero, status, location, Kyiv clock, stats.
+- [ ] Filter projects by a skill; clear the filter.
+- [ ] Open a project modal; inspect features and links.
+- [ ] Read about, education, all four skill groups, all seven certifications.
+- [ ] Open a certificate's public credential.
+- [ ] Change the time of day; observe the theme and sky.
+- [ ] Toggle audio.
+- [ ] Switch EN ↔ UA; check the URL updates.
+- [ ] Print/save the CV.
+- [ ] Copy the email; observe the toast.
+- [ ] Enter 3D from at least one CTA.
+- [ ] Use the skip link and back-to-top.
+
+### 3D
+
+- [ ] Watch or skip the intro; replay it from Controls.
+- [ ] Move, sprint, jump, orbit and zoom.
+- [ ] Meet all six crew; read all six dialogues.
+- [ ] Open bio, skills, contacts and all three project modals.
+- [ ] Watch the `Crew N/6` and `Materials N/6` counters.
+- [ ] Reload and confirm the dossier persists.
+- [ ] Open the tactical map; use a pin and a sidebar row.
+- [ ] Scrub to midnight and noon; observe lamps, stars, planet and theme.
+- [ ] Toggle audio.
+- [ ] Switch to classic and back.
+- [ ] On a phone: rotate to landscape, use the joystick, jump, orbit, pinch; try the portrait guard.
+
+---
+
+## 6. Visual language
+
+### 6.1 Shared
+
+- Both modes share the day/night sky palette, the warm accent `--tod-glow` (default `#ffe9b8`), glass panels, thin borders, and the same obsidian modal/dialogue family in 3D.
+- The site is designed to read as one product: the classic page is the “document” view of the same universe, the 3D outpost is the “place” view.
+
+### 6.2 Classic
+
+- Editorial, technical, monochrome. Black or white page, high-contrast type, restrained colour.
+- Space Grotesk for display; system UI for body.
+- Numbered sections 01–08, eyebrow labels, large headings, thin rules, generous spacing.
+- Surfaces: glass cards with 26 px radii, subtle borders, pointer spotlight on desktop.
+- Project cards mimic a browser window: traffic lights, URL chrome, screenshot, “Explore project”.
+- Hero: oversized name, rotating specialty, typed bio, kinetic orbital cube with nine orbit planes.
+- Background: a WebGL quasar/singularity vortex behind the content, plus a sky tint and aura that follow the time of day.
+- Motion: scroll reveals, sticky project scene, pointer tilt/light, typed text, rotating role — all disabled or reduced under `prefers-reduced-motion`.
+
+### 6.3 3D
+
+- Stylized low-poly sci-fi outpost built from KayKit Space Base modules; readable silhouettes, warm lamps, teal/violet night, strong sector colour coding.
+- Multi-tier platform with a hub, upper plateau, solar field, tunnels, cargo, landing pad and industrial props.
+- HUD: dark obsidian glass, thin luminous borders, small uppercase labels, sector-coloured accents.
+- Celestial composition: a huge Earth-like planet below the deck, a dense starfield and Milky Way above, a shattered moon and broken orbital arcs in the southern sky, and a black hole in the northern sky.
+- Lighting: one shadow-casting key light (sun by day, moon by night), cool fill and hemisphere light, additive lamp halos and ground pools at night.
+- The look is deliberately “physical place first, UI second”: the HUD is compact and the scene is meant to be explored.
+
+---
+
+## 7. Debug and QA API
+
+These hooks exist only when the corresponding query parameter is present. They have no cost in normal production use.
+
+### 7.1 Activation
+
+- `?debug` (any value): mounts the physics wireframe overlay, attaches `window.__aetheriaDebug`, and also enables the renderer probe. **The collider wireframes are visible by default**; call `window.__aetheriaDebug.showColliders(false)` before taking screenshots.
+- `?probe`: enables `window.__aetheria` only (no physics overlay, no teleport).
+
+Use `?mode=3d&debug` to land directly in the 3D world with the bridge active.
+
+### 7.2 `window.__aetheria` — renderer probe
+
+```js
+window.__aetheria.info()
+// { calls, triangles, points, lines, programs, geometries, textures, dpr }
+
+window.__aetheria.setDpr(1)
+// Fixed pixel ratio for honest measurements.
+
+window.__aetheria.time(0.5)
+// Set the day/night cycle: 0.5 = noon, 0 = midnight, 0.75 = sunset.
+
+window.__aetheria.fly(px, py, pz, tx, ty, tz)
+// Fixed QA camera. Example: fly(8, 6, 34, 0, 1, 0) matches the intro's opening view.
+
+window.__aetheria.flyOff()
+// Return control to the player camera.
+```
+
+### 7.3 `window.__aetheriaDebug` — player and physics bridge
+
+```js
+window.__aetheriaDebug.x // current player X (also .y, .z)
+window.__aetheriaDebug.teleport(x, y, z)
+window.__aetheriaDebug.setCamera(yaw, pitch, distance?) // radians, metres
+window.__aetheriaDebug.showColliders(true)
+window.__aetheriaDebug.listNear(2.2) // colliders near the player
+window.__aetheriaDebug.propsNear(4)  // placed props near the player
+```
+
+### 7.4 Deterministic examples
+
+Teleport next to Commander Kira and aim the camera west (Kira is at `x = 5.5`; the player is placed at `x = 7.5`, within the 2.5 m interaction radius):
+
+```js
+window.__aetheriaDebug.showColliders(false); // hide the QA wireframe overlay
+window.__aetheriaDebug.teleport(7.5, 1.2, -6.1);
+window.__aetheriaDebug.setCamera(Math.PI / 2, -0.08, 3.2);
+// Wait a frame, then press E to open the dialogue.
+```
+
+Open the tactical map: press `M`, or click the “Map [M]” button.
+
+Open a specific dossier without walking: teleport near the crew member, press `E`, then click the primary action in the dialogue. Coordinates are in §4.10–4.11.
+
+Capture a night frame:
+
+```js
+window.__aetheria.time(0);
+// Wait ~1 s for the tween; the lamps, stars and theme update.
+```
+
+Measure the scene:
+
+```js
+window.__aetheria.setDpr(1);
+window.__aetheria.info();
+```
+
+The debug bridge does not expose the React store or a “open modal by id” function. The reliable path is teleport → interaction → click, or click the HUD shortcuts.
+
+---
+
+## 8. Visual evaluation protocol
+
+### 8.1 Preconditions
+
+- Use a browser with WebGL 2 and a real GPU if possible. A software renderer will fall back to low quality and will look different.
+- Use a fresh profile for the first-visit intro. To skip it deliberately, set `localStorage.setItem('aetheria_intro_seen', '1')` before loading.
+- To test the light theme from a deterministic state, clear `aetheria_time_of_day` or set it to `0.5`.
+- Wait for the loader to finish and the intro to end or be skipped before capturing.
+- If the URL uses `?debug`, call `window.__aetheriaDebug.showColliders(false)` first; otherwise yellow/coloured collider wireframes will appear in every frame.
+- For the classic page, wait for hydration and the reveal animations (about 1 s) before a full-page capture.
+
+### 8.2 Suggested viewports and URLs
+
+| Target | Viewport | URL |
+|---|---|---|
+| Classic desktop | 1440×900 or 1600×900 | `/?mode=classic&lang=en` |
+| Classic mobile | 390×844 | `/?mode=classic&lang=en` |
+| Classic dark | 1440×900 | same, then scrub to night |
+| 3D desktop high | 1600×900 | `/?mode=3d&q=high&debug&lang=en` |
+| 3D mobile landscape | 844×390 | `/?mode=3d&q=medium&lang=en` |
+| 3D mobile portrait guard | 390×844 | `/?mode=3d&lang=en` |
+| Ukrainian | any | append `&lang=uk` |
+
+### 8.3 Frames to capture
+
+Classic:
+
+1. Hero at first paint (name, role, typed bio, stats, artifact).
+2. Projects section with all four cards.
+3. Filtered projects state (click a skill chip).
+4. About + education.
+5. Skills + certifications.
+6. 3D CTA + contacts.
+7. Recognition + footer.
+8. Project modal.
+9. Print preview (`page.emulateMedia({ media: 'print' })`).
+10. Night theme hero.
+11. Mobile hero and mobile project card.
+12. Ukrainian hero or section.
+
+3D:
+
+1. Loading overlay.
+2. Intro title frame (if testing first visit).
+3. Spawn view after landing.
+4. A sector close-up with a crew member and marker.
+5. Dialogue sheet.
+6. Tactical map.
+7. Bio modal.
+8. Skills modal (both tabs).
+9. Contacts modal.
+10. Project modal.
+11. Day frame (`time(0.5)`) and night frame (`time(0)`).
+12. A wide `fly(...)` establishing frame showing the platform, planet and sky.
+13. Mobile landscape HUD with joystick.
+14. Mobile portrait orientation guard.
+15. Ukrainian HUD/dialogue.
+
+### 8.4 Rubric
+
+Judge each frame against the user's acceptance bar, not against code claims.
+
+- **First-glance readability at 25% thumbnail:** is the name/role/primary action (classic) or the platform/hero object (3D) immediately legible?
+- **Hierarchy:** clear primary, secondary and tertiary elements; no competing headlines.
+- **Typography:** no clipping, overflow, orphan headings, or unreadably small labels; line lengths are comfortable.
+- **Contrast:** text is readable in both themes; no white-on-white or black-on-black states.
+- **Consistency:** classic and 3D share the same accent, glass and border language; sector colours are used consistently across markers, map, dialogue and modals.
+- **Classic composition:** numbered sections align; cards do not crowd; the hero artifact does not collide with text; project chrome and screenshots are crisp.
+- **3D composition:** the platform reads as a place, not a pile of props; the planet, moon, arcs and black hole are visible in the intended directions; no empty black void where the planet should be.
+- **HUD:** the top bar does not overlap the scene's focal point; the radar stays inside the viewport; the interaction pill is legible; no HUD during the intro.
+- **Map:** six pins are distinct and numbered; the route is readable; the sidebar is not clipped; statuses match the dossier.
+- **Modals/dialogue:** content fits, scrolls where needed, buttons remain reachable, focus is visible, `Escape` works.
+- **Mobile:** landscape guard appears in portrait; joystick and jump do not overlap the radar; safe-area insets are respected.
+- **Day/night:** both states are readable; lamps and windows glow at night; the planet is not washed out or flat pale blue; stars are visible.
+- **Performance:** steady frame rate on the test machine; no multi-second stall after the loader; no flicker from resolution changes.
+- **Accessibility:** skip link, focus outlines, ARIA labels, keyboard path through the classic page.
+
+### 8.5 Fail conditions
+
+- A black or empty canvas after the loader.
+- Text overlapping or clipped at a supported viewport.
+- The tactical map missing pins or showing the shuttle.
+- A modal that cannot be closed with `Escape` or the X.
+- The 3D HUD visible during the intro.
+- The planet rendering as a flat pale disk (a known shader failure signature: missing `modelMatrix` in the fragment shader).
+- The classic page requiring JavaScript to show its text.
+- Audio autoplaying before a gesture.
+
+---
+
+## 9. Known caveats and stale copy
+
+These are visible or source-level inconsistencies. The profile/project data is authoritative unless stated otherwise.
+
+1. **Kira's line says “four years of full-stack practice”; the profile summary says “2+ years”.** Treat the profile summary as authoritative. The line is in-game copy.
+2. **Nova's line describes Forma-3D as “generative CAD … parametric splines, real-time mesh operations and instant glTF export”.** The current Forma-3D feature list is surface snapping, freefly camera, real-time material customization and async scene persistence, with Scene JSON import/export. The Forma README does not advertise splines or glTF export. Treat `resumeData.ts` and the Forma repository as authoritative.
+3. **“Download PDF” opens the browser print dialog**, not a generated file. The dedicated print document is what the browser prints or saves.
+4. **“60 FPS” is a target.** It appears in project descriptions and crew dialogue; actual performance depends on the device and quality tier.
+5. **Legacy `cameraMode` field.** The store has `third_person` / `bird_eye` and a toggle action, but no UI exposes it. There is no camera-mode switch for visitors.
+6. **No welcome/mode-selection gate.** `isInitialWelcomeOpen` exists in the store for legacy guards but is always `false`. The site opens directly on the classic page.
+7. **No dossier reset button.** `resetDossier()` exists in the store but is not wired to visible UI. A visitor can clear `localStorage['aetheria_dossier']` manually.
+8. **3D is not screen-reader accessible.** The classic resume is the accessible equivalent.
+9. **Quality and appearance depend on hardware.** Software rendering and weak GPUs fall back to low; the planet bake is 2048² there and 4096² only on high desktop.
+10. **The Web Guru badge image is served from an external CDN.** If the CDN is unavailable, the badge may not render.
+11. **Forma's live URL redirects** from `/` to `/en` (HTTP 307).
+12. **`?mode=3d` briefly serves classic HTML** before hydration switches the mode. Automated visual tests should wait for the canvas.
+13. **The 3D scene has no deep links** to a specific crew member, sector or modal. Use the QA bridge or walk.
+14. **The tactical map intentionally omits the shuttle.** It is world decoration, not a route point.
+
+---
+
+## 10. Source map
+
+| Path | Purpose |
+|---|---|
+| `src/data/resumeData.ts` | Profile, bio, summary, education, certifications, skills, projects, all UI copy (EN/UK), project URL resolver |
+| `src/data/npcDialogues.ts` | Six crew scripts, names, roles, badges, gestures, actions, target keys |
+| `src/data/zones.ts` | Sector IDs, names, colours, coordinates, radii, visit order |
+| `src/data/tacticalLandmarks.ts` | Tactical-map pins derived from zones and NPC positions |
+| `src/data/islandScene.json` | 1,059 placed objects, spawn point, spawn yaw |
+| `src/data/sceneColliders.ts` | Physics collider source of truth |
+| `src/data/modelBounds.generated.ts` | Measured model AABBs |
+| `src/components/ui/ClassicLandingView.tsx` | Classic page sections, actions, filter, print trigger |
+| `src/components/ui/ProjectsScrollScene.tsx` | Project cards, tilt, tags, actions |
+| `src/components/ui/ResumePrintDocument.tsx` | Print-only CV |
+| `src/components/ui/ControlsGuideDropdown.tsx` | Keyboard/touch controls, replay intro |
+| `src/components/ui/ControlsHUD.tsx` | 3D top bar, dossier chip, interaction pill |
+| `src/components/ui/MiniRadar.tsx` | Radar and map trigger |
+| `src/components/ui/TacticalMap.tsx` | Tactical map canvas, pins, sidebar |
+| `src/components/ui/DialogueHUD.tsx` | Dialogue sheet, typewriter, next hint |
+| `src/components/ui/BioModal.tsx` | Bio modal |
+| `src/components/ui/SkillsModal.tsx` | Skills/certifications modal |
+| `src/components/ui/ContactsModal.tsx` | Contacts modal |
+| `src/components/ui/ProjectModal.tsx` | Project modal |
+| `src/components/3d/CharacterController.tsx` | Movement, camera, intro, debug teleport |
+| `src/components/3d/IslandCanvas.tsx` | Canvas, lighting, sky, quality, render probe |
+| `src/components/3d/GiantPlanet.tsx` | Baked planet |
+| `src/components/3d/ShatteredMoon.tsx` | Shattered moon and debris |
+| `src/components/3d/Megastructure.tsx` | Orbital arcs and nav lights |
+| `src/components/3d/SingularityCelestial.tsx` | Black hole in the 3D sky |
+| `src/components/3d/Starfield.tsx` | Stars and twinkle |
+| `src/components/3d/LampGlow.tsx` | Lamp halos and ground pools |
+| `src/store/debugState.ts` | Quality tiers, debug bridge, render probe flag |
+| `src/store/dayNightState.ts` | Continuous cycle, labels, theme sync, persistence |
+| `src/store/useGameStore.ts` | View mode, language, theme, modals, dossier |
+| `src/app/page.tsx` | View mode orchestration, URL parameters, intro gating |
+| `src/app/layout.tsx` | Metadata, Person JSON-LD, pre-paint theme, font |
+| `src/app/robots.ts`, `src/app/sitemap.ts` | Crawler plumbing |
+
+---
+
+## 11. Licensing and permissions
+
+- Original code, shaders, UI, composition and design are **source-available under PolyForm Strict 1.0.0**.
+- Viewing and noncommercial evaluation are welcome.
+- Redistribution, modification, derivative works and commercial use require written permission from the author.
+- KayKit Space Base Bits and Character Animations are officially **CC0 1.0**: free to use, including commercially; attribution is optional. The repository's license cannot and does not restrict those assets.
+- The Web Guru Awards badge belongs to Web Guru Awards and is used for the award recognition block.
+- This passport is descriptive. It grants no rights to the code, assets or design; it exists so agents can understand and evaluate the public site.
+
+---
+
+## 12. Verification
+
+- Last source review: 2026-10-22.
+- Measured from the current repository: 1,059 placed objects, 45 unique models, 859 terrain plates, 31 lamps, 6 NPC models, 39 glTF + 11 GLB model files.
+- The live site was checked on 2026-10-22: `/`, `/robots.txt` and `/sitemap.xml` return 200. Locally, a Next dev server serves `/llms.txt` and `/llms-full.txt` with HTTP 200 and `text/plain`; the production deployment will expose them after the next release.
+- Cross-checks: profile and project data from `src/data/resumeData.ts`; crew and sectors from `npcDialogues.ts` and `zones.ts`; controls from `ControlsGuideDropdown.tsx` and `CharacterController.tsx`; quality from `debugState.ts`; celestial constants from the 3D components.
+- If a future build changes counts, copy, coordinates or controls, this file should be updated in the same commit as the change.
+
+---
+
+*End of passport.*

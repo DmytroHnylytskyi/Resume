@@ -1,0 +1,112 @@
+# Aetheria — Interactive 3D Developer Portfolio (Dmytro Hnylytskyi)
+
+> Aetheria is the bilingual (English / Ukrainian) portfolio and resume of Dmytro Hnylytskyi, a Full-Stack & Creative 3D Developer based in Kyiv, Ukraine. One URL hosts two complete experiences: a structured classic resume and an explorable 3D WebGL outpost with real physics, six crew NPCs, a crew dossier and a tactical map.
+
+- Canonical: https://hnylytskyi.dev
+- Full machine-readable passport (everything a visitor can see and do): https://hnylytskyi.dev/llms-full.txt
+- Last verified: 2026-10-22
+- Languages: English (default) and Ukrainian (`?lang=uk`)
+- Default view: classic resume (`?mode=classic`); the 3D world is at `?mode=3d`
+- License: PolyForm Strict 1.0.0 for original code/design; KayKit Space Base Bits and Character Animations are CC0 1.0
+
+## Identity
+
+- Author: Dmytro Hnylytskyi / Дмитро Гнилицький
+- Role: Full-Stack & Creative 3D Developer
+- Location: Kyiv, Ukraine (100% remote)
+- Status: open to remote opportunities
+- Email: hnylytskyidmitri@gmail.com
+- Telegram: https://t.me/mokydjin
+- GitHub: https://github.com/DmytroHnylytskyi
+- Award: Web Guru Awards — Guru of the Day, 8 October 2026
+- Award page: https://www.webguruawards.com/sites/aetheria-interactive-3d-webgl-portfolio
+
+## Two modes on one route
+
+- [Classic resume](https://hnylytskyi.dev/?mode=classic): a server-rendered, crawlable, 8-section CV landing page. This is the text surface for crawlers and the fallback for any device.
+- [3D outpost](https://hnylytskyi.dev/?mode=3d): a lazy-loaded WebGL experience. Third-person character, Rapier physics, 1,059 authored objects, six interactive crew members, dialogue, dossier, tactical map and a continuous day/night cycle.
+- [Ukrainian version](https://hnylytskyi.dev/?lang=uk): full translation of both modes; the URL parameter wins over the stored preference.
+
+## What a visitor can do
+
+### Classic resume
+
+- Read the hero summary, selected work, about, education, skills, verified certifications and contacts.
+- Filter the four projects by clicking any technology tag (skills section or project card); the toolbar shows `N / 4`.
+- Open a project details modal with preview, description, features, stack, Live Demo and GitHub links.
+- Switch dark/light by scrubbing the day/night slider in the header (or the fallback theme button on small screens).
+- Toggle ambient audio (muted by default).
+- Switch EN / UA without reloading.
+- Open the 3D world via the `3D` button, the “Launch 3D Experience” banner, the orbital artifact or the footer.
+- Print or save the CV as PDF via the “Download PDF” button (it opens the browser print dialog with a dedicated print document).
+- Copy the email address; open email, Telegram or GitHub.
+- Use the skip link, keyboard focus, and back-to-top control.
+
+### 3D outpost
+
+- Watch or skip the first-visit cinematic intro; replay it later from the Controls guide.
+- Walk (WASD / arrows), sprint (Shift), jump (Space), orbit the camera (click to lock the pointer, then move the mouse; right-side drag on touch), zoom (wheel / pinch).
+- Talk to six crew members with `[E]` when the interaction pill appears within ~2.5 m.
+- Open the crew dossier materials: bio, skills, contacts, Forma-3D, TerraScope, Lumina.
+- Track progress in the `Crew N/6` chip and the `Materials N/6` counter; state survives reloads in `localStorage`.
+- Open the tactical map with `M` or the radar button; click any pin or row to jump straight to that dossier/project.
+- Scrub time of day from midnight to noon to midnight; the DOM theme follows the cycle.
+- Switch back to the classic resume at any time without a page reload; language, theme and dossier persist.
+
+## Key URLs
+
+- https://hnylytskyi.dev/ — classic resume by default
+- https://hnylytskyi.dev/?mode=classic — force classic
+- https://hnylytskyi.dev/?mode=3d — force 3D
+- https://hnylytskyi.dev/?lang=uk — Ukrainian
+- https://hnylytskyi.dev/?q=high — force the high 3D quality tier (`medium` and `low` also work)
+- https://hnylytskyi.dev/?debug — 3D QA bridge (`window.__aetheriaDebug`, `window.__aetheria`)
+- https://hnylytskyi.dev/?probe — renderer probe only (`window.__aetheria`)
+- Anchors: `#hero`, `#projects`, `#about`, `#education`, `#skills`, `#certifications`, `#interactive-3d`, `#contacts`, `#resume-main`
+- https://hnylytskyi.dev/robots.txt
+- https://hnylytskyi.dev/sitemap.xml
+- https://hnylytskyi.dev/og-preview.jpg (1200×630 social preview)
+- Project previews: `/shots/forma.webp`, `/shots/terrascope.webp`, `/shots/lumina.webp`, `/shots/aetheria.webp`
+
+## Crew and sectors (3D)
+
+| # | Crew | Sector | Opens |
+|---|---|---|---|
+| 1 | Commander Kira / Командир Кіра | BIO-ARCHIVE / БІО-АРХІВ | Bio dossier |
+| 2 | Chief Engineer Vex / Головний інженер Векс | REACTOR CORE / ЯДРО РЕАКТОРА | Skills & certifications |
+| 3 | UI Architect Nova / UI-архітектор Нова | GENERATIVE LAB / ГЕНЕРАТИВНА ЛАБОРАТОРІЯ | Forma-3D project |
+| 4 | Geodata Analyst Orion / Геодата-аналітик Оріон | ORBITAL GIS / ОРБІТАЛЬНИЙ ГІС | TerraScope project |
+| 5 | Photonics Specialist Lyra / Фахівець з фотоніки Ліра | LUMINA OPTICS / ОПТИКА LUMINA | Lumina project |
+| 6 | Comms Officer Tayra / Офіцер зв'язку Тайра | SUBSPACE ARRAY / СУБПРОСТОРОВИЙ МАСИВ | Contacts |
+
+## Visual identity
+
+- Classic: editorial monochrome (black/white), Space Grotesk headlines, glass panels, thin borders, large radii, numbered sections 01–08, warm accent driven by the time-of-day engine, a WebGL gravitational-singularity background and a kinetic orbital artifact in the hero.
+- 3D: stylized low-poly sci-fi outpost from KayKit Space Base, a multi-tier platform over a baked Earth-like planet, a shattered moon, broken orbital arcs and a gravitational singularity. Each sector has its own accent colour (gold, violet, emerald, sapphire, rose coral, cyan).
+- The 3D view is a WebGL canvas with DOM HUD layers. Text crawlers cannot see it; the classic resume is the crawlable surface.
+
+## For AI evaluators
+
+- Read this file for orientation and `llms-full.txt` for the complete inventory.
+- For visual evaluation, open the site in a browser at desktop and mobile sizes and capture rendered frames. The full passport contains a deterministic protocol using `?debug` (teleport to crew, fixed camera, time of day, renderer stats).
+- Do not judge 3D visuals from this text alone; the scene is procedural and quality-tier dependent.
+- Audio is muted by default and never autoplays.
+
+## Source of truth
+
+- `src/data/resumeData.ts` — profile, projects, education, certifications, skills, UI copy
+- `src/data/npcDialogues.ts` — six crew scripts and actions
+- `src/data/zones.ts` — sector names, colours, coordinates, visit order
+- `src/data/tacticalLandmarks.ts` — tactical map pins
+- `src/data/islandScene.json` — 1,059 placed objects, spawn point, yaw
+- `src/components/ui/ControlsGuideDropdown.tsx` — keyboard and touch controls
+- `src/components/3d/CharacterController.tsx` — movement, camera, intro
+- `src/store/debugState.ts` — quality tiers and QA bridge
+
+## Notes and caveats
+
+- The 3D canvas is not accessible to screen readers; the classic resume is the accessible text equivalent.
+- “Download PDF” opens the browser print dialog; the visitor chooses “Save as PDF”.
+- “60 FPS” is a performance target, not a guarantee on every device.
+- `llms-full.txt` lists two small copy inconsistencies visible in the 3D dialogue (the profile data is authoritative).
+- This site has no accounts, no backend API, no analytics and no cookies; preferences live in `localStorage`.
