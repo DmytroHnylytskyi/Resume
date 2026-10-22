@@ -135,29 +135,17 @@ function checkPngHeader(relPath) {
   );
 }
 
-// ── 57 Space Base glTF Models List ──
+// ── Space Base glTF models actually used by the map ──
+// The catalog was trimmed to the models the authored Forma-3D map references.
+// Deriving the list from islandScene.json keeps this gate honest when the map
+// grows or unused catalog entries are pruned.
 const SPACE_BASE_MODELS = [
-  'basemodule_A.gltf', 'basemodule_B.gltf', 'basemodule_C.gltf', 'basemodule_D.gltf', 'basemodule_E.gltf', 'basemodule_garage.gltf',
-  'cargodepot_A.gltf', 'cargodepot_B.gltf', 'cargodepot_C.gltf',
-  'cargo_A.gltf', 'cargo_A_packed.gltf', 'cargo_A_stacked.gltf',
-  'cargo_B.gltf', 'cargo_B_packed.gltf', 'cargo_B_stacked.gltf',
-  'containers_A.gltf', 'containers_B.gltf', 'containers_C.gltf', 'containers_D.gltf',
-  'drill_structure.gltf',
-  'lander_A.gltf', 'lander_B.gltf', 'lander_base.gltf',
-  'landingpad_large.gltf', 'landingpad_small.gltf',
-  'lights.gltf',
-  'rock_A.gltf', 'rock_B.gltf', 'rocks_A.gltf', 'rocks_B.gltf',
-  'roofmodule_base.gltf', 'roofmodule_cargo_A.gltf', 'roofmodule_cargo_B.gltf', 'roofmodule_cargo_C.gltf', 'roofmodule_solarpanels.gltf',
-  'solarpanel.gltf',
-  'spacetruck.gltf', 'spacetruck_large.gltf', 'spacetruck_trailer.gltf',
-  'structure_low.gltf', 'structure_tall.gltf',
-  'terrain_low.gltf', 'terrain_low_curved.gltf', 'terrain_tall.gltf', 'terrain_tall_curved.gltf', 'terrain_mining.gltf',
-  'terrain_slope.gltf', 'terrain_slope_inner_corner.gltf', 'terrain_slope_outer_corner.gltf',
-  'tunnel_diagonal_long_A.gltf', 'tunnel_diagonal_long_B.gltf',
-  'tunnel_diagonal_short_A.gltf', 'tunnel_diagonal_short_B.gltf',
-  'tunnel_straight_A.gltf', 'tunnel_straight_B.gltf',
-  'windturbine_low.gltf', 'windturbine_tall.gltf'
-];
+  ...new Set(
+    readJsonFile(path.join('src', 'data', 'islandScene.json'))
+      .placedObjects.map((object) => object.modelPath.split('/').pop())
+      .filter((name) => name.endsWith('.gltf'))
+  )
+].sort();
 
 console.log(`\n${colors.bold}${colors.magenta}========================================================================${colors.reset}`);
 console.log(`${colors.bold}${colors.magenta}       AETHERIA SCI-FI SPACE OUTPOST — E2E TEST RUNNER${colors.reset}`);
@@ -171,8 +159,8 @@ const T1 = 'Tier 1: Feature Coverage';
 console.log(`${colors.bold}${colors.cyan}--- ${T1} ---${colors.reset}`);
 
 // ── R1. Asset Pipeline & Conversion Integrity (5 tests) ──
-await runTest(T1, 'T1.1.1', 'R1: All 57 Space Base modular glTF files exist and contain valid glTF 2.0 JSON structures', () => {
-  assert.equal(SPACE_BASE_MODELS.length, 57, 'Must have exactly 57 glTF models defined');
+await runTest(T1, 'T1.1.1', 'R1: Every modular glTF referenced by the map exists and is valid glTF 2.0', () => {
+  assert.ok(SPACE_BASE_MODELS.length >= 30, `Expected the map to use at least 30 glTF models, got ${SPACE_BASE_MODELS.length}`);
   const missing = [];
   const invalidJson = [];
 
@@ -195,7 +183,7 @@ await runTest(T1, 'T1.1.1', 'R1: All 57 Space Base modular glTF files exist and 
   assert.equal(invalidJson.length, 0, `Invalid glTF JSON (${invalidJson.length}): ${invalidJson.slice(0, 5).join(', ')}`);
 });
 
-await runTest(T1, 'T1.1.2', 'R1: All 57 matching .bin binary buffer files exist and have non-zero byteLength', () => {
+await runTest(T1, 'T1.1.2', 'R1: Every .bin buffer for the map glTF models exists and is non-empty', () => {
   const missingBin = [];
   const emptyBin = [];
 

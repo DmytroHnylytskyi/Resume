@@ -3,9 +3,8 @@
 // из живой карты, собранной в редакторе Forma 3D Workspace.
 //
 // Пайплайн карты: авторская раскладка → этот импортёр → islandScene.json.
-// buildGameMap.mjs остаётся legacy-процедурным генератором и для текущей
-// карты не используется. islandScene.json руками не редактировать — только
-// перегенерация:  node scripts/importGameMap.mjs
+// islandScene.json руками не редактировать — только перегенерация:
+//   node scripts/importGameMap.mjs
 // ═══════════════════════════════════════════════════════════════════════════
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 
