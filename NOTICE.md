@@ -5,10 +5,14 @@ design and copy in this repository are Copyright (c) 2026 Dmytro Hnylytskyi and 
 source-available under the PolyForm Strict License 1.0.0 (see LICENSE). That license
 does not grant rights to the third-party works listed below.
 
-- **KayKit Space Base Bits** by Kay Lousberg — CC0 1.0 Universal (per the pack's
-  `LICENSE.txt`). Used for the Aetheria outpost models.
-- **KayKit Character Animations** by Kay Lousberg — used under the license shipped
-  with that asset pack.
+- **KayKit Space Base Bits 1.0** and **KayKit Character Animations** by Kay
+  Lousberg — **CC0 1.0 Universal** (official pack licenses; full legal code in
+  [`LICENSES/KayKit-CC0.txt`](LICENSES/KayKit-CC0.txt)). Free for personal,
+  educational and commercial use; attribution is appreciated but not required.
+  Sources: <https://kaylousberg.com/game-assets/space-base-bits> and
+  <https://kaylousberg.com/game-assets/character-animations>. Used in Aetheria
+  and Forma-3D. CC0 assets remain public domain: the repository's PolyForm
+  Strict license does not and cannot restrict them.
 - **Web Guru Awards badge artwork** — Copyright Web Guru Awards; used under the
   award program's badge terms. It is not covered by this repository's license.
 - **JavaScript/TypeScript dependencies** include Next.js, React, Three.js,
