@@ -42,16 +42,18 @@ src/
 │   │   ├── Globe.jsx          # R3F Canvas container with OrbitControls and lighting
 │   │   ├── Earth.jsx          # Earth sphere mesh with custom GLSL ShaderMaterial
 │   │   ├── Atmosphere.jsx     # Fresnel atmospheric glowing outer halo mesh
-│   │   ├── PostProcessing.jsx # EffectComposer with Bloom and Vignette passes
+│   │   ├── CountryBordersLayer.jsx # Vector country borders line mesh
 │   │   └── ErrorBoundary.jsx  # WebGL canvas error fallback barrier
+│   │
+│   ├── effects/
+│   │   └── PostProcessing.jsx # EffectComposer with Bloom and Vignette passes
 │   │
 │   ├── layers/
 │   │   ├── EarthquakeLayer.jsx# Instanced 3D magnitude columns (USGS dataset)
 │   │   ├── FlightLayer.jsx    # Instanced 3D airplane sprites (OpenSky dataset)
 │   │   ├── WeatherLayer.jsx   # Instanced capital weather indicator orbs
 │   │   ├── NeoLayer.jsx       # Instanced near-Earth asteroids and orbital rings
-│   │   ├── CapitalsLayer.jsx  # Instanced 16-segment tapered capital markers
-│   │   └── CountryBordersLayer.jsx # Vector country borders line mesh
+│   │   └── CapitalsLayer.jsx  # Instanced 16-segment tapered capital markers
 │   │
 │   └── ui/
 │       ├── Navbar.jsx         # Top navigation bar with surface mode switcher and auth
@@ -120,16 +122,18 @@ src/
 │   │   ├── Globe.jsx          # Контейнер R3F Canvas з OrbitControls та освітленням
 │   │   ├── Earth.jsx          # Сітка сфери Землі з власним GLSL ShaderMaterial
 │   │   ├── Atmosphere.jsx     # Сітка атмосферного сяйва Френеля
-│   │   ├── PostProcessing.jsx # EffectComposer з проходами Bloom та Vignette
+│   │   ├── CountryBordersLayer.jsx # Векторна сітка ліній кордонів країн
 │   │   └── ErrorBoundary.jsx  # Бар'єр перехоплення помилок контексту WebGL
+│   │
+│   ├── effects/
+│   │   └── PostProcessing.jsx # EffectComposer з проходами Bloom та Vignette
 │   │
 │   ├── layers/
 │   │   ├── EarthquakeLayer.jsx# Інстансовані 3D-колони магнітуд (USGS)
 │   │   ├── FlightLayer.jsx    # Інстансовані 3D-спрайти літаків (OpenSky)
 │   │   ├── WeatherLayer.jsx   # Інстансовані сфери погодних показників столиць
 │   │   ├── NeoLayer.jsx       # Інстансовані навколоземні астероїди та орбітальні кільця
-│   │   ├── CapitalsLayer.jsx  # Інстансовані 16-сегментні конуси-піни столиць
-│   │   └── CountryBordersLayer.jsx # Векторна сітка ліній кордонів країн
+│   │   └── CapitalsLayer.jsx  # Інстансовані 16-сегментні конуси-піни столиць
 │   │
 │   └── ui/
 │       ├── Navbar.jsx         # Верхня навігаційна панель з перемикачем режимів та входом
@@ -156,4 +160,4 @@ src/
 3. **Однопрохідний GLSL-шейдер Землі**:
    Обчислює змішування дня/ночі та атмосферне розсіювання заходу сонця за один фрагментний прохід шейдера, уникаючи багаторазових проходів освітлення.
 4. **Керування життєвим циклом пам'яті GPU**:
-   Буфери динамічних орбітальних шляхів та геометрії явно вивільняються у хуках демонтажу компонентів для запобігання витокам відеопам'яті (VRAM).\n
+   Буфери динамічних орбітальних шляхів та геометрії явно вивільняються у хуках демонтажу компонентів для запобігання витокам відеопам'яті (VRAM).

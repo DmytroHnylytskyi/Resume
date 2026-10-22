@@ -164,4 +164,4 @@ uvicorn app.main:app --reload --port 8000
 
 - **`users`**: Облікові дані користувачів (`id`, `email`, `hashed_password`, `created_at`).
 - **`saved_views`**: Конфігурації видів глобуса (`id`, `user_id`, `name`, `description`, `camera_position`, `camera_target`, `active_layers`, `layer_filters`, `created_at`).
-- **`cache_entries`**: Таблиця серверного кешу відповідей API (`id`, `cache_key`, `data`, `expires_at`, `created_at`).\n
+- **`cache_entries`**: Таблиця серверного кешу відповідей API (`id`, `cache_key`, `data`, `expires_at`, `created_at`).

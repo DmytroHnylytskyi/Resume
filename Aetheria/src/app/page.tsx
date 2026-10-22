@@ -34,7 +34,7 @@ const IslandExperience = dynamic(() => import('../components/3d/IslandExperience
  * HomePage
  * 
  * Application root coordinator rendering dual-view experience:
- * - Interactive 3D WebGL Island (R3F, Rapier 3D, Skeletal FBX)
+ * - Interactive 3D WebGL Outpost (R3F, Rapier 3D, skeletal glTF animation)
  * - Classic Responsive Document Resume
  * 
  * Reactively synchronizes `data-theme` and `document.title` on theme/locale switch.

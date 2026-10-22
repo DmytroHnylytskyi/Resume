@@ -22,13 +22,12 @@
 Aetheria is an interactive 3D WebGL developer portfolio and project hub built with Next.js 15 (App Router), React 19, Three.js, React Three Fiber, Rapier 3D physics, and Zustand 5.
 
 The application features a dual-experience architecture:
-1. **Interactive 3D World:** Third-person spatial exploration on a modular island environment with physics simulation, animated avatar movement, proximity-based interactions, knowledge statues, and project portals.
+1. **Interactive 3D Outpost:** Third-person exploration of a sci-fi outpost built from 1,059 authored objects (45 unique KayKit Space Base models), with Rapier 3D physics, an animated glTF avatar, six interactive crew members, a tactical map, a day/night cycle, and a celestial scene — a planet below the platform, a shattered moon, orbital megastructure arcs, and a gravitational singularity.
 2. **Classic Web Resume:** A responsive, accessible, structured CV landing page with comprehensive sections for professional summary, education, verified certifications, technical skills, featured projects, and direct contact channels.
 
 ### Awards
 
 - **Web Guru Awards — Guru of the Day** (October 8, 2026) for Aetheria's interactive 3D WebGL portfolio. [Award page](https://www.webguruawards.com/sites/aetheria-interactive-3d-webgl-portfolio).
-- Nominated for **Guru of the Month**.
 
 ---
 
@@ -46,23 +45,24 @@ The application features a dual-experience architecture:
 
 ### Architecture & Key Features
 
-- **Dual Viewing Modes:** Seamless transition between the 3D WebGL scene and the classic web resume without state loss.
+- **Dual Viewing Modes:** Seamless transition between the 3D WebGL outpost and the classic web resume without state loss.
 - **Third-Person Character Controller:**
   - Keyboard movement (WASD / Arrow keys), Sprint (Shift), Jump (Space).
   - Pointer Lock mouse look with pitch and yaw clamping.
-  - Skeletal FBX animation blending with smooth crossfading (Idle, Walk, Run, Jump).
-  - Ground collision checks and void fall recovery.
-- **Optimized 3D Scene Rendering:**
-  - Instanced mesh batching (`THREE.InstancedMesh`) for repeated environment props (~300 objects rendered in ~15 draw calls).
-  - Compound rigid bodies for solid obstacles and perimeter bounds.
-  - Single-frame unified pulse glow manager for all interactive landmarks.
-- **Spatial Proximity System:** Dynamic detection for interactive targets with a floating HUD interaction prompt (`[E]` key or click):
-  - Biography Statue
-  - Skills Altar
-  - Contacts Statue
-  - Forma-3D Portal
-  - TerraScope Portal
-  - Lumina Portal
+  - Skeletal glTF animation blending with smooth crossfading (Idle, Walk, Run, Jump) using the KayKit Mannequin rigs.
+  - Rapier capsule body with terrain collision, void fall recovery, and a cinematic intro flight.
+- **Authored Outpost Scene:**
+  - 1,059 placed objects built from 45 unique KayKit Space Base models, loaded from `islandScene.json`.
+  - Repeated props rendered with `THREE.InstancedMesh`; static kit geometry is merged into one material per model to keep VRAM and draw calls low.
+  - Physics colliders generated from measured mesh AABBs (`modelBounds.generated.ts` + `sceneColliders.ts`) and enforced by the `checkColliders.mjs` gate.
+- **Crew & Progression:**
+  - Six animated crew NPCs with per-sector animation clips, look-at behavior, and capsule collision: Commander Kira, Chief Engineer Vex, Comms Officer Tayra, UI Architect Nova, Geodata Analyst Orion, and Photonics Specialist Lyra.
+  - Holographic dialogue HUD with `[E]` / touch interaction; dossier actions open the bio, skills, contacts, and project modals.
+  - Tactical map drawn from the real scene with six crew pins, route order, and next-sector guidance. Dossier progress is stored in `localStorage`.
+- **Living Environment:**
+  - Continuous day/night cycle driving sky gradients, lighting, lamp emissive halos, and the DOM theme.
+  - Planet below the platform, magnitude-scattered star field and Milky Way, shattered moon, broken orbital megastructure arcs, and a gravitational singularity.
+  - Quality tiers adapt DPR, shadows, anisotropy, and texture sizes to the device.
 - **Zero-Latency Bilingual Localization:** Instant language switching (English / Ukrainian) through centralized Zustand state without unmounting or reloading the 3D WebGL canvas.
 - **Theme Support:** Dark and Light mode support powered by CSS variables and root attributes.
 - **Verified Credentials:** Showcase of formal software engineering education from Kyiv Polytechnic Institute (KPI) and verified skills assessments from HackerRank and EF SET.
@@ -73,53 +73,58 @@ The application features a dual-experience architecture:
 
 ```text
 ├── public/
-│   ├── model/kaykit_space/    # 3D GLB assets, character rigs, station modules
-│   └── shots/                 # Live project showcase screenshot previews (WebP)
+│   ├── model/kaykit_space/     # 39 glTF + 11 GLB models, rigs and shared atlas
+│   ├── shots/                  # Project preview screenshots (WebP)
+│   └── audio/                  # UI and ambience audio
+├── scripts/
+│   ├── importGameMap.mjs       # Forma-3D export -> islandScene.json
+│   ├── extractModelBounds.mjs  # Measured mesh AABBs -> modelBounds.generated.ts
+│   ├── checkColliders.mjs      # Collider alignment gate
+│   ├── e2e-space-test.mjs      # End-to-end gameplay checks
+│   └── adversarial-*           # Physics and input edge-case stress tests
 ├── src/
 │   ├── app/
-│   │   ├── globals.css        # Theme variables, glassmorphism, responsive styles
-│   │   ├── layout.tsx         # Root layout with metadata configuration
-│   │   └── page.tsx           # Main page orchestrating 3D and Classic views
+│   │   ├── globals.css         # Theme variables, glassmorphism, responsive styles
+│   │   ├── layout.tsx          # Root layout and metadata
+│   │   ├── page.tsx            # Dual-view orchestrator; lazy-loads the 3D chunk
+│   │   ├── robots.ts
+│   │   └── sitemap.ts
 │   ├── components/
 │   │   ├── 3d/
-│   │   │   ├── AnimatedCharacter.tsx    # Skeletal mesh and animation state machine
-│   │   │   ├── CharacterController.tsx  # Rapier physics body, input, and 3rd-person camera
-│   │   │   ├── IslandCanvas.tsx         # R3F Canvas, sky dome, lighting, and physics container
-│   │   │   └── WorldScene.tsx           # Instanced props, colliders, glows, proximity detection
-│   │   └── ui/
-│   │       ├── BioModal.tsx             # Biography and engineering background modal
-│   │       ├── ClassicLandingView.tsx   # Full classic CV landing page
-│   │       ├── ContactsModal.tsx        # Contact links with one-click copy helpers
-│   │       ├── ControlsGuideDropdown.tsx# Expandable keyboard & touch controls guide
-│   │       ├── ControlsHUD.tsx          # Top bar navigation, FPS meter, interaction pill
-│   │       ├── IntroOverlay.tsx         # Cinematic intro titles and mode selection card
-│   │       ├── LandscapeOrientationGuard.tsx # Mobile landscape orientation enforcement
-│   │       ├── LoadingScreen.tsx        # Asset loading screen with progress percentage
-│   │       ├── MiniRadar.tsx            # HUD mini-radar and tactical island map modal
-│   │       ├── MobileTouchControls.tsx  # Dual-zone virtual joystick and camera touch
-│   │       ├── ProjectModal.tsx         # Detailed project showcase modal
-│   │       ├── ResumePrintDocument.tsx  # Executive print-only CV document for PDF
-│   │       ├── RotatingRole.tsx         # Hero specialty phrase carousel
-│   │       ├── SkillsModal.tsx          # Tech stack and verified certificates tabs
-│   │       ├── TimeOfDaySlider.tsx      # Continuous day/night cycle sky scrubber
-│   │       ├── TypedBio.tsx             # Terminal-style self-typing hero bio
-│   │       └── icons.tsx                # Shared inline SVG brand icons
+│   │   │   ├── AnimatedCharacter.tsx      # glTF avatar and animation state machine
+│   │   │   ├── CharacterController.tsx    # Rapier body, input, third-person camera
+│   │   │   ├── CosmicDust.tsx             # Sky-wide dust and debris
+│   │   │   ├── CrewMarkers.tsx            # Grounded crew marker rings
+│   │   │   ├── CrewNPCs.tsx               # Six animated crew NPCs and look-at
+│   │   │   ├── GiantPlanet.tsx            # Baked Earth-like planet below the deck
+│   │   │   ├── IslandCanvas.tsx           # R3F canvas, sky, lighting, physics
+│   │   │   ├── IslandExperience.tsx       # Lazy 3D mode shell and HUD
+│   │   │   ├── LampGlow.tsx               # Additive lamp halos and ground pools
+│   │   │   ├── Megastructure.tsx          # Torn orbital megastructure arcs
+│   │   │   ├── ShatteredMoon.tsx          # Shattered moon and debris
+│   │   │   ├── SingularityCelestial.tsx   # Black hole in the 3D sky
+│   │   │   ├── Starfield.tsx              # Magnitude-scattered stars and twinkle
+│   │   │   ├── WorldScene.tsx             # Instanced props, colliders, proximity
+│   │   │   └── kitAssets.ts               # Shared atlas and merged kit geometry
+│   │   ├── singularity/                    # Classic-view black hole background + shaders
+│   │   └── ui/                             # HUD, dialogue, modals, CV, tactical map
 │   ├── data/
-│   │   ├── islandScene.json   # Placed 3D object positions, rotations, and scales
-│   │   └── resumeData.ts      # Profile, projects, certifications, and translations
-│   ├── store/
-│   │   ├── characterAnimState.ts # Shared zero-overhead mutable animation buffer
-│   │   ├── dayNightState.ts   # Continuous day/night state and color LUT
-│   │   ├── mobileControlsState.ts # Touch joystick state
-│   │   ├── radarState.ts      # Zero-allocation radar telemetry buffer
-│   │   └── useGameStore.ts    # Global Zustand store (mode, theme, language, modals)
-│   └── types/
-│       ├── portfolio.ts       # Profile, project, and translation interfaces
-│       ├── scene.ts           # 3D object and scene schema types
-│       └── store.ts           # State machine interfaces
-├── next.config.mjs            # Package transpilation configuration
-├── package.json               # Dependencies and scripts
-└── tsconfig.json              # TypeScript strict configuration
+│   │   ├── islandScene.json               # 1,059 placed objects, spawn point, yaw
+│   │   ├── modelBounds.generated.ts       # Measured AABBs (generated)
+│   │   ├── npcDialogues.ts                # Six crew dialogue scripts
+│   │   ├── npcPlacements.ts               # Crew positions resolved from the scene
+│   │   ├── resumeData.ts                  # Profile, projects, certificates, copy
+│   │   ├── sceneColliders.ts              # Physics collider source of truth
+│   │   ├── tacticalLandmarks.ts           # Six crew pins for the tactical map
+│   │   └── zones.ts                       # Outpost sectors and crew mapping
+│   ├── hooks/                              # Audio, focus trap, spatial resume hooks
+│   ├── store/                              # Zustand store and zero-allocation buffers
+│   └── types/                              # Portfolio, scene and store contracts
+├── Dockerfile
+├── Procfile
+├── next.config.mjs
+├── package.json
+└── tsconfig.json
 ```
 
 ---
@@ -181,13 +186,12 @@ npm start
 Aetheria — це інтерактивне 3D WebGL портфоліо та головний хаб проєктів розробника, розроблений на базі Next.js 15 (App Router), React 19, Three.js, React Three Fiber, фізичного рушія Rapier 3D та Zustand 5.
 
 Додаток реалізує архітектуру двох режимів перегляду:
-1. **Інтерактивний 3D-Світ:** Просторове дослідження модульного острова з повноцінною симуляцією фізики, анімованим персонажем від третьої особи, системою взаємодії за дистанцією, статуями знань та 3D-порталами до проєктів.
+1. **Інтерактивний 3D-Аутпост:** Дослідження науково-фантастичного аутпосту від третьої особи: 1 059 авторських об'єктів із 45 унікальних моделей KayKit Space Base, фізика Rapier 3D, анімований glTF-аватар, шість інтерактивних членів екіпажу, тактична карта, цикл день/ніч і небесна сцена — планета під платформою, розбитий місяць, дуги орбітальної мегаструктури та гравітаційна сингулярність.
 2. **Класичне Резюме:** Адаптивний, доступний, структурований веб-лендінг із детальним описом інженерного бекграунду, вищої освіти, верифікованих сертифікацій, стеку технологій, реалізованих проєктів та прямих контактів.
 
 ### Нагороди
 
 - **Web Guru Awards — Guru of the Day** (8 жовтня 2026) за інтерактивне 3D WebGL портфоліо Aetheria. [Сторінка нагороди](https://www.webguruawards.com/sites/aetheria-interactive-3d-webgl-portfolio).
-- Номінація на **Guru of the Month**.
 
 > **Ліцензія:** оригінальний код, 3D-сцени, шейдери та дизайн доступні за [PolyForm Strict 1.0.0](LICENSE). Перегляд і некомерційне ознайомлення дозволені; розповсюдження, зміни, похідні роботи та комерційне використання — лише з письмового дозволу. Сторонні ассети — за їхніми власними ліцензіями, див. [NOTICE.md](NOTICE.md).
 
@@ -207,26 +211,87 @@ Aetheria — це інтерактивне 3D WebGL портфоліо та го
 
 ### Архітектура та Ключові Можливості
 
-- **Два Режими Перегляду:** Миттєве перемикання між 3D-сценою та класичним резюме зі збереженням стану.
+- **Два Режими Перегляду:** Миттєве перемикання між 3D-аутпостом і класичним резюме зі збереженням стану.
 - **Контролер Персонажа від Третьої Особи:**
   - Пересування клавіатурою (WASD / стрілки), спринт (Shift), стрибок (Пробіл).
   - Обертання камери мишею через Pointer Lock з обмеженням кутів огляду.
-  - Змішування скелетних FBX-анімацій (Idle, Walk, Run, Jump) із плавним кросфейдом.
-  - Перевірка контакту з поверхнею та захист від падіння за межі острова.
-- **Оптимізований Рендеринг 3D-Сцени:**
-  - Батчинг повторюваних об'єктів через `THREE.InstancedMesh` (~300 об'єктів у ~15 draw calls).
-  - Складені тверді тіла (rigid bodies) для перешкод та периметральних меж.
-  - Єдиний менеджер пульсуючого світіння точок інтересу в межах одного frame loop.
-- **Система Детекції Наближення:** Автоматичне визначення найближчих об'єктів із виведенням підказки взаємодії (`[E]` або клік):
-  - Статуя Біографії
-  - Вівтар Навичок
-  - Статуя Контактів
-  - Портал Forma-3D
-  - Портал TerraScope
-  - Портал Lumina
-- **Миттєва Локалізація (0 мс):** Перемикання мови інтерфейсу (Українська / English) без перезавантаження та перерендерингу 3D WebGL Canvas.
+  - Змішування скелетних glTF-анімацій (Idle, Walk, Run, Jump) із плавним кросфейдом на ригах KayKit Mannequin.
+  - Capsule-тіло Rapier, колізії з рельєфом, відновлення після падіння та кінематографічний вступ.
+- **Авторська Сцена Аутпосту:**
+  - 1 059 розміщених об'єктів із 45 унікальних моделей KayKit Space Base; джерело — `islandScene.json`.
+  - Повторювані пропси рендеряться через `THREE.InstancedMesh`; статична геометрія кіта зливається в один матеріал на модель, щоб тримати VRAM і draw calls низькими.
+  - Фізичні колайдери будуються з виміряних AABB мешів (`modelBounds.generated.ts` + `sceneColliders.ts`) і перевіряються гейтом `checkColliders.mjs`.
+- **Екіпаж і Прогрес:**
+  - Шість анімованих NPC з кліпами під свій сектор, поведінкою look-at і capsule-колізією: командир Кіра, головний інженер Векс, офіцер зв'язку Тайра, UI-архітектор Нова, геодата-аналітик Оріон і фахівець з фотоніки Ліра.
+  - Голографічний діалоговий HUD із взаємодією `[E]` / дотиком; дії досьє відкривають модальні вікна біографії, навичок, контактів і проєктів.
+  - Тактична карта будується з реальної сцени: шість міток екіпажу, порядок маршруту й підказка наступного сектора. Прогрес досьє зберігається в `localStorage`.
+- **Живе Оточення:**
+  - Безперервний цикл день/ніч керує градієнтами неба, освітленням, емісійними ореолами ламп і DOM-темою.
+  - Планета під платформою, зоряне поле з різними magnitudes і Чумацький Шлях, розбитий місяць, дуги орбітальної мегаструктури та гравітаційна сингулярність.
+  - Рівні якості адаптують DPR, тіні, анізотропію та розміри текстур під пристрій.
+- **Миттєва Локалізація (0 мс):** Перемикання мови інтерфейсу (Українська / English) через централізований Zustand-стан без розмонтування та перерендерингу 3D WebGL Canvas.
 - **Підтримка Тем:** Повноцінна темна та світла теми на базі CSS-змінних.
 - **Підтверджені Сертифікати та Освіта:** Інформація про профільну освіту в НТУУ «КПІ ім. Ігоря Сікорського» («Інженерія програмного забезпечення») та офіційно верифіковані кваліфікації від HackerRank і EF SET.
+
+---
+
+### Структура Проєкту
+
+```text
+├── public/
+│   ├── model/kaykit_space/     # 39 glTF + 11 GLB моделей, риги та спільний атлас
+│   ├── shots/                  # Прев'ю проєктів (WebP)
+│   └── audio/                  # Аудіо для UI та атмосфери
+├── scripts/
+│   ├── importGameMap.mjs       # Експорт Forma-3D -> islandScene.json
+│   ├── extractModelBounds.mjs  # Виміряні AABB мешів -> modelBounds.generated.ts
+│   ├── checkColliders.mjs      # Гейт відповідності колайдерів
+│   ├── e2e-space-test.mjs      # Наскрізні перевірки геймплею
+│   └── adversarial-*           # Стрес-тести фізики та вводу
+├── src/
+│   ├── app/
+│   │   ├── globals.css         # Змінні тем, glassmorphism, адаптивні стилі
+│   │   ├── layout.tsx          # Кореневий layout і метадані
+│   │   ├── page.tsx            # Оркестратор двох режимів; ліниве завантаження 3D
+│   │   ├── robots.ts
+│   │   └── sitemap.ts
+│   ├── components/
+│   │   ├── 3d/
+│   │   │   ├── AnimatedCharacter.tsx      # glTF-аватар і стейт-машина анімацій
+│   │   │   ├── CharacterController.tsx    # Rapier-тіло, ввід, камера від 3-ї особи
+│   │   │   ├── CosmicDust.tsx             # Пил і дрібні уламки по всьому небу
+│   │   │   ├── CrewMarkers.tsx            # Приземні кільця-маркери екіпажу
+│   │   │   ├── CrewNPCs.tsx               # Шість анімованих NPC і look-at
+│   │   │   ├── GiantPlanet.tsx            # Запечена Earth-like планета під платформою
+│   │   │   ├── IslandCanvas.tsx           # R3F canvas, небо, освітлення, фізика
+│   │   │   ├── IslandExperience.tsx       # Лінива оболонка 3D-режиму та HUD
+│   │   │   ├── LampGlow.tsx               # Адитивні ореоли ламп і світлові плями
+│   │   │   ├── Megastructure.tsx          # Розірвані дуги орбітальної мегаструктури
+│   │   │   ├── ShatteredMoon.tsx          # Розбитий місяць та уламки
+│   │   │   ├── SingularityCelestial.tsx   # Чорна діра в 3D-небі
+│   │   │   ├── Starfield.tsx              # Зорі з різними magnitudes і мерехтінням
+│   │   │   ├── WorldScene.tsx             # Інстанси, колайдери, proximity-логіка
+│   │   │   └── kitAssets.ts               # Спільний атлас і злита геометрія кіта
+│   │   ├── singularity/                    # Фон чорної діри для класичного режиму + шейдери
+│   │   └── ui/                             # HUD, діалоги, модалки, резюме, тактична карта
+│   ├── data/
+│   │   ├── islandScene.json               # 1 059 об'єктів, точка спавну, yaw
+│   │   ├── modelBounds.generated.ts       # Виміряні AABB (згенеровано)
+│   │   ├── npcDialogues.ts                # Діалоги шести членів екіпажу
+│   │   ├── npcPlacements.ts               # Позиції екіпажу з реальної сцени
+│   │   ├── resumeData.ts                  # Профіль, проєкти, сертифікати, тексти
+│   │   ├── sceneColliders.ts              # Джерело істини для фізичних колайдерів
+│   │   ├── tacticalLandmarks.ts           # Шість міток екіпажу для тактичної карти
+│   │   └── zones.ts                       # Сектори аутпосту та прив'язка екіпажу
+│   ├── hooks/                              # Аудіо, focus trap, spatial-resume хуки
+│   ├── store/                              # Zustand-стор і zero-allocation буфери
+│   └── types/                              # Контракти portfolio, scene і store
+├── Dockerfile
+├── Procfile
+├── next.config.mjs
+├── package.json
+└── tsconfig.json
+```
 
 ---
 
@@ -276,6 +341,3 @@ npm start
 - **GitHub:** [https://github.com/DmytroHnylytskyi](https://github.com/DmytroHnylytskyi)
 - **Telegram:** [@mokydjin](https://t.me/mokydjin)
 - **Email:** hnylytskyidmitri@gmail.com
-
-
-

@@ -1083,8 +1083,8 @@ export default function ClassicLandingView(): React.ReactElement {
               </h2>
               <p className={styles.recognitionText}>
                 {isUk
-                  ? 'Aetheria відзначено Web Guru Awards як Guru of the Day 8 жовтня 2026 року. Номінація на Guru of the Month.'
-                  : 'Aetheria was selected as Web Guru Awards “Guru of the Day” on October 8, 2026. Nominated for Guru of the Month.'}
+                  ? 'Aetheria відзначено Web Guru Awards як Guru of the Day 8 жовтня 2026 року.'
+                  : 'Aetheria was selected as Web Guru Awards “Guru of the Day” on October 8, 2026.'}
               </p>
               <a
                 className={styles.recognitionLink}

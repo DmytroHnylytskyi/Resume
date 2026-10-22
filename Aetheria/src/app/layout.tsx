@@ -56,13 +56,13 @@ export const metadata: Metadata = {
     siteName: 'Aetheria 3D — Dmytro Hnylytskyi',
     title: 'Aetheria — Interactive 3D Developer Portfolio',
     description:
-      'Walk a moody WebGL island with real physics — knowledge statues, glowing portals and a full-stack developer resume.',
+      'Explore a sci-fi outpost with six crew members, real Rapier physics and a full-stack developer resume beneath a gravitational singularity.',
     images: [
       {
         url: '/og-preview.jpg',
         width: 1200,
         height: 630,
-        alt: 'Aetheria — an interactive 3D portfolio island with glowing portals'
+        alt: 'Aetheria — an interactive 3D sci-fi outpost beneath a gravitational singularity'
       }
     ],
     locale: 'en_US',
@@ -72,7 +72,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Aetheria — Interactive 3D Developer Portfolio',
     description:
-      'An interactive WebGL island with real physics: statues, project portals and a full-stack developer resume.',
+      'An interactive WebGL sci-fi outpost with real physics, six crew members and a full-stack developer resume.',
     images: ['/og-preview.jpg']
   }
 };

@@ -1,4 +1,4 @@
-# Forma-3D: 3D Spatial Editor and Architectural Room Configurator
+# Forma-3D: 3D Space Base Scene Editor and Outpost Configurator
 
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=nextdotjs)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
@@ -10,7 +10,7 @@
 
 > **License:** source-available under [PolyForm Strict 1.0.0](LICENSE) — viewing and noncommercial evaluation are welcome; redistribution, modification, derivative works and commercial use require written permission. Third-party assets keep their own terms — see [NOTICE.md](NOTICE.md).
 
-Forma-3D is an asynchronous full-stack 3D interior design and architectural room configurator built with Next.js 16 (App Router), React 19, Three.js (React Three Fiber and React Three Drei), Zustand 5, and FastAPI with asynchronous SQLAlchemy 2.0.
+Forma-3D is an asynchronous full-stack 3D sci-fi outpost and spatial scene editor built with Next.js 16 (App Router), React 19, Three.js (React Three Fiber and React Three Drei), Zustand 5, and FastAPI with asynchronous SQLAlchemy 2.0.
 
 ---
 
@@ -25,7 +25,7 @@ Forma-3D is an asynchronous full-stack 3D interior design and architectural room
 
 ### Overview
 
-Forma-3D is a browser-based 3D scene editor running via WebGL. The application allows users to build architectural layouts, place modular Space Base structures, terrain, vehicles, props, and crew from a catalog of 64 GLB models, customize sub-mesh material colors, switch lighting modes, and persist scene configurations locally and to a cloud database.
+Forma-3D is a browser-based 3D scene editor running via WebGL. The application allows users to build outpost layouts, place modular Space Base structures, terrain, vehicles, props, and crew from a 64-item glTF/GLB catalog, customize sub-mesh material colors, switch lighting modes, and persist scene configurations locally and to a cloud database.
 
 ---
 
@@ -71,7 +71,7 @@ Forma-3D is a browser-based 3D scene editor running via WebGL. The application a
    - **Camera Focus (F):** Frame and center camera view on the bounding box of the currently selected object.
 
 3. **3D Asset Library and Geometry Normalization**
-   - 64 modular Space Base GLB 3D assets: modules, tunnels, terrain plates, landing pads, vehicles, cargo, structures, props, and crew models.
+   - 64 modular Space Base glTF/GLB 3D assets: modules, tunnels, terrain plates, landing pads, vehicles, cargo, structures, props, and crew models.
    - Real-time catalog text search and fast filtering.
    - 3D Inspector preview box for hovering over catalog assets with live auto-rotation.
    - Centralized geometry normalizer (`normalizeModelGeometry`): centers models on horizontal axes (X/Z), aligns model base flush to ground level (Y=0), and preserves clean metric scaling.
@@ -135,7 +135,7 @@ Forma-3D is a browser-based 3D scene editor running via WebGL. The application a
 ├── frontend/
 │   ├── messages/                  # Localization dictionaries (en.json, uk.json)
 │   ├── public/
-│   │   └── model/                 # GLB 3D model assets
+│   │   └── model/                 # glTF/GLB model assets
 │   ├── src/
 │   │   ├── app/
 │   │   │   ├── [locale]/
@@ -158,7 +158,7 @@ Forma-3D is a browser-based 3D scene editor running via WebGL. The application a
 │   │   │   ├── TransformToolbar.tsx
 │   │   │   └── UserProfileModal.tsx
 │   │   ├── data/
-│   │   │   └── catalogData.ts     # 66 asset catalog items and categories
+│   │   │   └── catalogData.ts     # 64-item Space Base and crew catalog
 │   │   ├── hooks/
 │   │   │   └── useHotkeys.ts      # Global keyboard shortcuts listener
 │   │   ├── store/
@@ -324,9 +324,9 @@ npm run build
 
 ### Огляд Проєкту
 
-Forma-3D — це асинхронний фулстек 3D-редактор простору та архітектурний конфігуратор, розроблений на базі Next.js 16 (App Router), React 19, Three.js (React Three Fiber та React Three Drei), Zustand 5 та FastAPI з асинхронним SQLAlchemy 2.0.
+Forma-3D — це асинхронний фулстек 3D-редактор науково-фантастичних сцен Space Base та конфігуратор аутпосту, розроблений на базі Next.js 16 (App Router), React 19, Three.js (React Three Fiber та React Three Drei), Zustand 5 та FastAPI з асинхронним SQLAlchemy 2.0.
 
-Додаток працює безпосередньо у браузері через WebGL. Користувачі можуть конструювати архітектурні структури, розміщувати модульні елементи Space Base, рельєф, транспорт, пропси та екіпаж з каталогу на 64 GLB моделі, налаштовувати матеріали деталей у реальному часі, керувати режимами освітлення та зберігати сцени у хмарній базі даних.
+Додаток працює безпосередньо у браузері через WebGL. Користувачі можуть конструювати сцени аутпосту, розміщувати модулі Space Base, рельєф, транспорт, пропси та екіпаж з каталогу на 64 моделі glTF/GLB, налаштовувати матеріали деталей у реальному часі, керувати режимами освітлення та зберігати сцени у хмарній базі даних.
 
 ---
 
@@ -372,7 +372,7 @@ Forma-3D — це асинхронний фулстек 3D-редактор пр
    - **Фокусування на Об'єкті (F):** Центрування камери на габаритах виділеного об'єкта.
 
 3. **Каталог 3D-Моделей та Нормалізація Геометрії**
-   - 64 модульні GLB моделі Space Base: модулі, тунелі, плити рельєфу, посадкові майданчики, транспорт, вантажі, структури, пропси та моделі екіпажу.
+   - 64 модульні glTF/GLB моделі Space Base: модулі, тунелі, плити рельєфу, посадкові майданчики, транспорт, вантажі, структури, пропси та моделі екіпажу.
    - Пошук за назвою у реальному часі.
    - 3D Інспектор попереднього перегляду моделі при наведенні курсору на картку каталогу.
    - Модуль нормалізації геометрії (`normalizeModelGeometry`): центрування відносно осей X/Z, точна посадка на рівень підлоги (Y=0) та чисте метричне масштабування.

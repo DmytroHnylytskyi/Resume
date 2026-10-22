@@ -7,7 +7,8 @@ import { X, User, MapPin, Sparkles, GraduationCap, Briefcase } from 'lucide-reac
 import { useModalFocus } from '../../hooks/useModalFocus';
 
 /**
- * BioModal — biography dialog (Knowledge Statue `[E]` target).
+ * BioModal — biography dialog opened from crew dialogue actions, HUD
+ * shortcuts, and tactical-map pins.
  * Renders the developer profile: bio quote, first education entry, and the
  * numbered engineering highlights from `developerProfiles`. Focus, Tab trap
  * and Escape are owned by useModalFocus.

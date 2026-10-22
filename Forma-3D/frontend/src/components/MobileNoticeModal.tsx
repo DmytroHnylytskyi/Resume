@@ -4,7 +4,7 @@
  * @file MobileNoticeModal.tsx
  * @module components/MobileNoticeModal
  * @description Dedicated full-screen device restriction advisory screen for Forma-3D.
- * Displayed on mobile devices and tablets to inform users that this advanced 3D room builder
+ * Displayed on mobile devices and tablets to inform users that this advanced 3D scene editor
  * requires desktop PCs or laptops with mouse & keyboard due to real-time GPU rendering demands
  * and ergonomic precision controls.
  */

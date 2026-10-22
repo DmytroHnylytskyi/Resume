@@ -136,14 +136,4 @@ export interface Translations {
     copySuccess: string;
     statusLabel: string;
   };
-  interaction: {
-    actionKey: string;
-    interact: string;
-    statueBio: string;
-    statueSkills: string;
-    statueContacts: string;
-    portalForma: string;
-    portalTerrascope: string;
-    portalLumina: string;
-  };
 }

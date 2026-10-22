@@ -200,7 +200,7 @@ export default function ControlsGuideDropdown(): React.ReactElement {
                     <kbd className="ctrl-key accent">E</kbd>
                   </div>
                   <span className="controls-action-desc">
-                    {isUk ? 'Вхід у портали та відкриття резюме' : 'Enter portals & inspect exhibits'}
+                    {isUk ? 'Поговорити з екіпажем і відкрити досьє' : 'Talk to the crew & open the dossier'}
                   </span>
                 </div>
 
@@ -297,7 +297,7 @@ export default function ControlsGuideDropdown(): React.ReactElement {
                     <kbd className="ctrl-key accent">E</kbd>
                   </div>
                   <span className="controls-action-desc">
-                    {isUk ? 'Взаємодія з порталами та статуями' : 'Interact with portals & shrines'}
+                    {isUk ? 'Взаємодія з екіпажем і об’єктами аутпосту' : 'Interact with crew & outpost objects'}
                   </span>
                 </div>
 

@@ -162,10 +162,10 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
     projects: {
       forma: {
         id: "forma",
-        title: "Forma-3D (Spatial Builder & Object Configurator)",
-        tagline: "Модульний 3D-редактор простору та універсальний конфігуратор об'єктів",
-        description: "Комерційно-орієнтований full-stack 3D-редактор сцени та просторовий конфігуратор для будь-яких 3D-об'єктів (меблі, архітектура, декор) з автоматичним стекуванням поверхонь, гнучким налаштуванням матеріалів та хмарною синхронізацією.",
-        tags: ["Three.js", "React Three Fiber", "Next.js 15", "TypeScript", "FastAPI", "PostgreSQL", "Docker"],
+        title: "Forma-3D (Space Base Scene Editor)",
+        tagline: "Модульний 3D-редактор сцен Space Base та конфігуратор аутпосту",
+        description: "Full-stack 3D-редактор сцен для побудови науково-фантастичних аутпостів із модульних асетів Space Base, стекуванням на поверхнях, зміною матеріалів у реальному часі та хмарною синхронізацією.",
+        tags: ["Three.js", "React Three Fiber", "Next.js 16", "TypeScript", "FastAPI", "PostgreSQL", "Docker"],
         url: FORMA_URL,
         githubUrl: "https://github.com/DmytroHnylytskyi/Resume/tree/main/Forma-3D",
         color: "#34d399",
@@ -181,7 +181,7 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         title: "TerraScope (3D Geospatial Intelligence)",
         tagline: "Інтерактивна 3D-платформа геопросторової візуалізації та супутникових даних",
         description: "Апаратна 3D-візуалізація планети Земля з кастомними GLSL-шейдерами атмосфери та шарами супутникових даних у реальному часі зі стабільними 60 FPS.",
-        tags: ["Three.js", "GLSL Shaders", "Next.js 15", "FastAPI", "Zustand 5", "Docker"],
+        tags: ["Three.js", "GLSL Shaders", "Next.js 16", "FastAPI", "Zustand 5", "Docker"],
         url: TERRASCOPE_URL,
         githubUrl: "https://github.com/DmytroHnylytskyi/Resume/tree/main/TerraScope",
         color: "#60a5fa",
@@ -196,7 +196,7 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         title: "Lumina (Full-Stack LMS Learning Platform)",
         tagline: "Сучасна асинхронна освітня платформа дистанційного навчання",
         description: "Освітня система для викладачів і студентів із модульними інтерактивними курсами, системою дедлайнів, завантаженням домашніх робіт та візуальною аналітикою прогресу.",
-        tags: ["React 19", "Vite", "TanStack Query v5", "FastAPI", "PostgreSQL", "TailwindCSS"],
+        tags: ["React 19", "Vite", "TanStack Query v5", "FastAPI", "PostgreSQL", "React Router 7"],
         url: LUMINA_URL,
         githubUrl: "https://github.com/DmytroHnylytskyi/Resume/tree/main/Lumina",
         color: "#fb7185",
@@ -210,16 +210,16 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
       aetheria: {
         id: "aetheria",
         title: "Aetheria (Interactive 3D WebGL Portfolio & Hub)",
-        tagline: "Інтерактивний 3D-простір острова та презентаційний хаб проєктів",
-        description: "Комплексне 3D WebGL портфоліо на Next.js 15, Three.js, React Three Fiber та Rapier 3D з оптимізованим GPU Instancing рендерингом, фізикою в реальному часі та двомовним інтерфейсом.",
+        tagline: "Інтерактивний 3D-аутпост і презентаційний хаб проєктів",
+        description: "Комплексне 3D WebGL портфоліо на Next.js 15, Three.js, React Three Fiber та Rapier 3D з інстансингом геометрії, фізикою в реальному часі, шістьма NPC та двомовним інтерфейсом.",
         tags: ["Next.js 15", "React 19", "Three.js", "React Three Fiber", "Rapier 3D", "TypeScript", "Zustand 5"],
         url: "",
         githubUrl: "https://github.com/DmytroHnylytskyi/Resume/tree/main/Aetheria",
         color: "#fbbf24",
         features: [
-          "Оптимізований рендеринг оточення через THREE.InstancedMesh (~300 об'єктів за ~15 викликів відмальовки (draw calls))",
+          "1 059 розміщених об'єктів із 45 унікальних моделей Space Base; повторювані пропси через THREE.InstancedMesh",
           "Фізична симуляція Rapier 3D з фіксованим 60 Hz кроком та контролером від 3-ї особи",
-          "Скелетна анімація персонажа (FBX/GLB) з плавним змішуванням станів (Idle, Walk, Run, Jump)",
+          "Скелетна glTF-анімація персонажа з плавним змішуванням станів (Idle, Walk, Run, Jump)",
           "Миттєве перемикання мов (UK/EN) та тем (Dark/Light) через централізоване сховище (store) Zustand 5"
         ]
       }
@@ -340,10 +340,10 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
     projects: {
       forma: {
         id: "forma",
-        title: "Forma-3D (Spatial Builder & Object Configurator)",
-        tagline: "Modular 3D spatial scene builder & universal object configurator",
-        description: "Commercial-grade full-stack 3D interior & spatial room configurator for placing, stacking, and customizing any 3D assets with real-time materials swapping, surface raycasting, and async cloud synchronization.",
-        tags: ["Three.js", "React Three Fiber", "Next.js 15", "TypeScript", "FastAPI", "PostgreSQL", "Docker"],
+        title: "Forma-3D (Space Base Scene Editor)",
+        tagline: "Modular 3D Space Base scene editor & outpost configurator",
+        description: "Full-stack 3D scene editor for building sci-fi outposts with modular Space Base assets, surface stacking, real-time material customization, and async cloud synchronization.",
+        tags: ["Three.js", "React Three Fiber", "Next.js 16", "TypeScript", "FastAPI", "PostgreSQL", "Docker"],
         url: FORMA_URL,
         githubUrl: "https://github.com/DmytroHnylytskyi/Resume/tree/main/Forma-3D",
         color: "#34d399",
@@ -359,7 +359,7 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         title: "TerraScope (3D Geospatial Intelligence)",
         tagline: "Interactive 3D geospatial intelligence and live satellite analytics",
         description: "Hardware-accelerated 3D planetary Earth visualization with custom atmospheric GLSL shaders, orbital navigation, and real-time live data layers locked at 60 FPS.",
-        tags: ["Three.js", "GLSL Shaders", "Next.js 15", "FastAPI", "Zustand 5", "Docker"],
+        tags: ["Three.js", "GLSL Shaders", "Next.js 16", "FastAPI", "Zustand 5", "Docker"],
         url: TERRASCOPE_URL,
         githubUrl: "https://github.com/DmytroHnylytskyi/Resume/tree/main/TerraScope",
         color: "#60a5fa",
@@ -374,7 +374,7 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
         title: "Lumina (Full-Stack LMS Learning Platform)",
         tagline: "Modern asynchronous e-learning and student management platform",
         description: "Comprehensive educational platform featuring interactive course authoring, automated testing, homework submission pipelines, and visual progress analytics.",
-        tags: ["React 19", "Vite", "TanStack Query v5", "FastAPI", "PostgreSQL", "TailwindCSS"],
+        tags: ["React 19", "Vite", "TanStack Query v5", "FastAPI", "PostgreSQL", "React Router 7"],
         url: LUMINA_URL,
         githubUrl: "https://github.com/DmytroHnylytskyi/Resume/tree/main/Lumina",
         color: "#fb7185",
@@ -388,16 +388,16 @@ export const developerProfiles: Record<Locale, DeveloperProfile> = {
       aetheria: {
         id: "aetheria",
         title: "Aetheria (Interactive 3D WebGL Portfolio & Hub)",
-        tagline: "Interactive 3D spatial island & developer portfolio hub",
-        description: "Comprehensive interactive 3D WebGL portfolio built with Next.js 15, Three.js, React Three Fiber, and Rapier 3D featuring GPU instanced batch rendering, deterministic 60 Hz Rapier 3D physics simulation, and zero-latency dual-mode UI.",
+        tagline: "Interactive 3D outpost & developer portfolio hub",
+        description: "Comprehensive interactive 3D WebGL portfolio built with Next.js 15, Three.js, React Three Fiber, and Rapier 3D, featuring instanced kit geometry, real-time physics, six crew NPCs, and a zero-latency dual-mode UI.",
         tags: ["Next.js 15", "React 19", "Three.js", "React Three Fiber", "Rapier 3D", "TypeScript", "Zustand 5"],
         url: "",
         githubUrl: "https://github.com/DmytroHnylytskyi/Resume/tree/main/Aetheria",
         color: "#fbbf24",
         features: [
-          "Optimized environment rendering via THREE.InstancedMesh (~300 props in ~15 draw calls)",
+          "1,059 placed objects built from 45 unique Space Base models; repeated props rendered with THREE.InstancedMesh",
           "Rapier 3D physics simulation with fixed 60 Hz timestep and third-person controller",
-          "Skeletal character animation blending (FBX rig pipeline) with smooth state transitions (Idle, Walk, Run, Jump)",
+          "Skeletal glTF character animation with smooth state transitions (Idle, Walk, Run, Jump)",
           "Zero-latency bilingual switching (UK/EN) and theme toggle (Dark/Light) via Zustand 5"
         ]
       }
@@ -425,7 +425,7 @@ export const translations: Record<Locale, Translations> = {
       subtitle: "Інтерактивне 3D-портфоліо та резюме Дмитра Гнилицького",
       chooseMode: "Оберіть зручний формат ознайомлення:",
       mode3DTitle: "3D Інтерактивний світ",
-      mode3DDesc: "Досліджуйте 3D-острів, керуйте персонажем та взаємодійте з порталами проєктів та статуями знань.",
+      mode3DDesc: "Досліджуйте 3D-аутпост, керуйте персонажем і спілкуйтеся з шістьма членами екіпажу.",
       mode3DBtn: "Увійти в 3D світ",
       modeClassicTitle: "Класичне Резюме",
       modeClassicDesc: "Швидкий та зручний формат звичного лендінгу з детальним описом досвіду, освіти, сертифікатів та проєктів.",
@@ -478,16 +478,6 @@ export const translations: Record<Locale, Translations> = {
       viewCode: "GitHub Репозиторій",
       copySuccess: "Скопійовано в буфер!",
       statusLabel: "Статус доступності"
-    },
-    interaction: {
-      actionKey: "E",
-      interact: "Взаємодія",
-      statueBio: "Статуя Біографії",
-      statueSkills: "Вівтар Навичок",
-      statueContacts: "Статуя Контактів",
-      portalForma: "Портал: Forma-3D",
-      portalTerrascope: "Портал: TerraScope",
-      portalLumina: "Портал: Lumina"
     }
   },
   en: {
@@ -509,7 +499,7 @@ export const translations: Record<Locale, Translations> = {
       subtitle: "Interactive 3D Portfolio & Resume of Dmytro Hnylytskyi",
       chooseMode: "Choose your preferred viewing experience:",
       mode3DTitle: "Interactive 3D World",
-      mode3DDesc: "Explore the 3D island, control your character, and interact with project portals and skill altars.",
+      mode3DDesc: "Explore the 3D outpost, control your character, and talk to the six crew members.",
       mode3DBtn: "Enter 3D World",
       modeClassicTitle: "Classic Resume",
       modeClassicDesc: "Fast and structured web landing page with complete overview of experience, education, certificates, and projects.",
@@ -562,16 +552,6 @@ export const translations: Record<Locale, Translations> = {
       viewCode: "Source Code",
       copySuccess: "Copied to clipboard!",
       statusLabel: "Current Availability"
-    },
-    interaction: {
-      actionKey: "E",
-      interact: "Interact",
-      statueBio: "Biography Statue",
-      statueSkills: "Skills Altar",
-      statueContacts: "Contacts Statue",
-      portalForma: "Portal: Forma-3D",
-      portalTerrascope: "Portal: TerraScope",
-      portalLumina: "Portal: Lumina"
     }
   }
 };

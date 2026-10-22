@@ -2015,19 +2015,6 @@ html, body {
   transform: translateY(-2px);
 }
 
-/* 3D Portal Button */
-.project-action-link.portal {
-  background: rgba(251, 191, 36, 0.12);
-  border: 1px solid rgba(251, 191, 36, 0.35);
-  color: var(--text-primary);
-}
-
-.project-action-link.portal:hover {
-  background: rgba(251, 191, 36, 0.22);
-  border-color: rgba(251, 191, 36, 0.6);
-  transform: translateY(-2px);
-}
-
 /* ── About Section ── */
 .editorial-about-grid {
   display: grid;

@@ -7,7 +7,8 @@ import { X, Award, CheckCircle2, ShieldCheck, Layers, Code2, Cpu, Wrench } from 
 import { useModalFocus } from '../../hooks/useModalFocus';
 
 /**
- * SkillsModal — skills & certifications dialog (Skills Altar `[E]` target).
+ * SkillsModal — skills & certifications dialog opened from crew dialogue
+ * actions, HUD shortcuts, and tactical-map pins.
  * Two tabs: categorized tech-stack chips and verified certificates with
  * verification links. Focus, Tab trap and Escape are owned by useModalFocus.
  */

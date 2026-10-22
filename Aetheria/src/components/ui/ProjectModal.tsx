@@ -8,9 +8,9 @@ import { useModalFocus } from '../../hooks/useModalFocus';
 import { GithubIcon } from './icons';
 
 /**
- * ProjectModal — detailed project showcase dialog (opened from portals,
- * project cards, and the tactical map pins). Shows the feature list and
- * Live Demo / Source Code actions for the project id in the store.
+ * ProjectModal — detailed project showcase dialog (opened from crew dialogue
+ * actions and tactical-map pins). Shows the feature list and Live Demo /
+ * Source Code actions for the project id in the store.
  * Focus, Tab trap and Escape are owned by useModalFocus.
  */
 const PROJECT_SHOTS: Record<string, string> = {

@@ -12,8 +12,8 @@ import React from 'react';
 
 /** Page SEO Metadata configuration */
 export const metadata = {
-  title: "3D Builder & Configurator",
-  description: "Premium 3D Room & Architectural Configurator Portfolio Application",
+  title: "Forma-3D — Space Base Scene Editor",
+  description: "Premium 3D Space Base Scene Editor & Outpost Configurator Portfolio Application",
 };
 
 export const viewport = {

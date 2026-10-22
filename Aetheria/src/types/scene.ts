@@ -1,12 +1,11 @@
 /**
- * scene.ts — schema of the authored island scene and its interactive kinds.
- * `IslandSceneData` mirrors the structure of src/data/islandScene.json
- * (spawn point + placed 3D objects); `StatueKey`/`PortalKey` enumerate the
- * knowledge statues and project portals the interaction system dispatches to.
+ * scene.ts — schema of the authored outpost scene.
+ * `IslandSceneData` mirrors src/data/islandScene.json (spawn point and placed
+ * objects). `DossierKey` is the modal key used by the crew dossier actions:
+ * bio, skills and contacts.
  */
 
-export type StatueKey = 'bio' | 'skills' | 'contacts';
-export type PortalKey = 'forma' | 'terrascope' | 'lumina';
+export type DossierKey = 'bio' | 'skills' | 'contacts';
 
 export interface PlacedObject {
   id: string;
@@ -14,9 +13,7 @@ export interface PlacedObject {
   position: [number, number, number];
   rotation: [number, number, number];
   scale: number | [number, number, number];
-  type?: 'prop' | 'statue' | 'portal';
-  statueKey?: StatueKey;
-  portalKey?: PortalKey;
+  hiddenParts?: string[];
   colors?: Record<string, string>;
 }
 

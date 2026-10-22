@@ -28,7 +28,7 @@ import {
   Globe2,
   FlaskConical
 } from 'lucide-react';
-import { StatueKey } from '../../types/scene';
+import { DossierKey } from '../../types/scene';
 import { radarState } from '../../store/radarState';
 import { ZONES, nearestUnmetZone } from '../../data/zones';
 import type { NPCId } from '../../types/store';
@@ -132,7 +132,7 @@ export default function DialogueHUD(): React.ReactElement | null {
     markMaterialOpened(npcDef.targetKey);
 
     if (npcDef.targetType === 'modal') {
-      setActiveModal(npcDef.targetKey as StatueKey);
+      setActiveModal(npcDef.targetKey as DossierKey);
     } else if (npcDef.targetType === 'project') {
       setSelectedProject(npcDef.targetKey);
     }

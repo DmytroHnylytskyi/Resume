@@ -1,6 +1,6 @@
 # Forma-3D: Frontend Architecture and Developer Guide
 
-Interactive 3D interior design and architectural configurator client built with Next.js 16 (App Router), React 19, Three.js, React Three Fiber, React Three Drei, and Zustand 5.
+Interactive 3D Space Base scene editor client built with Next.js 16 (App Router), React 19, Three.js, React Three Fiber, React Three Drei, and Zustand 5.
 
 ---
 
@@ -34,7 +34,7 @@ frontend/
 │   ├── en.json                        # English dictionary
 │   └── uk.json                        # Ukrainian dictionary
 ├── public/
-│   └── model/                         # Space Base GLB model files and crew models
+│   └── model/                         # Space Base glTF/GLB models, textures and crew
 ├── src/
 │   ├── app/                           # Next.js App Router
 │   │   ├── [locale]/
@@ -109,6 +109,57 @@ In the `frontend` directory:
 
 ---
 
+### Структура Каталогів (`frontend/`)
+
+```
+frontend/
+├── messages/                          # Словники перекладів
+│   ├── en.json                        # Англійський словник
+│   └── uk.json                        # Український словник
+├── public/
+│   └── model/                         # glTF/GLB моделі Space Base, текстури та екіпаж
+├── src/
+│   ├── app/                           # Next.js App Router
+│   │   ├── [locale]/
+│   │   │   ├── layout.tsx             # Локалізований кореневий layout
+│   │   │   └── page.tsx               # Основний 3D-viewport та UI
+│   │   └── globals.css                # Дизайн-система glassmorphism
+│   ├── components/                    # React та Three.js компоненти
+│   │   ├── AuthModal.tsx              # Вхід і реєстрація
+│   │   ├── CameraNavigationController.tsx # UE5-подібна fly-камера
+│   │   ├── ClientI18nProvider.tsx     # Клієнтський i18n-провайдер
+│   │   ├── ColorPicker.tsx            # Панель кольору матеріалів
+│   │   ├── FurnitureCard.tsx          # Картка каталогу
+│   │   ├── FurnitureCatalog.tsx       # Каталог і 3D Inspector
+│   │   ├── InstructionModal.tsx       # Довідка з керування
+│   │   ├── InteractivePlacementGhost.tsx # Привид розміщення з surface snapping
+│   │   ├── PlaceableObject.tsx        # Розміщений об'єкт і гізмо
+│   │   ├── SceneViewport.tsx          # Мемоізований WebGL canvas
+│   │   ├── Toast.tsx                  # Стек сповіщень
+│   │   ├── TransformToolbar.tsx       # Панель трансформацій
+│   │   └── UserProfileModal.tsx       # Збереження/завантаження проєктів
+│   ├── data/
+│   │   └── catalogData.ts             # Каталог Space Base та екіпажу на 64 позиції
+│   ├── hooks/
+│   │   └── useHotkeys.ts              # Глобальні гарячі клавіші
+│   ├── store/
+│   │   └── useStore.ts                # Глобальний Zustand-стор
+│   ├── types/
+│   │   └── index.ts                   # Типи TypeScript
+│   ├── utils/
+│   │   └── modelNormalization.ts      # Центрування та масштабування геометрії
+│   ├── config.ts                      # URL бекенду
+│   ├── i18n.ts                        # Серверна конфігурація next-intl
+│   └── proxy.ts                       # Проксі локалізованої маршрутизації
+├── Dockerfile                         # Багатоетапна standalone-збірка
+├── eslint.config.mjs                  # Конфігурація ESLint
+├── next.config.mjs                    # Конфігурація Next.js
+├── package.json                       # Залежності та скрипти
+└── tsconfig.json                      # Строга конфігурація TypeScript
+```
+
+---
+
 ### Доступні Скрипти
 
 - `npm run dev` — Запуск сервера розробки за адресою http://localhost:3000.
@@ -116,4 +167,3 @@ In the `frontend` directory:
 - `npm run start` — Запуск продакшн сервера після збірки.
 - `npm run lint` — Перевірка коду через ESLint.
 - `npx tsc --noEmit` — Перевірка типів TypeScript.
-

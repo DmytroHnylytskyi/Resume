@@ -51,7 +51,7 @@ export interface FurnitureCardProps {
 /**
  * Derives a clean Lucide icon component and vibrant accent color string from a 3D model name.
  * 
- * @param {string} [name=''] - Name of the furniture or architectural item.
+ * @param {string} [name=''] - Name of the catalog item.
  * @returns {{ icon: LucideIcon, color: string }} Icon component and color hex string.
  */
 export function getFurnitureIcon(name: string = ''): { icon: LucideIcon, color: string } {

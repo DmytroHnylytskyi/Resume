@@ -5,7 +5,7 @@
  * the implementation lives in src/store/useGameStore.ts.
  */
 
-import { StatueKey } from './scene';
+import { DossierKey } from './scene';
 import { Locale } from './portfolio';
 
 export interface InteractionPrompt {
@@ -72,8 +72,8 @@ export interface GameState {
   setRendererReady: (ready: boolean) => void;
 
   // 3D Modals & Prompts
-  activeModal: StatueKey | null;
-  setActiveModal: (modal: StatueKey | null) => void;
+  activeModal: DossierKey | null;
+  setActiveModal: (modal: DossierKey | null) => void;
   selectedProject: string | null;
   setSelectedProject: (projectId: string | null) => void;
   activeDialogue: DialogueState | null;

@@ -1,7 +1,7 @@
 {
   "Index": {
-    "title": "Room Configurator",
-    "description": "Design your perfect space with our premium 3D room configurator.",
+    "title": "Space Base Scene Editor",
+    "description": "Build sci-fi outposts with modular Space Base 3D assets.",
     "login": "Login",
     "register": "Register"
   },
@@ -222,8 +222,8 @@
   "MobileNotice": {
     "badge": "Desktop / Laptop Required",
     "title": "3D Builder is Designed for PC",
-    "desc1": "This 3D interior configurator is engineered exclusively for desktop PCs and laptops with a mouse and keyboard.",
-    "desc2": "Mobile devices and tablets are not suited for real-time 3D room rendering, dynamic lighting, and high-polygon model geometry.",
+    "desc1": "This 3D scene editor is engineered exclusively for desktop PCs and laptops with a mouse and keyboard.",
+    "desc2": "Mobile devices and tablets are not suited for real-time 3D scene rendering, dynamic lighting, and high-polygon model geometry.",
     "desc3": "Furthermore, precision object positioning, rotation gizmos, and catalog management cannot be operated ergonomically on touchscreens.",
     "advice": "For the best experience, please open Forma-3D on a computer or laptop.",
     "hubBtn": "Back to Portfolio Hub"

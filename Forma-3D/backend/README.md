@@ -129,6 +129,34 @@ cd backend
 
 ---
 
+### Структура Каталогів (`backend/`)
+
+```
+backend/
+├── alembic/                      # Середовище міграцій Alembic
+│   ├── versions/                 # Скрипти ревізій
+│   └── env.py                    # Конфігурація середовища Alembic
+├── app/
+│   ├── routers/
+│   │   ├── auth.py               # Реєстрація, вхід, refresh, профіль
+│   │   └── projects.py           # CRUD 3D-проєктів
+│   ├── auth.py                   # Паролі, JWT та залежності авторизації
+│   ├── database.py               # Асинхронний engine і фабрика сесій
+│   ├── main.py                   # FastAPI, middleware, health
+│   ├── models.py                 # ORM-моделі (User, Project)
+│   └── schemas.py                # Pydantic v2 схеми
+├── tests/
+│   ├── conftest.py               # Фікстури in-memory SQLite
+│   ├── test_auth.py              # Інтеграційні тести авторизації
+│   └── test_projects.py          # Тести CRUD проєктів
+├── alembic.ini
+├── Dockerfile
+├── pytest.ini
+└── requirements.txt
+```
+
+---
+
 ### Запуск та Розробка
 
 ```bash
@@ -174,3 +202,11 @@ uvicorn app.main:app --reload --port 8000
 - `PUT /projects/{project_id}` — Оновлення назви або сцени проєкту.
 - `DELETE /projects/{project_id}` — Видалення проєкту.
 
+---
+
+### Запуск Тестів
+
+```bash
+cd backend
+.\venv\Scripts\pytest -v
+```

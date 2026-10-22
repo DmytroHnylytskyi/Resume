@@ -5,8 +5,8 @@
  * Guarantees:
  * 1. Pivot Point Centering: Object (0,0) is placed at the EXACT center of the horizontal bounding box (X/Z),
  *    and the bottom (Y=0) is snapped flush to the floor grid.
- * 2. Realistic Proportional Scale: Architectural elements are 1:1 metric, furniture is scaled to ergonomic
- *    real-world dimensions, and oversized environment models (islands, statues, portals, magic trees)
+ * 2. Realistic Proportional Scale: Architectural elements are 1:1 metric, props are scaled to ergonomic
+ *    real-world dimensions, and oversized environment models (Space Base modules, terrain plates)
  *    are normalized to balanced scene proportions.
  * 3. Base Orientation Alignment: Corrects axis discrepancies for models exported with non-standard coordinates.
  */

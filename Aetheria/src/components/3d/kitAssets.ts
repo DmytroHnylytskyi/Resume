@@ -3,10 +3,10 @@
 /**
  * kitAssets — shared geometry and materials for the KayKit Space Base catalog.
  *
- * Why a separate module. The catalog has 58 GLTFs, and ALL of them share the same pair
+ * Why a separate module. Every static model in the Space Base kit shares the same pair
  * "material spacebits_texture + one 1024² atlas". GLTFLoader does not cache
  * textures across files, so each model pulled its own copy of the
- * atlas: 40+ copies at ~5.6 MB each — hundreds of megabytes of VRAM, on a phone that is
+ * atlas: dozens of copies at ~5.6 MB each — hundreds of megabytes of VRAM, on a phone that is
  * a guaranteed crash or thermal throttling. Here the atlas is loaded ONCE
  * and all static geometry gets one shared material.
  *

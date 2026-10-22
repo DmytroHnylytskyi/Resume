@@ -11,7 +11,7 @@ import type { Locale } from '../types/portfolio';
  *   and light writes happen ONLY when the version changed (zero cost at rest).
  * - TimeOfDaySlider subscribes so the thumb follows while a toggle tween runs.
  * - ClassicLandingView reads `sky` for the DOM sky-tint backdrop.
- * - WorldScene reads `sunElev` to boost the portal glows after dark.
+ * - WorldScene reads `getNightFactor()` to drive the lamp emissive intensity.
  *
  * Deliberately NOT part of the zustand store: it mutates at up to 60 Hz and
  * must never trigger React re-renders (same zero-overhead contract as
@@ -337,7 +337,7 @@ export function subscribeToDayNight(fn: Listener): () => void {
   };
 }
 
-/** 0 at full day → 1 at deep night (portal glow boost, star fade, etc.). */
+/** 0 at full day → 1 at deep night (lamp glow, star fade, planet tint, etc.). */
 export function getNightFactor(): number {
   return clamp01((0.05 - dayNightState.sunElev) / 0.35);
 }

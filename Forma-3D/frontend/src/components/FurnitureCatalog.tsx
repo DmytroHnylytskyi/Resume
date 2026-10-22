@@ -3,9 +3,9 @@
 /**
  * @file FurnitureCatalog.tsx
  * @module components/FurnitureCatalog
- * @description Collapsible sidebar catalog containing 127 modular furniture and architectural 3D building blocks.
+ * @description Collapsible sidebar catalog containing the 64-item modular Space Base 3D catalog.
  * Features real-time bilingual text search, horizontal category scroll controls, and an interactive 3D Inspector preview box
- * that dynamically auto-scales and rotates hovered GLB models using centralized normalizeModelGeometry.
+ * that dynamically auto-scales and rotates hovered glTF/GLB models using centralized normalizeModelGeometry.
  */
 
 import { useState, useRef, Suspense, useMemo } from 'react';

@@ -9,7 +9,7 @@ import {
   MaterialKey,
   NPCId
 } from '../types/store';
-import { StatueKey } from '../types/scene';
+import { DossierKey } from '../types/scene';
 import { Locale } from '../types/portfolio';
 import { registerDayNightThemeSync, toggleDayNight } from './dayNightState';
 import { getGlobalCyberAudio } from '../hooks/cyberAudio';
@@ -102,7 +102,7 @@ export const useGameStore = create<GameState>((set) => ({
 
   // ── 3D Landmark & Project Modals ──
   activeModal: null,
-  setActiveModal: (modal: StatueKey | null) => set({ activeModal: modal }),
+  setActiveModal: (modal: DossierKey | null) => set({ activeModal: modal }),
 
   selectedProject: null,
   setSelectedProject: (projectId: string | null) => set({ selectedProject: projectId }),

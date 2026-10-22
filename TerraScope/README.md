@@ -4,7 +4,7 @@
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
 [![Three.js](https://img.shields.io/badge/Three.js-R3F-black)](https://threejs.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-Python-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Database: SQLite](https://img.shields.io/badge/database-SQLite%203-003B57?logo=sqlite&logoColor=white)](https://www.sqlite.org/)
 [![License: PolyForm Strict 1.0.0](https://img.shields.io/badge/license-PolyForm%20Strict%201.0.0-black)](LICENSE)
 
 > **License:** source-available under [PolyForm Strict 1.0.0](LICENSE) — viewing and noncommercial evaluation are welcome; redistribution, modification, derivative works and commercial use require written permission. Third-party assets keep their own terms — see [NOTICE.md](NOTICE.md).
@@ -71,7 +71,7 @@ TerraScope is an interactive 3D geospatial intelligence and planetary visualizat
 #### Backend
 - **Framework**: FastAPI (Python 3.10+)
 - **ASGI Server**: Uvicorn
-- **Database & ORM**: SQLAlchemy 2.0 (Async), aiosqlite, Alembic (database migrations)
+- **Database & ORM**: SQLAlchemy 2.0 (Async) with SQLite (`aiosqlite`) as the default and PostgreSQL (`asyncpg`) supported via `DATABASE_URL`; Alembic migrations
 - **HTTP Client**: HTTPX (asynchronous client with connection pooling)
 - **Security & Auth**: PyJWT (HS256 Bearer tokens), Bcrypt password hashing
 - **Rate Limiting**: SlowAPI
@@ -321,7 +321,7 @@ TerraScope — інтерактивна платформа для 3D-візуа�
 #### Бекенд
 - **Фреймворк**: FastAPI (Python 3.10+)
 - **ASGI-сервер**: Uvicorn
-- **База даних та ORM**: SQLAlchemy 2.0 (Async), aiosqlite, Alembic (міграції бази даних)
+- **База даних та ORM**: SQLAlchemy 2.0 (Async) зі SQLite (`aiosqlite`) за замовчуванням і підтримкою PostgreSQL (`asyncpg`) через `DATABASE_URL`; міграції Alembic
 - **HTTP-клієнт**: HTTPX (асинхронний клієнт з пулом з'єднань)
 - **Безпека та автентифікація**: PyJWT (токени HS256 Bearer), хешування паролів Bcrypt
 - **Лімітування запитів**: SlowAPI
@@ -509,4 +509,4 @@ cd backend
 ```bash
 cd frontend
 npm run build
-```\n
+```

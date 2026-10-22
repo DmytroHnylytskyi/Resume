@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { radarState } from '../../store/radarState';
 import { useGameStore } from '../../store/useGameStore';
 import { Map } from 'lucide-react';
-import { StatueKey } from '../../types/scene';
+import { DossierKey } from '../../types/scene';
 import { MATERIAL_KEYS } from '../../types/store';
 import { nearestUnmetZone } from '../../data/zones';
 import {
@@ -55,7 +55,7 @@ export default function MiniRadar(): React.ReactElement | null {
       setSelectedProject(lm.targetKey);
       setTacticalMapOpen(false);
     } else if (lm.targetType === 'modal' && lm.targetKey) {
-      setActiveModal(lm.targetKey as StatueKey);
+      setActiveModal(lm.targetKey as DossierKey);
       setTacticalMapOpen(false);
     }
   };

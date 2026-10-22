@@ -29,18 +29,19 @@ This repository contains a monorepo ecosystem of 4 full-stack applications showc
 ### Projects Ecosystem
 
 #### 1. [Aetheria - 3D Portfolio Hub](Aetheria/) (Port 3000)
-Interactive 3D WebGL developer portfolio island and structured classic CV landing view.
+Interactive 3D WebGL portfolio outpost and structured classic CV landing view.
 - **Frontend Stack:** Next.js 15.2.0 (App Router), React 19.0.0, Three.js 0.174.0, React Three Fiber, Drei, Rapier 3D Physics (@react-three/rapier 2.1.0), Zustand 5.0.3, TypeScript 5.7.
 - **Key Features:**
-  - Third-person animated avatar controller with skeletal FBX animations (Idle, Walk, Run, Jump) and smooth crossfading.
-  - Rapier 3D physics colliders for ground foundation, perimeter barriers, and scene obstacles.
-  - Instanced mesh rendering (`THREE.InstancedMesh`) batching ~300 map objects into ~15 draw calls.
-  - Proximity detection system with `[E]` interaction prompt for knowledge statues and project portals.
+  - Third-person avatar controller with glTF skeletal animation (Idle, Walk, Run, Jump) and smooth crossfading.
+  - Rapier 3D physics for a 1,059-object outpost, with colliders generated from measured mesh bounds.
+  - GPU instancing and merged kit geometry keep the 45 unique Space Base models affordable.
+  - Six interactive crew NPCs with a dialogue HUD, dossier actions, and a live tactical map.
+  - Day/night cycle, planet below the platform, shattered moon, orbital megastructure, and a gravitational singularity.
   - Zero-latency client-side bilingual localization (EN / UK) without WebGL canvas unmounting.
   - Dark / Light mode switching powered by CSS custom properties.
 
-#### 2. [Forma-3D - Spatial Builder & Room Configurator](Forma-3D/) (Port 3001)
-Commercial-grade full-stack 3D interior design and spatial room configurator for furniture, decor, and architectural elements.
+#### 2. [Forma-3D - Space Base Scene Builder](Forma-3D/) (Port 3001)
+Full-stack 3D scene editor for building sci-fi outposts with modular Space Base structures, terrain, vehicles, props, and crew.
 - **Frontend Stack:** Next.js 16.2.12, React 19.2.4, Three.js 0.185.1, React Three Fiber, Drei, Zustand 5, next-intl, TypeScript.
 - **Backend Stack:** FastAPI 0.115.8, SQLAlchemy 2.0 (Async), PostgreSQL 16 (asyncpg), SQLite (aiosqlite), Alembic, Docker.
 - **Key Features:**
@@ -52,7 +53,7 @@ Commercial-grade full-stack 3D interior design and spatial room configurator for
 #### 3. [TerraScope - 3D Geospatial Intelligence](TerraScope/) (Port 3002)
 Real-time 3D planetary Earth visualization and geospatial analytics platform with live satellite data integration.
 - **Frontend Stack:** Next.js 16.3.0, React 19.2.8, Three.js 0.185.1, React Three Fiber, Custom GLSL Shaders, Zustand 5, JavaScript (ESNext, JSDoc).
-- **Backend Stack:** FastAPI 0.110+, SQLAlchemy 2.0 (Async), SQLite (aiosqlite), Alembic, Docker.
+- **Backend Stack:** FastAPI 0.110+, SQLAlchemy 2.0 (Async), SQLite (aiosqlite) by default, PostgreSQL (asyncpg) supported, Alembic, Docker.
 - **Key Features:**
   - Custom GLSL Day/Night Terminator shader with solar direction calculations and Fresnel atmospheric glow.
   - GPU-instanced live data layers: USGS earthquakes, OpenSky active flights, Open-Meteo weather parameters, and NASA NEO asteroid tracking.
@@ -60,7 +61,7 @@ Real-time 3D planetary Earth visualization and geospatial analytics platform wit
 
 #### 4. [Lumina - Asynchronous LMS Platform](Lumina/) (Port 3003)
 Asynchronous educational platform for interactive online courses, assignment tracking, and visual student performance curves.
-- **Frontend Stack:** React 19.2.7, Vite 8.1.1, TanStack Query v5, Recharts 3.10.1, React Router 7, i18next, TailwindCSS.
+- **Frontend Stack:** React 19.2.7, Vite 8.1.1, TanStack Query v5, Recharts 3.10.1, React Router 7, i18next, plain CSS.
 - **Backend Stack:** FastAPI 0.115+, SQLAlchemy 2.0 (Async), PostgreSQL 16 (asyncpg), SQLite (aiosqlite), Alembic, Docker.
 - **Key Features:**
   - Optimistic UI updates and client-side caching via TanStack Query v5.
@@ -154,12 +155,19 @@ uvicorn app.main:app --reload --port 8003
 ### Проєкти Екосистеми
 
 #### 1. [Aetheria - 3D Хаб Портфоліо](Aetheria/) (Порт 3000)
-Інтерактивний 3D WebGL острів-портфоліо та структуроване класичне резюме.
+Інтерактивний 3D WebGL портфоліо-аутпост і структуроване класичне резюме.
 - **Стек:** Next.js 15.2.0 (App Router), React 19.0.0, Three.js 0.174.0, React Three Fiber, Rapier 3D (@react-three/rapier 2.1.0), Zustand 5.0.3, TypeScript 5.7.
-- **Можливості:** Контролер персонажа від третьої особи, скелетні FBX-анімації, фізика Rapier, інстансинг мешів (~300 об'єктів у ~15 draw calls), портали переходів на проєкти, миттєва UK/EN локалізація без перезавантаження сцени.
+- **Можливості:**
+  - Контролер персонажа від третьої особи зі скелетною glTF-анімацією (Idle, Walk, Run, Jump) і плавним кросфейдом.
+  - Фізика Rapier 3D для аутпосту з 1 059 об'єктів; колайдери будуються з виміряних меж мешів.
+  - GPU-інстансинг і злита геометрія для 45 унікальних моделей Space Base.
+  - Шість інтерактивних NPC з діалоговим HUD, діями досьє та тактичною картою.
+  - Цикл день/ніч, планета під платформою, розбитий місяць, орбітальна мегаструктура й гравітаційна сингулярність.
+  - Миттєва UK/EN локалізація без перезавантаження сцени.
+  - Темна та світла теми на базі CSS-змінних.
 
-#### 2. [Forma-3D - Просторовий 3D Конфігуратор](Forma-3D/) (Порт 3001)
-Комерційно-орієнтований full-stack 3D-редактор простору та модульний конфігуратор меблів та об'єктів інтер'єру.
+#### 2. [Forma-3D - 3D-Редактор Сцен Space Base](Forma-3D/) (Порт 3001)
+Full-stack 3D-редактор для побудови науково-фантастичних аутпостів із модульних структур Space Base, рельєфу, транспорту, пропсів та екіпажу.
 - **Фронтенд:** Next.js 16.2.12, React 19.2.4, Three.js 0.185.1, React Three Fiber, Zustand 5, next-intl, TypeScript.
 - **Бекенд:** FastAPI 0.115.8, SQLAlchemy 2.0 (Async), PostgreSQL 16 (asyncpg), SQLite, Alembic, Docker.
 - **Можливості:** Surface Snapping (Raycasting) для автоматичного розміщення та стекування об'єктів на поверхнях, режим камери Unreal Engine 5, динамічна зміна матеріалів суб-мешів, збереження сцен у БД.
@@ -167,12 +175,12 @@ uvicorn app.main:app --reload --port 8003
 #### 3. [TerraScope - Геопросторова 3D Візуалізація](TerraScope/) (Порт 3002)
 Платформа 3D-візуалізації планети Земля з кастомними GLSL-шейдерами та супутниковими даними в реальному часі.
 - **Фронтенд:** Next.js 16.3.0, React 19.2.8, Three.js 0.185.1, Custom GLSL Shaders, Zustand 5, JavaScript (ESNext, JSDoc).
-- **Бекенд:** FastAPI 0.110+, SQLAlchemy 2.0 (Async), SQLite (aiosqlite), Alembic, Docker.
+- **Бекенд:** FastAPI 0.110+, SQLAlchemy 2.0 (Async), SQLite (aiosqlite) за замовчуванням, підтримка PostgreSQL (asyncpg), Alembic, Docker.
 - **Можливості:** Кастомний Day/Night Terminator GLSL-шейдер, GPU Instanced шари (землетруси USGS, авіарейси OpenSky, погода Open-Meteo, астероїди NASA), захист від Cache Stampede через `asyncio.Lock`.
 
 #### 4. [Lumina - Асинхронна Освітня LMS Платформа](Lumina/) (Порт 3003)
 Асинхронна система дистанційного навчання з модульними курсами, системою дедлайнів та аналітикою успішності.
-- **Фронтенд:** React 19.2.7, Vite 8.1.1, TanStack Query v5, Recharts 3.10.1, React Router 7, i18next, TailwindCSS.
+- **Фронтенд:** React 19.2.7, Vite 8.1.1, TanStack Query v5, Recharts 3.10.1, React Router 7, i18next, plain CSS.
 - **Бекенд:** FastAPI 0.115+, SQLAlchemy 2.0 (Async), PostgreSQL 16 (asyncpg), SQLite, Alembic, Docker.
 - **Можливості:** Оптимістичний UI на базі TanStack Query v5, рольова авторизація (Студент / Викладач) із JWT-ротацією, медіаплеєр уроків (відео, PDF, Cloudinary), аналітичні графіки Recharts.
 
@@ -190,6 +198,54 @@ uvicorn app.main:app --reload --port 8003
 - **TerraScope:** [http://localhost:3002](http://localhost:3002)
 - **Lumina:** [http://localhost:3003](http://localhost:3003)
 
+#### 2. Індивідуальний запуск
+
+##### Aetheria
+```bash
+cd Aetheria
+npm install
+npm run dev
+```
+
+##### Forma-3D
+```bash
+# Фронтенд (порт 3001)
+cd Forma-3D/frontend
+npm install
+npm run dev -- -p 3001
+
+# Бекенд
+cd Forma-3D/backend
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8001
+```
+
+##### TerraScope
+```bash
+# Фронтенд (порт 3002)
+cd TerraScope/frontend
+npm install
+npm run dev -- -p 3002
+
+# Бекенд
+cd TerraScope/backend
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8002
+```
+
+##### Lumina
+```bash
+# Фронтенд (порт 3003)
+cd Lumina/frontend
+npm install
+npm run dev -- --port 3003
+
+# Бекенд
+cd Lumina/backend
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8003
+```
+
 ---
 
 ## License / Ліцензія
@@ -199,6 +255,3 @@ uvicorn app.main:app --reload --port 8003
 Third-party assets and dependencies are **not** covered by that license and remain under their own terms — see [NOTICE.md](NOTICE.md). KayKit assets are CC0; the Web Guru Awards badge belongs to Web Guru Awards.
 
 **Авторське право © 2026 Дмитро Гнилицький.** Оригінальний код, 3D-сцени, шейдери, дизайн і тексти доступні за **PolyForm Strict 1.0.0** ([LICENSE](LICENSE)): перегляд і некомерційне ознайомлення дозволені, а розповсюдження, зміни, похідні роботи та комерційне використання — лише з письмового дозволу. Сторонні ассети — за їхніми власними ліцензіями ([NOTICE.md](NOTICE.md)).
-
-
-

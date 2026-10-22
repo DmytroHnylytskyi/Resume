@@ -8,7 +8,8 @@ import { useModalFocus } from '../../hooks/useModalFocus';
 import { GithubIcon } from './icons';
 
 /**
- * ContactsModal — contacts dialog (Contacts Statue `[E]` target).
+ * ContactsModal — contacts dialog opened from crew dialogue actions, HUD
+ * shortcuts, and tactical-map pins.
  * Direct links (email, Telegram, GitHub) with one-click copy feedback for
  * email and the Telegram handle. Focus, Tab trap and Escape are owned by
  * useModalFocus.

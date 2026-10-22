@@ -443,7 +443,7 @@ async function runAllTests() {
     const isAnyModalOpen = true;
     const keys = { forward: false, backward: false, left: false, right: false };
 
-    // From CharacterController.tsx lines 409-414:
+    // From the CharacterController movement-input calculation:
     const fwdKeyboard = (keys.forward ? 1 : 0) - (keys.backward ? 1 : 0);
     const sideKeyboard = (keys.right ? 1 : 0) - (keys.left ? 1 : 0);
 
