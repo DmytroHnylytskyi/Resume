@@ -52,3 +52,17 @@ Thumbs.db
 .aider*
 Aetheria-Lab/
 *.mp4
+
+# Archived duplicates and session snapshots (kept outside the repo)
+/Aetheria2/
+/Aetheria3/
+/_session_backup_*/
+/uploads/
+
+# Local agent/tool artifacts and scratch files
+/Aetheria/.agents/
+/Aetheria/nul
+/Aetheria/KayKit_Space_Base_Bits_1.0_FREE/
+
+# Map editor local backups (the current source is forma-workspace-3d.json)
+/Aetheria/scripts/map-source/*.bak-*.json

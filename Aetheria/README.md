@@ -58,8 +58,8 @@ The application features a dual-experience architecture:
 
 ```text
 ├── public/
-│   ├── model/kaykit_halloween/ # 3D GLB assets, character model, textures
-│   └── shots/                 # Live project showcase screenshot previews
+│   ├── model/kaykit_space/    # 3D GLB assets, character rigs, station modules
+│   └── shots/                 # Live project showcase screenshot previews (WebP)
 ├── src/
 │   ├── app/
 │   │   ├── globals.css        # Theme variables, glassmorphism, responsive styles
