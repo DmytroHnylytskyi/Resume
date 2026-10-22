@@ -1,19 +1,49 @@
 'use client';
 
 /**
- * DialogueHUD — Futuristic Holographic Sci-Fi Dialogue Interface.
+ * DialogueHUD — карточка разговора с экипажем станции.
  *
- * Appears when the player interacts with any of the 6 NPC crew members.
- * Features typewriter text animation, sector color theming, audio feedback,
- * and seamless routing to portfolio modals (Bio, Skills, Contacts, Projects).
+ * Один каркас на всех шестерых: та же «обсидиановая» панель, что у модалок
+ * (glass-panel + те же классы заголовка и кнопок), поэтому разговор читается
+ * как часть интерфейса станции, а не как шесть отдельных приложений. Сектор
+ * остаётся только цветовым акцентом — линия сверху, иконка и точка, — а не
+ * темой окна: неоновая рамка, сканлайны и градиентные кнопки убраны.
+ *
+ * Печать текста посимвольно сохранена: она задаёт ритм чтения и не мешает.
+ * Клик по панели, Enter или Space мгновенно показывают реплику целиком;
+ * Escape и клик по фону закрывают разговор.
  */
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useGameStore } from '../../store/useGameStore';
 import { NPC_DIALOGUES, NPCDialogueDef } from '../../data/npcDialogues';
 import { getGlobalCyberAudio } from '../../hooks/cyberAudio';
-import { X, Sparkles, ChevronRight, Terminal } from 'lucide-react';
+import {
+  X,
+  ChevronRight,
+  UserRound,
+  Wrench,
+  Radio,
+  Shapes,
+  Globe2,
+  FlaskConical
+} from 'lucide-react';
 import { StatueKey } from '../../types/scene';
+import { radarState } from '../../store/radarState';
+import { ZONES, nearestUnmetZone } from '../../data/zones';
+import type { NPCId } from '../../types/store';
+
+/** Иконка в заголовке — единственная визуальная метка профессии. */
+type CrewIcon = React.ComponentType<{ size?: number; strokeWidth?: number }>;
+
+const NPC_ICONS: Record<NPCId, CrewIcon> = {
+  commander: UserRound,
+  chief_engineer: Wrench,
+  comms_officer: Radio,
+  ui_architect: Shapes,
+  geodata_analyst: Globe2,
+  photonics_specialist: FlaskConical
+};
 
 export default function DialogueHUD(): React.ReactElement | null {
   const {
@@ -21,8 +51,17 @@ export default function DialogueHUD(): React.ReactElement | null {
     setActiveDialogue,
     setActiveModal,
     setSelectedProject,
+    markMaterialOpened,
+    metCrew,
     language
   } = useGameStore();
+
+  // Подсказка «куда дальше» считается от позиции игрока, а не от порядка
+  // обхода: физически ближайший сектор полезнее, чем следующий по сценарию.
+  const nextZone = React.useMemo(
+    () => nearestUnmetZone(radarState.x, radarState.z, metCrew),
+    [metCrew, activeDialogue]
+  );
 
   const [displayedTextLength, setDisplayedTextLength] = useState(0);
   const audio = getGlobalCyberAudio();
@@ -88,12 +127,16 @@ export default function DialogueHUD(): React.ReactElement | null {
     audio.play('interact', 0.4);
     setActiveDialogue(null);
 
+    // Досье отмечает сам факт открытия материала — здесь, а не по закрытию окна:
+    // посетитель мог закрыть его сразу, но материал он всё равно увидел.
+    markMaterialOpened(npcDef.targetKey);
+
     if (npcDef.targetType === 'modal') {
       setActiveModal(npcDef.targetKey as StatueKey);
     } else if (npcDef.targetType === 'project') {
       setSelectedProject(npcDef.targetKey);
     }
-  }, [npcDef, audio, setActiveDialogue, setActiveModal, setSelectedProject]);
+  }, [npcDef, audio, setActiveDialogue, setActiveModal, setSelectedProject, markMaterialOpened]);
 
   // Keyboard controls: Escape closes, Enter triggers primary if typing finished
   useEffect(() => {
@@ -119,263 +162,116 @@ export default function DialogueHUD(): React.ReactElement | null {
 
   const isTypingComplete = displayedTextLength >= fullText.length;
   const currentRenderedText = fullText.slice(0, displayedTextLength);
+  const Icon = NPC_ICONS[npcDef.id];
+
+  // Цвет сектора приходит из данных и живёт только в CSS-переменных панели:
+  // один класс на все диалоги, акцент — параметр. См. .dialogue-* в globals.css.
+  const accentStyle = {
+    '--dialogue-accent': npcDef.hexColor,
+    '--dialogue-accent-rgb': npcDef.rgbColor
+  } as React.CSSProperties;
 
   return (
     <div
-      className="dialogue-hud-backdrop"
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 950,
-        pointerEvents: 'auto',
-        display: 'flex',
-        alignItems: 'flex-end',
-        justifyContent: 'center',
-        padding: '0 20px 28px 20px',
-        background: 'radial-gradient(ellipse at bottom, rgba(5, 8, 18, 0.45) 0%, transparent 70%)'
-      }}
+      className="dialogue-backdrop"
       onClick={(e) => {
         if (e.target === e.currentTarget) handleDismiss();
       }}
     >
       <div
-        className="dialogue-hud-card"
-        style={{
-          width: '100%',
-          maxWidth: '720px',
-          background: 'rgba(7, 10, 20, 0.94)',
-          backdropFilter: 'blur(24px)',
-          WebkitBackdropFilter: 'blur(24px)',
-          borderRadius: '16px',
-          border: `1.5px solid rgba(${npcDef.rgbColor}, 0.45)`,
-          boxShadow: `0 16px 48px rgba(0, 0, 0, 0.8), 0 0 32px rgba(${npcDef.rgbColor}, 0.25)`,
-          color: '#ffffff',
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column',
-          position: 'relative',
-          animation: 'dialogueSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
-        }}
+        className="dialogue-sheet glass-panel"
+        style={accentStyle}
         onClick={handleSkipTyping}
         role="dialog"
         aria-labelledby="dialogue-npc-name"
         aria-describedby="dialogue-npc-text"
       >
-        {/* Hologram subtle scanlines overlay */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            pointerEvents: 'none',
-            background:
-              'linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03))',
-            backgroundSize: '100% 3px, 6px 100%',
-            opacity: 0.5
-          }}
-        />
+        <div className="modal-accent-line dialogue-accent-line" />
 
-        {/* Header: Badge, Name & Close Button */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '16px 20px 12px 20px',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-            position: 'relative',
-            zIndex: 2
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            {/* Sector Indicator Dot */}
-            <span
-              style={{
-                width: '10px',
-                height: '10px',
-                borderRadius: '50%',
-                background: npcDef.hexColor,
-                boxShadow: `0 0 10px ${npcDef.hexColor}`
-              }}
-            />
-
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span
-                  id="dialogue-npc-name"
-                  style={{
-                    fontSize: '16px',
-                    fontWeight: 700,
-                    letterSpacing: '0.02em',
-                    color: '#ffffff'
-                  }}
-                >
-                  {npcDef.name[language]}
-                </span>
-                <span
-                  style={{
-                    fontSize: '11px',
-                    fontFamily: 'monospace',
-                    padding: '2px 8px',
-                    borderRadius: '4px',
-                    background: `rgba(${npcDef.rgbColor}, 0.15)`,
-                    color: npcDef.hexColor,
-                    border: `1px solid rgba(${npcDef.rgbColor}, 0.35)`
-                  }}
-                >
-                  {npcDef.badge[language]}
-                </span>
-              </div>
-              <div
-                style={{
-                  fontSize: '12px',
-                  color: 'rgba(255, 255, 255, 0.6)',
-                  marginTop: '2px'
-                }}
-              >
-                {npcDef.role[language]}
-              </div>
+        {/* Header: иконка, имя, роль; бейдж сектора и закрытие — справа */}
+        <div className="modal-header dialogue-header">
+          <div className="modal-badge-group">
+            <div className="modal-badge-icon dialogue-icon" aria-hidden="true">
+              <Icon size={19} strokeWidth={1.8} />
+            </div>
+            <div className="dialogue-heading">
+              <h2 id="dialogue-npc-name" className="modal-title">
+                {npcDef.name[language]}
+              </h2>
+              <p className="modal-subtitle">{npcDef.role[language]}</p>
             </div>
           </div>
 
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleDismiss();
-            }}
-            aria-label="Close dialogue"
-            style={{
-              background: 'rgba(255, 255, 255, 0.06)',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
-              borderRadius: '8px',
-              width: '32px',
-              height: '32px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'rgba(255, 255, 255, 0.8)',
-              cursor: 'pointer',
-              transition: 'background 0.2s, color 0.2s'
-            }}
-          >
-            <X size={16} />
-          </button>
+          <div className="dialogue-header-right">
+            <span className="dialogue-badge">{npcDef.badge[language]}</span>
+            <button
+              type="button"
+              className="modal-close-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDismiss();
+              }}
+              aria-label={language === 'uk' ? 'Закрити діалог' : 'Close dialogue'}
+            >
+              <X size={18} aria-hidden="true" />
+            </button>
+          </div>
         </div>
 
         {/* Content: Typewriter Message */}
-        <div
-          id="dialogue-npc-text"
-          style={{
-            padding: '20px 24px',
-            fontSize: '15px',
-            lineHeight: '1.65',
-            color: 'rgba(255, 255, 255, 0.95)',
-            minHeight: '96px',
-            position: 'relative',
-            zIndex: 2,
-            fontFamily:
-              '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
-          }}
-        >
+        <p id="dialogue-npc-text" className="dialogue-text">
           {currentRenderedText}
-          {!isTypingComplete && (
-            <span
-              style={{
-                display: 'inline-block',
-                width: '8px',
-                height: '16px',
-                background: npcDef.hexColor,
-                marginLeft: '4px',
-                verticalAlign: 'middle',
-                animation: 'blink 0.7s infinite'
-              }}
-            />
-          )}
-        </div>
+          {!isTypingComplete && <span className="dialogue-caret" aria-hidden="true" />}
+        </p>
 
-        {/* Footer: Action Buttons */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-            gap: '12px',
-            padding: '12px 20px 16px 20px',
-            borderTop: '1px solid rgba(255, 255, 255, 0.06)',
-            position: 'relative',
-            zIndex: 2,
-            background: 'rgba(0, 0, 0, 0.25)'
-          }}
-        >
-          {/* Dismiss button */}
+        {/* Footer: одна и та же пара кнопок во всех диалогах */}
+        <div className="dialogue-footer">
           <button
+            type="button"
+            className="modal-action-btn secondary"
             onClick={(e) => {
               e.stopPropagation();
               handleDismiss();
-            }}
-            style={{
-              padding: '8px 16px',
-              background: 'transparent',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              borderRadius: '8px',
-              color: 'rgba(255, 255, 255, 0.75)',
-              fontSize: '13px',
-              fontWeight: 500,
-              cursor: 'pointer',
-              transition: 'all 0.2s ease'
             }}
           >
             {npcDef.dismissLabel[language]}
           </button>
 
-          {/* Primary action button */}
           <button
+            type="button"
+            className="modal-action-btn primary"
             onClick={(e) => {
               e.stopPropagation();
               handlePrimaryAction();
             }}
-            style={{
-              padding: '8px 18px',
-              background: `linear-gradient(135deg, ${npcDef.hexColor}, rgba(${npcDef.rgbColor}, 0.8))`,
-              border: `1px solid rgba(${npcDef.rgbColor}, 0.6)`,
-              borderRadius: '8px',
-              color: '#070a14',
-              fontSize: '13px',
-              fontWeight: 700,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              cursor: 'pointer',
-              boxShadow: `0 4px 14px rgba(${npcDef.rgbColor}, 0.35)`,
-              transition: 'transform 0.15s ease, filter 0.15s ease'
-            }}
           >
             <span>{npcDef.actionLabel[language]}</span>
-            <ChevronRight size={15} />
+            <ChevronRight size={15} aria-hidden="true" />
           </button>
         </div>
-      </div>
 
-      <style jsx global>{`
-        @keyframes dialogueSlideUp {
-          from {
-            opacity: 0;
-            transform: translateY(24px) scale(0.98);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-          }
-        }
-        @keyframes blink {
-          0%,
-          100% {
-            opacity: 1;
-          }
-          50% {
-            opacity: 0;
-          }
-        }
-      `}</style>
+        {/* Куда идти дальше. Разговор — естественный момент направить посетителя
+            к следующему сектору, и заодно это подсказка, зачем вообще обходить
+            станцию. Текущий NPC уже отмечен встреченным при открытии диалога,
+            поэтому в «ближайшем непознанном» он не появится. */}
+        {nextZone ? (
+          <div className="dialogue-next-hint">
+            <span className="dialogue-next-dot" style={{ backgroundColor: ZONES[nextZone].hexColor }} />
+            <span>
+              {language === 'uk' ? 'Далі' : 'Next'}:{' '}
+              <strong>{ZONES[nextZone].name[language]}</strong>
+            </span>
+          </div>
+        ) : (
+          <div className="dialogue-next-hint complete">
+            <span>
+              {language === 'uk'
+                ? 'Увесь екіпаж на зв’язку — дос’є зібрано'
+                : 'Whole crew accounted for — dossier complete'}
+            </span>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

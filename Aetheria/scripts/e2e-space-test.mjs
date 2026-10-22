@@ -233,8 +233,7 @@ await runTest(T1, 'T1.1.5', 'R1: Character animation packs exist and possess val
     'Rig_Medium_MovementBasic.glb',
     'Rig_Medium_General.glb',
     'Rig_Medium_Simulation.glb',
-    'Rig_Medium_Tools.glb',
-    'Rig_Medium_Special.glb'
+    'Rig_Medium_Tools.glb'
   ];
 
   for (const pack of animPacks) {
@@ -245,7 +244,7 @@ await runTest(T1, 'T1.1.5', 'R1: Character animation packs exist and possess val
 });
 
 // ── R2. Outpost Level Design Geometry (5 tests) ──
-await runTest(T1, 'T1.2.1', 'R2: Tier 1 Landing Pad contains landingpad_large and arrival shuttle lander_A player spawn', () => {
+await runTest(T1, 'T1.2.1', 'R2: Tier 1 Landing Pad contains landingpad_small and arrival shuttle lander_A player spawn', () => {
   // Check either islandScene.json or WorldScene.tsx level definition
   const sceneJsonRel = path.join('src', 'data', 'islandScene.json');
   const worldSceneRel = path.join('src', 'components', '3d', 'WorldScene.tsx');
@@ -254,17 +253,17 @@ await runTest(T1, 'T1.2.1', 'R2: Tier 1 Landing Pad contains landingpad_large an
   let sceneFound = false;
   if (checkFileExists(sceneJsonRel)) {
     const content = readTextFile(sceneJsonRel);
-    if (content.includes('landingpad_large') && content.includes('lander_A')) {
+    if (content.includes('landingpad_small') && content.includes('lander_A')) {
       sceneFound = true;
     }
   }
   if (!sceneFound && checkFileExists(worldSceneRel)) {
     const content = readTextFile(worldSceneRel);
-    if (content.includes('landingpad_large') && content.includes('lander_A')) {
+    if (content.includes('landingpad_small') && content.includes('lander_A')) {
       sceneFound = true;
     }
   }
-  assert.ok(sceneFound, 'Tier 1 must contain landingpad_large and lander_A models for player arrival spawn');
+  assert.ok(sceneFound, 'Tier 1 must contain landingpad_small and lander_A models for player arrival spawn');
 });
 
 await runTest(T1, 'T1.2.2', 'R2: Tier 1 Logistics area contains spacetruck rovers and cargo depot containers', () => {
@@ -279,16 +278,21 @@ await runTest(T1, 'T1.2.2', 'R2: Tier 1 Logistics area contains spacetruck rover
   assert.ok(hasCargo, 'Tier 1 must place cargo depot containers');
 });
 
-await runTest(T1, 'T1.2.3', 'R2: Tier 2 Command & Research Hub contains modular research labs (basemodule_A, B, garage)', () => {
+await runTest(T1, 'T1.2.3', 'R2: Living sector contains modular habitat labs (basemodule_A, C, D, E, garage)', () => {
   const sceneJsonRel = path.join('src', 'data', 'islandScene.json');
   const worldSceneRel = path.join('src', 'components', '3d', 'WorldScene.tsx');
   const content = (checkFileExists(sceneJsonRel) ? readTextFile(sceneJsonRel) : '') +
                   (checkFileExists(worldSceneRel) ? readTextFile(worldSceneRel) : '');
 
+  // Состав жилого сектора по авторской карте (Forma 3D Workspace): хаб из
+  // башен basemodule_D с E-капами на платах basemodule_A; C-модуль и гараж —
+  // на северо-западном плато и в энергетическом секторе. basemodule_B в
+  // авторской раскладке не используется.
   const hasLabA = content.includes('basemodule_A');
-  const hasLabB = content.includes('basemodule_B');
+  const hasLabD = content.includes('basemodule_D');
+  const hasLabE = content.includes('basemodule_E');
   const hasGarage = content.includes('basemodule_garage');
-  assert.ok(hasLabA && hasLabB && hasGarage, 'Tier 2 must configure basemodule_A, basemodule_B, and basemodule_garage labs');
+  assert.ok(hasLabA && hasLabD && hasLabE && hasGarage, 'Living sector must configure basemodule_A, basemodule_D, basemodule_E, and basemodule_garage (authored Forma 3D map)');
 });
 
 await runTest(T1, 'T1.2.4', 'R2: Tier 2 Connectors include walkable slope ramps (terrain_slope) and pressurized tunnels', () => {
@@ -312,7 +316,7 @@ await runTest(T1, 'T1.2.5', 'R2: Tier 3 Energy Ridge contains solar panels, wind
   const hasSolar = content.includes('solarpanel');
   const hasWind = content.includes('windturbine');
   const hasDrill = content.includes('drill_structure');
-  assert.ok(hasSolar && hasWind && hasDrill, 'Tier 3 must feature solar panels, wind turbines, and drill_structure easter egg');
+  assert.ok(hasSolar && hasWind && hasDrill, 'Tier 3 must feature solar panels, wind turbines, and drill_structure');
 });
 
 // ── R3. Interactive 6-Crew NPCs & Dialogues (5 tests) ──
@@ -341,9 +345,14 @@ await runTest(T1, 'T1.3.1', 'R3: All 6 interactive crew NPCs defined with unique
 });
 
 await runTest(T1, 'T1.3.2', 'R3: 6 distinct sector badges configured (gold, violet, cyan, emerald, sapphire, rose_coral)', () => {
+  // Секторы переехали в zones.ts (это свойство места, а не человека), поэтому
+  // источников стало три: данные зон, данные экипажа и стили HUD. Проверяемое
+  // утверждение то же самое — все шесть тем секторов где-то объявлены.
+  const zoneFileRel = path.join('src', 'data', 'zones.ts');
   const npcFileRel = path.join('src', 'data', 'npcDialogues.ts');
   const hudFileRel = path.join('src', 'components', 'ui', 'DialogueHUD.tsx');
-  const content = (checkFileExists(npcFileRel) ? readTextFile(npcFileRel) : '') +
+  const content = (checkFileExists(zoneFileRel) ? readTextFile(zoneFileRel) : '') +
+                  (checkFileExists(npcFileRel) ? readTextFile(npcFileRel) : '') +
                   (checkFileExists(hudFileRel) ? readTextFile(hudFileRel) : '');
 
   const sectors = ['gold', 'violet', 'cyan', 'emerald', 'sapphire', 'rose_coral'];
@@ -404,13 +413,17 @@ await runTest(T1, 'T1.4.2', 'R4: AnimationMixer configures 4 crossfaded locomoti
   assert.ok(content.includes('Jump_Full_Short') || content.includes('Jump_Start'), 'Must configure Jump animation');
 });
 
-await runTest(T1, 'T1.4.3', 'R4: Rapier CapsuleCollider configured with humanoid proportions [0.54, 0.30]', () => {
+await runTest(T1, 'T1.4.3', 'R4: Rapier CapsuleCollider proportioned for the 0.55m avatar: [0.125, 0.15] + offset 0.27', () => {
   const controllerRel = path.join('src', 'components', '3d', 'CharacterController.tsx');
   assert.ok(checkFileExists(controllerRel), 'src/components/3d/CharacterController.tsx must exist');
   const content = readTextFile(controllerRel);
 
   assert.ok(content.includes('CapsuleCollider'), 'Must use Rapier CapsuleCollider');
-  assert.ok(content.includes('0.54') && content.includes('0.30'), 'Must specify capsule half-height and radius [0.54, 0.30]');
+  // Аватар 0.55 м (пропорции каталога kaykit: пикап ~0.69 м, модуль ~1 м):
+  // капсула halfHeight 0.125 + radius 0.15, offset 0.27 — капсула высотой
+  // 0.54 м стоит основанием на теле персонажа.
+  assert.ok(content.includes('0.125') && content.includes('0.15'), 'Must specify capsule half-height and radius [0.125, 0.15]');
+  assert.ok(content.includes('0.27'), 'Must offset capsule by 0.27 so its bottom aligns with feet');
 });
 
 await runTest(T1, 'T1.4.4', 'R4: Zero-GC locomotion state tracking in characterAnimState and CharacterController', () => {
@@ -932,20 +945,23 @@ await runTest(T4, 'T4.S.4', 'Scenario 4: Subspace Telemetry & Satellite Sync (Co
   assert.equal(geodata.modal, 'terrascope', 'Geodata Analyst must route to TerraScope modal');
 });
 
-await runTest(T4, 'T4.S.5', 'Scenario 5: Deep Mining Drill Easter Egg & Perimeter Defense (Void Drop Prevention)', () => {
-  // Navigate to mining drill drop-off
-  const drillOverlook = [16, 4.0, -22];
+await runTest(T4, 'T4.S.5', 'Scenario 5: Map Perimeter Defense (Void Drop Prevention, no easter egg)', () => {
+  // Пасхалка бура удалена (стал обычным пропсом карты с точной физикой);
+  // сценарий оставлен за проверкой периметра острова от падения в пустоту.
   const playerPos = [16, 4.0, -21];
 
-  // Verify distance to drill
-  const dist = Math.hypot(playerPos[0] - drillOverlook[0], playerPos[2] - drillOverlook[2]);
-  assert.ok(dist < 3.0, 'Player reaches drill overlook easter egg');
-
   // Perimeter collision prevents stepping off edge
-  const clampedX = Math.min(28, Math.max(-28, playerPos[0]));
-  const clampedZ = Math.min(28, Math.max(-28, playerPos[2]));
+  const clampedX = Math.min(30.1, Math.max(-30.1, playerPos[0]));
+  const clampedZ = Math.min(30.1, Math.max(-30.1, playerPos[2]));
   assert.equal(clampedX, playerPos[0], 'Player remains clamped within perimeter');
   assert.equal(clampedZ, playerPos[2], 'Player remains clamped within perimeter');
+
+  // Убедимся, что пасхалка вырезана полностью: ни тоста, ни триггера, ни
+  // частиц, ни секретного пина радара не осталось в коде.
+  const sources = ['src/components/3d/WorldScene.tsx', 'src/components/ui/ControlsHUD.tsx', 'src/components/ui/MiniRadar.tsx', 'src/store/useGameStore.ts']
+    .map((f) => readTextFile(path.join('.', f)))
+    .join('');
+  assert.ok(!sources.includes('easterEggToast') && !sources.includes('Вам ще зарано') && !sources.includes("Not your time yet"), 'Easter egg toast/trigger fully removed');
 });
 
 // ============================================================================

@@ -19,6 +19,7 @@ export default function IntroOverlay(): React.ReactElement | null {
   const isSceneLoaded = useGameStore((s) => s.isSceneLoaded);
   const viewMode = useGameStore((s) => s.viewMode);
   const language = useGameStore((s) => s.language);
+  const setIntroPlaying = useGameStore((s) => s.setIntroPlaying);
   const [stage, setStage] = useState<IntroStage>('hidden');
   const [leaving, setLeaving] = useState(false);
 
@@ -29,6 +30,16 @@ export default function IntroOverlay(): React.ReactElement | null {
       setStage('intro');
     }
   }, [isIntroPlaying, isSceneLoaded, viewMode]);
+
+  // Failsafe: even if the flight frame loop stalls (shader compile, driver),
+  // the overlay must never stay on screen indefinitely. 4.8s flight + margin.
+  useEffect(() => {
+    if (stage !== 'intro') return undefined;
+    const t = window.setTimeout(() => {
+      if (useGameStore.getState().isIntroPlaying) setIntroPlaying(false);
+    }, 8000);
+    return () => window.clearTimeout(t);
+  }, [stage, setIntroPlaying]);
 
   // Flight ended (landed, skipped, or left 3D mode)
   useEffect(() => {

@@ -523,86 +523,6 @@ html, body {
   letter-spacing: 0.2px;
 }
 
-/* ── Easter Egg Floating Toast ── */
-.easter-egg-toast-wrapper {
-  position: absolute;
-  top: 76px;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  pointer-events: none;
-  z-index: var(--z-toast);
-  animation: easter-egg-bounce-in 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes easter-egg-bounce-in {
-  from {
-    opacity: 0;
-    transform: translateY(-16px) scale(0.94);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.easter-egg-toast {
-  pointer-events: auto;
-  display: inline-flex;
-  align-items: center;
-  gap: 14px;
-  padding: 12px 22px;
-  border-radius: 20px;
-  background: var(--bg-pill);
-  border: 1px solid rgba(192, 132, 252, 0.4);
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4), 0 0 20px rgba(192, 132, 252, 0.2);
-  max-width: 460px;
-}
-
-.easter-egg-icon-box {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(192, 132, 252, 0.15);
-  color: #c084fc;
-  border: 1px solid rgba(192, 132, 252, 0.3);
-  flex-shrink: 0;
-}
-
-.easter-egg-sparkle-icon {
-  animation: rotateSparkle 3s linear infinite;
-}
-
-@keyframes rotateSparkle {
-  0% { transform: scale(1) rotate(0deg); }
-  50% { transform: scale(1.15) rotate(180deg); }
-  100% { transform: scale(1) rotate(360deg); }
-}
-
-.easter-egg-content {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.easter-egg-title {
-  font-size: 13.5px;
-  font-weight: 800;
-  color: #c084fc;
-  letter-spacing: 0.1px;
-}
-
-.easter-egg-desc {
-  font-size: 12px;
-  color: var(--text-primary);
-  opacity: 0.9;
-  line-height: 1.4;
-}
-
 /* ── Loading Screen ── */
 .loading-screen-backdrop {
   position: fixed;
@@ -4176,8 +4096,10 @@ nextjs-portal,
 /* Island Schematic Footprint on Mini-Radar */
 .radar-island-contour {
   position: absolute;
-  inset: 18px;
-  border-radius: 18px;
+  /* Проценты от корпуса: на мобильных он 74 px, и пиксельная геометрия
+     макета 124 px обрезалась. */
+  inset: 14.5%;
+  border-radius: 14.5%;
   background: rgba(139, 92, 246, 0.05);
   border: 1px dashed rgba(139, 92, 246, 0.25);
   pointer-events: none;
@@ -4185,8 +4107,8 @@ nextjs-portal,
 
 .radar-path-ns {
   position: absolute;
-  top: 18px;
-  bottom: 18px;
+  top: 14.5%;
+  bottom: 14.5%;
   left: 50%;
   width: 6px;
   transform: translateX(-50%);
@@ -4197,8 +4119,8 @@ nextjs-portal,
 .radar-path-ew {
   position: absolute;
   top: 48%;
-  left: 20px;
-  right: 20px;
+  left: 16%;
+  right: 16%;
   height: 5px;
   transform: translateY(-50%);
   background: rgba(255, 255, 255, 0.04);
@@ -4216,14 +4138,14 @@ nextjs-portal,
 }
 
 .radar-grid-ring.r-inner {
-  width: 44px;
-  height: 44px;
+  width: 35.5%;
+  height: 35.5%;
   border: 1px dashed rgba(255, 255, 255, 0.08);
 }
 
 .radar-grid-ring.r-outer {
-  width: 86px;
-  height: 86px;
+  width: 69.4%;
+  height: 69.4%;
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
@@ -4235,16 +4157,16 @@ nextjs-portal,
 
 .radar-crosshair.h {
   top: 50%;
-  left: 10px;
-  right: 10px;
+  left: 8%;
+  right: 8%;
   height: 1px;
   transform: translateY(-50%);
 }
 
 .radar-crosshair.v {
   left: 50%;
-  top: 10px;
-  bottom: 10px;
+  top: 8%;
+  bottom: 8%;
   width: 1px;
   transform: translateX(-50%);
 }
@@ -4304,10 +4226,12 @@ nextjs-portal,
 
 .radar-landmark-blip {
   position: absolute;
-  width: 7px;
-  height: 7px;
+  /* 8.5 px + 2 px border: 7 px at 35% opacity was invisible on a 124 px
+     radar, especially on a phone — the map read as empty. */
+  width: 8.5px;
+  height: 8.5px;
   border-radius: 50%;
-  border: 1.5px solid rgba(255, 255, 255, 0.9);
+  border: 2px solid rgba(255, 255, 255, 0.95);
   pointer-events: auto;
   cursor: pointer;
   transform: translate(-50%, -50%);
@@ -4317,6 +4241,280 @@ nextjs-portal,
 .radar-landmark-blip:hover {
   transform: translate(-50%, -50%) scale(1.6) !important;
   z-index: 15;
+}
+
+/* ── Досье экипажа: состояние знакомства ──────────────────────────────────
+   В одном месте всё, что зависит от прогресса обхода станции. Классы приходят
+   из MiniRadar.tsx и ControlsHUD.tsx, собственный цвет пина остаётся секторным
+   (он инлайновый), поэтому здесь только приглушение непознанных. */
+.radar-landmark-blip.unmet {
+  /* Непройденный сектор остаётся приглушённым, но читаемым: 0.35 делал
+     мини-карту визуально пустой. */
+  opacity: 0.62;
+  filter: saturate(0.55);
+}
+
+.tactical-pin-wrapper.unmet {
+  opacity: 0.45;
+  filter: saturate(0.4);
+}
+
+/* Пройденный сектор: ядро пина загорается, пин перестаёт читаться пустым */
+.tactical-pin-wrapper.visited .tactical-pin-gem-inner {
+  box-shadow: 0 0 7px #ffffff;
+}
+
+.legend-chip.unmet {
+  opacity: 0.5;
+}
+
+/* Счётчик в верхней панели. Кликабелен и ведёт на тактическую карту — там
+   видно, кого из шестерых ещё не встречал, поэтому счётчик и карта связаны. */
+.dossier-chip {
+  font-variant-numeric: tabular-nums;
+}
+
+.dossier-chip.complete {
+  border-color: rgba(52, 211, 153, 0.65);
+  box-shadow: 0 0 12px rgba(52, 211, 153, 0.28);
+}
+
+/* Номер шага маршрута на пине: порядок обхода виден глазами, а не только
+   подразумевается порядком в данных. */
+.tactical-pin-order {
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 2px 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.88);
+  color: #0b1220;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Идёт ПОСЛЕ .unmet намеренно: ближайший непознанный сектор по определению
+   ещё не пройден, но приглушать его нельзя — он и есть цель. */
+.tactical-pin-wrapper.next {
+  opacity: 1;
+  filter: none;
+  z-index: 12;
+}
+
+.tactical-pin-wrapper.next .tactical-pin-gem {
+  animation: tacticalPinNext 1.6s ease-in-out infinite;
+}
+
+@keyframes tacticalPinNext {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.4);
+  }
+}
+
+/* ── Экипаж: одно диалоговое окно на всех шестерых ──
+   Каркас повторяет модалки (glass-panel, modal-header, modal-action-btn), чтобы
+   разговор не выглядел отдельным «голографическим» приложением. Цвет сектора
+   приходит из данных в --dialogue-accent(-rgb) и работает только акцентом:
+   линия сверху, иконка, каретка. Тема — общая, через токены, поэтому светлая
+   тема не требует переопределять текст и кнопки. */
+@keyframes dialogueSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.dialogue-backdrop {
+  position: fixed;
+  inset: 0;
+  /* Ниже модалок (--z-modal: 1000), но выше HUD: проект открывается поверх. */
+  z-index: 950;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 20px 24px;
+  pointer-events: auto;
+  background: linear-gradient(
+    to top,
+    rgba(5, 8, 18, 0.62) 0%,
+    rgba(5, 8, 18, 0.18) 42%,
+    transparent 68%
+  );
+  animation: modal-fade-in 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-theme='light'] .dialogue-backdrop {
+  background: linear-gradient(
+    to top,
+    rgba(228, 228, 231, 0.72) 0%,
+    rgba(240, 240, 245, 0.2) 42%,
+    transparent 68%
+  );
+}
+
+.dialogue-sheet {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px 24px 18px;
+  border-radius: 22px;
+  overflow: hidden;
+  color: var(--text-primary);
+  animation: dialogueSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dialogue-accent-line {
+  background: linear-gradient(
+    90deg,
+    transparent 6%,
+    var(--dialogue-accent) 50%,
+    transparent 94%
+  );
+  opacity: 0.85;
+}
+
+.dialogue-header {
+  padding-bottom: 14px;
+}
+
+.dialogue-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(var(--dialogue-accent-rgb), 0.12);
+  border: 1px solid rgba(var(--dialogue-accent-rgb), 0.28);
+  color: var(--dialogue-accent);
+}
+
+.dialogue-heading {
+  min-width: 0;
+}
+
+.dialogue-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.dialogue-badge {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border-radius: 6px;
+  color: var(--text-muted);
+  background: var(--badge-bg);
+  border: 1px solid var(--border-subtle);
+  white-space: nowrap;
+}
+
+.dialogue-text {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--text-primary);
+  min-height: 74px;
+}
+
+.dialogue-caret {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 3px;
+  vertical-align: -0.15em;
+  background: var(--dialogue-accent);
+  animation: blink 0.8s steps(1) infinite;
+}
+
+.dialogue-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 14px;
+}
+
+.dialogue-footer .modal-action-btn {
+  flex: 0 0 auto;
+  padding: 9px 16px;
+}
+
+/* Подсказка «куда дальше»: тихая строка под кнопками, без второй рамки. */
+.dialogue-next-hint {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.dialogue-next-hint strong {
+  color: var(--text-secondary);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.dialogue-next-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+
+.dialogue-next-hint.complete {
+  color: #34d399;
+}
+
+/* На белой панели мятный текст почти не читается — берём тёмный оттенок. */
+[data-theme='light'] .dialogue-next-hint.complete {
+  color: #059669;
+}
+
+@media (max-width: 640px) {
+  .dialogue-backdrop {
+    padding: 0 10px 12px;
+  }
+
+  .dialogue-sheet {
+    padding: 16px 16px 14px;
+    gap: 12px;
+    border-radius: 18px;
+  }
+
+  .dialogue-badge {
+    display: none;
+  }
+
+  .dialogue-text {
+    font-size: 14px;
+    min-height: 64px;
+  }
+
+  .dialogue-footer .modal-action-btn {
+    flex: 1;
+  }
 }
 
 /* Dynamic Live Player Pin & Heading Cone on Mini-Radar */
@@ -4407,6 +4605,14 @@ nextjs-portal,
   width: 6px;
   height: 6px;
   border-radius: 50%;
+}
+
+/* Полное имя NPC может быть длинным — в мини-пилюле обрезаем его. */
+.radar-hover-title {
+  max-width: 156px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* ── Tactical Island Map Modal (Proportional 1:1 Aspect Ratio) ── */
@@ -7677,4 +7883,19 @@ nextjs-portal,
 @keyframes wormholeReveal {
   0% { opacity: 1; }
   100% { opacity: 0; }
+}
+
+/* ── Touch devices: refuse backdrop compositing ──
+   На телефоне backdrop-filter — одна из самых дорогих операций композитора:
+   каждый «стеклянный» слой заставляет GPU перечитывать фон под ним. Здесь
+   31 такой слой, и на мобиле они дают заметный лаг при скролле и открытии
+   модалок. Без blur панели остаются читаемыми: фон у них уже плотный
+   (rgba .88–.94). Это осознанная деградация эффекта ради плавности. ── */
+@media (pointer: coarse) {
+  *,
+  *::before,
+  *::after {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
 }

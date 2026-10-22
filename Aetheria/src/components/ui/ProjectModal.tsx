@@ -14,10 +14,10 @@ import { GithubIcon } from './icons';
  * Focus, Tab trap and Escape are owned by useModalFocus.
  */
 const PROJECT_SHOTS: Record<string, string> = {
-  forma: '/shots/forma.jpg',
-  terrascope: '/shots/terrascope.jpg',
-  lumina: '/shots/lumina.jpg',
-  aetheria: '/shots/aetheria.jpg'
+  forma: '/shots/forma.webp',
+  terrascope: '/shots/terrascope.webp',
+  lumina: '/shots/lumina.webp',
+  aetheria: '/shots/aetheria.webp'
 };
 
 export default function ProjectModal(): React.ReactElement | null {
@@ -106,8 +106,10 @@ export default function ProjectModal(): React.ReactElement | null {
               ) : (
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img
-                  src={PROJECT_SHOTS[project.id] ?? `/shots/${project.id}.jpg`}
+                  src={PROJECT_SHOTS[project.id] ?? `/shots/${project.id}.webp`}
                   alt={project.title}
+                  width={1280}
+                  height={800}
                   loading="eager"
                   decoding="async"
                   draggable={false}

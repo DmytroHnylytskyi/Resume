@@ -36,8 +36,11 @@ export default function TimeOfDaySlider(): React.ReactElement {
   // low-frequency label/glow/pole.
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [label, setLabel] = useState('Noon');
-  const [glow, setGlow] = useState('#cfe8fa');
   const [litPole, setLitPole] = useState<'moon' | 'sun' | null>(null);
+  // Свечение — CSS-переменная на корне, а не React-состояние: оно плавно
+  // меняется каждый кадр, и setState на него ре-рендерил компонент 60 раз
+  // в секунду (в CPU-профиле это читалось как jsxDEV/createElement).
+  const lastUi = useRef({ label: '', pole: null as 'moon' | 'sun' | null });
   const trackRef = useRef<HTMLDivElement | null>(null);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
@@ -59,9 +62,13 @@ export default function TimeOfDaySlider(): React.ReactElement {
     const apply = () => {
       const s = compute();
       if (inputRef.current) inputRef.current.value = String(s.t);
-      setLabel(s.label);
-      setGlow(s.glow);
-      setLitPole(s.litPole);
+      if (rootRef.current) rootRef.current.style.setProperty('--tod-glow', s.glow);
+      // React трогаем только когда реально сменилась подпись/полюс.
+      if (s.label !== lastUi.current.label || s.litPole !== lastUi.current.pole) {
+        lastUi.current = { label: s.label, pole: s.litPole };
+        setLabel(s.label);
+        setLitPole(s.litPole);
+      }
     };
     apply();
 
@@ -97,7 +104,6 @@ export default function TimeOfDaySlider(): React.ReactElement {
       role="group"
       aria-label={isUk ? 'Час доби' : 'Time of day'}
       title={sliderTip}
-      style={{ '--tod-glow': glow } as React.CSSProperties}
     >
       <button
         type="button"

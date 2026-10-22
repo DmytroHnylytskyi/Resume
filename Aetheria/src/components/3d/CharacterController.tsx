@@ -1,13 +1,14 @@
 'use client';
 
-import React, { useRef, useEffect, useCallback, Suspense } from 'react';
+import React, { useRef, useEffect, useCallback, useMemo, Suspense } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import { RigidBody, CapsuleCollider, RapierRigidBody } from '@react-three/rapier';
+import { RigidBody, CapsuleCollider, RapierRigidBody, useRapier } from '@react-three/rapier';
 import * as THREE from 'three';
 import { useGameStore } from '../../store/useGameStore';
 import { characterAnimState } from '../../store/characterAnimState';
 import { radarState } from '../../store/radarState';
 import { mobileControls } from '../../store/mobileControlsState';
+import { DEBUG_MODE, debugBridge, debugCameraState } from '../../store/debugState';
 import { getGlobalCyberAudio } from '../../hooks/cyberAudio';
 import AnimatedCharacter from './AnimatedCharacter';
 
@@ -16,20 +17,26 @@ const RUN_SPEED = 4.6;
 const JUMP_FORCE = 5.5;
 
 // ── Cinematic intro flight path (module constants — zero per-frame allocation) ──
-// Hold: camera is perfectly still while assets decode (loading jank stays invisible).
-// Then a slow sky drift, then the bezier dive to the spawn point.
-const INTRO_SKY_A = new THREE.Vector3(26, 38, 36);
-const INTRO_SKY_B = new THREE.Vector3(15, 26, 26);
-const INTRO_SKY_DRIFT_MS = 2200; // drift window after assets are ready
-const INTRO_DESCEND_MS = 2600; // bezier dive duration
-const INTRO_CONTROL = new THREE.Vector3(4, 9, 27); // bezier control point
-const INTRO_END_CAM = new THREE.Vector3(0, 3.6, 18); // matches spawn + steadicam offset
-const INTRO_END_LOOK = new THREE.Vector3(0, 2.2, 14); // spawn + head height
-const INTRO_CENTER_LOOK = new THREE.Vector3(0, 3, 0); // island center during the sky beat
+// Новая карта: открывающий кадр снизу-с юго-востока, сингулярность в небе над
+// хабом; затем камера проходит над солнечным полем и южными башнями и садится
+// за спину игроку в западной площади. Финальная точка считается от spawnPoint
+// и spawnYaw, поэтому при смене спавна интро не разъезжается с персонажем.
+const INTRO_SKY_A = new THREE.Vector3(8, 6, 34);
+const INTRO_SKY_B = new THREE.Vector3(10, 12, 24);
+const INTRO_SKY_DRIFT_MS = 2200;
+const INTRO_DESCEND_MS = 2600;
+const INTRO_CONTROL = new THREE.Vector3(-10, 10, 22);
+// Взгляд через хаб в небо: в кадре одновременно солнечное поле внизу,
+// башни хаба в центре и сингулярность вверху.
+const INTRO_CENTER_LOOK = new THREE.Vector3(0, 10, -30);
+const INTRO_END_DISTANCE = 3.6;
+const INTRO_END_PITCH = 0.26;
 
 interface CharacterControllerProps {
   playerPosRef?: React.MutableRefObject<THREE.Vector3 | null>;
   spawnPoint?: [number, number, number];
+  /** Стартовый yaw камеры и персонажа (радианы): куда смотрит игрок на спавне. */
+  spawnYaw?: number;
 }
 
 /**
@@ -46,11 +53,13 @@ interface CharacterControllerProps {
  */
 export default function CharacterController({
   playerPosRef,
-  spawnPoint = [0.0, 1.4, 6.0]
+  spawnPoint = [0.0, 1.4, 6.0],
+  spawnYaw = 0
 }: CharacterControllerProps): React.ReactElement {
   const rigidBodyRef = useRef<RapierRigidBody>(null);
   const avatarGroupRef = useRef<THREE.Group>(null);
   const { camera, gl } = useThree();
+  const { world: physicsWorld, rapier } = useRapier();
   // Granular Zustand subscriptions: whole-store subscription would re-render
   // this subtree on ANY store change (e.g. proximity prompt edges), causing
   // frame stalls on integrated GPUs — same cost class as the jump-state fix.
@@ -87,17 +96,44 @@ export default function CharacterController({
     characterAnimState.isJumping = false;
   }, []);
 
-  // Camera angles: Looking forward into negative Z (cemetery/island)
-  const targetYaw = useRef(0.0);
-  const targetPitch = useRef(0.32); // 18° downward angle to view character & ground
-  const cameraYaw = useRef(0.0);
+  // Спавн-кадр: камера смотрит туда, куда развернут spawnYaw (на северо-восток
+  // к хабу), а не всегда в -Z.
+  const initialCosPitch = Math.cos(0.32);
+  const initialSinPitch = Math.sin(0.32);
+  const initialCam = useMemo(
+    () =>
+      new THREE.Vector3(
+        spawnPoint[0] + 2.8 * Math.sin(spawnYaw) * initialCosPitch,
+        spawnPoint[1] + 0.33 + 2.8 * initialSinPitch,
+        spawnPoint[2] + 2.8 * Math.cos(spawnYaw) * initialCosPitch
+      ),
+    [spawnPoint[0], spawnPoint[1], spawnPoint[2], spawnYaw]
+  );
+
+  // Камера/персонаж на старте и финальная точка интро (за спиной игрока).
+  const targetYaw = useRef(spawnYaw);
+  const targetPitch = useRef(0.32);
+  const cameraYaw = useRef(spawnYaw);
   const cameraPitch = useRef(0.32);
   const cameraDistance = useRef(2.8);
 
+  const introEnd = useMemo(() => {
+    const look = new THREE.Vector3(spawnPoint[0], spawnPoint[1] + 0.33, spawnPoint[2]);
+    const cosPitch = Math.cos(INTRO_END_PITCH);
+    const cam = new THREE.Vector3(
+      look.x + INTRO_END_DISTANCE * Math.sin(spawnYaw) * cosPitch,
+      look.y + INTRO_END_DISTANCE * Math.sin(INTRO_END_PITCH),
+      look.z + INTRO_END_DISTANCE * Math.cos(spawnYaw) * cosPitch
+    );
+    return { cam, look };
+  }, [spawnPoint[0], spawnPoint[1], spawnPoint[2], spawnYaw]);
+
   // Steadicam buffers (reusable — zero GC pressure)
-  const smoothLookTarget = useRef(new THREE.Vector3(spawnPoint[0], spawnPoint[1] + 0.45, spawnPoint[2]));
-  const smoothCamPos = useRef(new THREE.Vector3(spawnPoint[0], spawnPoint[1] + 1.2, spawnPoint[2] + 2.8));
+  const smoothLookTarget = useRef(new THREE.Vector3(spawnPoint[0], spawnPoint[1] + 0.33, spawnPoint[2]));
+  const smoothCamPos = useRef(initialCam.clone());
   const currentVelocity = useRef(new THREE.Vector3());
+  // Коллизия камеры: текущая допустимая дистанция (плавно догоняет цель).
+  const collisionDistance = useRef(2.8);
   const isGrounded = useRef(true);
   const wasGrounded = useRef(true);
   const footstepTimer = useRef(0);
@@ -106,6 +142,29 @@ export default function CharacterController({
   // ── Reusable per-frame scratch vectors (ZERO allocations per frame) ──
   const _playerVec = useRef(new THREE.Vector3());
   const _moveDir = useRef(new THREE.Vector3());
+  // Пул из трёх Ray для проверки коллизии камеры (создаётся один раз).
+  const camRays = useRef<InstanceType<typeof rapier.Ray>[] | null>(null);
+
+  // ?debug=1: консольный телепорт и наведение камеры (окно отладки карты)
+  useEffect(() => {
+    if (!DEBUG_MODE) return;
+    debugBridge.teleport = (x: number, y: number, z: number) => {
+      if (!rigidBodyRef.current) return;
+      rigidBodyRef.current.setTranslation({ x, y, z }, true);
+      rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
+    };
+    debugBridge.setCamera = (yaw: number, pitch: number, distance?: number) => {
+      targetYaw.current = yaw;
+      targetPitch.current = pitch;
+      cameraYaw.current = yaw;
+      cameraPitch.current = pitch;
+      if (typeof distance === 'number') cameraDistance.current = distance;
+    };
+    return () => {
+      debugBridge.teleport = null;
+      debugBridge.setCamera = null;
+    };
+  }, []);
 
   // ── Cinematic intro state ──
   const introStartTime = useRef<number | null>(null);
@@ -316,6 +375,11 @@ export default function CharacterController({
       playerPosRef.current.set(translation.x, translation.y, translation.z);
     }
 
+    // ?debug=1 телеметрия ( плоские записи в mutable-мост, ~0 стоимости)
+    debugBridge.x = translation.x;
+    debugBridge.y = translation.y;
+    debugBridge.z = translation.z;
+
     // ── Cinematic Intro Camera: fly over the island, dive to spawn, handoff ──
     // Replaces the whole input/camera section while active (input is locked).
     if (isIntroPlaying && introStartTime.current !== null) {
@@ -347,19 +411,19 @@ export default function CharacterController({
           const e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
           const inv = 1 - e;
           _playerVec.current.set(
-            inv * inv * introFromPos.current.x + 2 * inv * e * INTRO_CONTROL.x + e * e * INTRO_END_CAM.x,
-            inv * inv * introFromPos.current.y + 2 * inv * e * INTRO_CONTROL.y + e * e * INTRO_END_CAM.y,
-            inv * inv * introFromPos.current.z + 2 * inv * e * INTRO_CONTROL.z + e * e * INTRO_END_CAM.z
+            inv * inv * introFromPos.current.x + 2 * inv * e * INTRO_CONTROL.x + e * e * introEnd.cam.x,
+            inv * inv * introFromPos.current.y + 2 * inv * e * INTRO_CONTROL.y + e * e * introEnd.cam.y,
+            inv * inv * introFromPos.current.z + 2 * inv * e * INTRO_CONTROL.z + e * e * introEnd.cam.z
           );
           camera.position.copy(_playerVec.current);
-          _moveDir.current.copy(introFromLook.current).lerp(INTRO_END_LOOK, e);
+          _moveDir.current.copy(introFromLook.current).lerp(introEnd.look, e);
           camera.lookAt(_moveDir.current);
 
           if (t >= 1) {
             // Handoff: seed the steadicam buffers so the normal loop continues seamlessly
-            smoothCamPos.current.copy(INTRO_END_CAM);
-            smoothLookTarget.current.copy(INTRO_END_LOOK);
-            camera.position.copy(INTRO_END_CAM);
+            smoothCamPos.current.copy(introEnd.cam);
+            smoothLookTarget.current.copy(introEnd.look);
+            camera.position.copy(introEnd.cam);
             try {
               localStorage.setItem('aetheria_intro_seen', '1');
             } catch (_) {}
@@ -419,8 +483,8 @@ export default function CharacterController({
     if (translation.y < -3.0) {
       rigidBodyRef.current.setTranslation({ x: spawnPoint[0], y: spawnPoint[1], z: spawnPoint[2] }, true);
       rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
-      smoothLookTarget.current.set(spawnPoint[0], spawnPoint[1] + 0.45, spawnPoint[2]);
-      smoothCamPos.current.set(spawnPoint[0], spawnPoint[1] + 1.2, spawnPoint[2] + 2.8);
+      smoothLookTarget.current.set(spawnPoint[0], spawnPoint[1] + 0.33, spawnPoint[2]);
+      smoothCamPos.current.copy(initialCam);
       return;
     }
 
@@ -512,21 +576,77 @@ export default function CharacterController({
       }
     }
 
+    // QA-камера (__aetheria.fly) владеет камерой: не перетираем её позицию.
+    if (debugCameraState.active) return;
+
     // ── 3rd-Person Camera & Cinematic Intro Swoop ──
     smoothLookTarget.current.x = THREE.MathUtils.lerp(smoothLookTarget.current.x, translation.x, 0.12);
-    smoothLookTarget.current.y = THREE.MathUtils.lerp(smoothLookTarget.current.y, translation.y + 0.45, 0.10);
+    smoothLookTarget.current.y = THREE.MathUtils.lerp(smoothLookTarget.current.y, translation.y + 0.33, 0.10);
     smoothLookTarget.current.z = THREE.MathUtils.lerp(smoothLookTarget.current.z, translation.z, 0.12);
 
     const cosPitch = Math.cos(cameraPitch.current);
     const sinPitch = Math.sin(cameraPitch.current);
 
-    const targetCamX = smoothLookTarget.current.x + cameraDistance.current * Math.sin(cameraYaw.current) * cosPitch;
-    const targetCamY = smoothLookTarget.current.y + cameraDistance.current * sinPitch;
-    const targetCamZ = smoothLookTarget.current.z + cameraDistance.current * Math.cos(cameraYaw.current) * cosPitch;
+    // ── Коллизия камеры ──
+    // Три параллельных луча из головы вдоль взгляда камеры (центр ± 0.25 м
+    // по горизонтали): так камера не проваливается сквозь стены и крупные
+    // пропсы, но не «дёргается» от тонких углов. Игрок исключён из запроса.
+    const dirX = Math.sin(cameraYaw.current) * cosPitch;
+    const dirY = sinPitch;
+    const dirZ = Math.cos(cameraYaw.current) * cosPitch;
+    const camRightX = Math.cos(cameraYaw.current);
+    const camRightZ = -Math.sin(cameraYaw.current);
 
-    smoothCamPos.current.x = THREE.MathUtils.lerp(smoothCamPos.current.x, targetCamX, 0.12);
-    smoothCamPos.current.y = THREE.MathUtils.lerp(smoothCamPos.current.y, targetCamY, 0.10);
-    smoothCamPos.current.z = THREE.MathUtils.lerp(smoothCamPos.current.z, targetCamZ, 0.12);
+    if (!camRays.current) {
+      camRays.current = [0, 1, 2].map(
+        () => new rapier.Ray({ x: 0, y: 0, z: 0 }, { x: 0, y: 0, z: 1 })
+      );
+    }
+    const rays = camRays.current;
+    const maxToi = cameraDistance.current + 0.4;
+    let hitDistance = Infinity;
+    for (let i = 0; i < rays.length; i++) {
+      const lateral = (i - 1) * 0.25;
+      const ray = rays[i];
+      ray.origin.x = smoothLookTarget.current.x + camRightX * lateral;
+      ray.origin.y = smoothLookTarget.current.y;
+      ray.origin.z = smoothLookTarget.current.z + camRightZ * lateral;
+      ray.dir.x = dirX;
+      ray.dir.y = dirY;
+      ray.dir.z = dirZ;
+      const hit = physicsWorld.castRay(
+        ray,
+        maxToi,
+        true,
+        undefined,
+        undefined,
+        undefined,
+        rigidBodyRef.current ?? undefined
+      );
+      if (hit && hit.timeOfImpact < hitDistance) hitDistance = hit.timeOfImpact;
+    }
+
+    const allowedDistance =
+      hitDistance === Infinity
+        ? cameraDistance.current
+        : Math.max(0.55, hitDistance - 0.25);
+    const blocked = allowedDistance < cameraDistance.current - 0.03;
+    // К стене подтягиваемся быстро, от стены отходим медленно — без рывка.
+    collisionDistance.current = THREE.MathUtils.lerp(
+      collisionDistance.current,
+      allowedDistance,
+      blocked ? 0.55 : 0.08
+    );
+    const camDistance = collisionDistance.current;
+
+    const targetCamX = smoothLookTarget.current.x + camDistance * dirX;
+    const targetCamY = smoothLookTarget.current.y + camDistance * dirY;
+    const targetCamZ = smoothLookTarget.current.z + camDistance * dirZ;
+
+    const posLerp = blocked ? 0.45 : 0.12;
+    smoothCamPos.current.x = THREE.MathUtils.lerp(smoothCamPos.current.x, targetCamX, posLerp);
+    smoothCamPos.current.y = THREE.MathUtils.lerp(smoothCamPos.current.y, targetCamY, posLerp * 0.85);
+    smoothCamPos.current.z = THREE.MathUtils.lerp(smoothCamPos.current.z, targetCamZ, posLerp);
 
     if (
       Number.isFinite(smoothCamPos.current.x) &&
@@ -557,9 +677,9 @@ export default function CharacterController({
       angularDamping={2.5}
       ccd={true}
     >
-      <CapsuleCollider args={[0.17, 0.20]} position={[0, 0.37, 0]} friction={0.0} />
+      <CapsuleCollider args={[0.125, 0.15]} position={[0, 0.27, 0]} friction={0.0} />
 
-      <group ref={avatarGroupRef} position={[0, 0, 0]} rotation={[0, Math.PI, 0]}>
+      <group ref={avatarGroupRef} position={[0, 0, 0]} rotation={[0, Math.PI + spawnYaw, 0]}>
         <CharacterErrorBoundary fallback={<CharacterFallback />}>
           <Suspense fallback={<CharacterFallback />}>
             <AnimatedCharacter />

@@ -11,10 +11,10 @@ const MOTION_QUERY =
   '(min-width: 900px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)';
 
 const PROJECT_SHOTS: Record<string, string> = {
-  forma: '/shots/forma.jpg',
-  terrascope: '/shots/terrascope.jpg',
-  lumina: '/shots/lumina.jpg',
-  aetheria: '/shots/aetheria.jpg'
+  forma: '/shots/forma.webp',
+  terrascope: '/shots/terrascope.webp',
+  lumina: '/shots/lumina.webp',
+  aetheria: '/shots/aetheria.webp'
 };
 
 const MOTION_PROPERTIES = [
@@ -47,7 +47,7 @@ function ProjectImage({
   project: ProjectItem;
   isUk: boolean;
 }): React.ReactElement {
-  const source = PROJECT_SHOTS[project.id] ?? `/shots/${project.id}.jpg`;
+  const source = PROJECT_SHOTS[project.id] ?? `/shots/${project.id}.webp`;
   const [failedSource, setFailedSource] = useState<string | null>(null);
 
   if (failedSource === source) {
@@ -64,6 +64,8 @@ function ProjectImage({
     <img
       src={source}
       alt=""
+      width={1280}
+      height={800}
       loading="lazy"
       decoding="async"
       draggable={false}

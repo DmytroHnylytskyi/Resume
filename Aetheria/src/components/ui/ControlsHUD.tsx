@@ -3,24 +3,27 @@
 import React, { useState, useEffect } from 'react';
 import { useGameStore } from '../../store/useGameStore';
 import { developerProfiles, translations } from '../../data/resumeData';
-import { User, Share2, Award, FileText, Sun, Moon, Sparkles, Volume2, VolumeX } from 'lucide-react';
+import { User, Share2, Award, FileText, Sun, Moon, Sparkles, Volume2, VolumeX, Users } from 'lucide-react';
 import { getGlobalCyberAudio } from '../../hooks/cyberAudio';
 import ControlsGuideDropdown from './ControlsGuideDropdown';
 import TimeOfDaySlider from './TimeOfDaySlider';
+import { ZONE_ORDER } from '../../data/zones';
+
+/** Сколько всего членов экипажа — из списка секторов, чтобы не заводить вторую константу. */
+const TOTAL_CREW = ZONE_ORDER.length;
 
 /**
  * ControlsHUD — 3D-view chrome.
  *
- * Top glass navigation bar (brand badge, quick modals, view-mode switch,
- * controls guide, day/night slider, language toggle), the floating `[E]`
- * proximity interaction pill, and the easter-egg toast. Hidden while the
+ * Top glass navigation bar (brand badge, quick modals, crew dossier counter,
+ * view-mode switch, controls guide, day/night slider, language toggle), the
+ * floating `[E]` proximity interaction pill. Hidden while the
  * cinematic intro is playing.
  */
 export default function ControlsHUD(): React.ReactElement {
   const {
     setActiveModal,
     interactionPrompt,
-    easterEggToast,
     language,
     setLanguage,
     setViewMode,
@@ -30,7 +33,9 @@ export default function ControlsHUD(): React.ReactElement {
     isAudioMuted,
     toggleAudio,
     isIntroPlaying,
-    triggerIntroSwoop
+    triggerIntroSwoop,
+    metCrew,
+    setTacticalMapOpen
   } = useGameStore();
 
   const profile = developerProfiles[language];
@@ -102,6 +107,28 @@ export default function ControlsHUD(): React.ReactElement {
           <button className="nav-shortcut-btn" onClick={() => setActiveModal('contacts')}>
             <Share2 size={15} aria-hidden="true" />
             <span>{t.contacts}</span>
+          </button>
+
+          {/* Досье экипажа. Клик ведёт на тактическую карту — именно там видно,
+              кого из шестерых ещё не встретил, поэтому счётчик и карта связаны. */}
+          <button
+            className={`nav-shortcut-btn dossier-chip${metCrew.length >= TOTAL_CREW ? ' complete' : ''}`}
+            onClick={() => setTacticalMapOpen(true)}
+            title={
+              language === 'uk'
+                ? `Дос'є екіпажу: ${metCrew.length} з ${TOTAL_CREW}. Відкрити тактичну карту`
+                : `Crew dossier: ${metCrew.length} of ${TOTAL_CREW}. Open tactical map`
+            }
+            aria-label={
+              language === 'uk'
+                ? `Дос'є екіпажу: ${metCrew.length} з ${TOTAL_CREW}`
+                : `Crew dossier: ${metCrew.length} of ${TOTAL_CREW}`
+            }
+          >
+            <Users size={15} aria-hidden="true" />
+            <span>
+              {language === 'uk' ? 'Екіпаж' : 'Crew'} {metCrew.length}/{TOTAL_CREW}
+            </span>
           </button>
 
           {/* Expandable Controls Guide Dropdown */}
@@ -199,21 +226,6 @@ export default function ControlsHUD(): React.ReactElement {
                 : interactionPrompt.title}
             </span>
           </button>
-        </div>
-      )}
-
-      {/* ── Easter Egg Floating Toast (announced politely) ── */}
-      {easterEggToast && (
-        <div className="easter-egg-toast-wrapper" role="status" aria-live="polite">
-          <div className="easter-egg-toast glass-panel">
-            <div className="easter-egg-icon-box">
-              <Sparkles size={20} className="easter-egg-sparkle-icon" aria-hidden="true" />
-            </div>
-            <div className="easter-egg-content">
-              <h4 className="easter-egg-title">{easterEggToast.title}</h4>
-              <p className="easter-egg-desc">{easterEggToast.text}</p>
-            </div>
-          </div>
         </div>
       )}
     </>

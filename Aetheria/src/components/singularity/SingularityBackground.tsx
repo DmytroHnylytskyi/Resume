@@ -7,6 +7,15 @@ import { QuasarAccretionShader, QuasarHorizonShader } from './shaders/QuasarSing
 import { WormholeTunnelShader } from './shaders/WormholeTunnelShader';
 import { getNightFactor } from '../../store/dayNightState';
 import { useGameStore } from '../../store/useGameStore';
+import { visualQuality } from '../../store/debugState';
+
+// Фон работает на всех устройствах (полная версия классики), но стоимость
+// ограничена уровнем: топовый телефон получает полный вихрь и DPR 1.5,
+// слабый — 500 частиц и DPR 1.0. Раньше всё это скрывалось на мобиле целиком.
+const BG_PARTICLE_COUNT =
+  visualQuality.tier === 'high' ? 1400 : visualQuality.tier === 'medium' ? 900 : 500;
+const BG_DPR_CAP =
+  visualQuality.tier === 'high' ? 1.5 : visualQuality.tier === 'medium' ? 1.25 : 1.0;
 
 interface SingularityBackgroundProps {
   scrollContainerRef: React.RefObject<HTMLElement | null>;
@@ -29,8 +38,7 @@ function InfallStarfield({
   physicsRef: React.RefObject<SharedPhysics>;
 }) {
   const pointsRef = useRef<THREE.Points>(null);
-  const isMobile = typeof window !== 'undefined' && (window.innerWidth < 820 || 'ontouchstart' in window);
-  const count = isMobile ? 600 : 1600;
+  const count = BG_PARTICLE_COUNT;
 
   const { positions, colors, orbits } = useMemo(() => {
     const pos = new Float32Array(count * 3);
@@ -509,11 +517,11 @@ export default function SingularityBackground({
       <Canvas
         camera={{ position: [0, 0.5, 7.5], fov: 46, near: 0.1, far: 50 }}
         gl={{
-          antialias: true,
-          powerPreference: 'high-performance',
+          antialias: visualQuality.antialias,
+          powerPreference: visualQuality.tier === 'low' ? 'default' : 'high-performance',
           alpha: true
         }}
-        dpr={[1, 1.5]}
+        dpr={[1, BG_DPR_CAP]}
       >
         <ambientLight intensity={0.5} />
 

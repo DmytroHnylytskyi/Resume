@@ -31,6 +31,19 @@ export interface DialogueState {
   npcId: NPCId;
 }
 
+/**
+ * Материалы портфолио, которые открывает экипаж. Один в один с targetKey в
+ * npcDialogues: там тип берётся отсюда, поэтому список объявлен в одном месте.
+ */
+export const MATERIAL_KEYS = ['bio', 'skills', 'contacts', 'forma', 'terrascope', 'lumina'] as const;
+export type MaterialKey = (typeof MATERIAL_KEYS)[number];
+
+/** Персистентная часть досье: то, что переживает перезагрузку страницы. */
+export interface DossierSnapshot {
+  metCrew: NPCId[];
+  openedMaterials: MaterialKey[];
+}
+
 export interface GameState {
   // Locale
   language: Locale;
@@ -54,6 +67,9 @@ export interface GameState {
   setSceneLoaded: (loaded: boolean) => void;
   isCharacterLoaded: boolean;
   setCharacterLoaded: (loaded: boolean) => void;
+  /** Материалы прогреты (compileAsync): интро не стартует, пока true не станет. */
+  isRendererReady: boolean;
+  setRendererReady: (ready: boolean) => void;
 
   // 3D Modals & Prompts
   activeModal: StatueKey | null;
@@ -64,10 +80,6 @@ export interface GameState {
   setActiveDialogue: (dialogue: DialogueState | null) => void;
   interactionPrompt: InteractionPrompt | null;
   setInteractionPrompt: (prompt: InteractionPrompt | null) => void;
-
-  // Easter Egg Toasts
-  easterEggToast: { title: string; text: string } | null;
-  setEasterEggToast: (toast: { title: string; text: string } | null) => void;
 
   // Audio & Camera
   isAudioMuted: boolean;
@@ -87,4 +99,15 @@ export interface GameState {
   // Tactical Island Map
   isTacticalMapOpen: boolean;
   setTacticalMapOpen: (open: boolean) => void;
+
+  // ── Досье экипажа ──
+  // Прогресс обхода станции: кого встретил и какие материалы открыл. Живёт в
+  // store, а не в модульном буфере вроде dayNightState, ровно потому что на него
+  // реагирует интерфейс — счётчик в HUD и пины на тактической карте; буфер без
+  // подписки их бы не разбудил. Переживает перезагрузку (localStorage).
+  metCrew: NPCId[];
+  openedMaterials: MaterialKey[];
+  markCrewMet: (npcId: NPCId) => void;
+  markMaterialOpened: (key: MaterialKey) => void;
+  resetDossier: () => void;
 }

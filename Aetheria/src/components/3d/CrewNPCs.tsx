@@ -6,7 +6,10 @@
  * Each crew member features:
  * - Independent cloned Mannequin_Medium skeletal mesh
  * - Sector-specific skeletal animation (Waving, Work_A, Interact, Cheering)
- * - Sector colored ground aura disc and point lighting
+ * - Distinct body tint (per-sector material color, НЕ emissive — раньше вся
+ *   фигура светилась сектором: emissive 0.18 + две аддитивные ауры + точечный
+ *   свет на каждом из 6 NPC) и лёгкая вариация роста
+ * - Dim grounded marker ring (normal blending — маркер читается, но не блумит)
  * - Smooth dynamic look-at rotation turning toward the player on approach
  * - Rapier 3D capsule collider preventing player clipping
  */
@@ -17,6 +20,8 @@ import { useGLTF } from '@react-three/drei';
 import { RigidBody, CapsuleCollider } from '@react-three/rapier';
 import * as THREE from 'three';
 import { clone as cloneSkeleton } from 'three/examples/jsm/utils/SkeletonUtils.js';
+import { visualQuality } from '../../store/debugState';
+import { makeCheapMaterial, mergeSkinnedMeshes } from './kitAssets';
 import { NPC_DIALOGUES, NPCDialogueDef } from '../../data/npcDialogues';
 import { NPCId } from '../../types/store';
 import rawIslandSceneData from '../../data/islandScene.json';
@@ -24,8 +29,19 @@ import { IslandSceneData } from '../../types/scene';
 
 const islandSceneData = rawIslandSceneData as unknown as IslandSceneData;
 
-const TARGET_HEIGHT = 0.75;
+const TARGET_HEIGHT = 0.55; // пропорции каталога kaykit (см. AnimatedCharacter)
 const DEGENERATE_SCALE_FALLBACK = 0.34;
+
+// Детерминированная вариация роста по id (0.97..1.05) — одинаковый
+// Mannequin-меш с разной высотой читается как разные персонажи.
+function heightFactorOf(id: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < id.length; i++) {
+    h ^= id.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return 0.97 + ((h >>> 0) % 100) / 100 * 0.08;
+}
 
 interface SingleNPCProps {
   def: NPCDialogueDef;
@@ -51,31 +67,43 @@ function SingleNPC({
   const groupRef = useRef<THREE.Group>(null);
   const ringRef = useRef<THREE.Mesh>(null);
   const defaultYaw = rot[1];
+  const heightFactor = useMemo(() => heightFactorOf(def.id), [def.id]);
 
   const { clone, mixer, autoScale } = useMemo(() => {
-    const cl = cloneSkeleton(mannequinScene) as THREE.Group;
+    const cl = cloneSkeleton(mannequinScene);
 
     const box = new THREE.Box3().setFromObject(cl);
     const rawHeight = box.getSize(new THREE.Vector3()).y;
-    const scale = rawHeight > 0 ? TARGET_HEIGHT / rawHeight : DEGENERATE_SCALE_FALLBACK;
+    const scale = rawHeight > 0 ? (TARGET_HEIGHT * heightFactor) / rawHeight : DEGENERATE_SCALE_FALLBACK;
 
-    // Apply sector color tint to materials
+    // 6 skinned-примитивов на NPC → один draw call на человека.
+    mergeSkinnedMeshes(cl);
+
+    // Различимые образы: цвет-тинт материала сектора (обычный множитель —
+    // НЕ emissive: тело больше не светится в темноте).
+    const tintColor = new THREE.Color(def.hexColor);
     cl.traverse((child) => {
       if ((child as THREE.SkinnedMesh).isSkinnedMesh || (child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.SkinnedMesh;
-        mesh.castShadow = false;
+        mesh.castShadow = true; // тень от солнечного key, как у игрока
         mesh.receiveShadow = false;
         mesh.frustumCulled = false;
 
         if (mesh.material) {
-          // Clone material so each NPC can have its own sector emissive accent
           const originalMat = mesh.material as THREE.MeshStandardMaterial;
-          const tintedMat = originalMat.clone();
-          tintedMat.roughness = 0.65;
-          tintedMat.metalness = 0.35;
-          tintedMat.emissive = new THREE.Color(def.hexColor);
-          tintedMat.emissiveIntensity = 0.18;
-          mesh.material = tintedMat;
+          if (visualQuality.cheapMaterials) {
+            const tintedMat = makeCheapMaterial(originalMat);
+            tintedMat.color.multiply(tintColor);
+            mesh.material = tintedMat;
+          } else {
+            const tintedMat = originalMat.clone();
+            tintedMat.roughness = 0.75;
+            tintedMat.metalness = 0.15;
+            tintedMat.emissive = new THREE.Color(0x000000);
+            tintedMat.emissiveIntensity = 0;
+            tintedMat.color.multiply(tintColor);
+            mesh.material = tintedMat;
+          }
         }
       }
     });
@@ -105,7 +133,7 @@ function SingleNPC({
     }
 
     return { clone: cl, mixer: m, autoScale: scale };
-  }, [mannequinScene, simulationAnims, toolsAnims, generalAnims, def]);
+  }, [mannequinScene, simulationAnims, toolsAnims, generalAnims, def, heightFactor]);
 
   // Dynamic look-at player rotation & ground ring pulse
   useFrame(({ clock }, delta) => {
@@ -140,51 +168,29 @@ function SingleNPC({
   return (
     <group position={pos}>
       {/* ── Rapier 3D Solid Collider ── */}
-      <RigidBody type="fixed" colliders={false} position={pos}>
-        <CapsuleCollider args={[0.20, 0.17]} position={[0, 0.37, 0]} />
+      {/* position здесь НЕ задаём: Rapier-биндинг ставит тело по
+          object.matrixWorld (уже включает position группы) — с явным
+          position={pos} капсулы уезжали на 2×координаты ([3,2,10] вместо
+          [1.5,1,5]) и висели вдали от видимых тел. */}
+      <RigidBody type="fixed" colliders={false}>
+        <CapsuleCollider args={[0.15, 0.125]} position={[0, 0.27, 0]} />
       </RigidBody>
 
-      {/* ── Ground Sector Aura Halo ── */}
+      {/* ── Ground marker ring (обычный блендинг, не аддитивный) ── */}
       <mesh
         ref={ringRef}
         position={[0, 0.05, 0]}
         rotation={[-Math.PI / 2, 0, 0]}
       >
-        <ringGeometry args={[0.20, 0.55, 32]} />
+        <ringGeometry args={[0.34, 0.42, 32]} />
         <meshBasicMaterial
           color={def.hexColor}
           transparent
-          opacity={0.65}
+          opacity={0.4}
           side={THREE.DoubleSide}
-          blending={THREE.AdditiveBlending}
           depthWrite={false}
         />
       </mesh>
-
-      {/* ── Ground Outer Soft Spread ── */}
-      <mesh
-        position={[0, 0.04, 0]}
-        rotation={[-Math.PI / 2, 0, 0]}
-      >
-        <ringGeometry args={[0.50, 0.85, 32]} />
-        <meshBasicMaterial
-          color={def.hexColor}
-          transparent
-          opacity={0.25}
-          side={THREE.DoubleSide}
-          blending={THREE.AdditiveBlending}
-          depthWrite={false}
-        />
-      </mesh>
-
-      {/* ── Sector Glow Light ── */}
-      <pointLight
-        position={[0, 0.85, 0]}
-        color={def.hexColor}
-        intensity={2.2}
-        distance={3.0}
-        decay={2.0}
-      />
 
       {/* ── Animated Skinned Mannequin Mesh ── */}
       <group ref={groupRef} rotation={rot}>
@@ -212,8 +218,9 @@ export default function CrewNPCs({ playerPosRef }: CrewNPCsProps): React.ReactEl
     <group name="CrewNPCsGroup">
       {npcKeys.map((key) => {
         const def = NPC_DIALOGUES[key];
-        const modelSubstr = `npc_${key.toLowerCase()}`;
-        const placed = islandSceneData.placedObjects?.find((p) => p.modelPath.toLowerCase().includes(modelSubstr));
+        // Связка NPC↔размещение — по явному имени файла из диалога
+        // (эвристика 'npc_'+id ломалась: chief_engineer ≠ npc_engineer.glb).
+        const placed = islandSceneData.placedObjects?.find((p) => p.modelPath.endsWith('/' + def.modelFile));
         const pos: [number, number, number] = placed ? placed.position : def.position;
         const rot: [number, number, number] = placed ? (placed.rotation as [number, number, number]) : def.rotation;
 

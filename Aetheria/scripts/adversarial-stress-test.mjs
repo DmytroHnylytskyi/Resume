@@ -110,17 +110,13 @@ test('ADV.A.3', 'Shared palette texture spacebits_texture.png has valid PNG 8-by
   }
 });
 
-test('ADV.A.4', 'Mannequin_Medium.glb and all 8 animation packs have valid glTF 2.0 binary headers', () => {
+test('ADV.A.4', 'Mannequin_Medium.glb and the four used animation packs have valid glTF 2.0 binary headers', () => {
   const glbFiles = [
     'Mannequin_Medium.glb',
     'Rig_Medium_MovementBasic.glb',
-    'Rig_Medium_MovementAdvanced.glb',
     'Rig_Medium_General.glb',
     'Rig_Medium_Simulation.glb',
-    'Rig_Medium_Tools.glb',
-    'Rig_Medium_CombatMelee.glb',
-    'Rig_Medium_CombatRanged.glb',
-    'Rig_Medium_Special.glb'
+    'Rig_Medium_Tools.glb'
   ];
 
   for (const name of glbFiles) {
@@ -462,7 +458,7 @@ test('ADV.X.2', 'Proximity Detection Stress: Rapid jitter around 3.8m interactio
     const distSq = dx * dx + dz * dz;
 
     if (distSq < thresholdDistSq) {
-      currentPrompt = 'Commander Valeria';
+      currentPrompt = 'Commander Kira';
     } else {
       currentPrompt = null;
     }

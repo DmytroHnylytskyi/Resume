@@ -4,21 +4,30 @@ import dynamic from 'next/dynamic';
 import React from 'react';
 import { useGameStore } from '../store/useGameStore';
 import { enableDayNightThemeSync } from '../store/dayNightState';
-import ControlsHUD from '../components/ui/ControlsHUD';
-import BioModal from '../components/ui/BioModal';
-import ContactsModal from '../components/ui/ContactsModal';
-import SkillsModal from '../components/ui/SkillsModal';
 import ProjectModal from '../components/ui/ProjectModal';
 import IntroOverlay from '../components/ui/IntroOverlay';
-import LoadingScreen from '../components/ui/LoadingScreen';
 import ClassicLandingView from '../components/ui/ClassicLandingView';
-import MiniRadar from '../components/ui/MiniRadar';
-import MobileTouchControls from '../components/ui/MobileTouchControls';
-import LandscapeOrientationGuard from '../components/ui/LandscapeOrientationGuard';
-import DialogueHUD from '../components/ui/DialogueHUD';
 
-const IslandCanvas = dynamic(() => import('../components/3d/IslandCanvas'), {
-  ssr: false
+/**
+ * Весь 3D-режим — в одном ленивом чанке. Статический импорт LoadingScreen
+ * тянул three.js через @react-three/drei в стартовый бандл классики, а
+ * MiniRadar — islandScene.json и тактическую карту. Классика платила за
+ * 3D, которое могло не открыться.
+ */
+const IslandExperience = dynamic(() => import('../components/3d/IslandExperience'), {
+  ssr: false,
+  loading: () => (
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        background: '#000000',
+        zIndex: 99997,
+        pointerEvents: 'none'
+      }}
+      aria-hidden="true"
+    />
+  )
 });
 
 /**
@@ -30,32 +39,17 @@ const IslandCanvas = dynamic(() => import('../components/3d/IslandCanvas'), {
  * 
  * Reactively synchronizes `data-theme` and `document.title` on theme/locale switch.
  */
-function WormholeArrivalCurtain(): React.ReactElement | null {
-  const [visible, setVisible] = React.useState(true);
-  React.useEffect(() => {
-    const timer = setTimeout(() => setVisible(false), 900);
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (!visible) return null;
-
-  return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        background: '#000000',
-        zIndex: 99998,
-        pointerEvents: 'none',
-        animation: 'wormholeReveal 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards'
-      }}
-      aria-hidden="true"
-    />
-  );
-}
-
 export default function HomePage(): React.ReactElement {
-  const { viewMode, theme, language, isSceneLoaded, setIntroPlaying } = useGameStore();
+  // Granular Zustand subscriptions: whole-store subscription would re-render
+  // the entire app tree (including the Canvas subtree reconcile and all HUD)
+  // on any store change — e.g. every interactionPrompt edge when walking past
+  // an NPC, every interactionPrompt edge. Pattern is the same as CharacterController.
+  const viewMode = useGameStore((s) => s.viewMode);
+  const theme = useGameStore((s) => s.theme);
+  const language = useGameStore((s) => s.language);
+  const isSceneLoaded = useGameStore((s) => s.isSceneLoaded);
+  // Action reference is stable — selector never triggers a re-render.
+  const setIntroPlaying = useGameStore((s) => s.setIntroPlaying);
 
   // Theme & language persistence: the pre-paint script in layout.tsx has
   // already set <html data-theme> (stored theme, else OS preference); sync
@@ -181,39 +175,8 @@ export default function HomePage(): React.ReactElement {
       {/* ── VIEW MODE A: Classic Web Resume Landing ── */}
       {viewMode === 'classic' && <ClassicLandingView />}
 
-      {/* ── VIEW MODE B: Interactive 3D WebGL Island ── */}
-      {viewMode === '3d' && (
-        <>
-          {/* Smooth emergence curtain from black hole */}
-          <WormholeArrivalCurtain />
-
-          {/* Preloader overlay while 3D assets load */}
-          <LoadingScreen />
-
-          {/* 3D Canvas */}
-          <IslandCanvas />
-
-          {/* HUD Top Navigation & Floating [E] Interaction Pill */}
-          <ControlsHUD />
-
-          {/* Enforce Landscape Orientation on Mobile */}
-          <LandscapeOrientationGuard />
-
-          {/* Mobile Virtual Joystick & Touch Camera Controls */}
-          <MobileTouchControls />
-
-          {/* Circular Glass Mini-Radar & Island Tactical Map */}
-          <MiniRadar />
-
-          {/* Holographic Sci-Fi Dialogue HUD */}
-          <DialogueHUD />
-
-          {/* 3D Modal Windows */}
-          <BioModal />
-          <ContactsModal />
-          <SkillsModal />
-        </>
-      )}
+      {/* ── VIEW MODE B: Interactive 3D WebGL Island (lazy chunk) ── */}
+      {viewMode === '3d' && <IslandExperience />}
     </main>
   );
 }

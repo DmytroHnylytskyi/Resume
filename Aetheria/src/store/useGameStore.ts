@@ -1,9 +1,64 @@
 import { create } from 'zustand';
-import { GameState, ViewMode, ThemeMode, CameraMode } from '../types/store';
+import {
+  GameState,
+  ViewMode,
+  ThemeMode,
+  CameraMode,
+  DossierSnapshot,
+  MATERIAL_KEYS,
+  MaterialKey,
+  NPCId
+} from '../types/store';
 import { StatueKey } from '../types/scene';
 import { Locale } from '../types/portfolio';
 import { registerDayNightThemeSync, toggleDayNight } from './dayNightState';
 import { getGlobalCyberAudio } from '../hooks/cyberAudio';
+import { ZONE_BY_CREW } from '../data/zones';
+
+// ── Досье экипажа: сохранение ──
+// Хранилище читается и пишется здесь, а не в page.tsx, как тема с языком: досье
+// меняется по ходу игры, а не один раз при гидратации, поэтому запись должна
+// происходить в тот же момент, что и изменение состояния.
+const DOSSIER_STORAGE_KEY = 'aetheria_dossier';
+
+const EMPTY_DOSSIER: DossierSnapshot = { metCrew: [], openedMaterials: [] };
+
+// Идентификаторы проверяются по списку секторов: в localStorage мог остаться
+// мусор от прежней версии карты, и он бы попал прямо в счётчик и на пины.
+function isNPCId(value: unknown): value is NPCId {
+  return typeof value === 'string' && Object.prototype.hasOwnProperty.call(ZONE_BY_CREW, value);
+}
+
+function isMaterialKey(value: unknown): value is MaterialKey {
+  return typeof value === 'string' && (MATERIAL_KEYS as readonly string[]).includes(value);
+}
+
+function readDossier(): DossierSnapshot {
+  if (typeof window === 'undefined') return { ...EMPTY_DOSSIER };
+  try {
+    const raw = window.localStorage.getItem(DOSSIER_STORAGE_KEY);
+    if (!raw) return { ...EMPTY_DOSSIER };
+    const parsed = JSON.parse(raw) as Partial<DossierSnapshot>;
+    return {
+      metCrew: Array.isArray(parsed.metCrew) ? parsed.metCrew.filter(isNPCId) : [],
+      openedMaterials: Array.isArray(parsed.openedMaterials)
+        ? parsed.openedMaterials.filter(isMaterialKey)
+        : []
+    };
+  } catch {
+    // Приватный режим или битый JSON — досье просто начинается заново.
+    return { ...EMPTY_DOSSIER };
+  }
+}
+
+function persistDossier(snapshot: DossierSnapshot): void {
+  if (typeof window === 'undefined') return;
+  try {
+    window.localStorage.setItem(DOSSIER_STORAGE_KEY, JSON.stringify(snapshot));
+  } catch {
+    /* приватный режим — досье не переживёт перезагрузку, но играть не мешает */
+  }
+}
 
 /**
  * useGameStore
@@ -42,6 +97,8 @@ export const useGameStore = create<GameState>((set) => ({
   setSceneLoaded: (loaded: boolean) => set({ isSceneLoaded: loaded }),
   isCharacterLoaded: false,
   setCharacterLoaded: (loaded: boolean) => set({ isCharacterLoaded: loaded }),
+  isRendererReady: false,
+  setRendererReady: (ready: boolean) => set({ isRendererReady: ready }),
 
   // ── 3D Landmark & Project Modals ──
   activeModal: null,
@@ -52,15 +109,17 @@ export const useGameStore = create<GameState>((set) => ({
 
   // ── Holographic Dialogue State ──
   activeDialogue: null,
-  setActiveDialogue: (dialogue) => set({ activeDialogue: dialogue }),
+  setActiveDialogue: (dialogue) => {
+    set({ activeDialogue: dialogue });
+    // Разговор и есть знакомство. Отмечаем встречу здесь — в единственной точке,
+    // где диалог действительно открывается, — поэтому счётчик досье не может
+    // разойтись с тем, что игрок видит на экране.
+    if (dialogue?.npcId) useGameStore.getState().markCrewMet(dialogue.npcId);
+  },
 
   // ── Proximity Interaction HUD Prompt ([E] Key) ──
   interactionPrompt: null,
   setInteractionPrompt: (prompt) => set({ interactionPrompt: prompt }),
-
-  // ── Secret Levitation Easter Egg Toast ──
-  easterEggToast: null,
-  setEasterEggToast: (toast) => set({ easterEggToast: toast }),
 
   // ── Audio & Camera Settings ──
   isAudioMuted: true,
@@ -87,7 +146,33 @@ export const useGameStore = create<GameState>((set) => ({
 
   // ── Tactical Island Map ──
   isTacticalMapOpen: false,
-  setTacticalMapOpen: (open: boolean) => set({ isTacticalMapOpen: open })
+  setTacticalMapOpen: (open: boolean) => set({ isTacticalMapOpen: open }),
+
+  // ── Досье экипажа ──
+  // Восстанавливаем из localStorage сразу при создании стора, чтобы счётчик не
+  // мигал с нуля при каждой перезагрузке.
+  ...readDossier(),
+
+  markCrewMet: (npcId) =>
+    set((s) => {
+      if (s.metCrew.includes(npcId)) return {};
+      const metCrew = [...s.metCrew, npcId];
+      persistDossier({ metCrew, openedMaterials: s.openedMaterials });
+      return { metCrew };
+    }),
+
+  markMaterialOpened: (key) =>
+    set((s) => {
+      if (s.openedMaterials.includes(key)) return {};
+      const openedMaterials = [...s.openedMaterials, key];
+      persistDossier({ metCrew: s.metCrew, openedMaterials });
+      return { openedMaterials };
+    }),
+
+  resetDossier: () => {
+    persistDossier(EMPTY_DOSSIER);
+    set({ metCrew: [], openedMaterials: [] });
+  }
 }));
 
 // Wire the DOM theme to the continuous day/night cycle (threshold with

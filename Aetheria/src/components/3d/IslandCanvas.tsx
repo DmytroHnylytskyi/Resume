@@ -2,12 +2,28 @@
 
 import React, { useRef, Suspense, useEffect, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Physics, RigidBody, CuboidCollider } from '@react-three/rapier';
-import { useGLTF, useTexture } from '@react-three/drei';
+import { Physics } from '@react-three/rapier';
+import { useGLTF, useTexture, useProgress } from '@react-three/drei';
 import * as THREE from 'three';
 import { useGameStore } from '../../store/useGameStore';
-import { dayNightState, getNightFactor } from '../../store/dayNightState';
+import { dayNightState, getNightFactor, setTimeOfDay } from '../../store/dayNightState';
+import { debugCameraState, visualQuality } from '../../store/debugState';
 import WorldScene from './WorldScene';
+import SingularityCelestial from './SingularityCelestial';
+import CosmicDust from './CosmicDust';
+import Starfield from './Starfield';
+import GiantPlanet from './GiantPlanet';
+import ShatteredMoon from './ShatteredMoon';
+import Megastructure from './Megastructure';
+import rawIslandSceneData from '../../data/islandScene.json';
+import { IslandSceneData } from '../../types/scene';
+
+// Спавн — один источник с гейтами: spawnPoint из islandScene.json (его же
+// проверяет scripts/checkColliders.mjs). Раньше здесь был захардкоженный
+// [0.3, 1.1, 6.0], расходившийся с JSON при перестройке карты.
+const SCENE_DATA = rawIslandSceneData as unknown as IslandSceneData;
+const SPAWN_POINT = SCENE_DATA.spawnPoint;
+const SPAWN_YAW = SCENE_DATA.spawnYaw ?? 0;
 import CharacterController from './CharacterController';
 import { getGlobalCyberAudio } from '../../hooks/cyberAudio';
 
@@ -21,11 +37,22 @@ import { getGlobalCyberAudio } from '../../hooks/cyberAudio';
  * reported while sprinting. Quantized steps, asymmetric thresholds and a
  * cooldown keep resolution changes rare and one-directional instead.
  */
-const IS_COARSE_POINTER =
-  typeof window !== 'undefined' && !!window.matchMedia?.('(pointer: coarse)').matches;
-const NATIVE_DPR = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
-const DPR_FLOOR = IS_COARSE_POINTER ? 0.75 : 0.85;
-const DPR_CAP = Math.min(NATIVE_DPR, IS_COARSE_POINTER ? 1.5 : 2);
+// ?probe=1 — только рендер-проба (для замеров); ?debug=1 включает её же плюс
+// физический оверлей. Разделены, чтобы QA-замеры не платили за 900 EdgesGeometry.
+const PROBE_MODE =
+  typeof window !== 'undefined' &&
+  (new URLSearchParams(window.location.search).has('probe') ||
+    new URLSearchParams(window.location.search).has('debug'));
+
+const DPR_FLOOR = Math.min(visualQuality.nativeDpr, visualQuality.dprFloor);
+const DPR_CAP = Math.min(visualQuality.nativeDpr, visualQuality.dprCap);
+// Старт на 1.5, а не на потолке: на 3× телефоне сразу 2.0 — дорогая
+// аллокация swapchain и рывок на входе. Адаптивный шаг поднимет до потолка,
+// если железо держит >56 FPS.
+const DPR_START =
+  visualQuality.tier === 'high'
+    ? Math.min(DPR_CAP, Math.max(DPR_FLOOR, 1.5))
+    : DPR_CAP;
 
 function AdaptiveResolution({
   dpr,
@@ -88,27 +115,60 @@ function AdaptiveResolution({
 /**
  * ShaderWarmup
  *
- * Pre-compiles every material program in the scene after load. Without this,
- * running into a newly visible area triggers first-draw shader compilation —
- * 100ms+ frame stalls that read as hitching mid-gameplay. The light rig is
- * now permanent (day/night animates values only), so a single compile pass
- * covers the whole cycle — no recompile on theme switch anymore.
+ * Pre-compiles every material program in the scene before the cinematic intro
+ * is allowed to start. Without this, the first frame that shows the island
+ * triggers first-draw shader compilation — on a phone with shadows/PBR that
+ * is a multi-second main-thread stall: the intro title appeared over the
+ * planet and simply froze.
+ *
+ * `compileAsync` (KHR_parallel_shader_compile) is used so linking does not
+ * block the JS thread in one long call; the loader waits for the warm flag
+ * before it dissolves. A hard timeout releases the gate if a driver never
+ * resolves (the scene will then compile lazily, as before).
  */
 function ShaderWarmup(): null {
   const gl = useThree((s) => s.gl);
   const scene = useThree((s) => s.scene);
   const camera = useThree((s) => s.camera);
-  const isSceneLoaded = useGameStore((s) => s.isSceneLoaded);
+  const { active, loaded, total } = useProgress();
+  const setRendererReady = useGameStore((s) => s.setRendererReady);
+
+  // A previous 3D session may have left the flag true; every fresh mount must
+  // re-earn it, otherwise the loader/intro can start before this scene warms.
+  useEffect(() => {
+    setRendererReady(false);
+  }, [setRendererReady]);
 
   useEffect(() => {
-    if (!isSceneLoaded) return;
-    const id = requestAnimationFrame(() => {
+    // Start from the asset-progress signal, not isSceneLoaded: the loader now
+    // deliberately holds isSceneLoaded until this warmup finishes.
+    const assetsDone = !active && total > 0 && loaded >= total;
+    if (!assetsDone) return;
+
+    let cancelled = false;
+    setRendererReady(false);
+    const markReady = () => {
+      if (!cancelled) setRendererReady(true);
+    };
+    const hardTimeout = window.setTimeout(markReady, 20000);
+
+    const raf = requestAnimationFrame(() => {
       try {
-        gl.compile(scene, camera);
-      } catch (_) {}
+        const task = gl.compileAsync
+          ? gl.compileAsync(scene, camera)
+          : Promise.resolve(gl.compile(scene, camera));
+        Promise.resolve(task).then(markReady).catch(markReady);
+      } catch (_) {
+        markReady();
+      }
     });
-    return () => cancelAnimationFrame(id);
-  }, [gl, scene, camera, isSceneLoaded]);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(hardTimeout);
+      cancelAnimationFrame(raf);
+    };
+  }, [gl, scene, camera, active, loaded, total, setRendererReady]);
 
   return null;
 }
@@ -179,8 +239,30 @@ function makeArc(east: THREE.Vector3, apex: THREE.Vector3, west: THREE.Vector3):
 const SUN_ARC = makeArc(SUN_ARC_EAST, SUN_ARC_APEX, SUN_ARC_WEST);
 const MOON_ARC = makeArc(MOON_ARC_EAST, MOON_ARC_APEX, MOON_ARC_WEST);
 
-const CELESTIAL_DIST = 290; // dome is at 360; bodies sit just inside it
 const LIGHT_DIST = 60;
+
+// Сингулярность заняла место солнца и луны: неподвижное небесное тело внутри
+// купола; свет днём/ночью по-прежнему несёт пара directional-светов.
+//
+// Посадка изменена: раньше она висела на вершине солнечной дуги (apogee 30°)
+// на дистанции 290 — это читалось мелкой точкой высоко в небе, оторванной от
+// острова. Теперь 18° над горизонтом на 170 м — тело видно, стоит лишь чуть
+// поднять камеру, и оно читается частью карты, а не далёкой звездой.
+//
+// Высота работает не только на композицию: от неё зависит зазор до карты.
+// Ближняя кромка диска наклонена к наблюдателю, и её высота над островом равна
+// `170·sin(посадка) − 0.179·DISK_OUTER`: масштаб тянет кромку вниз, посадка
+// поднимает. Сейчас (18°, ×1.8) кромка идёт в ~36 м — запас двойной к башням
+// хаба. Купол (r = 360) и звёздную сферу (r = 330) тело не задевает: даже на
+// ×3 дальний край доходил только до 319 м.
+//
+// Кадр держит угол до ~19°: при взгляде вверх на пределе (pitch −0,2) центр
+// кадра стоит на +11.5°, и 18° ложатся ниже верхней кромки, а на 20°+ тело
+// начинает упираться в HUD.
+const SINGULARITY_DIST = 170;
+const SINGULARITY_POS = new THREE.Vector3(0, 0.309, -0.951)
+  .normalize()
+  .multiplyScalar(SINGULARITY_DIST);
 
 function celestialPos(out: THREE.Vector3, arc: CelestialArc, a: number): THREE.Vector3 {
   let angle = a % (Math.PI * 2);
@@ -206,118 +288,6 @@ function AtmosphereSky(): React.ReactElement {
   const gl = useThree((s) => s.gl);
   const scene = useThree((s) => s.scene);
 
-  // ── Procedural textures (baked once, disposed on unmount) ──
-  const moonTexture = useMemo(() => {
-    if (typeof document === 'undefined') return null;
-    const canvas = document.createElement('canvas');
-    canvas.width = 256;
-    canvas.height = 256;
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      const base = ctx.createRadialGradient(118, 110, 16, 128, 128, 126);
-      base.addColorStop(0, '#f7f9ff');
-      base.addColorStop(0.72, '#dde5f6');
-      base.addColorStop(1, '#aebada');
-      ctx.fillStyle = base;
-      ctx.fillRect(0, 0, 256, 256);
-
-      const maria: [number, number, number][] = [
-        [92, 88, 46], [150, 120, 38], [110, 160, 30], [168, 76, 26]
-      ];
-      for (const [x, y, r] of maria) {
-        const g = ctx.createRadialGradient(x, y, 4, x, y, r);
-        g.addColorStop(0, 'rgba(150, 168, 205, 0.4)');
-        g.addColorStop(1, 'rgba(150, 168, 205, 0)');
-        ctx.fillStyle = g;
-        ctx.beginPath();
-        ctx.arc(x, y, r, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      const craters: [number, number, number][] = [
-        [80, 70, 9], [140, 90, 6], [60, 130, 11], [170, 150, 8], [120, 55, 5],
-        [200, 110, 7], [45, 95, 5], [150, 185, 10], [95, 175, 6], [185, 60, 4]
-      ];
-      for (const [x, y, r] of craters) {
-        ctx.fillStyle = 'rgba(140, 158, 198, 0.45)';
-        ctx.beginPath();
-        ctx.arc(x, y, r, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = 'rgba(235, 242, 255, 0.5)';
-        ctx.beginPath();
-        ctx.arc(x - r * 0.2, y - r * 0.25, r * 0.55, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-    const tex = new THREE.CanvasTexture(canvas);
-    tex.colorSpace = THREE.SRGBColorSpace;
-    return tex;
-  }, []);
-
-  const moonHaloTexture = useMemo(() => {
-    if (typeof document === 'undefined') return null;
-    const canvas = document.createElement('canvas');
-    canvas.width = 256;
-    canvas.height = 256;
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      const grad = ctx.createRadialGradient(128, 128, 40, 128, 128, 128);
-      grad.addColorStop(0, 'rgba(210, 224, 255, 0.55)');
-      grad.addColorStop(0.5, 'rgba(180, 200, 255, 0.18)');
-      grad.addColorStop(1, 'rgba(160, 190, 255, 0)');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, 256, 256);
-    }
-    return new THREE.CanvasTexture(canvas);
-  }, []);
-
-  const sunHaloTexture = useMemo(() => {
-    if (typeof document === 'undefined') return null;
-    const canvas = document.createElement('canvas');
-    canvas.width = 256;
-    canvas.height = 256;
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      // Normal-blended warm gradient: additive over a bright sky would clip
-      // straight to white and split the sun into two tones
-      const grad = ctx.createRadialGradient(128, 128, 0, 128, 128, 128);
-      grad.addColorStop(0, 'rgba(255, 214, 110, 0.7)');
-      grad.addColorStop(0.25, 'rgba(255, 220, 130, 0.45)');
-      grad.addColorStop(0.6, 'rgba(255, 228, 160, 0.18)');
-      grad.addColorStop(1, 'rgba(255, 232, 180, 0)');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, 256, 256);
-    }
-    return new THREE.CanvasTexture(canvas);
-  }, []);
-
-  const starTexture = useMemo(() => {
-    if (typeof document === 'undefined') return null;
-    const canvas = document.createElement('canvas');
-    canvas.width = 64;
-    canvas.height = 64;
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      const grad = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
-      grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
-      grad.addColorStop(0.35, 'rgba(220, 230, 255, 0.7)');
-      grad.addColorStop(1, 'rgba(200, 215, 255, 0)');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, 64, 64);
-    }
-    return new THREE.CanvasTexture(canvas);
-  }, []);
-
-  useEffect(
-    () => () => {
-      if (moonTexture) moonTexture.dispose();
-      if (moonHaloTexture) moonHaloTexture.dispose();
-      if (sunHaloTexture) sunHaloTexture.dispose();
-      if (starTexture) starTexture.dispose();
-    },
-    [moonTexture, moonHaloTexture, sunHaloTexture, starTexture]
-  );
-
   // ── Sky dome material (merged day/night gradient shader) ──
   const domeMat = useMemo(() => {
     return new THREE.ShaderMaterial({
@@ -327,7 +297,8 @@ function AtmosphereSky(): React.ReactElement {
         uZenith: { value: new THREE.Color('#2e7fd6') },
         uHorizon: { value: new THREE.Color('#cfe8fa') },
         uSunDir: { value: new THREE.Vector3(0, 1, 0) },
-        uSunTint: { value: new THREE.Color('#ffe9b8') }
+        uSunTint: { value: new THREE.Color('#ffe9b8') },
+        uNight: { value: 0 }
       },
       vertexShader: `
         varying vec3 vLocal;
@@ -342,13 +313,23 @@ function AtmosphereSky(): React.ReactElement {
         uniform vec3 uHorizon;
         uniform vec3 uSunDir;
         uniform vec3 uSunTint;
+        uniform float uNight;
         void main() {
-          float h = clamp(normalize(vLocal).y, 0.0, 1.0);
+          vec3 dir = normalize(vLocal);
+          float h = clamp(dir.y, 0.0, 1.0);
           vec3 col = mix(uHorizon, uZenith, pow(h, 0.6));
           // Warm bloom hugging the sun direction — glows at the horizon
           // during dawn/dusk and fades out once the sun is below it.
-          float sunAmt = pow(max(dot(normalize(vLocal), uSunDir), 0.0), 5.0);
+          float sunAmt = pow(max(dot(dir, uSunDir), 0.0), 5.0);
           col = mix(col, uSunTint, sunAmt * 0.45);
+
+          // Млечный Путь: очень слабая полоса с пылевыми сгустками. Живёт
+          // прямо в куполе, без новой геометрии и без лишнего draw call.
+          float band = exp(-pow(dot(dir, normalize(vec3(0.18, 0.56, 0.81))) * 5.2, 2.0));
+          float knots = 0.5 + 0.5 * sin(dir.x * 21.0 + dir.z * 17.0) * sin(dir.y * 19.0 + 1.7);
+          vec3 mw = vec3(0.42, 0.5, 0.78) * band * (0.32 + 0.5 * knots) * uNight;
+          col += mw * 0.22;
+
           gl_FragColor = vec4(col, 1.0);
         }
       `
@@ -357,30 +338,7 @@ function AtmosphereSky(): React.ReactElement {
 
   useEffect(() => () => domeMat.dispose(), [domeMat]);
 
-  // ── Starfield positions (static shell inside the dome, upper sky biased) ──
-  const starPositions = useMemo(() => {
-    const COUNT = 1400;
-    const arr = new Float32Array(COUNT * 3);
-    for (let i = 0; i < COUNT; i++) {
-      const y = -0.9 + Math.random() * 1.9; // [-0.9, 1] — mostly above horizon
-      const phi = Math.random() * TAU;
-      const r = Math.sqrt(Math.max(0.05, 1 - y * y));
-      arr[i * 3] = Math.cos(phi) * r * 330;
-      arr[i * 3 + 1] = y * 330;
-      arr[i * 3 + 2] = Math.sin(phi) * r * 330;
-    }
-    return arr;
-  }, []);
-
   // ── Refs animated by the director below ──
-  const sunGroupRef = useRef<THREE.Group>(null);
-  const moonGroupRef = useRef<THREE.Group>(null);
-  const sunDiscMatRef = useRef<THREE.MeshBasicMaterial>(null);
-  const sunHaloMatRef = useRef<THREE.SpriteMaterial>(null);
-  const moonDiscMatRef = useRef<THREE.MeshBasicMaterial>(null);
-  const moonHaloMatRef = useRef<THREE.SpriteMaterial>(null);
-  const starsRef = useRef<THREE.Points>(null);
-  const starMatRef = useRef<THREE.PointsMaterial>(null);
   const sunLightRef = useRef<THREE.DirectionalLight>(null);
   const moonLightRef = useRef<THREE.DirectionalLight>(null);
   const fillLightRef = useRef<THREE.DirectionalLight>(null);
@@ -430,28 +388,22 @@ function AtmosphereSky(): React.ReactElement {
     (domeMat.uniforms.uSunDir.value as THREE.Vector3).copy(_dirSun);
     setSrgb(_bgColor, sky.horizon);
 
-    // Celestial bodies ride their arcs; cross-fade around the horizon so
-    // nothing pops (and the sun never shows from "under the world").
-    if (sunGroupRef.current) sunGroupRef.current.position.copy(_dirSun).multiplyScalar(CELESTIAL_DIST);
-    if (moonGroupRef.current) moonGroupRef.current.position.copy(_dirMoon).multiplyScalar(CELESTIAL_DIST);
-    const sunVis = clamp01((s.sunElev + 0.03) * 7);
-    const moonVis = clamp01((s.moonElev + 0.03) * 7);
-    if (sunDiscMatRef.current) sunDiscMatRef.current.opacity = sunVis;
-    if (sunHaloMatRef.current) sunHaloMatRef.current.opacity = 0.6 * sunVis;
-    if (moonDiscMatRef.current) moonDiscMatRef.current.opacity = moonVis;
-    if (moonHaloMatRef.current) moonHaloMatRef.current.opacity = 0.6 * moonVis;
+    // Сингулярность — неподвижное небесное тело: позиции не обновляются,
+    // она сама тянет свои uniform'ы в собственном useFrame.
 
-    // Stars fade in through dusk, out through dawn.
+    // Млечный Путь проявляется только ночью; звёзды ведут свой шейдер.
     const nf = getNightFactor();
-    if (starMatRef.current) starMatRef.current.opacity = nf * 0.95;
-    if (starsRef.current) starsRef.current.visible = nf > 0.002;
+    domeMat.uniforms.uNight.value = nf;
 
     // ── Unified light rig (values only; count never changes) ──
+    // Цветокоррекция: прежняя сумма света 6.2 без теней замыливала сцену —
+    // ключ понижен до ~2.1, заполнялки до долей, солнечная тень стала
+    // главным источником формы. Ночные ветки понижены пропорционально.
     const sunI = Math.sqrt(clamp01(s.sunElev)); // fast warm-up after sunrise
     const sl = sunLightRef.current;
     if (sl) {
       sl.position.copy(_dirSun).multiplyScalar(LIGHT_DIST);
-      sl.intensity = 2.8 * sunI;
+      sl.intensity = 2.1 * sunI;
       _colA.set('#ff8f5a');
       _colB.set('#fff3d6');
       sl.color.lerpColors(_colA, _colB, clamp01(s.sunElev * 2.2));
@@ -460,12 +412,12 @@ function AtmosphereSky(): React.ReactElement {
     const ml = moonLightRef.current;
     if (ml) {
       ml.position.copy(_dirMoon).multiplyScalar(LIGHT_DIST);
-      ml.intensity = 2.3 * Math.sqrt(clamp01(s.moonElev)) * nf;
+      ml.intensity = 1.2 * Math.sqrt(clamp01(s.moonElev)) * nf;
     }
 
     const fl = fillLightRef.current;
     if (fl) {
-      fl.intensity = 1.1 + (0.95 - 1.1) * nf;
+      fl.intensity = 0.45 + (0.35 - 0.45) * nf;
       _colA.set('#93c5fd');
       _colB.set('#405a9e');
       fl.color.lerpColors(_colA, _colB, nf);
@@ -473,7 +425,7 @@ function AtmosphereSky(): React.ReactElement {
 
     const am = ambientRef.current;
     if (am) {
-      am.intensity = 1.0 + (2.2 - 1.0) * nf;
+      am.intensity = 0.3 + (1.0 - 0.3) * nf;
       _colA.set('#f0f9ff');
       _colB.set('#2f4485');
       am.color.lerpColors(_colA, _colB, nf);
@@ -487,83 +439,76 @@ function AtmosphereSky(): React.ReactElement {
       _colA.set('#cbd5e1');
       _colB.set('#1c2640');
       hl.groundColor.lerpColors(_colA, _colB, nf);
-      hl.intensity = 1.3 + 0.3 * nf;
+      hl.intensity = 0.55 + 0.15 * nf;
     }
 
-    gl.toneMappingExposure = 1.05 + 0.3 * nf;
+    gl.toneMappingExposure = 1.0 + 0.28 * nf;
   });
 
   return (
     <group>
-      {/* ── Sky dome (single continuous gradient + sun bloom) ── */}
+      {/* ── Sky dome (single continuous gradient + sun bloom + Milky Way) ── */}
       <mesh material={domeMat} renderOrder={-1000}>
-        <sphereGeometry args={[360, 32, 20]} />
+        <sphereGeometry args={[850, 32, 20]} />
       </mesh>
 
-      {/* ── Starfield (opacity follows the night factor) ── */}
-      <points ref={starsRef}>
-        <bufferGeometry>
-          <bufferAttribute attach="attributes-position" args={[starPositions, 3]} />
-        </bufferGeometry>
-        <pointsMaterial
-          ref={starMatRef}
-          size={2.4}
-          sizeAttenuation={false}
-          map={starTexture || undefined}
-          color="#cdd9ff"
-          transparent
-          opacity={0}
-          depthWrite={false}
-          blending={THREE.AdditiveBlending}
-        />
-      </points>
+      {/* ── Магнитудное звёздное поле: мелкие/яркие, цветные, с мерцанием ── */}
+      <Starfield />
 
-      {/* ── Sun: halo sprite + self-lit disc on the travel arc ── */}
-      <group ref={sunGroupRef}>
-        <sprite scale={[128, 128, 1]}>
-          <spriteMaterial
-            ref={sunHaloMatRef}
-            map={sunHaloTexture || undefined}
-            transparent
-            opacity={0.6}
-            blending={THREE.AdditiveBlending}
-            depthWrite={false}
-            toneMapped={false}
-          />
-        </sprite>
-        <mesh>
-          <sphereGeometry args={[16, 32, 24]} />
-          <meshBasicMaterial ref={sunDiscMatRef} color="#fff3c4" toneMapped={false} transparent opacity={1} />
-        </mesh>
-      </group>
+      {/* ── Гигантская планета под платформой: закрывает пустоту под островом,
+          даёт масштаб и объясняет, почему станция висит над миром. ── */}
+      <GiantPlanet />
 
-      {/* ── Moon: procedural crater texture + cold halo ── */}
-      <group ref={moonGroupRef}>
-        <sprite scale={[128, 128, 1]}>
-          <spriteMaterial
-            ref={moonHaloMatRef}
-            map={moonHaloTexture || undefined}
-            transparent
-            opacity={0.6}
-            blending={THREE.AdditiveBlending}
-            depthWrite={false}
-            toneMapped={false}
-          />
-        </sprite>
-        <mesh>
-          <sphereGeometry args={[16, 32, 24]} />
-          <meshBasicMaterial ref={moonDiscMatRef} map={moonTexture || undefined} toneMapped={false} transparent opacity={1} />
-        </mesh>
-      </group>
+      {/* ── Расколотая луна и древняя разорванная орбитальная дуга в небе ── */}
+      <ShatteredMoon />
+      <Megastructure />
+
+      {/* ── Пыль и мелкие обломки по всему небу: днём приглушённо, ночью ярко.
+          Заменила рой искр, который крутился только у сингулярности. ── */}
+      <CosmicDust />
+
+      {/* ── Гравитационная сингулярность вместо солнца и луны:
+          чёрное ядро, аккреционный диск, линзовое гало.
+          Неподвижна на 15° над горизонтом, палитра следует циклу. ── */}
+      <SingularityCelestial position={SINGULARITY_POS} />
 
       {/* ── Permanent unified light rig ──
-          Key = sun by day, moon by night; cool fill + ambient + hemisphere
-          interpolate between the previously shipped day/night rigs. */}
-      <directionalLight ref={sunLightRef} intensity={2.8} color="#fff3d6" />
+          Key = sun by day, moon by night (свет дуги несут эти два
+          directional-света); cool fill + ambient + hemisphere interpolate
+          between the previously shipped day/night rigs.
+          Тени несёт только солнечный key: интенсивность уходит в нуль
+          к ночи, тени гаснут вместе с ним — одна теневая карта в кадре. */}
+      <directionalLight
+        ref={sunLightRef}
+        intensity={2.1}
+        color="#fff3d6"
+        castShadow={visualQuality.shadows}
+        shadow-mapSize-width={visualQuality.shadowMapSize}
+        shadow-mapSize-height={visualQuality.shadowMapSize}
+        // Орто-фрустум на весь остров (±30 м по XZ у плит + запас на
+        // пропсы): 64 м / 2048 текселей ≈ 3 см — достаточная плотность,
+        // стабильно без следящего за игроком таргета.
+        shadow-camera-left={-32}
+        shadow-camera-right={32}
+        shadow-camera-top={32}
+        shadow-camera-bottom={-32}
+        shadow-camera-near={1}
+        shadow-camera-far={200}
+        shadow-bias={-0.0003}
+        shadow-normalBias={0.03}
+      />
       <directionalLight ref={moonLightRef} intensity={0} color="#c3d6ff" />
-      <directionalLight ref={fillLightRef} position={[60, 30, 40]} intensity={1.1} color="#93c5fd" />
-      <ambientLight ref={ambientRef} intensity={1.0} color="#f0f9ff" />
-      <hemisphereLight ref={hemiRef} args={['#a5d8ff', '#cbd5e1', 1.3]} />
+      {/* На low-пресете остаются только ключевые три источника (sun/moon/
+          ambient): каждый лишний directional — это полный расчёт освещения
+          на каждый фрагмент МешStandardMaterial, а на телефоне пиксели
+          дороже, чем полутон заполняющего света. */}
+      {visualQuality.extraLights && (
+        <directionalLight ref={fillLightRef} position={[60, 30, 40]} intensity={0.45} color="#93c5fd" />
+      )}
+      <ambientLight ref={ambientRef} intensity={0.3} color="#f0f9ff" />
+      {visualQuality.extraLights && (
+        <hemisphereLight ref={hemiRef} args={['#a5d8ff', '#cbd5e1', 0.55]} />
+      )}
     </group>
   );
 }
@@ -574,6 +519,67 @@ function AtmosphereSky(): React.ReactElement {
  * label and shortcut hints are set imperatively here, once, right after
  * mount and on every language switch.
  */
+/**
+ * RenderProbe — ?debug=1 exposes the renderer/scene for field measurements
+ * (draw calls, triangles, programs) and for QA screenshots from fixed poses.
+ * Never mounted in production.
+ */
+function RenderProbe(): null {
+  const gl = useThree((s) => s.gl);
+  const scene = useThree((s) => s.scene);
+  const camera = useThree((s) => s.camera);
+
+  useEffect(() => {
+    if (!PROBE_MODE) return;
+    (window as unknown as Record<string, unknown>).__aetheria = {
+      gl,
+      scene,
+      camera,
+      info: () => ({
+        calls: gl.info.render.calls,
+        triangles: gl.info.render.triangles,
+        points: gl.info.render.points,
+        lines: gl.info.render.lines,
+        programs: gl.info.programs?.length ?? 0,
+        geometries: gl.info.memory.geometries,
+        textures: gl.info.memory.textures,
+        dpr: gl.getPixelRatio()
+      }),
+      /** Фиксированное разрешение для честных замеров (адаптив иначе меняет dpr). */
+      setDpr: (n: number) => {
+        gl.setPixelRatio(n);
+        gl.setSize(gl.domElement.clientWidth, gl.domElement.clientHeight, false);
+      },
+      /** Время суток для QA-кадров: 0.5 — полдень, 0.0 — полночь. */
+      time: (t: number) => setTimeOfDay(t),
+      /** Свободная камера (QA): позиция и точка взгляда в мировых метрах. */
+      fly: (px: number, py: number, pz: number, tx: number, ty: number, tz: number) => {
+        debugCameraState.position = [px, py, pz];
+        debugCameraState.target = [tx, ty, tz];
+        debugCameraState.active = true;
+      },
+      flyOff: () => {
+        debugCameraState.active = false;
+      }
+    };
+  }, [gl, scene, camera]);
+
+  return null;
+}
+
+/** QA-камера поверх контроллера игрока (только при вызове __aetheria.fly). */
+function DebugFlyCamera(): null {
+  const camera = useThree((s) => s.camera);
+  useFrame(() => {
+    if (!debugCameraState.active) return;
+    const [px, py, pz] = debugCameraState.position;
+    const [tx, ty, tz] = debugCameraState.target;
+    camera.position.set(px, py, pz);
+    camera.lookAt(tx, ty, tz);
+  });
+  return null;
+}
+
 function CanvasA11y({ label }: { label: string }): null {
   const gl = useThree((s) => s.gl);
 
@@ -608,7 +614,7 @@ export default function IslandCanvas(): React.ReactElement {
   // The adaptive resolution value lives in the dpr PROP itself: fiber
   // reconciles viewport.dpr against this prop on re-renders, so driving it
   // from here is the only churn-free way to change resolution at runtime.
-  const [dpr, setDpr] = React.useState(DPR_CAP);
+  const [dpr, setDpr] = React.useState(DPR_START);
 
   // Synchronize 3D atmospheric background music & ambient with global audio state
   useEffect(() => {
@@ -632,36 +638,59 @@ export default function IslandCanvas(): React.ReactElement {
   return (
     <Canvas
       dpr={dpr}
-      camera={{ position: [-18, 22, 36], fov: 45, far: 900 }}
+      camera={{ position: [-18, 22, 36], fov: 45, far: 1000 }}
+      shadows={visualQuality.shadows ? 'soft' : false}
       gl={{
-        antialias: true,
+        // MSAA только на десктопе: на тач-устройствах резкость даёт высокий
+        // DPR (до 2.0), а MSAA — один из самых дорогих пиксельных эффектов.
+        antialias: visualQuality.antialias,
         alpha: false,
-        powerPreference: 'high-performance',
+        powerPreference: visualQuality.tier === 'low' ? 'default' : 'high-performance',
         toneMapping: THREE.ACESFilmicToneMapping
       }}
       performance={{ min: 0.5 }}
     >
-      {/* ── Continuous day/night atmosphere (dome, sun/moon, stars, lights) ── */}
+      {/* ── Continuous day/night atmosphere (dome, singularity, stars, lights) ── */}
       <AtmosphereSky />
 
       {/* ── Canvas accessibility contract (role + localized label) ── */}
       <CanvasA11y label={canvasAriaLabel} />
 
+      {/* ── ?debug=1: renderer probe for perf measurements ── */}
+      <RenderProbe />
+
       {/* ── High-Speed Rapier 3D Physics Simulation with Fixed 60Hz Timestep ── */}
       <Suspense fallback={null}>
-        <Physics gravity={[0, -19.6, 0]} timeStep={1 / 60} interpolate={true}>
-          {/* Seamless Solid Ground Foundation aligned with surface plane (Y=1.0) */}
-          <RigidBody type="fixed" colliders={false} position={[0, -4.0, 0]}>
-            <CuboidCollider args={[45, 5.0, 45]} friction={0.8} />
-          </RigidBody>
+        {/* interpolate выключен на low: он снимает копию всех rigid body
+            каждый физический шаг, а на слабом CPU разница в 1–2 кадра
+            заметнее, чем микро-джиттер интерполяции. */}
+        <Physics gravity={[0, -19.6, 0]} timeStep={1 / 60} interpolate={!visualQuality.cheapMaterials}>
+          {/* Пол строит WorldScene из плит земли: коллайдер каждой плиты
+              совпадает с её мешем, страховочный пол лежит ПОД островом в
+              пределах визуального края. Прежний невидимый куб 90×90×10
+              (args [45, 5, 45]) доползал до ±45 м — далеко за край
+              видимого острова — и позволял ходить по пустоте. */}
 
           {/* Optimized Modular Space Outpost Objects */}
           <WorldScene playerPosRef={playerPosRef} />
 
           {/* 3rd-Person Playable Animated Character */}
-          <CharacterController playerPosRef={playerPosRef} spawnPoint={[0.0, 1.1, 6.0]} />
+          {/* Спавн сдвинут к x=0.3: бокс spacetruck_large (yaw 45°, грань
+              до x≈0, z 5.1..6.2, y 1..1.69) доходил до точки [0,1.1,6] —
+              капсула r=0.2 пересекала его на ~0.16 м и получала
+              депенетрационный пинок при спавне; при x=0.3 до грани остаётся
+              0.30 > r + запас. Дефолт [0,1.4,6] в CharacterController —
+              мёртвый путь (проп всегда передаётся), сознательно не тронут. */}
+          <CharacterController
+            playerPosRef={playerPosRef}
+            spawnPoint={[SPAWN_POINT[0], SPAWN_POINT[1], SPAWN_POINT[2]]}
+            spawnYaw={SPAWN_YAW}
+          />
         </Physics>
       </Suspense>
+
+      {/* ── QA free camera: mounts after the controller so it wins the frame ── */}
+      <DebugFlyCamera />
 
       {/* ── Adaptive render resolution + shader precompile: engage once
           loading settles. ── */}

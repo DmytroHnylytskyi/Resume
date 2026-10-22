@@ -1,13 +1,22 @@
 /**
  * npcDialogues.ts — dialogue scripts and sector metadata for the 6 outpost crew members.
  *
- * Provides bilingual (Ukrainian and English) atmospheric and witty sci-fi dialogue trees,
- * sector color themes, station coordinates, gestures, and modal action links.
+ * Provides bilingual (Ukrainian and English) short, factual dialogue lines written
+ * in each crew member's voice, plus sector theming, gestures and modal action links.
+ * The copy stays calm and specific: the crew explains what stands in front of the
+ * visitor and what is worth opening next, without advertising language.
+ *
+ * Координаты, цвет сектора и имя сектора здесь НЕ хранятся: они приходят из
+ * zones.ts, это свойство места, а не человека. Здесь остаётся то, что принадлежит
+ * разговору — реплики, жест, вращение и то, что NPC открывает (targetKey).
  */
 
-import { NPCId } from '../types/store';
+import { NPCId, MaterialKey } from '../types/store';
+import { ZONES, ZoneId, SectorColor } from './zones';
 
-export type SectorColor = 'gold' | 'violet' | 'cyan' | 'emerald' | 'sapphire' | 'rose_coral';
+// Сектор переехал в zones.ts; тип ре-экспортируется, чтобы не ломать тех, кто
+// брал его отсюда.
+export type { SectorColor };
 
 export interface LocalizedString {
   en: string;
@@ -16,6 +25,10 @@ export interface LocalizedString {
 
 export interface NPCDialogueDef {
   id: NPCId;
+  /** Сектор, в котором стоит NPC. Координаты, цвет и имя места — в zones.ts. */
+  zone: ZoneId;
+  /** Файл модели в public/model/kaykit_space — единственная связка NPC↔размещение в islandScene.json. */
+  modelFile: string;
   name: LocalizedString;
   role: LocalizedString;
   badge: LocalizedString;
@@ -29,15 +42,18 @@ export interface NPCDialogueDef {
   actionLabel: LocalizedString;
   dismissLabel: LocalizedString;
   targetType: 'modal' | 'project';
-  targetKey: 'bio' | 'skills' | 'contacts' | 'forma' | 'terrascope' | 'lumina';
+  /** Что открывает разговор. Список живёт в types/store (MATERIAL_KEYS) — его
+   *  же ведёт досье, отмечая, какие материалы посетитель уже посмотрел. */
+  targetKey: MaterialKey;
 }
 
 export const NPC_DIALOGUES: Record<NPCId, NPCDialogueDef> = {
   commander: {
     id: 'commander',
+    modelFile: 'npc_commander.glb',
     name: {
-      en: 'Commander Valeria',
-      uk: 'Командир Валерія'
+      en: 'Commander Kira',
+      uk: 'Командир Кіра'
     },
     role: {
       en: 'Expedition Commander',
@@ -47,23 +63,24 @@ export const NPC_DIALOGUES: Record<NPCId, NPCDialogueDef> = {
       en: '[COMMANDER // BIO-ARCHIVE]',
       uk: '[КОМАНДИР // БІО-АРХІВ]'
     },
-    sector: 'gold',
-    hexColor: '#fbbf24',
-    rgbColor: '251, 191, 36',
-    position: [1.5, 1.0, 5.0],
-    rotation: [0, -0.7, 0],
+    zone: 'bio_archive',
+    sector: ZONES.bio_archive.sector,
+    hexColor: ZONES.bio_archive.hexColor,
+    rgbColor: ZONES.bio_archive.rgbColor,
+    position: ZONES.bio_archive.position,
+    rotation: [0, Math.PI, 0],
     gesture: 'Waving',
     dialogueText: {
-      en: "Welcome to Aetheria Research Outpost, Traveler! I'm Commander Valeria. If you're looking for the chief architect behind this orbital station — Dmytro engineered it from database schemas up to WebGL shaders. No AI hallucinations or spaghetti code: 4 years of rigorous KPI software engineering and battle-tested full-stack product leadership. Ready to inspect the Commander's service record?",
-      uk: "Вітаю на науково-дослідному аванпості Aetheria, мандрівнику! Я — Командир Валерія. Якщо ви шукаєте головного архітектора цієї орбітальної платформи — Дмитро закладав її фундамент від реляційних схем бази даних до кастомних WebGL-шейдерів. Жодних галюцинацій ШІ чи спагетті-коду: 4 роки інженерної школи КПІ та реальний фулстек-досвід. Бажаєте ознайомитись із повною особовою справою капітана?"
+      en: "Welcome aboard Aetheria Outpost. I'm Commander Kira. This station is Dmytro's work — every system here, from database schemas to WebGL shaders, built on a Kyiv Polytechnic (KPI) software engineering degree and four years of full-stack practice. My archive holds his full record.",
+      uk: 'Вітаю на аванпості Aetheria. Я командир Кіра. Ця станція — робота Дмитра: кожна система тут, від схем бази даних до WebGL-шейдерів, стоїть на освіті з інженерії програмного забезпечення в КПІ та чотирьох роках фулстек-практики. У моєму архіві — повна особова справа.'
     },
     actionLabel: {
-      en: '📋 Inspect Dossier / Bio',
-      uk: '📋 Особова справа / Біографія'
+      en: 'Open dossier',
+      uk: 'Відкрити досьє'
     },
     dismissLabel: {
-      en: 'Dismiss, Commander',
-      uk: 'Бувай, Командире'
+      en: 'Close',
+      uk: 'Закрити'
     },
     targetType: 'modal',
     targetKey: 'bio'
@@ -71,35 +88,37 @@ export const NPC_DIALOGUES: Record<NPCId, NPCDialogueDef> = {
 
   chief_engineer: {
     id: 'chief_engineer',
+    modelFile: 'npc_engineer.glb',
     name: {
       en: 'Chief Engineer Vex',
       uk: 'Головний інженер Векс'
     },
     role: {
-      en: 'Core Propulsion & Systems Architect',
-      uk: 'Архітектор реактора та систем'
+      en: 'Reactor & Systems Architect',
+      uk: 'Архітектор реактора і систем'
     },
     badge: {
       en: '[CHIEF ENGINEER // REACTOR CORE]',
       uk: '[ГОЛОВНИЙ ІНЖЕНЕР // ЯДРО РЕАКТОРА]'
     },
-    sector: 'violet',
-    hexColor: '#c084fc',
-    rgbColor: '192, 132, 252',
-    position: [-2.2, 1.0, 3.8],
-    rotation: [0, 1.0, 0],
+    zone: 'reactor_core',
+    sector: ZONES.reactor_core.sector,
+    hexColor: ZONES.reactor_core.hexColor,
+    rgbColor: ZONES.reactor_core.rgbColor,
+    position: ZONES.reactor_core.position,
+    rotation: [0, -0.8, 0],
     gesture: 'Work_A',
     dialogueText: {
-      en: "Watch your step near the plasma injectors! We're locking a rock-solid 60 FPS on deterministic Rapier 3D physics. Zero garbage collection spikes: zero per-frame allocations, strict TypeScript boundaries, React 19, and Next.js 15 humming under the hood. This rig runs buttery-smooth even on mobile thermals. Want to review the reactor's full technical specs?",
-      uk: "Обережно біля плазмового інжектора! Ми тримаємо залізобетонні 60 кадрів/сек на детерміністичній фізиці Rapier 3D. Ніяких витоків пам'яті: нуль алокацій у циклі кадрів, суворий TypeScript-каркас, React 19 та Next.js 15 під капотом. Як бачите, реактор працює бездоганно навіть на інтегрованих графічних чіпах. Хочете поглянути на технічний паспорт нашого стеку?"
+      en: "Reactor's stable. Sixty FPS on deterministic Rapier physics, no per-frame allocations, strict TypeScript across the stack, React 19 and Next.js 15 underneath. The technical passport — stack and certifications — is on this console.",
+      uk: 'Реактор стабільний. Шістдесят FPS на детермінованій фізиці Rapier, нуль алокацій у циклі кадрів, суворий TypeScript по всьому стеку, під капотом — React 19 і Next.js 15. Технічний паспорт зі стеком і сертифікатами — на цій консолі.'
     },
     actionLabel: {
-      en: '⚙️ View Tech Stack & Certs',
-      uk: '⚙️ Специфікація стеку & Сертифікати'
+      en: 'Stack & certifications',
+      uk: 'Стек і сертифікати'
     },
     dismissLabel: {
-      en: 'At ease, Engineer',
-      uk: 'Бувай, інженере'
+      en: 'Close',
+      uk: 'Закрити'
     },
     targetType: 'modal',
     targetKey: 'skills'
@@ -107,35 +126,37 @@ export const NPC_DIALOGUES: Record<NPCId, NPCDialogueDef> = {
 
   comms_officer: {
     id: 'comms_officer',
+    modelFile: 'npc_comms.glb',
     name: {
       en: 'Comms Officer Tayra',
       uk: "Офіцер зв'язку Тайра"
     },
     role: {
-      en: 'Subspace Relay & Deep Orbit Comms',
+      en: 'Subspace Relay Officer',
       uk: "Офіцер підпросторового зв'язку"
     },
     badge: {
-      en: '[COMMS OFFICER // SUBSPACE ARRAY]',
-      uk: "[ОФІЦЕР ЗВ'ЯЗКУ // СУБПРОСТОРОВИЙ МАСИВ]"
+      en: '[COMMS // SUBSPACE ARRAY]',
+      uk: "[ЗВ'ЯЗОК // СУБПРОСТОРОВИЙ МАСИВ]"
     },
-    sector: 'cyan',
-    hexColor: '#38bdf8',
-    rgbColor: '56, 189, 248',
-    position: [-1.0, 1.0, -4.5],
-    rotation: [0, 0.5, 0],
+    zone: 'subspace_array',
+    sector: ZONES.subspace_array.sector,
+    hexColor: ZONES.subspace_array.hexColor,
+    rgbColor: ZONES.subspace_array.rgbColor,
+    position: ZONES.subspace_array.position,
+    rotation: [0, -1.2, 0],
     gesture: 'Interact',
     dialogueText: {
-      en: "Subspace tachyon array locked on Kyiv coordinates! Quantum comms are open with zero ping: direct Telegram relay primed, encrypted mail protocol verified, and GitHub source telemetry ready for inspection. Got an ambitious engineering project or a remote tech role? My subspace array will beam your transmission straight to Dmytro's desk!",
-      uk: "Підпросторові тахіонні антени наведено на координати Києва! Канал зв'язку працює з нульовим пінгом: Telegram-лінк активний, зашифрований поштовий протокол синхронізовано, репозиторії GitHub доступні для інспекції коду. Якщо у вас є амбітний проєкт або пропозиція інженерного партнерства — мій передавач доставить ваше повідомлення прямо до термінала Дмитра!"
+      en: 'The subspace array is locked on Kyiv and the channel is clean. Mail, Telegram and GitHub are live — send your project or offer through this uplink and it reaches Dmytro directly.',
+      uk: 'Субпросторовий масив наведено на Київ, канал чистий. Пошта, Telegram і GitHub активні — надішліть проєкт або пропозицію через цей канал, і вона потрапить до Дмитра напряму.'
     },
     actionLabel: {
-      en: '📡 Open Subspace Uplink',
-      uk: "📡 Відкрити прямий зв'язок"
+      en: 'Contact Dmytro',
+      uk: "Зв'язатися"
     },
     dismissLabel: {
-      en: 'End transmission',
-      uk: "Кінець зв'язку"
+      en: 'Close',
+      uk: 'Закрити'
     },
     targetType: 'modal',
     targetKey: 'contacts'
@@ -143,35 +164,37 @@ export const NPC_DIALOGUES: Record<NPCId, NPCDialogueDef> = {
 
   ui_architect: {
     id: 'ui_architect',
+    modelFile: 'npc_forma.glb',
     name: {
       en: 'UI Architect Nova',
       uk: 'UI-архітектор Нова'
     },
     role: {
-      en: 'Spatial CAD & Generative UI Lead',
+      en: 'Forma-3D Lab Lead',
       uk: 'Керівник лабораторії Forma-3D'
     },
     badge: {
-      en: '[UI ARCHITECT // GENERATIVE LAB]',
-      uk: '[UI-АРХІТЕКТОР // ГЕНЕРАТИВНА ЛАБОРАТОРІЯ]'
+      en: '[UI ARCHITECT // FORMA-3D]',
+      uk: '[UI-АРХІТЕКТОР // FORMA-3D]'
     },
-    sector: 'emerald',
-    hexColor: '#34d399',
-    rgbColor: '52, 211, 153',
-    position: [1.2, 1.0, -0.5],
-    rotation: [0, -2.4, 0],
+    zone: 'generative_lab',
+    sector: ZONES.generative_lab.sector,
+    hexColor: ZONES.generative_lab.hexColor,
+    rgbColor: ZONES.generative_lab.rgbColor,
+    position: ZONES.generative_lab.position,
+    rotation: [0, -1.57, 0],
     gesture: 'Interact',
     dialogueText: {
-      en: "Welcome to the Procedural Geometry deck! Here we operate Forma-3D — our generative CAD and spatial shape modeling workstation. We fused parametric spline mathematics, real-time CSG meshes, and instant glTF pipelines right in the browser. The interface adapts faster than liquid chrome! Ready to fire up the interactive 3D modeling demo?",
-      uk: "Ласкаво просимо до сектору процедурної геометрії! Тут ми досліджуємо Forma-3D — наш веб-редактор просторових форм. Ми об'єднали математичні формули сплайнів, параметричні меші та миттєвий експорт у glTF. Інтерфейс адаптується швидше за рідкий метал! Готові запустити інтерактивну лабораторію 3D-моделювання?"
+      en: 'This deck runs Forma-3D, our generative CAD in the browser: parametric splines, real-time mesh operations and instant glTF export. The demo is interactive — you can model something yourself.',
+      uk: 'На цій палубі працює Forma-3D — генеративний CAD у браузері: параметричні сплайни, операції з мешами в реальному часі та миттєвий експорт у glTF. Демо інтерактивне — можете змоделювати щось самостійно.'
     },
     actionLabel: {
-      en: '🚀 Launch Forma-3D Demo',
-      uk: '🚀 Запустити демо Forma-3D'
+      en: 'Launch Forma-3D',
+      uk: 'Демо Forma-3D'
     },
     dismissLabel: {
-      en: 'Return to base',
-      uk: 'Бувай, архітекторе'
+      en: 'Close',
+      uk: 'Закрити'
     },
     targetType: 'project',
     targetKey: 'forma'
@@ -179,35 +202,37 @@ export const NPC_DIALOGUES: Record<NPCId, NPCDialogueDef> = {
 
   geodata_analyst: {
     id: 'geodata_analyst',
+    modelFile: 'npc_terrascope.glb',
     name: {
       en: 'Geodata Analyst Orion',
       uk: 'Геодата-аналітик Оріон'
     },
     role: {
-      en: 'Orbital GIS & Telemetry Specialist',
-      uk: 'Спеціаліст орбітального ГІС'
+      en: 'Orbital GIS Specialist',
+      uk: 'Фахівець орбітального ГІС'
     },
     badge: {
-      en: '[GEODATA ANALYST // ORBITAL GIS]',
-      uk: '[ГЕОДАТА-АНАЛІТИК // ОРБІТАЛЬНИЙ ГІС]'
+      en: '[GEODATA // ORBITAL GIS]',
+      uk: '[ГЕОДАНІ // ОРБІТАЛЬНИЙ ГІС]'
     },
-    sector: 'sapphire',
-    hexColor: '#60a5fa',
-    rgbColor: '96, 165, 250',
-    position: [2.2, 1.0, 3.0],
-    rotation: [0, -1.2, 0],
+    zone: 'orbital_gis',
+    sector: ZONES.orbital_gis.sector,
+    hexColor: ZONES.orbital_gis.hexColor,
+    rgbColor: ZONES.orbital_gis.rgbColor,
+    position: ZONES.orbital_gis.position,
+    rotation: [0, 1.57, 0],
     gesture: 'Work_A',
     dialogueText: {
-      en: "Orbital constellation telemetry synced and streaming! TerraScope processes multispectral imagery and renders live geospatial intelligence layer-by-layer in real-time. Millions of spatial coordinates, tile pyramids, and vector data streams compiled faster than an orbital burn. Ready to inspect the live GIS analytics platform?",
-      uk: "Орбітальні супутники зафіксували стабільний потік даних! TerraScope аналізує мультиспектральні знімки та шар за шаром візуалізує геопросторову аналітику в реальному часі. Мільйони координат, тайлові піраміди та векторні шари обробляються швидше за гравітаційний маневр. Бажаєте поглянути на живу геоінформаційну платформу?"
+      en: 'Orbital telemetry is streaming: TerraScope renders multispectral imagery as live geospatial layers — millions of coordinates, tile pyramids and vector streams in real time. The platform is open for inspection.',
+      uk: 'Орбітальна телеметрія йде потоком: TerraScope перетворює мультиспектральні знімки на живі геошари — мільйони координат, тайлові піраміди й векторні потоки в реальному часі. Платформа відкрита для огляду.'
     },
     actionLabel: {
-      en: '🛰️ Launch TerraScope Demo',
-      uk: '🛰️ Запустити демо TerraScope'
+      en: 'Launch TerraScope',
+      uk: 'Демо TerraScope'
     },
     dismissLabel: {
-      en: 'Stand down',
-      uk: 'До зв’язку'
+      en: 'Close',
+      uk: 'Закрити'
     },
     targetType: 'project',
     targetKey: 'terrascope'
@@ -215,35 +240,37 @@ export const NPC_DIALOGUES: Record<NPCId, NPCDialogueDef> = {
 
   photonics_specialist: {
     id: 'photonics_specialist',
+    modelFile: 'npc_lumina.glb',
     name: {
       en: 'Photonics Specialist Lyra',
-      uk: 'Спеціаліст з фотоніки Ліра'
+      uk: 'Фахівець з фотоніки Ліра'
     },
     role: {
-      en: 'Optics & WebGL Shader Scientist',
-      uk: 'Спеціаліст з оптики та Lumina'
+      en: 'Optics & Shader Scientist',
+      uk: 'Фахівець з оптики та шейдерів'
     },
     badge: {
-      en: '[PHOTONICS SPECIALIST // LUMINA OPTICS]',
-      uk: '[ФОТОНІКА // ОПТИКА LUMINA]'
+      en: '[PHOTONICS // LUMINA]',
+      uk: '[ФОТОНІКА // LUMINA]'
     },
-    sector: 'rose_coral',
-    hexColor: '#fb7185',
-    rgbColor: '251, 113, 133',
-    position: [-5.5, 1.0, -7.0],
-    rotation: [0, 0.8, 0],
+    zone: 'lumina_optics',
+    sector: ZONES.lumina_optics.sector,
+    hexColor: ZONES.lumina_optics.hexColor,
+    rgbColor: ZONES.lumina_optics.rgbColor,
+    position: ZONES.lumina_optics.position,
+    rotation: [0, Math.PI, 0],
     gesture: 'Cheering',
     dialogueText: {
-      en: "Caution: High laser luminance in this sector! The Lumina lab pioneers photon-speed educational workflows. It's not just another LMS, but an optical knowledge accelerator: interactive media players, automated code validation pipelines, and real-time student analytics. Ready to witness the Lumina educational platform demo?",
-      uk: "Обережно: інтенсивне лазерне випромінювання! Сектор Lumina тестує новітні оптичні методи передачі знань. Це не просто освітня LMS-платформа, а цілий фотонний симулятор: інтерактивні відеоплеєри, автоматизована перевірка коду та візуальна аналітика прогресу студентів. Запустити демонстрацію освітньої платформи Lumina?"
+      en: 'Keep clear of the beam path. Lumina is our learning platform: interactive media players, automated code checks and live student analytics. The demo is ready when you are.',
+      uk: 'Тримайтеся подалі від променя. Lumina — наша освітня платформа: інтерактивні медіаплеєри, автоматична перевірка коду та жива аналітика прогресу студентів. Демо готове до запуску.'
     },
     actionLabel: {
-      en: '✨ Launch Lumina Demo',
-      uk: '✨ Запустити демо Lumina'
+      en: 'Launch Lumina',
+      uk: 'Демо Lumina'
     },
     dismissLabel: {
-      en: 'Transmission ended',
-      uk: 'Бувай, Ліро'
+      en: 'Close',
+      uk: 'Закрити'
     },
     targetType: 'project',
     targetKey: 'lumina'

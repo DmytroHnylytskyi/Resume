@@ -103,7 +103,7 @@ async function runAllTests() {
     }
 
     // Verify elevation tiers:
-    // Commander Valeria at Tier 1 (landing plateau Y ≈ 0.5m)
+    // Commander Kira at Tier 1 (landing plateau Y ≈ 0.5m)
     assert.equal(NPC_DIALOGUES.commander.position[1], 0.5, 'Commander must be on Tier 1 (Y=0.5)');
     // Mid-tier crew at Tier 2 (research hub Y ≈ 2.0m)
     assert.equal(NPC_DIALOGUES.chief_engineer.position[1], 2.0, 'Chief Engineer must be on Tier 2 (Y=2.0)');
@@ -479,7 +479,7 @@ async function runAllTests() {
   // =========================================================================
   console.log('\n--- SUITE 4: MODAL ACTION ROUTING ---');
 
-  await test('C1.4.1', 'Commander Valeria routes to BioModal (activeModal = "bio")', () => {
+  await test('C1.4.1', 'Commander Kira routes to BioModal (activeModal = "bio")', () => {
     const def = NPC_DIALOGUES.commander;
     assert.equal(def.targetType, 'modal');
     assert.equal(def.targetKey, 'bio');

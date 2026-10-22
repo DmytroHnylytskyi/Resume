@@ -17,7 +17,15 @@ import { Loader2 } from 'lucide-react';
  */
 export default function LoadingScreen(): React.ReactElement | null {
   const { progress, active, loaded, total } = useProgress();
-  const { language, isSceneLoaded, setSceneLoaded, isCharacterLoaded, viewMode } = useGameStore();
+  const {
+    language,
+    isSceneLoaded,
+    setSceneLoaded,
+    isCharacterLoaded,
+    isRendererReady,
+    setRendererReady,
+    viewMode
+  } = useGameStore();
   const [displayProgress, setDisplayProgress] = useState(0);
   const [fadeOut, setFadeOut] = useState(false);
   const [gone, setGone] = useState(false);
@@ -39,8 +47,10 @@ export default function LoadingScreen(): React.ReactElement | null {
   // The world is marked ready the MOMENT the fade-out begins — the loader
   // dissolves into the cinematic intro with the character fully spawned.
   useEffect(() => {
+    // The loader also waits for ShaderWarmup: the cinematic intro must never
+    // start on a frame that is about to block for seconds compiling the island.
     const isFinished =
-      isCharacterLoaded && (
+      isCharacterLoaded && isRendererReady && (
         displayProgress >= 100 ||
         progress >= 100 ||
         (hasStartedRef.current && !active && total > 0 && loaded >= total)
@@ -58,20 +68,23 @@ export default function LoadingScreen(): React.ReactElement | null {
       }, 400)
     );
     return () => timers.forEach((id) => window.clearTimeout(id));
-  }, [displayProgress, progress, active, loaded, total, isCharacterLoaded, setSceneLoaded]);
+  }, [displayProgress, progress, active, loaded, total, isCharacterLoaded, isRendererReady, setSceneLoaded]);
 
-  // Safety fallback: if asset queue stalled, mark loaded after 10s
+  // Safety fallback: if the asset queue or the warmup stalled, release the
+  // loader after 15s. Lazy shader compilation then resumes as before — the
+  // important part is that the intro is never left frozen behind the loader.
   useEffect(() => {
     const safetyTimer = setTimeout(() => {
       if (!isSceneLoaded) {
         setDisplayProgress(100);
         setFadeOut(true);
+        setRendererReady(true);
         setSceneLoaded(true);
         setTimeout(() => setGone(true), 650);
       }
-    }, 10000);
+    }, 15000);
     return () => clearTimeout(safetyTimer);
-  }, [isSceneLoaded, setSceneLoaded]);
+  }, [isSceneLoaded, setSceneLoaded, setRendererReady]);
 
   // Keep rendering through the fade-out transition, then unmount
   if (gone || viewMode === 'classic') return null;

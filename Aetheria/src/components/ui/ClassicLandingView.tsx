@@ -176,6 +176,7 @@ export default function ClassicLandingView(): React.ReactElement {
   const [toast, setToast] = useState('');
   const [warpActive, setWarpActive] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
+  const [showSingularity, setShowSingularity] = useState(false);
 
   const isPrintingRef = useRef(false);
 
@@ -188,6 +189,18 @@ export default function ClassicLandingView(): React.ReactElement {
       window.removeEventListener('beforeprint', onBefore);
       window.removeEventListener('afterprint', onAfter);
     };
+  }, []);
+
+  // Полноценный фон нужен всем, но на телефоне он не должен соревноваться с
+  // гидратацией и первым скроллом: даём странице встать и через полсекунды
+  // подключаем WebGL. На десктопе — сразу.
+  useEffect(() => {
+    const coarse = !!window.matchMedia?.('(pointer: coarse)').matches;
+    const id = window.setTimeout(
+      () => setShowSingularity(true),
+      coarse ? 500 : 0
+    );
+    return () => window.clearTimeout(id);
   }, []);
 
   useEffect(() => {
@@ -524,8 +537,12 @@ export default function ClassicLandingView(): React.ReactElement {
       ref={wrapperRef}
       data-warp-active={isDesktop && warpActive ? 'true' : undefined}
     >
-      {/* ── Live Spatial Engine: Gravitational Singularity / Quasar Background (Desktop Only) ── */}
-      {isDesktop && (
+      {/* ── Live Spatial Engine: Gravitational Singularity / Quasar Background.
+          Раньше монтировался только на десктопе — телефоны и планшеты видели
+          «урезанную» классику без фирменного фона. Теперь это полноценная
+          версия на всех устройствах; её стоимость ограничивают качество
+          (частицы/DPR/AA) в SingularityBackground. ── */}
+      {showSingularity && (
         <SingularityBackground
           scrollContainerRef={wrapperRef}
           warpActive={warpActive}

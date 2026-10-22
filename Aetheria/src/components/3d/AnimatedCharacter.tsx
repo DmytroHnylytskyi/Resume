@@ -7,7 +7,7 @@
  * machine: locomotion flags are polled from the shared `characterAnimState` buffer
  * inside useFrame (zero React re-renders) and crossfaded on the AnimationMixer
  * (Idle_A, Walking_A, Running_A loop, Jump_Full_Short plays once).
- * The model is auto-scaled to TARGET_HEIGHT (1.65m) to fit inside the 1.68m capsule collider.
+ * The model is auto-scaled to TARGET_HEIGHT (0.55m) to fit inside the 0.54m capsule collider.
  */
 
 import React, { useRef, useMemo, useEffect } from 'react';
@@ -16,9 +16,11 @@ import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { characterAnimState } from '../../store/characterAnimState';
 import { useGameStore } from '../../store/useGameStore';
+import { visualQuality } from '../../store/debugState';
+import { makeCheapMaterial, mergeSkinnedMeshes } from './kitAssets';
 import { clone as cloneSkeleton } from 'three/examples/jsm/utils/SkeletonUtils.js';
 
-const TARGET_HEIGHT = 0.75;
+const TARGET_HEIGHT = 0.55; // пропорции каталога kaykit: пикап ~0.69 м, модуль ~1 м
 const DEGENERATE_SCALE_FALLBACK = 0.34;
 
 export default function AnimatedCharacter(): React.ReactElement {
@@ -44,18 +46,29 @@ export default function AnimatedCharacter(): React.ReactElement {
     const rawHeight = box.getSize(new THREE.Vector3()).y;
     const scaleFactor = rawHeight > 0 ? TARGET_HEIGHT / rawHeight : DEGENERATE_SCALE_FALLBACK;
 
+    // 6 skinned-примитивов KayKit (руки/ноги/тело/голова) — это 6 draw call'ов
+    // на персонажа. Склеиваем в один SkinnedMesh на том же скелете; анимации
+    // адресуются костям, поэтому миксер продолжает работать без изменений.
+    mergeSkinnedMeshes(clone);
+
     // Optimize materials for clean sci-fi astronaut aesthetic
     clone.traverse((child) => {
       if ((child as THREE.SkinnedMesh).isSkinnedMesh || (child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.SkinnedMesh;
-        mesh.castShadow = false;
+        mesh.castShadow = true; // персонаж получает тень от солнечного key — контекст формы
         mesh.receiveShadow = false;
         mesh.frustumCulled = false; // Required for skinned mesh animation stability
 
         if (mesh.material) {
-          const mat = mesh.material as THREE.MeshStandardMaterial;
-          mat.roughness = 0.65;
-          mat.metalness = 0.35;
+          const src = mesh.material as THREE.MeshStandardMaterial;
+          if (visualQuality.cheapMaterials) {
+            mesh.material = makeCheapMaterial(src);
+          } else {
+            const mat = src.clone();
+            mat.roughness = 0.65;
+            mat.metalness = 0.35;
+            mesh.material = mat;
+          }
         }
       }
     });
