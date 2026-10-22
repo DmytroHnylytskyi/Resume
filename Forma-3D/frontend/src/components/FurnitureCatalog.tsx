@@ -200,7 +200,7 @@ export default function FurnitureCatalog() {
 
   // Filter items by category and localized search string
   const categoryItems = useMemo(() => {
-    if (activeCategory === 'all' || activeCategory === 'necropolis' || catalogCategories.length <= 1) return catalogItems;
+    if (activeCategory === 'all' || catalogCategories.length <= 1) return catalogItems;
     return catalogItems.filter(item => item.category === activeCategory);
   }, [activeCategory]);
 

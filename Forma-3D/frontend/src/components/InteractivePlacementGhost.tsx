@@ -30,7 +30,10 @@ export default function InteractivePlacementGhost() {
   const commitPlacement = useStore((state) => state.commitPlacement);
   const cancelPlacement = useStore((state) => state.cancelPlacement);
   
-  const { scene } = useGLTF(placingModelPath || '/model/kaykit_halloween/Crypt.glb');
+  // Fallback exists only because hooks must run unconditionally; the ghost is
+  // not rendered while placingModelPath is null. Use a Space Base crate now
+  // that the legacy Halloween pack is gone.
+  const { scene } = useGLTF(placingModelPath || '/model/kaykit_space/cargo_A.gltf');
   
   /** Ref to main ghost group element for zero-rerender direct frame mutation */
   const ghostRef = useRef<THREE.Group>(null!);

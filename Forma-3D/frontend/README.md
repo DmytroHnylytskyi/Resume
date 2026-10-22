@@ -34,7 +34,7 @@ frontend/
 │   ├── en.json                        # English dictionary
 │   └── uk.json                        # Ukrainian dictionary
 ├── public/
-│   └── model/                         # 66 modular GLB 3D model files in the Necropolis collection
+│   └── model/                         # Space Base GLB model files and crew models
 ├── src/
 │   ├── app/                           # Next.js App Router
 │   │   ├── [locale]/
@@ -56,7 +56,7 @@ frontend/
 │   │   ├── TransformToolbar.tsx       # Floating transform controls toolbar
 │   │   └── UserProfileModal.tsx       # Cloud project save and load manager
 │   ├── data/
-│   │   └── catalogData.ts             # 66 modular 3D models index (Necropolis)
+│   │   └── catalogData.ts             # 64-item Space Base and crew model index
 
 │   ├── hooks/
 │   │   └── useHotkeys.ts              # Global keyboard shortcuts listener
